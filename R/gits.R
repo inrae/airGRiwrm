@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-gits <- function(id, ts,
+Gits <- function(id, ts,
                  cols = list(date = "date", Precip = "Precip", PotEvap = "PotEvap", Qobs = "Qobs")) {
 
   cols <- as.list(cols)
@@ -16,7 +16,7 @@ gits <- function(id, ts,
   gitsOut <- list(date = ts$date)
   cols$date <- NULL
   gitsOut[[id]] <- dplyr::select(ts, names(cols))
-  class(gitsOut) <- append(class(gitsOut), "gits")
+  class(gitsOut) <- append(class(gitsOut), "Gits")
   gitsOut
 }
 
@@ -29,9 +29,10 @@ gits <- function(id, ts,
 #' @export
 #'
 #' @examples
-merge.gits <- function(x, y) {
-  if(!is(y, "gits")) {
-    stop("A gits class object can only be merged with a gits class object")
+merge.Gits <- function(x, y) {
+  browser()
+  if(!is(y, "Gits")) {
+    stop("A Gits class object can only be merged with a Gits class object")
   }
   if(! identical(x$date, y$date)) {
     stop("Time series dates are not identical")

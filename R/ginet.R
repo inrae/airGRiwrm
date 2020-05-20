@@ -9,13 +9,13 @@
 #' @export
 #'
 #' @examples
-ginet <- function(db, cols = list(id = "id", down = "down", length = "length", runoff = "runoff"), keep_all = FALSE) {
+Ginet <- function(db, cols = list(id = "id", down = "down", length = "length", runoff = "runoff"), keep_all = FALSE) {
   colsDefault <- list(id = "id", down = "down", length = "length", runoff = "runoff")
   cols <- utils::modifyList(colsDefault, as.list(cols))
   db <- dplyr::rename(db, unlist(cols))
   if(!keep_all) {
     db <- dplyr::select(db, names(cols))
   }
-  class(db) <- append(class(db), "ginet")
+  class(db) <- append(class(db), "Ginet")
   db
 }
