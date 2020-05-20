@@ -1,0 +1,73 @@
+---
+title: 'Tutorial: structuration of a semi-distributive GR model'
+author: "David Dorchies"
+date: "19 mai 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(griwrm)
+```
+
+
+## Semi-distributive network description
+
+List of nodes
+
+```{r}
+seine_nodes <- readr::read_delim(
+  file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/griwrm_network.txt&dl=1", 
+  delim = ";"
+)
+seine_nodes
+```
+
+Create the ginet object
+
+```{r}
+# Specify that all nodes are of run-off type
+seine_nodes$runoff = TRUE
+# Generate the ginet object
+ginetSeine <- ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+```
+
+Create the girop object
+
+```{r}
+giropSeine <- girop(seine_nodes, list(id = "id_sgl", area = "area"))
+```
+
+
+## Load data
+
+Hydrometeorological data on the Seine river basin from the ClimAware project: 
+```{r, warning=FALSE, message=FALSE}
+urls <- 
+  file.path(
+    "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT", 
+    paste0(ginetSeine$id, "_NAT.txt&dl=1")
+  )
+names(urls) <- ginetSeine$id
+
+load_ts <- function(x) {
+  readr::read_delim(file = x, 
+             delim = ";", skip = 16, trim_ws = TRUE)
+}
+
+l <- lapply(urls, readr::read_delim, delim = ";", skip = 16, trim_ws = TRUE)
+
+```
+
+```{r}
+gitsSeine <- gits(ginetSeine$id[1], l[[ginetSeine$id[1]]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat"))
+
+for(id in ginetSeine$id) {
+  gitsSeine <- merge(gitsSeine, gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
+}
+```
+
+
