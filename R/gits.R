@@ -30,7 +30,6 @@ Gits <- function(id, ts,
 #'
 #' @examples
 merge.Gits <- function(x, y) {
-  browser()
   if(!is(y, "Gits")) {
     stop("A Gits class object can only be merged with a Gits class object")
   }
