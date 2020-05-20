@@ -38,6 +38,9 @@ ginetSeine <- ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = 
 Create the girop object
 
 ```{r}
+# Specify which run-off model to use
+seine_nodes$model = "RunModel_GR4J"
+# Generate girop object
 giropSeine <- girop(seine_nodes, list(id = "id_sgl", area = "area"))
 ```
 
@@ -69,5 +72,3 @@ for(id in ginetSeine$id) {
   gitsSeine <- merge(gitsSeine, gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
 }
 ```
-
-

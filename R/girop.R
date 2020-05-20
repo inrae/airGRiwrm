@@ -8,8 +8,8 @@
 #' @export
 #'
 #' @examples
-girop <- function(db, cols = c(id = "id", area = "area", params = "params"), keep_all = FALSE) {
-  colsDefault <- list(id = "id", area = "area", params = "params")
+girop <- function(db, cols = c(id = "id", area = "area", model = "model", params = "params"), keep_all = FALSE) {
+  colsDefault <- list(id = "id", area = "area", model = "model", params = "params")
   cols <- utils::modifyList(colsDefault, as.list(cols))
   if(!any(names(db) == cols$params)) {
     # Add missing params column in the database
