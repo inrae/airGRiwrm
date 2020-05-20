@@ -69,6 +69,6 @@ l <- lapply(urls, readr::read_delim, delim = ";", skip = 16, trim_ws = TRUE)
 gitsSeine <- Gits(ginetSeine$id[1], l[[ginetSeine$id[1]]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat"))
 
 for(id in ginetSeine$id) {
-  gitsSeine <- merge(gitsSeine, gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
+  gitsSeine <- merge(gitsSeine, Gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
 }
 ```
