@@ -32,7 +32,7 @@ Create the ginet object
 # Specify that all nodes are of run-off type
 seine_nodes$runoff = TRUE
 # Generate the ginet object
-ginetSeine <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+ginet <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
 ```
 
 Create the girop object
@@ -41,7 +41,7 @@ Create the girop object
 # Specify which run-off model to use
 seine_nodes$model = "RunModel_GR4J"
 # Generate girop object
-giropSeine <- Girop(seine_nodes, list(id = "id_sgl", area = "area"))
+girop <- Girop(seine_nodes, list(id = "id_sgl", area = "area"))
 ```
 
 
@@ -52,23 +52,33 @@ Hydrometeorological data on the Seine river basin from the ClimAware project:
 urls <- 
   file.path(
     "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT", 
-    paste0(ginetSeine$id, "_NAT.txt&dl=1")
+    paste0(ginet$id, "_NAT.txt&dl=1")
   )
-names(urls) <- ginetSeine$id
+names(urls) <- ginet$id
 
 load_ts <- function(x) {
-  readr::read_delim(file = x, 
+  ts <- readr::read_delim(file = x, 
              delim = ";", skip = 16, trim_ws = TRUE)
+  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+  ts
 }
 
-l <- lapply(urls, readr::read_delim, delim = ";", skip = 16, trim_ws = TRUE)
+l <- lapply(urls, load_ts)
 
 ```
 
 ```{r}
-gitsSeine <- Gits(ginetSeine$id[1], l[[ginetSeine$id[1]]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat"))
+gits <- Gits(ginet$id[1], l[[ginet$id[1]]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat"))
 
-for(id in ginetSeine$id) {
-  gitsSeine <- merge(gitsSeine, Gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
+for(id in ginet$id) {
+  gits <- merge(gits, Gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
 }
 ```
+
+## Save data for next vignettes
+
+```{r}
+dir.create("_cache", showWarnings = FALSE)
+save(ginet, girop, gits, file = "_cache/seine.RData")
+```
+

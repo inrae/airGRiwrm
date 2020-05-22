@@ -1,0 +1,65 @@
+---
+title: "First run of the model"
+author: "David Dorchies"
+date: "20 mai 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load parameters of GR4 run-off model
+
+```{r}
+library(griwrm)
+load("_cache/seine.RData")
+```
+
+
+
+Data comes from calibration of ClimAware project with naturalised flows.
+
+
+```{r}
+params <- readr::read_csv(
+  file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1"
+)
+
+params$LAG <- params$Tau0 + params$K0
+
+for(i in 1:length(girop$id)) {
+  param <- params[params$id_sgl == girop$id[i],]
+  girop$params[i] <- list(param[,c("S", "IGF", "KR", "T", "LAG")])
+}
+
+```
+
+## Run the SD model for the whole basin
+
+```{r}
+# Time settings
+library(lubridate)
+IndPeriod_Run <- seq(
+  which(gits$date == (gits$date[1] + months(12))), # Set aside warm-up period
+  length(gits$date)) # Until the end of the time series
+IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+
+OutputsModels <- RunModelGriwrm(
+  ginet, girop, gits, 
+  IndPeriod_Run = IndPeriod_Run, 
+  IndPeriod_WarmUp = IndPeriod_WarmUp
+)
+```
+
+## Plot the result for each basin
+
+```{r, fig.height = 5, fig.width = 8}
+htmltools::tagList(lapply(names(OutputsModels), function(x) plot(OutputsModels[[x]], main = x)))
+```
+
+
+
+
+
+

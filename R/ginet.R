@@ -19,3 +19,27 @@ Ginet <- function(db, cols = list(id = "id", down = "down", length = "length", r
   class(db) <- append(class(db), "Ginet")
   db
 }
+
+#' Title
+#'
+#' @param ginet
+#'
+#' @return
+#' @export
+#'
+#' @examples
+getNodeRanking <- function(ginet) {
+  if(!is(ginet, "Ginet")) {
+    stop("getNodeRanking: ginet argument should be of class Ginet")
+  }
+  # Rank 1
+  rank <- setdiff(ginet$id, ginet$down)
+  ranking <- rank
+  # Next ranks
+  while(any(ginet$id %in% rank)) {
+    rank <- ginet$down[ginet$id %in% rank]
+    ranking <- c(ranking, rank)
+  }
+  ranking <- unique(ranking, fromLast = TRUE)
+  ranking <- ranking[-length(ranking)]
+}
