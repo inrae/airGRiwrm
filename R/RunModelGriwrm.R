@@ -79,7 +79,13 @@ SetAirGrInputsAndOptions <- function(id, ginet, girop, gits, OutputsModels, IndP
       }
     }
     LengthHydro <- matrix(ginet$length[girop$id %in% UpstrNodes] , nrow = 1)
-    BasinAreas <- matrix(c(girop$area[girop$id %in% UpstrNodes], girop$area[girop$id == id]) , nrow = 1)
+    BasinAreas <- matrix(
+      c(
+        girop$area[girop$id %in% UpstrNodes],
+        girop$area[girop$id == id] - sum(girop$area[girop$id %in% UpstrNodes])
+      ),
+      nrow = 1
+    )
   }
   # Set model inputs
   InputsModel <- CreateInputsModel(
