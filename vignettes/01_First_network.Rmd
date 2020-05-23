@@ -71,6 +71,9 @@ l <- lapply(urls, load_ts)
 gits <- Gits(ginet$id[1], l[[ginet$id[1]]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat"))
 
 for(id in ginet$id) {
+  l[[id]]$Qnat
+  l[[id]]$Qnat <- l[[id]]$Qnat * 86.4 / girop$area[girop$id == id]
+  l[[id]]$Qnat[l[[id]]$Qnat < 0] <- NA
   gits <- merge(gits, Gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
 }
 ```

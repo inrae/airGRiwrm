@@ -55,7 +55,12 @@ OutputsModels <- RunModelGriwrm(
 ## Plot the result for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
-htmltools::tagList(lapply(names(OutputsModels), function(x) plot(OutputsModels[[x]], main = x)))
+htmltools::tagList(lapply(
+  names(OutputsModels), 
+  function(x) {
+    plot(OutputsModels[[x]], Qobs = gits[[x]]$Qobs[IndPeriod_Run] , main = x)
+  }
+))
 ```
 
 
