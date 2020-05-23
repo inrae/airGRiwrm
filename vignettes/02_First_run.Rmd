@@ -16,21 +16,36 @@ library(griwrm)
 load("_cache/seine.RData")
 ```
 
-
-
 Data comes from calibration of ClimAware project with naturalised flows.
 
-
 ```{r}
-params <- readr::read_csv(
+ClimAwareParams <- readr::read_csv(
   file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1"
 )
 
-params$LAG <- params$Tau0 + params$K0
+ClimAwareParams
+```
 
-for(i in 1:length(girop$id)) {
-  param <- params[params$id_sgl == girop$id[i],]
-  girop$params[i] <- list(param[,c("S", "IGF", "KR", "T", "LAG")])
+The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin. 
+Almost all sub basin has only a lag parameter. The only exception is for La Marne à Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
+
+This lag parameter has to be converted in a speed in m/s used in the airGR lag model:
+
+```{r}
+# Convert TGR routing parameter into speed
+params <- merge(ginet, ClimAwareParams, by.x = "id", by.y = "id_sgl")
+
+for(id in girop$id) {
+  # Maximum connection length with upstream nodes
+  UpstrNodes <- which(ginet$down == id & !is.na(ginet$down))
+  if(length(UpstrNodes) > 0) {
+    maxLength <- max(ginet$length[UpstrNodes])
+    params$LAG <- maxLength / ((params$Tau0 + params$K0) * 3600)
+    sLag <- "LAG"
+  } else {
+    sLag <- NULL
+  }
+  girop$params[girop$id == id] <- list(params[params$id == id, c("S", "IGF", "KR", "T", sLag)])
 }
 
 ```

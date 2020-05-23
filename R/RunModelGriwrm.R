@@ -26,9 +26,6 @@ RunModelGriwrm <- function(ginet, girop, gits, IndPeriod_Run, IndPeriod_WarmUp =
 
     # Prepare param for upstream sub-basin or basin with hydraulic routing
     Param <- unlist(girop$params[girop$id == id])
-    if (!is(lIO$InputsModel, "SD")) {
-      Param <- Param[-length(Param)]
-    }
 
     # Run the model for the sub-basin
     OutputsModels[[id]] <- RunModel(
@@ -37,6 +34,7 @@ RunModelGriwrm <- function(ginet, girop, gits, IndPeriod_Run, IndPeriod_WarmUp =
       RunOptions = lIO$RunOptions,
       Param = Param
     )
+
   }
   OutputsModels
 }
