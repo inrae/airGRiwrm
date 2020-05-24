@@ -27,7 +27,7 @@ ClimAwareParams
 ```
 
 The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin. 
-Almost all sub basin has only a lag parameter. The only exception is for La Marne à Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
+Almost all sub basin has only a lag parameter. The only exception is for La Marne Ã  Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
 
 This lag parameter has to be converted in a speed in m/s used in the airGR lag model:
 
@@ -40,7 +40,7 @@ for(id in girop$id) {
   UpstrNodes <- which(ginet$down == id & !is.na(ginet$down))
   if(length(UpstrNodes) > 0) {
     maxLength <- max(ginet$length[UpstrNodes])
-    params$LAG <- maxLength / ((params$Tau0 + params$K0) * 3600)
+    params$LAG <- maxLength * 1000 / ((params$Tau0 + params$K0) * 3600)
     sLag <- "LAG"
   } else {
     sLag <- NULL
