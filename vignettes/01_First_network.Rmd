@@ -30,7 +30,9 @@ Create the ginet object
 
 ```{r}
 # Specify that all nodes are of run-off type
-seine_nodes$runoff = TRUE
+seine_nodes$runoff <- TRUE
+# Convert distance in km as it the unit used by airGR
+seine_nodes$distance_aval <- seine_nodes$distance_aval / 1000
 # Generate the ginet object
 ginet <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
 ```
