@@ -13,6 +13,14 @@ Gits <- function(id, ts,
 
   cols <- as.list(cols)
   ts <- dplyr::rename(ts, unlist(cols))
+
+  if(any(is.na(ts$Qobs))) {
+    stop("Qobs should not contain any NA")
+  }
+  if(any(ts$Qobs < 0)) {
+    stop("Qobs should be strictly positive")
+  }
+
   gitsOut <- list(date = ts$date)
   cols$date <- NULL
   gitsOut[[id]] <- dplyr::select(ts, names(cols))

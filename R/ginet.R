@@ -16,7 +16,7 @@ Ginet <- function(db, cols = list(id = "id", down = "down", length = "length", r
   if(!keep_all) {
     db <- dplyr::select(db, names(cols))
   }
-  class(db) <- append(class(db), "Ginet")
+  class(db) <- append(class(db), c("Griwrm", "Ginet"))
   db
 }
 
