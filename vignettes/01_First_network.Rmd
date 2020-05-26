@@ -80,10 +80,9 @@ load_ts <- function(x) {
              delim = ";", skip = 16, trim_ws = TRUE)
   ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
   # Interpolation of data gap in the discharge time serie
-  browser
   ts[ts$Qnat < 0, "Qnat"] <- NA
   if(is.na(ts$Qnat[nrow(ts)])) {
-    ts$Qnat[nrow(ts)] <- 0 # End of time series converge to zero
+    ts$Qnat[nrow(ts)] <- 0 # No value at the end: time serie converge to zero
   }
   ts$Qnat <- zoo::na.approx(ts$Qnat)
   ts
@@ -120,7 +119,7 @@ The airGR CreateInputsModel function is extended in order to handle the ginet ob
 
 
 ```{r}
-  InputsModel <- CreateInputsModel(ginet, girop, gits)
+InputsModel <- CreateInputsModel(ginet, girop, gits)
 ```
 
 
@@ -129,6 +128,6 @@ The airGR CreateInputsModel function is extended in order to handle the ginet ob
 
 ```{r}
 dir.create("_cache", showWarnings = FALSE)
-save(ginet, girop, gits, file = "_cache/seine.RData")
+save(ginet, girop, gits, InputsModel, file = "_cache/seine.RData")
 ```
 

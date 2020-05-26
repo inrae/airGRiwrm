@@ -9,12 +9,24 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Load parameters of GR4 run-off model
+## Load libraries
 
 ```{r}
 library(griwrm)
+```
+
+
+## Load parameters of GR4 run-off model
+
+### Loading network and time series data
+
+Run `vignette("01_First_network", package = "griwrm")` before this one in order to create the Rdata file loaded below:
+
+```{r}
 load("_cache/seine.RData")
 ```
+
+### Loading 
 
 Data comes from calibration of ClimAware project with naturalised flows.
 
@@ -27,7 +39,7 @@ ClimAwareParams
 ```
 
 The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin. 
-Almost all sub basin has only a lag parameter. The only exception is for La Marne Ã  Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
+Almost all sub basin has only a lag parameter. The only exception is for La Marne à Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
 
 This lag parameter has to be converted in a speed in m/s used in the airGR lag model:
 
@@ -48,22 +60,52 @@ for(id in girop$id) {
   girop$params[girop$id == id] <- list(params[params$id == id, c("S", "IGF", "KR", "T", sLag)])
 }
 
+dplyr::select(params, id, S, IGF, KR, T, LAG)
 ```
+
+## GriwmRunOptions object
+
+The `CreateRunOptions()` function allows to prepare the options required to the `RunModel()` function.
+
+The user must at least define the following arguments:
+
+* InputsModel: the associated input data
+* IndPeriod_Run: the period on which the model is run
+
+
+```{r}
+library(lubridate)
+IndPeriod_Run <- seq(
+  which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + months(12))), # Set aside warm-up period
+  length(InputsModel[[1]]$DatesR) # Until the end of the time series
+) 
+```
+
+The warmup period could also be defined as is:
+
+```{r}
+IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+```
+
+
+
+```{r}
+RunOptions <- CreateRunOptions(
+  InputsModel = InputsModel, 
+  IndPeriod_WarmUp = IndPeriod_WarmUp, 
+  IndPeriod_Run = IndPeriod_Run
+)
+```
+
+
 
 ## Run the SD model for the whole basin
 
 ```{r}
-# Time settings
-library(lubridate)
-IndPeriod_Run <- seq(
-  which(gits$date == (gits$date[1] + months(12))), # Set aside warm-up period
-  length(gits$date)) # Until the end of the time series
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
-
-OutputsModels <- RunModelGriwrm(
-  ginet, girop, gits, 
-  IndPeriod_Run = IndPeriod_Run, 
-  IndPeriod_WarmUp = IndPeriod_WarmUp
+OutputsModels <- RunModel(
+  InputsModel = InputsModel,
+  RunOptions = RunOptions,
+  girop
 )
 ```
 
