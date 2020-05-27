@@ -2,7 +2,8 @@ default:
   tags: [docker]
   image: r-base:latest
   before_script:
-    - Rscript -e 'remotes::install_git(url = "https://gitlab.irstea.fr/HYCAR-Hydro/airgr.git", ref = "sd")'
+    - Rscript -e 'install.packages("remotes")'
+    - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr")'
     - R CMD build griwrm
 
 check_not_cran:
