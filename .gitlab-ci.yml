@@ -1,0 +1,12 @@
+default:
+  tags: [docker]
+  image: r-base:latest
+  before_script:
+    - Rscript -e 'remotes::install_git(url = "https://gitlab.irstea.fr/HYCAR-Hydro/airgr.git", ref = "sd")'
+    - R CMD build griwrm
+
+check_not_cran:
+  variables:
+    NOT_CRAN: "true"
+  script:
+    - R CMD check ../griwrm_*.tar.gz
