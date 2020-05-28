@@ -1,19 +1,23 @@
 Package: griwrm
 Title: GR based Integrated Water Resource Management
 Version: 0.1.0
-Authors@R: 
+Authors@R:
     person(given = "David",
            family = "Dorchies",
            role = c("aut", "cre"),
            email = "david.dorchies@inrae.fr",
            comment = c(ORCID = "0000-0002-6595-7984"))
 Description: This R package aims to model water basin with a airGR based semi-distributive hydrology with the integration of human infrastructures and their management.
-License: `use_gpl3_license()`
+License: LGPL (>= 2.1)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0
-Imports: 
+Imports:
     dplyr,
     utils,
     airGR (>= 1.6.1.11)
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
