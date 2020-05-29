@@ -29,7 +29,7 @@ build:
     - R CMD build ../griwrm
   artifacts:
     paths:
-      - check griwrm_*.tar.gz
+      - griwrm_*.tar.gz
 
 check_not_cran:
   stage: checks
