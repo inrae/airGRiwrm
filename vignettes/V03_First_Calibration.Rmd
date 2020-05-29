@@ -11,11 +11,12 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Loading network and time series data
+## Loading libraries, network and time series data
 
 Run `vignette("01_First_network", package = "griwrm")` and `vignette("02_First_run", package = "griwrm")` before this one in order to create the Rdata files loaded below:
 
 ```{r}
+library(griwrm)
 load("_cache/V01.RData")
 load("_cache/V02.RData")
 ```
