@@ -27,6 +27,9 @@ build:
   stage: build
   script:
     - R CMD build ../griwrm
+  artifacts:
+    paths:
+      - check griwrm_*.tar.gz
 
 check_not_cran:
   stage: checks
