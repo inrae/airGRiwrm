@@ -36,4 +36,4 @@ check_not_cran:
   variables:
     NOT_CRAN: "true"
   script:
-    - R CMD check griwrm_*.tar.gz
+    - R CMD check --no-manual griwrm_*.tar.gz
