@@ -22,7 +22,7 @@ load("_cache/V02.RData")
 
 ## InputsCrit object
 
-```{r cars}
+```{r}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel, 
   RunOptions = RunOptions, gits = gits
@@ -32,7 +32,7 @@ str(InputsCrit)
 
 ## GriwrmCalibOptions object
 
-```{r, eval=FALSE}
+```{r}
 CalibOptions <- CreateCalibOptions(InputsModel)
 str(CalibOptions)
 ```
