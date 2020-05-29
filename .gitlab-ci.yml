@@ -19,7 +19,8 @@ update_packages:
   stage: update_packages
   script:
     - mkdir -p R_LIBS
-    - Rscript -e 'install.packages(c("remotes", "dplyr", "rmarkdown", "readr", "lubridate", "zoo"), lib = "R_LIBS")'
+    - Rscript -e 'if(!dir.exists("R_LIBS/remotes")) install.packages("remotes", lib = "R_LIBS")'
+    - Rscript -e 'remotes::update.packages(c("dplyr", "rmarkdown", "readr", "lubridate", "zoo"), lib = "R_LIBS")'
     - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr", lib = "R_LIBS")'
 
 build:
