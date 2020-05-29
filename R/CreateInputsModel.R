@@ -1,12 +1,10 @@
-#' Create InputsModel object for either airGR or GRIWRM
+#' Create InputsModel object for either airGR or GR-IWRM
 #'
-#' @param x
-#' @param ...
+#' @param x First parameter determining which InputsModel object is created
+#' @param ... further arguments passed to or from other methods.
 #'
-#' @return
+#' @return InputsModel or GriwrmInputsObject object
 #' @export
-#'
-#' @examples
 CreateInputsModel <- function(x, ...) {
   UseMethod("CreateInputsModel", x)
 }

@@ -1,46 +1,31 @@
 #' Title
 #'
-#' @param ginet
-#' @param girop
-#' @param gits
-#' @param IndPeriod_Run
-#' @param IndPeriod_WarmUp
+#' @param InputsModel object of class \emph{GriwrmInputsModel}, see \code{[CreateInputsModel.Griwrm]} for details.
+#' @param RunOptions object of class \emph{GriwrmRunOptions}, see \code{[CreateRunOptions.Griwrm]} for details.
+#' @param girop Girop object giving the run-off model parameters, see \code{[Girop]}.
+#' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
+#' @param ... Mandatory for S3 method signature function compatibility with generic.
 #'
-#' @return
+#' @return \emph{GriwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \code{\link[airGR]{RunModel}}) for each node of the semi-distributed model.
 #' @export
-#'
-#' @examples
-RunModel.GriwrmInputsModel <- function(InputsModel, RunOptions, girop, verbose = TRUE) {
+RunModel.GriwrmInputsModel <- function(InputsModel, RunOptions, girop, verbose = TRUE, ...) {
 
-  OutputsModels <- list()
+  OutputsModel <- list()
+  class(OutputsModel) <- append(class(OutputsModel), "GriwrmOutputsModel")
 
   for(IM in InputsModel) {
     if(verbose) cat("RunModel.GriwrmInputsModel: Treating sub-basin", IM$id, "...\n")
 
     # Update InputsModel$QobsUpstr with simulated upstream flows
-    if(length(IM$UpstreamNodes) > 0) {
-      for(i in 1:length(IM$UpstreamNodes)) {
-        QobsUpstr1 <- matrix(
-          c(
-            rep(0, length(RunOptions[[IM$id]]$IndPeriod_WarmUp)),
-            OutputsModels[[IM$UpstreamNodes[i]]]$Qsim
-          ), ncol = 1
-        )
-        if(i == 1) {
-          IM$QobsUpstr <- QobsUpstr1
-        } else {
-          IM$QobsUpstr <- cbind(IM$QobsUpstr, QobsUpstr1)
-        }
-      }
-    }
+    IM <- UpdateQsimUpstream(IM, OutputsModel)
 
     # Run the model for the sub-basin
-    OutputsModels[[IM$id]] <- RunModel(
+    OutputsModel[[IM$id]] <- RunModel(
       InputsModel = IM,
       RunOptions = RunOptions[[IM$id]],
       Param = unlist(girop$params[girop$id == IM$id])
     )
 
   }
-  return(OutputsModels)
+  return(OutputsModel)
 }

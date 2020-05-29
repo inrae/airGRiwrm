@@ -1,20 +1,19 @@
 #' Create InputsModel object for a GRIWRM network
 #'
-#' @param ginet
-#' @param girop
-#' @param gits
+#' @param x Ginet object describing the diagram of the semi-distributed model, see \code{[Ginet]}.
+#' @param girop Girop object giving the run-off model parameters, see \code{[Girop]}.
+#' @param gits Gits object giving the observation time series, see \code{[Gits]}.
+#' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
-#' @return
+#' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-#'
-#' @examples
-CreateInputsModel.Griwrm <- function(ginet, girop, gits, verbose = TRUE) {
+CreateInputsModel.Griwrm <- function(x, girop, gits, ...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
 
-  for(id in getNodeRanking(ginet)) {
+  for(id in getNodeRanking(x)) {
     if(verbose) cat("CreateInputsModel.griwrm: Treating sub-basin", id, "...\n")
-    InputsModel[[id]] <- CreateOneGriwrmInputsModel(id, ginet, girop, gits)
+    InputsModel[[id]] <- CreateOneGriwrmInputsModel(id, x, girop, gits, ...)
   }
   return(InputsModel)
 }
@@ -22,9 +21,7 @@ CreateInputsModel.Griwrm <- function(ginet, girop, gits, verbose = TRUE) {
 
 #' Create an empty InputsModel object for GRIWRM nodes
 #'
-#' @return
-#'
-#' @examples
+#' @return \emph{GriwrmInputsModel} empty object
 CreateEmptyGriwrmInputsModel <- function() {
   InputsModel <- list()
   class(InputsModel) <- append(class(InputsModel), "GriwrmInputsModel")
@@ -34,14 +31,12 @@ CreateEmptyGriwrmInputsModel <- function() {
 
 #' Create one InputsModel for a GRIWRM node
 #'
-#' @param ginet
-#' @param girop
-#' @param gits
-#' @param id
+#' @param id string of the node identifier
+#' @param ginet See \code{[Ginet]}.
+#' @param girop See \code{[Girop]}.
+#' @param gits See \code{[Gits]}.
 #'
-#' @return
-#'
-#' @examples
+#' @return \emph{InputsModel} object for one.
 CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
   node <- ginet[ginet$id == id,]
   FUN_MOD <- girop$model[girop$id == id]

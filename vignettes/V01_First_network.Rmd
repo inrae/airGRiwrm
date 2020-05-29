@@ -1,8 +1,10 @@
 ---
 title: 'Tutorial: structuration of a semi-distributive GR model'
 author: "David Dorchies"
-date: "19 mai 2020"
-output: html_document
+vignette: >
+  %\VignetteIndexEntry{Tutorial: structuration of a semi-distributive GR model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

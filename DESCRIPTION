@@ -8,7 +8,7 @@ Authors@R:
            email = "david.dorchies@inrae.fr",
            comment = c(ORCID = "0000-0002-6595-7984"))
 Description: This R package aims to model water basin with a airGR based semi-distributive hydrology with the integration of human infrastructures and their management.
-License: LGPL (>= 2.1)
+License: AGPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -16,8 +16,11 @@ RoxygenNote: 7.1.0
 Imports:
     dplyr,
     utils,
-    airGR (>= 1.6.1.11)
-Suggests: 
+    airGR (>= 1.6.1.11),
+    methods
+Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    lattice
 VignetteBuilder: knitr
+URL: https://gitlab.irstea.fr/in-wop/griwrm

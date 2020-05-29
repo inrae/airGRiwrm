@@ -1,12 +1,10 @@
-#' Title
+#' Create \emph{RunOptions} object for airGR and GR-IWRM. See \code{\link[airGR]{CreateOptions}} and \code{[CreateOptions.GriwrmInputsModel]}.
 #'
-#' @param ...
-#' @param InputsModel
+#' @param InputsModel object of class \emph{InputsModel} (see \code{\link[airGR]{CreateInputsModel}}) or \emph{GriwrmInputsModel} (See \code{[CreateInputsModel.Griwrm]}).
+#' @param ... further arguments passed to or from other methods.
 #'
-#' @return
+#' @return Object of \emph{RunOptions} class family
 #' @export
-#'
-#' @examples
 CreateRunOptions <- function(InputsModel, ...) {
   UseMethod("CreateRunOptions", InputsModel)
 }

@@ -1,8 +1,10 @@
 ---
 title: "First run of the model"
 author: "David Dorchies"
-date: "20 mai 2020"
-output: html_document
+vignette: >
+  %\VignetteIndexEntry{First run of the model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include=FALSE}

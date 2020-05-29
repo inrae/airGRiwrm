@@ -1,13 +1,11 @@
 #' Title
 #'
-#' @param id
-#' @param ts
-#' @param cols
+#' @param id string of the id of the node
+#' @param ts numeric matrix or data frame containing 3 columns for precipitation, evaporation, and observed flow
+#' @param cols named list or vector used for matching the columns of ts with the required columns names which are "Precip", "PotEvap", and "Qobs".
 #'
-#' @return
+#' @return \emph{Gits} class object which is a list containing a `date` element (Vector of PosiXlt timestamps) and an element named the id of the node containing a dataframe with observed data.
 #' @export
-#'
-#' @examples
 Gits <- function(id, ts,
                  cols = list(date = "date", Precip = "Precip", PotEvap = "PotEvap", Qobs = "Qobs")) {
 
@@ -28,16 +26,15 @@ Gits <- function(id, ts,
   gitsOut
 }
 
-#' Title
+#' Merge two gits objects with identical date time series.
 #'
-#' @param x
-#' @param y
+#' @param x Gits object to merge (See [Gits]).
+#' @param y Gits object to merge (See [Gits]).
+#' @param ... For merge generic function compatibility.
 #'
-#' @return
+#' @return Gits object merged with one item `Date` and Items corresponding to each node.
 #' @export
-#'
-#' @examples
-merge.Gits <- function(x, y) {
+merge.Gits <- function(x, y, ...) {
   if(!is(y, "Gits")) {
     stop("A Gits class object can only be merged with a Gits class object")
   }

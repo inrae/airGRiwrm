@@ -7,9 +7,7 @@
 #'
 #' @return
 #' @export
-#'
-#' @examples
-RunModel.InputsModel <- function(InputsModel, RunOptions, Param, FUN_MOD = NULL) {
+RunModel.InputsModel <- function(InputsModel, RunOptions, Param, FUN_MOD = NULL, ...) {
   if(is.null(FUN_MOD)) {
     FUN_MOD <- InputsModel$FUN_MOD
   }
