@@ -1,12 +1,33 @@
-default:
-  tags: [docker]
-  image: r-base:latest
-  before_script:
-    - Rscript -e 'install.packages(c("remotes", "dplyr", "knitr", "readr", "lubridate", "zoo"))'
-    - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr")'
+stages:
+    - update_packages
+    - build
+    - checks
+
+tags: [docker]
+
+image: r-base:latest
+
+cache:
+  paths:
+    - R_LIBS/
+
+before_script:
+  - echo "R_LIBS='$(pwd)/R_LIBS'" > .Renviron
+
+update_packages:
+  stage: update_packages
+  script:
+    - mkdir -p R_LIBS
+    - Rscript -e 'install.packages(c("remotes", "dplyr", "rmarkdown", "readr", "lubridate", "zoo"), lib = "R_LIBS")'
+    - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr", lib = "R_LIBS")'
+
+build:
+  stage: build
+  script:
     - R CMD build ../griwrm
 
 check_not_cran:
+  stage: checks
   variables:
     NOT_CRAN: "true"
   script:
