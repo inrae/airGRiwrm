@@ -3,11 +3,12 @@
 #' @param x Ginet object describing the diagram of the semi-distributed model, see \code{[Ginet]}.
 #' @param girop Girop object giving the run-off model parameters, see \code{[Girop]}.
 #' @param gits Gits object giving the observation time series, see \code{[Gits]}.
+#' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
 #' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.Griwrm <- function(x, girop, gits, ...) {
+CreateInputsModel.Griwrm <- function(x, girop, gits, verbose = TRUE,...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
 
