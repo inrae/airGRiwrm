@@ -1,0 +1,46 @@
+---
+title: "03_First_Calibration"
+author: "David Dorchies"
+vignette: >
+  %\VignetteIndexEntry{Calibration of naturalised semi-distributive model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading network and time series data
+
+Run `vignette("01_First_network", package = "griwrm")` and `vignette("02_First_run", package = "griwrm")` before this one in order to create the Rdata files loaded below:
+
+```{r}
+load("_cache/V01.RData")
+load("_cache/V02.RData")
+```
+
+## InputsCrit object
+
+```{r cars}
+InputsCrit <- CreateInputsCrit(
+  InputsModel = InputsModel, 
+  RunOptions = RunOptions, gits = gits
+)
+str(InputsCrit)
+```
+
+## GriwrmCalibOptions object
+
+```{r, eval=FALSE}
+CalibOptions <- CreateCalibOptions(InputsModel)
+str(CalibOptions)
+```
+
+## Calibration
+
+```{r}
+OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+```
+
+

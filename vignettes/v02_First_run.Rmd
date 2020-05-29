@@ -25,7 +25,7 @@ library(griwrm)
 Run `vignette("01_First_network", package = "griwrm")` before this one in order to create the Rdata file loaded below:
 
 ```{r}
-load("_cache/seine.RData")
+load("_cache/V01.RData")
 ```
 
 ### Loading 
@@ -109,6 +109,12 @@ OutputsModels <- RunModel(
   RunOptions = RunOptions,
   girop
 )
+```
+
+## Save data for next vignettes
+
+```{r}
+save(RunOptions, file = "_cache/V02.RData")
 ```
 
 ## Plot the result for each basin

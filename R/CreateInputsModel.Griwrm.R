@@ -8,7 +8,7 @@
 #'
 #' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.Griwrm <- function(x, girop, gits, verbose = TRUE,...) {
+CreateInputsModel.Griwrm <- function(x, girop, gits, verbose = TRUE, ...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
 
