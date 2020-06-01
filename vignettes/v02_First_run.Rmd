@@ -104,7 +104,7 @@ RunOptions <- CreateRunOptions(
 ## Run the SD model for the whole basin
 
 ```{r}
-OutputsModels <- RunModel(
+OutputsModelsClimAware <- RunModel(
   InputsModel = InputsModel,
   RunOptions = RunOptions,
   girop
@@ -121,9 +121,9 @@ save(RunOptions, file = "_cache/V02.RData")
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
-  names(OutputsModels), 
+  names(OutputsModelsClimAware), 
   function(x) {
-    plot(OutputsModels[[x]], Qobs = gits[[x]]$Qobs[IndPeriod_Run] , main = x)
+    plot(OutputsModelsClimAware[[x]], Qobs = gits[[x]]$Qobs[IndPeriod_Run] , main = x)
   }
 ))
 ```

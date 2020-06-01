@@ -44,4 +44,34 @@ str(CalibOptions)
 OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 ```
 
+```{r}
+save(OutputsCalib, file = "_cache/V03.RData")
+```
+
+
+## Run model with Michel calibration
+
+```{r}
+giropMichel <- girop
+for(id in giropMichel$id) {
+  giropMichel$params[giropMichel$id == id] <- list(OutputsCalib[[id]]$Param)
+}
+
+OutputsModels <- RunModel(
+  InputsModel = InputsModel,
+  RunOptions = RunOptions,
+  girop = giropMichel
+)
+```
+
+## Plot the result for each basin
+
+```{r, fig.height = 5, fig.width = 8}
+htmltools::tagList(lapply(
+  names(OutputsModels), 
+  function(x) {
+    plot(OutputsModels[[x]], Qobs = gits[[x]]$Qobs[RunOptions[[x]]$IndPeriod_Run] , main = x)
+  }
+))
+```
 
