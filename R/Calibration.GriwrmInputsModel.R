@@ -28,7 +28,7 @@ Calibration.GriwrmInputsModel <- function(InputsModel,
     if(verbose) cat("Calibration.GriwrmInputsModel: Treating sub-basin", IM$id, "...\n")
 
     if(useUpstreamQsim) {
-      # Update InputsModel$QobsUpstr with simulated upstream flows
+      # Update InputsModel$Qupstream with simulated upstream flows
       IM <- UpdateQsimUpstream(IM, OutputsModel)
     }
 

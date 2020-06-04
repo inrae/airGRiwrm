@@ -9,7 +9,7 @@ CreateCalibOptions.InputsModel <- function(InputsModel,
                                ...) {
   airGR::CreateCalibOptions(
     FUN_MOD = InputsModel$FUN_MOD,
-    IsSD = !is.null(InputsModel$QobsUpstr),
+    IsSD = !is.null(InputsModel$Qupstream),
     ...
   )
 }
