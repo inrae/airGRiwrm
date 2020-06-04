@@ -58,13 +58,10 @@ CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
         Qupstream <- cbind(Qupstream, Qupstream1)
       }
     }
-    LengthHydro <- matrix(ginet$length[girop$id %in% UpstreamNodes] , nrow = 1)
-    BasinAreas <- matrix(
-      c(
+    LengthHydro <- ginet$length[girop$id %in% UpstreamNodes]
+    BasinAreas <- c(
         girop$area[girop$id %in% UpstreamNodes],
         girop$area[girop$id == id] - sum(girop$area[girop$id %in% UpstreamNodes])
-      ),
-      nrow = 1
     )
   }
 
