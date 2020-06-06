@@ -16,7 +16,7 @@ RunModel.GriwrmInputsModel <- function(InputsModel, RunOptions, girop, verbose =
   for(IM in InputsModel) {
     if(verbose) cat("RunModel.GriwrmInputsModel: Treating sub-basin", IM$id, "...\n")
 
-    # Update InputsModel$QobsUpstr with simulated upstream flows
+    # Update InputsModel$Qupstream with simulated upstream flows
     IM <- UpdateQsimUpstream(IM, OutputsModel)
 
     # Run the model for the sub-basin

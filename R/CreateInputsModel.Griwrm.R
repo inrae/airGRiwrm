@@ -8,7 +8,7 @@
 #'
 #' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.Griwrm <- function(x, girop, gits, verbose = TRUE,...) {
+CreateInputsModel.Griwrm <- function(x, girop, gits, verbose = TRUE, ...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
 
@@ -44,27 +44,24 @@ CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
 
   # Set hydraulic parameters
   UpstreamNodes <- ginet$id[ginet$down == id & !is.na(ginet$down)]
-  QobsUpstr <- NULL
+  Qupstream <- NULL
   LengthHydro <- NULL
   BasinAreas <- NULL
 
   if(length(UpstreamNodes) > 0) {
     # Sub-basin with hydraulic routing
     for(idUpstrNode in UpstreamNodes) {
-      QobsUpstr1 <- matrix(gits[[idUpstrNode]]$Qobs, ncol = 1)
-      if(is.null(QobsUpstr)) {
-        QobsUpstr <- QobsUpstr1
+      Qupstream1 <- matrix(gits[[idUpstrNode]]$Qobs, ncol = 1)
+      if(is.null(Qupstream)) {
+        Qupstream <- Qupstream1
       } else {
-        QobsUpstr <- cbind(QobsUpstr, QobsUpstr1)
+        Qupstream <- cbind(Qupstream, Qupstream1)
       }
     }
-    LengthHydro <- matrix(ginet$length[girop$id %in% UpstreamNodes] , nrow = 1)
-    BasinAreas <- matrix(
-      c(
+    LengthHydro <- ginet$length[girop$id %in% UpstreamNodes]
+    BasinAreas <- c(
         girop$area[girop$id %in% UpstreamNodes],
         girop$area[girop$id == id] - sum(girop$area[girop$id %in% UpstreamNodes])
-      ),
-      nrow = 1
     )
   }
 
@@ -74,7 +71,7 @@ CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
     DatesR = gits$date,
     Precip = gits[[id]]$Precip,
     PotEvap = gits[[id]]$PotEvap,
-    QobsUpstr = QobsUpstr,
+    Qupstream = Qupstream,
     LengthHydro = LengthHydro,
     BasinAreas = BasinAreas
   )

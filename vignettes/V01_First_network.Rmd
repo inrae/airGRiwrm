@@ -130,6 +130,6 @@ InputsModel <- CreateInputsModel(ginet, girop, gits)
 
 ```{r}
 dir.create("_cache", showWarnings = FALSE)
-save(ginet, girop, gits, InputsModel, file = "_cache/seine.RData")
+save(ginet, girop, gits, InputsModel, file = "_cache/V01.RData")
 ```
 

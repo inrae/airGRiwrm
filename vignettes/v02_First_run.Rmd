@@ -25,7 +25,7 @@ library(griwrm)
 Run `vignette("01_First_network", package = "griwrm")` before this one in order to create the Rdata file loaded below:
 
 ```{r}
-load("_cache/seine.RData")
+load("_cache/V01.RData")
 ```
 
 ### Loading 
@@ -104,20 +104,26 @@ RunOptions <- CreateRunOptions(
 ## Run the SD model for the whole basin
 
 ```{r}
-OutputsModels <- RunModel(
+OutputsModelsClimAware <- RunModel(
   InputsModel = InputsModel,
   RunOptions = RunOptions,
   girop
 )
 ```
 
+## Save data for next vignettes
+
+```{r}
+save(RunOptions, file = "_cache/V02.RData")
+```
+
 ## Plot the result for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
-  names(OutputsModels), 
+  names(OutputsModelsClimAware), 
   function(x) {
-    plot(OutputsModels[[x]], Qobs = gits[[x]]$Qobs[IndPeriod_Run] , main = x)
+    plot(OutputsModelsClimAware[[x]], Qobs = gits[[x]]$Qobs[IndPeriod_Run] , main = x)
   }
 ))
 ```
