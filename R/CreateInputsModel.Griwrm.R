@@ -2,19 +2,25 @@
 #'
 #' @param x Ginet object describing the diagram of the semi-distributed model, see \code{[Ginet]}.
 #' @param girop Girop object giving the run-off model parameters, see \code{[Girop]}.
-#' @param gits Gits object giving the observation time series, see \code{[Gits]}.
+#' @param DateR Vector of POSIXlt observation time steps.
+#' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
+#' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
+#' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.
 #' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
 #' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.Griwrm <- function(x, girop, gits, verbose = TRUE, ...) {
+CreateInputsModel.Griwrm <- function(x, girop, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
+  Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
 
   for(id in getNodeRanking(x)) {
     if(verbose) cat("CreateInputsModel.griwrm: Treating sub-basin", id, "...\n")
-    InputsModel[[id]] <- CreateOneGriwrmInputsModel(id, x, girop, gits, ...)
+    InputsModel[[id]] <- CreateOneGriwrmInputsModel(
+      id, x, girop, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
+    )
   }
   return(InputsModel)
 }
@@ -35,10 +41,13 @@ CreateEmptyGriwrmInputsModel <- function() {
 #' @param id string of the node identifier
 #' @param ginet See \code{[Ginet]}.
 #' @param girop See \code{[Girop]}.
-#' @param gits See \code{[Gits]}.
-#'
+#' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs.
+#' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step).
+#' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step).
+#' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs.
+##'
 #' @return \emph{InputsModel} object for one.
-CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
+CreateOneGriwrmInputsModel <- function(id, ginet, girop, DatesR, Precip, PotEvap, Qobs) {
   node <- ginet[ginet$id == id,]
   FUN_MOD <- girop$model[girop$id == id]
 
@@ -51,7 +60,7 @@ CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
   if(length(UpstreamNodes) > 0) {
     # Sub-basin with hydraulic routing
     for(idUpstrNode in UpstreamNodes) {
-      Qupstream1 <- matrix(gits[[idUpstrNode]]$Qobs, ncol = 1)
+      Qupstream1 <- matrix(Qobs[,idUpstrNode], ncol = 1)
       if(is.null(Qupstream)) {
         Qupstream <- Qupstream1
       } else {
@@ -68,9 +77,9 @@ CreateOneGriwrmInputsModel <- function(id, ginet, girop, gits) {
   # Set model inputs with the airGR function
   InputsModel <- CreateInputsModel(
     FUN_MOD,
-    DatesR = gits$date,
-    Precip = gits[[id]]$Precip,
-    PotEvap = gits[[id]]$PotEvap,
+    DatesR = DatesR,
+    Precip = Precip,
+    PotEvap = PotEvap,
     Qupstream = Qupstream,
     LengthHydro = LengthHydro,
     BasinAreas = BasinAreas

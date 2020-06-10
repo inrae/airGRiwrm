@@ -27,7 +27,7 @@ load("_cache/V02.RData")
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel, 
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, gits = gits
+  RunOptions = RunOptions, Qobs = Qobs
 )
 str(InputsCrit)
 ```
@@ -65,13 +65,20 @@ OutputsModels <- RunModel(
 )
 ```
 
+## Save calibration data for next vignettes
+
+```{r}
+save(giropMichel, file = "_cache/V03.RData")
+```
+
+
 ## Plot the result for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
   names(OutputsModels), 
   function(x) {
-    plot(OutputsModels[[x]], Qobs = gits[[x]]$Qobs[RunOptions[[x]]$IndPeriod_Run] , main = x)
+    plot(OutputsModels[[x]], Qobs = Qobs[RunOptions[[x]]$IndPeriod_Run,x] , main = x)
   }
 ))
 ```
