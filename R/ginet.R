@@ -7,8 +7,8 @@
 #'
 #' @return `Ginet` class object containing the description of diagram of the semi-distributed catchment model
 #' @export
-Ginet <- function(db, cols = list(id = "id", down = "down", length = "length", runoff = "runoff"), keep_all = FALSE) {
-  colsDefault <- list(id = "id", down = "down", length = "length", runoff = "runoff")
+Ginet <- function(db, cols = list(id = "id", down = "down", length = "length", model = "model"), keep_all = FALSE) {
+  colsDefault <- list(id = "id", down = "down", length = "length", model = "model", area = "area")
   cols <- utils::modifyList(colsDefault, as.list(cols))
   db <- dplyr::rename(db, unlist(cols))
   if(!keep_all) {

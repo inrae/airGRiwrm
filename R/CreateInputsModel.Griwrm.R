@@ -1,7 +1,6 @@
 #' Create InputsModel object for a GRIWRM network
 #'
 #' @param x Ginet object describing the diagram of the semi-distributed model, see \code{[Ginet]}.
-#' @param girop Girop object giving the run-off model parameters, see \code{[Girop]}.
 #' @param DateR Vector of POSIXlt observation time steps.
 #' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
 #' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
@@ -11,7 +10,7 @@
 #'
 #' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.Griwrm <- function(x, girop, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
+CreateInputsModel.Griwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
   Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
@@ -19,7 +18,7 @@ CreateInputsModel.Griwrm <- function(x, girop, DatesR, Precip, PotEvap, Qobs, ve
   for(id in getNodeRanking(x)) {
     if(verbose) cat("CreateInputsModel.griwrm: Treating sub-basin", id, "...\n")
     InputsModel[[id]] <- CreateOneGriwrmInputsModel(
-      id, x, girop, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
+      id, x, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
     )
   }
   return(InputsModel)
@@ -40,16 +39,15 @@ CreateEmptyGriwrmInputsModel <- function() {
 #'
 #' @param id string of the node identifier
 #' @param ginet See \code{[Ginet]}.
-#' @param girop See \code{[Girop]}.
 #' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs.
 #' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step).
 #' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step).
 #' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs.
 ##'
 #' @return \emph{InputsModel} object for one.
-CreateOneGriwrmInputsModel <- function(id, ginet, girop, DatesR, Precip, PotEvap, Qobs) {
+CreateOneGriwrmInputsModel <- function(id, ginet, DatesR, Precip, PotEvap, Qobs) {
   node <- ginet[ginet$id == id,]
-  FUN_MOD <- girop$model[girop$id == id]
+  FUN_MOD <- ginet$model[ginet$id == id]
 
   # Set hydraulic parameters
   UpstreamNodes <- ginet$id[ginet$down == id & !is.na(ginet$down)]
@@ -67,10 +65,10 @@ CreateOneGriwrmInputsModel <- function(id, ginet, girop, DatesR, Precip, PotEvap
         Qupstream <- cbind(Qupstream, Qupstream1)
       }
     }
-    LengthHydro <- ginet$length[girop$id %in% UpstreamNodes]
+    LengthHydro <- ginet$length[ginet$id %in% UpstreamNodes]
     BasinAreas <- c(
-        girop$area[girop$id %in% UpstreamNodes],
-        girop$area[girop$id == id] - sum(girop$area[girop$id %in% UpstreamNodes])
+        ginet$area[ginet$id %in% UpstreamNodes],
+        node$area - sum(ginet$area[ginet$id %in% UpstreamNodes])
     )
   }
 

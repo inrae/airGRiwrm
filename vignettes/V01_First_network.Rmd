@@ -30,38 +30,19 @@ seine_nodes
 
 Create the ginet object which lists the nodes and describes the network diagram. It's a dataframe of class `Ginet` and `Griwrm` with specific column names:
 
-- `id`: the identifier of the node in the network
-- `down`: the identifier of the next node downstream
-- `length`: hydraulic distance to the next downstream node
-- `runoff`: does the node is a rainfall run-off model?
+- `id`: the identifier of the node in the network.
+- `down`: the identifier of the next hydrological node downstream.
+- `length`: hydraulic distance to the next hydrological downstream node.
+- `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
+- `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
 `Ginet` function helps to rename the columns of the dataframe and assign the variable classes.
 
 ```{r}
-# Specify that all nodes are of run-off type
-seine_nodes$runoff <- TRUE
-# Convert distance in km as it the unit used by airGR
-seine_nodes$length <- seine_nodes$distance_aval / 1000
+seine_nodes$model <- "RunModel_GR4J"
 # Generate the ginet object 
-ginet <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval"))
+ginet <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
 ginet
-```
-
-Each line of the `Ginet` object having the `runoff` columns switched to `TRUE` should have a corresponding line in the `Girop` object which contains the parameters of the rainfall run-off models. 
-
-The `Girop` object is a dataframe of class `Girop` with specific columns:
-
-- `id`: the identifier of the node in the network
-- `area`: the total area of the basin (including upstream sub-basins) at the location of the node (km<sup>2</sup>)
-- `model`: the name of the rainfall run-off model used (e.g. "RunModel_GR4J")
-- `params`: a list containing the calibration parameters of the model
-
-```{r}
-# Specify which run-off model to use
-seine_nodes$model = "RunModel_GR4J"
-# Generate girop object
-girop <- Girop(seine_nodes, list(id = "id_sgl", area = "area"))
-girop
 ```
 
 
@@ -70,12 +51,6 @@ girop
 Loading hydrometeorological data on the Seine river basin from the ClimAware project: 
 
 ```{r, warning=FALSE, message=FALSE}
-urls <- 
-  file.path(
-    "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT", 
-    paste0(ginet$id, "_NAT.txt&dl=1")
-  )
-names(urls) <- ginet$id
 
 Precip <- NULL
 PotEvap <- NULL
@@ -105,8 +80,8 @@ for(id in ginet$id) {
   Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
   # ETP column is merged into PotEvap dataframe
   PotEvap <- MergeTS(PotEvap, id, ts[,c("Date", "ETP")])
-  # Convert Qobs from m3/s to mm
-  ts$Qnat <- ts$Qnat * 86.4 / girop$area[girop$id == id]
+  # Convert Qobs from m3/s to mm/time step
+  ts$Qnat <- ts$Qnat * 86.4 / ginet$area[ginet$id == id]
   # Setting data gaps to NA
   ts$Qnat[ts$Qnat <= 0] <- NA
   # Qnat column is merged into Qobs dataframe
@@ -126,7 +101,7 @@ The airGR CreateInputsModel function is extended in order to handle the ginet ob
 
 
 ```{r}
-InputsModel <- CreateInputsModel(ginet, girop, DatesR, Precip, PotEvap, Qobs)
+InputsModel <- CreateInputsModel(ginet, DatesR, Precip, PotEvap, Qobs)
 ```
 
 
@@ -136,6 +111,6 @@ InputsModel <- CreateInputsModel(ginet, girop, DatesR, Precip, PotEvap, Qobs)
 ```{r}
 
 dir.create("_cache", showWarnings = FALSE)
-save(ginet, girop, Qobs, InputsModel, file = "_cache/V01.RData")
+save(ginet, Qobs, InputsModel, file = "_cache/V01.RData")
 ```
 

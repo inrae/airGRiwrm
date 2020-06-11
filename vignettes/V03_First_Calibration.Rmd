@@ -53,22 +53,19 @@ save(OutputsCalib, file = "_cache/V03.RData")
 ## Run model with Michel calibration
 
 ```{r}
-giropMichel <- girop
-for(id in giropMichel$id) {
-  giropMichel$params[giropMichel$id == id] <- list(OutputsCalib[[id]]$Param)
-}
+ParamMichel <- sapply(ginet$id, function(x) {OutputsCalib[[x]]$Param})
 
 OutputsModels <- RunModel(
   InputsModel = InputsModel,
   RunOptions = RunOptions,
-  girop = giropMichel
+  Param = ParamMichel
 )
 ```
 
 ## Save calibration data for next vignettes
 
 ```{r}
-save(giropMichel, file = "_cache/V03.RData")
+save(ParamMichel, file = "_cache/V03.RData")
 ```
 
 

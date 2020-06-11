@@ -49,20 +49,22 @@ This lag parameter has to be converted in a speed in m/s used in the airGR lag m
 # Convert TGR routing parameter into speed
 params <- merge(ginet, ClimAwareParams, by.x = "id", by.y = "id_sgl")
 
-for(id in girop$id) {
-  # Maximum connection length with upstream nodes
+ParamClimAware <- sapply(ginet$id, function(id) {
+  nodeParam <- ClimAwareParams[ClimAwareParams$id_sgl == id,]
+  # Record hydrological model parameters
+  Param <- unlist(nodeParam[c("S", "IGF", "KR", "T")])
+  # Add lag model parameter if upstream nodes exist
   UpstrNodes <- which(ginet$down == id & !is.na(ginet$down))
   if(length(UpstrNodes) > 0) {
     maxLength <- max(ginet$length[UpstrNodes])
-    params$LAG <- maxLength * 1000 / ((params$Tau0 + params$K0) * 3600)
-    sLag <- "LAG"
-  } else {
-    sLag <- NULL
+    Param <- c(
+      Param, 
+      maxLength / ((nodeParam$Tau0 + nodeParam$K0) * 3600)
+    )
   }
-  girop$params[girop$id == id] <- list(params[params$id == id, c("S", "IGF", "KR", "T", sLag)])
-}
+  return(Param)
+})
 
-dplyr::select(params, id, S, IGF, KR, T, LAG)
 ```
 
 ## GriwmRunOptions object
@@ -107,14 +109,14 @@ RunOptions <- CreateRunOptions(
 OutputsModelsClimAware <- RunModel(
   InputsModel = InputsModel,
   RunOptions = RunOptions,
-  girop
+  Param = ParamClimAware
 )
 ```
 
 ## Save data for next vignettes
 
 ```{r}
-save(RunOptions, file = "_cache/V02.RData")
+save(RunOptions, ParamClimAware, file = "_cache/V02.RData")
 ```
 
 ## Plot the result for each basin
