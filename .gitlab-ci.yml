@@ -14,6 +14,7 @@ cache:
 
 before_script:
   - echo "R_LIBS='$(pwd)/R_LIBS'" > .Renviron
+  - rm -rf $(pwd)/R_LIBS/stringi
 
 update_packages:
   stage: update_packages
