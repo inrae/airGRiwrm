@@ -1,9 +1,6 @@
-#' Create \emph{RunOptions} object for airGR. See \code{\link[airGR]{CreateOptions}}.
+#' Wrapper for \code{\link[airGR]{CreateRunOptions}} for one sub-basin.
 #'
-#' @param InputsModel object of class \emph{InputsModel}, see \code{\link[airGR]{CreateInputsModel}} for details.
-#' @param ... further arguments passed to \code{\link[airGR]{CreateOptions}}.
-#'
-#' @return See \code{\link[airGR]{CreateOptions}}.
+#' @inherit airGR::CreateRunOptions
 #' @export
 CreateRunOptions.InputsModel <- function(InputsModel, ...) {
 

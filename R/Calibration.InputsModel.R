@@ -1,9 +1,6 @@
-#' Wrapper to \code{\link[airGR]{Calibration}}.
+#' Wrapper to \code{\link[airGR]{Calibration}} for one sub-basin.
 #'
-#' @param InputsModel object of class \emph{InputsModel}, see \code{\link[airGR]{CreateInputsModel}} for details.
-#' @param ... further arguments passed to \code{\link[airGR]{Calibration}}.
-#'
-#' @return \emph{CalibOutput} object.
+#' @inherit airGR::Calibration
 #' @export
 Calibration.InputsModel <- function(InputsModel, ...) {
   airGR::Calibration(InputsModel, FUN_MOD = InputsModel$FUN_MOD, ...)
