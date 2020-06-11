@@ -11,7 +11,7 @@ Open a terminal and type:
 ```shell
 git clone git@gitlab-ssh.irstea.fr:in-wop/griwrm.git
 cd griwrm
-Rscript -e "install.packages("roxygen2");roxygen2::roxygenise()"
+Rscript -e "install.packages(\"roxygen2\");roxygen2::roxygenise()"
 cd ..
 R CMD INSTALL griwrm
 ```
