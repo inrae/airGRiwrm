@@ -1,6 +1,6 @@
 #' Create InputsModel object for a GRIWRM network
 #'
-#' @param x Ginet object describing the diagram of the semi-distributed model, see \code{[Ginet]}.
+#' @param x Griwrm object describing the diagram of the semi-distributed model, see \code{[Griwrm]}.
 #' @param DateR Vector of POSIXlt observation time steps.
 #' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
 #' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
@@ -38,19 +38,19 @@ CreateEmptyGriwrmInputsModel <- function() {
 #' Create one InputsModel for a GRIWRM node
 #'
 #' @param id string of the node identifier
-#' @param ginet See \code{[Ginet]}.
+#' @param griwrm See \code{[Griwrm]}.
 #' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs.
 #' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step).
 #' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step).
 #' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs.
 ##'
 #' @return \emph{InputsModel} object for one.
-CreateOneGriwrmInputsModel <- function(id, ginet, DatesR, Precip, PotEvap, Qobs) {
-  node <- ginet[ginet$id == id,]
-  FUN_MOD <- ginet$model[ginet$id == id]
+CreateOneGriwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs) {
+  node <- griwrm[griwrm$id == id,]
+  FUN_MOD <- griwrm$model[griwrm$id == id]
 
   # Set hydraulic parameters
-  UpstreamNodes <- ginet$id[ginet$down == id & !is.na(ginet$down)]
+  UpstreamNodes <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
   Qupstream <- NULL
   LengthHydro <- NULL
   BasinAreas <- NULL
@@ -65,10 +65,10 @@ CreateOneGriwrmInputsModel <- function(id, ginet, DatesR, Precip, PotEvap, Qobs)
         Qupstream <- cbind(Qupstream, Qupstream1)
       }
     }
-    LengthHydro <- ginet$length[ginet$id %in% UpstreamNodes]
+    LengthHydro <- griwrm$length[griwrm$id %in% UpstreamNodes]
     BasinAreas <- c(
-        ginet$area[ginet$id %in% UpstreamNodes],
-        node$area - sum(ginet$area[ginet$id %in% UpstreamNodes])
+        griwrm$area[griwrm$id %in% UpstreamNodes],
+        node$area - sum(griwrm$area[griwrm$id %in% UpstreamNodes])
     )
   }
 

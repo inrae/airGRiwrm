@@ -22,13 +22,13 @@ List of nodes
 
 ```{r}
 seine_nodes <- readr::read_delim(
-  file = system.file("seine_data", "network_gauging_stations.txt", package = "griwrm"), 
+  file = system.file("seine_data", "network_gauging_stations.txt", package = "griwrm"),
   delim = "\t"
 )
 seine_nodes
 ```
 
-Create the ginet object which lists the nodes and describes the network diagram. It's a dataframe of class `Ginet` and `Griwrm` with specific column names:
+Create the griwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `Griwrm` and `Griwrm` with specific column names:
 
 - `id`: the identifier of the node in the network.
 - `down`: the identifier of the next hydrological node downstream.
@@ -36,25 +36,25 @@ Create the ginet object which lists the nodes and describes the network diagram.
 - `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
 - `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
-`Ginet` function helps to rename the columns of the dataframe and assign the variable classes.
+`Griwrm` function helps to rename the columns of the dataframe and assign the variable classes.
 
 ```{r}
 seine_nodes$model <- "RunModel_GR4J"
-# Generate the ginet object 
-ginet <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
-ginet
+# Generate the griwrm object
+griwrm <- Griwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+griwrm
 ```
 
 
-## Observation time series 
+## Observation time series
 
-Loading hydrometeorological data on the Seine river basin from the ClimAware project: 
+Loading hydrometeorological data on the Seine river basin from the ClimAware project:
 
 ```{r, warning=FALSE, message=FALSE}
 
 Precip <- NULL
 PotEvap <- NULL
-Qobs <- NULL 
+Qobs <- NULL
 
 MergeTS <- function(dfOld, id, dfNew) {
     names(dfNew) <- c("DatesR", id) # Renaming columns of the new input into date and sub-basin ID
@@ -66,13 +66,13 @@ MergeTS <- function(dfOld, id, dfNew) {
   return(dfOut)
 }
 
-for(id in ginet$id) {
-  url <- 
+for(id in griwrm$id) {
+  url <-
     file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT", 
+      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
       paste0(id, "_NAT.txt&dl=1")
     )
-  ts <- readr::read_delim(file = url, 
+  ts <- readr::read_delim(file = url,
                           delim = ";", skip = 16, trim_ws = TRUE)
   # Date conversion to POSIX
   ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
@@ -81,7 +81,7 @@ for(id in ginet$id) {
   # ETP column is merged into PotEvap dataframe
   PotEvap <- MergeTS(PotEvap, id, ts[,c("Date", "ETP")])
   # Convert Qobs from m3/s to mm/time step
-  ts$Qnat <- ts$Qnat * 86.4 / ginet$area[ginet$id == id]
+  ts$Qnat <- ts$Qnat * 86.4 / griwrm$area[griwrm$id == id]
   # Setting data gaps to NA
   ts$Qnat[ts$Qnat <= 0] <- NA
   # Qnat column is merged into Qobs dataframe
@@ -97,11 +97,11 @@ Qobs$DateR <- NULL
 
 The GRIWRM InputsModel object is a list of airGR InputsModel. The identifier of the sub-basin is used as key in the list which is ordered from upstream to downstream.
 
-The airGR CreateInputsModel function is extended in order to handle the ginet object which describe the basin diagram:
+The airGR CreateInputsModel function is extended in order to handle the griwrm object which describe the basin diagram:
 
 
 ```{r}
-InputsModel <- CreateInputsModel(ginet, DatesR, Precip, PotEvap, Qobs)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 ```
 
 
@@ -111,6 +111,6 @@ InputsModel <- CreateInputsModel(ginet, DatesR, Precip, PotEvap, Qobs)
 ```{r}
 
 dir.create("_cache", showWarnings = FALSE)
-save(ginet, Qobs, InputsModel, file = "_cache/V01.RData")
+save(griwrm, Qobs, InputsModel, file = "_cache/V01.RData")
 ```
 

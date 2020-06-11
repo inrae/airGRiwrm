@@ -28,7 +28,7 @@ Run `vignette("01_First_network", package = "griwrm")` before this one in order 
 load("_cache/V01.RData")
 ```
 
-### Loading 
+### Loading
 
 Data comes from calibration of ClimAware project with naturalised flows.
 
@@ -40,25 +40,25 @@ ClimAwareParams <- readr::read_csv(
 ClimAwareParams
 ```
 
-The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin. 
+The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin.
 Almost all sub basin has only a lag parameter. The only exception is for La Marne à Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
 
 This lag parameter has to be converted in a speed in m/s used in the airGR lag model:
 
 ```{r}
 # Convert TGR routing parameter into speed
-params <- merge(ginet, ClimAwareParams, by.x = "id", by.y = "id_sgl")
+params <- merge(griwrm, ClimAwareParams, by.x = "id", by.y = "id_sgl")
 
-ParamClimAware <- sapply(ginet$id, function(id) {
+ParamClimAware <- sapply(griwrm$id, function(id) {
   nodeParam <- ClimAwareParams[ClimAwareParams$id_sgl == id,]
   # Record hydrological model parameters
   Param <- unlist(nodeParam[c("S", "IGF", "KR", "T")])
   # Add lag model parameter if upstream nodes exist
-  UpstrNodes <- which(ginet$down == id & !is.na(ginet$down))
+  UpstrNodes <- which(griwrm$down == id & !is.na(griwrm$down))
   if(length(UpstrNodes) > 0) {
-    maxLength <- max(ginet$length[UpstrNodes])
+    maxLength <- max(griwrm$length[UpstrNodes])
     Param <- c(
-      Param, 
+      Param,
       maxLength / ((nodeParam$Tau0 + nodeParam$K0) * 3600)
     )
   }
@@ -82,7 +82,7 @@ library(lubridate)
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + months(12))), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
-) 
+)
 ```
 
 The warmup period could also be defined as is:
@@ -95,8 +95,8 @@ IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
 
 ```{r}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel, 
-  IndPeriod_WarmUp = IndPeriod_WarmUp, 
+  InputsModel = InputsModel,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )
 ```
@@ -123,7 +123,7 @@ save(RunOptions, ParamClimAware, file = "_cache/V02.RData")
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
-  names(OutputsModelsClimAware), 
+  names(OutputsModelsClimAware),
   function(x) {
     plot(OutputsModelsClimAware[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
   }

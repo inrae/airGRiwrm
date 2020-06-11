@@ -25,7 +25,7 @@ load("_cache/V02.RData")
 
 ```{r}
 InputsCrit <- CreateInputsCrit(
-  InputsModel = InputsModel, 
+  InputsModel = InputsModel,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
   RunOptions = RunOptions, Qobs = Qobs
 )
@@ -53,7 +53,7 @@ save(OutputsCalib, file = "_cache/V03.RData")
 ## Run model with Michel calibration
 
 ```{r}
-ParamMichel <- sapply(ginet$id, function(x) {OutputsCalib[[x]]$Param})
+ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
 
 OutputsModels <- RunModel(
   InputsModel = InputsModel,
@@ -73,7 +73,7 @@ save(ParamMichel, file = "_cache/V03.RData")
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
-  names(OutputsModels), 
+  names(OutputsModels),
   function(x) {
     plot(OutputsModels[[x]], Qobs = Qobs[RunOptions[[x]]$IndPeriod_Run,x] , main = x)
   }
