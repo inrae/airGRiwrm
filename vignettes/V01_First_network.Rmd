@@ -22,106 +22,86 @@ List of nodes
 
 ```{r}
 seine_nodes <- readr::read_delim(
-  file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/griwrm_network.txt&dl=1", 
-  delim = ";"
+  file = system.file("seine_data", "network_gauging_stations.txt", package = "griwrm"),
+  delim = "\t"
 )
 seine_nodes
 ```
 
-Create the ginet object which lists the nodes and describes the network diagram. It's a dataframe of class `Ginet` and `Griwrm` with specific column names:
+Create the griwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `Griwrm` and `Griwrm` with specific column names:
 
-- `id`: the identifier of the node in the network
-- `down`: the identifier of the next node downstream
-- `length`: hydraulic distance to the next downstream node
-- `runoff`: does the node is a rainfall run-off model?
+- `id`: the identifier of the node in the network.
+- `down`: the identifier of the next hydrological node downstream.
+- `length`: hydraulic distance to the next hydrological downstream node.
+- `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
+- `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
-`Ginet` function helps to rename the columns of the dataframe and assign the variable classes.
-
-```{r}
-# Specify that all nodes are of run-off type
-seine_nodes$runoff <- TRUE
-# Convert distance in km as it the unit used by airGR
-seine_nodes$length <- seine_nodes$distance_aval / 1000
-# Generate the ginet object 
-ginet <- Ginet(seine_nodes, list(id = "id_sgl", down = "id_aval"))
-ginet
-```
-
-Each line of the `Ginet` object having the `runoff` columns switched to `TRUE` should have a corresponding line in the `Girop` object which contains the parameters of the rainfall run-off models. 
-
-The `Girop` object is a dataframe of class `Girop` with specific columns:
-
-- `id`: the identifier of the node in the network
-- `area`: the total area of the basin (including upstream sub-basins) at the location of the node (km<sup>2</sup>)
-- `model`: the name of the rainfall run-off model used (e.g. "RunModel_GR4J")
-- `params`: a list containing the calibration parameters of the model
+`Griwrm` function helps to rename the columns of the dataframe and assign the variable classes.
 
 ```{r}
-# Specify which run-off model to use
-seine_nodes$model = "RunModel_GR4J"
-# Generate girop object
-girop <- Girop(seine_nodes, list(id = "id_sgl", area = "area"))
-girop
+seine_nodes$model <- "RunModel_GR4J"
+# Generate the griwrm object
+griwrm <- Griwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+griwrm
 ```
 
 
-## Observation time series 
+## Observation time series
 
-Loading hydrometeorological data on the Seine river basin from the ClimAware project: 
+Loading hydrometeorological data on the Seine river basin from the ClimAware project:
 
 ```{r, warning=FALSE, message=FALSE}
-urls <- 
-  file.path(
-    "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT", 
-    paste0(ginet$id, "_NAT.txt&dl=1")
-  )
-names(urls) <- ginet$id
 
-load_ts <- function(x) {
-  ts <- readr::read_delim(file = x, 
-             delim = ";", skip = 16, trim_ws = TRUE)
-  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
-  # Interpolation of data gap in the discharge time serie
-  ts[ts$Qnat < 0, "Qnat"] <- NA
-  if(is.na(ts$Qnat[nrow(ts)])) {
-    ts$Qnat[nrow(ts)] <- 0 # No value at the end: time serie converge to zero
+Precip <- NULL
+PotEvap <- NULL
+Qobs <- NULL
+
+MergeTS <- function(dfOld, id, dfNew) {
+    names(dfNew) <- c("DatesR", id) # Renaming columns of the new input into date and sub-basin ID
+    if(is.null(dfOld)) {
+    dfOut <- dfNew # Creation of the first column
+  } else {
+    dfOut <- merge(dfOld, dfNew, by = "DatesR", all = TRUE) # Merge the new columns respecting to date column
   }
-  ts$Qnat <- zoo::na.approx(ts$Qnat)
-  ts
+  return(dfOut)
 }
 
-l <- lapply(urls, load_ts)
-
-```
-
-`Gits` object is a list containing a item named `date` with a timestamp vector of the time series and items named by the identifier of each node. These items contain a dataframe with the observations.
-
-The Gits function creates a `Gits` object 
-
-```{r}
-gits <- Gits(ginet$id[1], l[[ginet$id[1]]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat"))
-```
-
-Copy the observations for each node the ginet network:
-
-```{r}
-for(id in ginet$id) {
-  l[[id]]$Qnat
-  l[[id]]$Qnat <- l[[id]]$Qnat * 86.4 / girop$area[girop$id == id]
-  l[[id]]$Qnat[l[[id]]$Qnat < 0] <- NA
-  gits <- merge(gits, Gits(id, l[[id]], cols = list(date = "Date", Precip = "Ptot", PotEvap = "ETP", Qobs = "Qnat")))
+for(id in griwrm$id) {
+  url <-
+    file.path(
+      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
+      paste0(id, "_NAT.txt&dl=1")
+    )
+  ts <- readr::read_delim(file = url,
+                          delim = ";", skip = 16, trim_ws = TRUE)
+  # Date conversion to POSIX
+  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+  # Ptot column  is merged into Precip dataframe
+  Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
+  # ETP column is merged into PotEvap dataframe
+  PotEvap <- MergeTS(PotEvap, id, ts[,c("Date", "ETP")])
+  # Convert Qobs from m3/s to mm/time step
+  ts$Qnat <- ts$Qnat * 86.4 / griwrm$area[griwrm$id == id]
+  # Setting data gaps to NA
+  ts$Qnat[ts$Qnat <= 0] <- NA
+  # Qnat column is merged into Qobs dataframe
+  Qobs <- MergeTS(Qobs, id, ts[,c("Date", "Qnat")])
 }
+DatesR <- Precip$DatesR
+Precip$DateR <- NULL
+PotEvap$DateR <- NULL
+Qobs$DateR <- NULL
 ```
 
 ## Generate the GRIWRM InputsModel object
 
 The GRIWRM InputsModel object is a list of airGR InputsModel. The identifier of the sub-basin is used as key in the list which is ordered from upstream to downstream.
 
-The airGR CreateInputsModel function is extended in order to handle the ginet object which describe the basin diagram:
+The airGR CreateInputsModel function is extended in order to handle the griwrm object which describe the basin diagram:
 
 
 ```{r}
-InputsModel <- CreateInputsModel(ginet, girop, gits)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 ```
 
 
@@ -129,7 +109,8 @@ InputsModel <- CreateInputsModel(ginet, girop, gits)
 ## Save data for next vignettes
 
 ```{r}
+
 dir.create("_cache", showWarnings = FALSE)
-save(ginet, girop, gits, InputsModel, file = "_cache/V01.RData")
+save(griwrm, Qobs, InputsModel, file = "_cache/V01.RData")
 ```
 
