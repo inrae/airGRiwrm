@@ -1,5 +1,6 @@
 ^griwrm\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
-\.gitlab-ci\.yml
-R_LIBS
+^\.gitlab-ci\.yml$
+^R_LIBS
+^vignettes/_cache
