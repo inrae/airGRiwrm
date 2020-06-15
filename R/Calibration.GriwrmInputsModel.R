@@ -29,7 +29,7 @@ Calibration.GriwrmInputsModel <- function(InputsModel,
 
     if(useUpstreamQsim) {
       # Update InputsModel$Qupstream with simulated upstream flows
-      IM <- UpdateQsimUpstream(IM, OutputsModel)
+      IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
     }
 
     OutputsCalib[[IM$id]] <- Calibration.InputsModel(
