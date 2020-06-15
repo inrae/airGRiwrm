@@ -1,0 +1,54 @@
+{
+    "Aube": {
+        "file": "Obs_Aube_1987-2008.txt",
+        "connections": {
+            "AUBE-_P2": {
+                "col": "Q_prise_m3s",
+                "type": "in"
+            },
+            "AUBE-_R3": {
+                "col": "Q_restitution_total_m3s",
+                "type": "out"
+            }
+        }
+    },
+    "Marne": {
+        "file": "Obs_Marne_1973-2008.txt",
+        "connections": {
+            "MARNE_P23": {
+                "col": "Q_prise_Marne_m3s",
+                "type": "in"
+            },
+            "MARNE_P28": {
+                "col": "Q_prise_Blaise_m3s",
+                "type": "in"
+            },
+            "MARNE_R25": {
+                "col": "Q_restitution_total_m3s",
+                "type": "out"
+            }
+        }
+    },
+    "Panneciere": {
+        "file": "Obs_Panneciere_1949-2008.txt",
+        "connections": {
+            "PANNEC_R": {
+                "col": "Q_aval_bassin_m3s",
+                "type": "out"
+            }
+        }
+    },
+    "Seine": {
+        "file": "Obs_Seine_1965-2008.txt",
+        "connections": {
+            "SEINE_P7": {
+                "col": "Q_prise_m3s",
+                "type": "in"
+            },
+            "SEINE_R8": {
+                "col": "Q_restitution_total_m3s",
+                "type": "out"
+            }
+        }
+    }
+}

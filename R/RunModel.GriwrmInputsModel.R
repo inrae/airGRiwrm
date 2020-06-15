@@ -13,11 +13,13 @@ RunModel.GriwrmInputsModel <- function(InputsModel, RunOptions, Param, verbose =
   OutputsModel <- list()
   class(OutputsModel) <- append(class(OutputsModel), "GriwrmOutputsModel")
 
+  IndPeriod_Run <- RunOptions[[1]]$IndPeriod_Run # Same run period fall all sub-basins
+
   for(IM in InputsModel) {
     if(verbose) cat("RunModel.GriwrmInputsModel: Treating sub-basin", IM$id, "...\n")
 
     # Update InputsModel$Qupstream with simulated upstream flows
-    IM <- UpdateQsimUpstream(IM, OutputsModel)
+    IM <- UpdateQsimUpstream(IM, IndPeriod_Run, OutputsModel)
 
     # Run the model for the sub-basin
     OutputsModel[[IM$id]] <- RunModel(

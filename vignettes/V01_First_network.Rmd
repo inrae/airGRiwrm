@@ -109,8 +109,8 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 ## Save data for next vignettes
 
 ```{r}
-
 dir.create("_cache", showWarnings = FALSE)
 save(griwrm, Qobs, InputsModel, file = "_cache/V01.RData")
+save(griwrm, DatesR, Precip, PotEvap, Qobs, MergeTS, file = "_cache/V01b.RData")
 ```
 

@@ -28,6 +28,8 @@ getNodeRanking <- function(griwrm) {
   if(!is(griwrm, "Griwrm")) {
     stop("getNodeRanking: griwrm argument should be of class Griwrm")
   }
+  # Remove nodes without model (direct flow connections treated as upstream flows only)
+  griwrm <- griwrm[!is.na(griwrm$model),]
   # Rank 1
   rank <- setdiff(griwrm$id, griwrm$down)
   ranking <- rank

@@ -1,0 +1,194 @@
+---
+title: "Running open-loop influenced semi-distributed flow model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Running open-loop influenced semi-distributed flow model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(griwrm)
+```
+
+## Integration of the reservoir connections into the model
+
+### Loading naturalised data
+
+```{r}
+load("_cache/V01b.RData")
+```
+
+### Add connections to the reservoirs in the gauging station network
+
+Loading connection topological data :
+
+```{r}
+reservoir_connections <- readr::read_delim(
+  file = system.file("seine_data", "network_reservoir_connections.txt", package = "griwrm"),
+  delim = "\t"
+)
+reservoir_connections
+```
+
+Add topological data in the griwrm object:
+
+```{r}
+reservoir_connections$model <- NA
+reservoir_connections$area <- NA
+griwrm2 <- rbind(griwrm, reservoir_connections)
+```
+
+
+## Loading reservoir observation time series
+
+```{r}
+
+lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "griwrm"))
+
+for(reservoir_id in names(lCfgReservoirs)) {
+  df <- readr::read_delim(
+    file = file.path(
+      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/Reservoir_current_rules",
+      paste0(lCfgReservoirs[[reservoir_id]]$file, "&dl=1")
+    ),
+    delim = "\t", 
+    col_types = readr::cols(
+      Date = readr::col_character(), 
+      .default = readr::col_double()
+    )
+  )
+  df$Date <- format(as.POSIXlt(lubridate::dmy(df$Date)), "%Y-%m-%d")
+  Qreservoir <- merge(data.frame(Date = format(DatesR, "%Y-%m-%d")), df, by = "Date", all.x = TRUE)
+  for(connect in names(lCfgReservoirs[[reservoir_id]]$connections)) {
+    # Replace data gap by zeros (should be interpolated ?)
+    Qreservoir[is.na(Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]),lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col] <- 0
+    if(lCfgReservoirs[[reservoir_id]]$connections[[connect]]$type == "in") {
+      # Reservoir inlet flow is a withdrawal for the catchment: this is a negative flow to route
+      Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col] <- -Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]
+    }
+    Qobs <- cbind(
+      Qobs, 
+      Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]
+    )
+    names(Qobs)[ncol(Qobs)] <- connect
+  }
+}
+# Convert flows from m3/s to m3/day
+Qobs[,-1] <- Qobs[,-1] * 86400
+
+```
+
+## How to handle online reservoir ? The Pannecière lake case.
+
+There are two possibilities: 
+
+- truncate the system and only simulate the release of the reservoir if we only care about downstream flows
+- add a fictive inlet to the reservoir that will store all upstream discharge into the reservoir
+
+If we know in advance the flow released by the reservoir, upstream flow informations is not usefull for the simulation. But reservoir management simulation would need upstream flow informations for simulating the reservoir state during simulation. The second alternative will be useful for the next phases.
+
+```{r}
+Qobs$PANNEC_P <- -Qobs$CHAUM_07
+```
+
+
+## Create the InputsModel object
+
+```{r}
+InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs)
+```
+
+## Run simulation with naturalised flow parameters
+
+### Load calibration parameters
+
+```{r}
+# Load RunOptions
+load("_cache/V02.RData")
+# Load calibrated parameters with Michel's method
+load("_cache/V03.RData")
+```
+
+
+### How to handle former upstream sub-basins with upstream flows ?
+
+A lag parameter is now mandatory for these sub-basins. As no calibration is possible at that stage an arbitrary one will be used.
+
+```{r}
+ParamMichel$STDIZ_04[5] <- 1
+```
+
+
+### Run simulation
+
+```{r}
+OutputsModels2 <- RunModel(
+  InputsModel = InputsModel2,
+  RunOptions = RunOptions,
+  Param = ParamMichel
+)
+```
+
+## Compare modelled flows with observed flows
+
+### Load observed flow 
+
+```{r, warning=FALSE, message=FALSE}
+
+Qobs2 <- NULL
+
+# Files of observed flows doesn't exist for some basins
+NatIds <- c("CHAUM_07", "MONTE_15", "NOGEN_13", "STGER_09", "TRANN_01")
+
+ids <- griwrm$id[!griwrm$id %in% NatIds]
+
+for(id in ids) {
+  url <-
+    file.path(
+      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
+      paste0(id, "_BV.txt&dl=1")
+    )
+  ts <- readr::read_delim(file = url,
+                          delim = ";", skip = 24, trim_ws = TRUE)
+  # Date conversion to POSIX
+  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+    # Convert Qobs from l/s to mm/time step
+  ts$Q <- ts$Q * 86.4 / griwrm$area[griwrm$id == id] / 1000
+  # Setting data gaps to NA
+  ts$Q[ts$Q <= 0] <- NA
+  # Qnat column is merged into Qobs dataframe
+  Qobs2 <- MergeTS(Qobs2, id, ts[,c("Date", "Q")])
+}
+```
+
+### Comparison with simulated flows
+
+```{r, fig.height = 5, fig.width = 8}
+ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
+  items <- names(OutputsModels)
+  OutputsModelsOut <- sapply(items, function(x) {OutputsModels[[x]] <- OutputsModels[[x]][IndPeriod]})
+  OutputsModelsOut$StateEnd <- OutputsModels$StateEnd
+  class(OutputsModelsOut) <- class(OutputsModels)
+  return(OutputsModelsOut)
+}
+
+htmltools::tagList(lapply(
+  ids,
+  function(x) {
+    Q2 <- Qobs2[RunOptions[[1]]$IndPeriod_Run,x]
+    IndPeriod_Obs <- which(!is.na(Q2))
+    OutputsModels <- ReduceOutputsModel(OutputsModels2[[x]], IndPeriod_Obs)
+    plot(OutputsModels, Qobs = Q2[IndPeriod_Obs] , main = x)
+  }
+))
+```
+
+
