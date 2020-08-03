@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(griwrm)
+library(DiagrammeR)
 ```
 
 ## Integration of the reservoir connections into the model
@@ -28,7 +29,130 @@ load("_cache/V01b.RData")
 
 ### Add connections to the reservoirs in the gauging station network
 
-Loading connection topological data :
+Because of the airGR SD model structure, the topology of the network will difere between the physical one and the modelled one.
+
+For example, the physical topology of the Aube lake is represented below:
+
+```{r echo = FALSE, fig.height = 3}
+mermaid("graph LR
+  TRANN_01 -->|1.5km| AUBE_P2
+  AUBE_P2 -->|22km| AUBE_R3
+  AUBE_P2 --> AUBE(AUBE)
+  AUBE --> AUBE_R3
+  AUBE_R3 -->|44.5km| ARCIS_24
+style AUBE_P2 fill:#fcc
+style AUBE_R3 fill:#fcc
+style AUBE fill:#ccf
+", width = "100%")
+```
+
+In the SD model, we do not model intermediate flows as well as the reservoir in the catchment. As a result, an equivalent topology compatible with airGR will be the one below:
+
+```{r echo = FALSE}
+mermaid("
+graph LR
+TRANN_01 -->|68km| ARCIS_24
+AUBE_P2 -->|66.5km| ARCIS_24
+AUBE_R3 -->|44.5km| ARCIS_24
+style AUBE_P2 fill:#fcc
+style AUBE_R3 fill:#fcc
+", width = "100%")
+```
+
+`AUBE_P2` will propagate negative flow to downstream (reservoir inflows) while `AUBE_R3` will propagate positive flow to downstream (reservoir releases).
+
+Configuration on lake Seine is similar:
+
+```{r echo = FALSE, fig.height = 3}
+mermaid("
+graph LR
+  BAR-S_06 -->|6km| SEINE_P7
+  SEINE_P7 -->|32km| SEINE_R8
+  SEINE_P7 --> SEINE(SEINE)
+  SEINE--> SEINE_R8
+  SEINE_R8 -->|41.7km| MERY-_22
+  style SEINE_P7 fill:#fcc
+  style SEINE_R8 fill:#fcc
+  style SEINE fill:#ccf
+", width = "100%")
+```
+
+which can be translate as:
+
+```{r echo = FALSE}
+mermaid("
+graph LR
+  BAR-S_06 -->|79.7km| MERY-_22
+  SEINE_P7 -->|73.7km| MERY-_22
+  SEINE_R8 -->|41.7km| MERY-_22
+  style SEINE_P7 fill:#fcc
+  style SEINE_R8 fill:#fcc
+", width = "100%")
+```
+
+Pannecière is an inline reservoir:
+
+```{r echo = FALSE, fig.height = 2}
+mermaid("
+graph LR
+P(PANNECIERE)
+CHAUM_07 -->|0km| P
+P --> |153km| GURGY_02
+style P fill:#ccf
+", width = "100%")
+```
+
+It can be modelled as:
+
+```{r echo = FALSE}
+mermaid("
+graph LR
+CHAUM_07 --> |153km| GURGY_02
+PANNEC_P --> |153km| GURGY_02
+PANNEC_R --> |153km| GURGY_02
+style PANNEC_P fill:#fcc
+style PANNEC_R fill:#fcc
+", width = "100%")
+```
+
+With $Q_{PANNEC\_P} = - Q_{CHAUM\_07}$ as all the upstream flow fills the reservoir.
+
+Marne lake can be mapped as:
+
+```{r echo = FALSE}
+mermaid("
+graph LR
+LOUVE_19 -->|0.5km| MARNE_P28
+MARNE_P23 -->|3km| STDIZ_04
+MARNE_P23 --> M(MARNE)
+MARNE_P28 --> M
+MARNE_P28 -->|25.6km| MARNE_R25
+M --> MARNE_R25
+STDIZ_04 -->|28.7km| MARNE_R25
+MARNE_R25 -->|56.9km| CHALO_21
+style MARNE_P28 fill:#fcc
+style MARNE_P23 fill:#fcc
+style MARNE_R25 fill:#fcc
+style M fill:#ccf
+", width = "100%")
+```
+And can be modeled as:
+
+```{r echo = FALSE}
+mermaid("
+graph LR
+MARNE_P23 -->|3km| STDIZ_04
+LOUVE_19 -->|83km| CHALO_21
+MARNE_P28 -->|82.5km| CHALO_21
+STDIZ_04 -->|85.6km| CHALO_21
+MARNE_R25 -->|56.9km| CHALO_21
+style MARNE_P28 fill:#fcc
+style MARNE_P23 fill:#fcc
+style MARNE_R25 fill:#fcc
+", width = "100%")
+```
+
+Hence the topological connection to the reservoirs is described in the model as below:
 
 ```{r}
 reservoir_connections <- readr::read_delim(
@@ -38,12 +162,13 @@ reservoir_connections <- readr::read_delim(
 reservoir_connections
 ```
 
-Add topological data in the griwrm object:
+Reservoir connections are added to the griwrm object:
 
 ```{r}
 reservoir_connections$model <- NA
 reservoir_connections$area <- NA
 griwrm2 <- rbind(griwrm, reservoir_connections)
+DiagramGriwrm(griwrm2)
 ```
 
 

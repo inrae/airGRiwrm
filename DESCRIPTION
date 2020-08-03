@@ -21,6 +21,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    lattice
+    lattice,
+    DiagrammeR
 VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/griwrm
