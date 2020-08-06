@@ -21,7 +21,7 @@ update_packages:
     - mkdir -p R_LIBS
     - Rscript -e 'if(!dir.exists("R_LIBS/remotes")) install.packages("remotes", lib = "R_LIBS")'
     - apt-get update && apt-get -y install libxml2-dev
-    - Rscript -e 'remotes::update_packages(c("dplyr", "rmarkdown", "readr", "lubridate", "zoo", "roxygen2"), lib = "R_LIBS")'
+    - Rscript -e 'remotes::update_packages(c("dplyr", "rmarkdown", "readr", "lubridate", "zoo", "roxygen2", "DiagrammeR"), lib = "R_LIBS")'
     - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr", lib = "R_LIBS")'
 
 build:
