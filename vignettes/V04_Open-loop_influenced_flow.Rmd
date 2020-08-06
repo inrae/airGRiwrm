@@ -3,7 +3,7 @@ title: "Running open-loop influenced semi-distributed flow model"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Running open-loop influenced semi-distributed flow model}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
 

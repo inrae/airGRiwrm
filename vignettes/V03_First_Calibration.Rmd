@@ -3,7 +3,7 @@ title: "03_First_Calibration"
 author: "David Dorchies"
 vignette: >
   %\VignetteIndexEntry{Calibration of naturalised semi-distributive model}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
 

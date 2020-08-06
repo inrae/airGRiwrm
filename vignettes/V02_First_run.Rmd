@@ -3,7 +3,7 @@ title: "First run of the model"
 author: "David Dorchies"
 vignette: >
   %\VignetteIndexEntry{First run of the model}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
 

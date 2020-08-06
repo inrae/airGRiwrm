@@ -18,9 +18,6 @@
 #' DiagrammeR::mermaid(DiagramGriwrm(griwrm, display = FALSE), width = "100%", height = "100%")
 #'
 DiagramGriwrm <- function(griwrm, display = TRUE, orientation = "LR") {
-  if(Sys.getenv("RSTUDIO") != "1") {
-    return()
-  }
   g2 <- griwrm[!is.na(griwrm$down),]
   nodes <- paste(
     g2$id,
