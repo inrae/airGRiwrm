@@ -35,10 +35,10 @@ For example, the physical topology of the Aube lake is represented below:
 
 ```{r echo = FALSE, fig.height = 3}
 
-mmd <- function(x) {
+mmd <- function(x, ...) {
   # For avoiding crash of R CMD build in console mode
   if(Sys.getenv("RSTUDIO") == "1") {
-    mermaid(x)
+    mermaid(x, ...)
   }
 }
 
