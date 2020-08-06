@@ -3,7 +3,7 @@ title: "Running open-loop influenced semi-distributed flow model"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Running open-loop influenced semi-distributed flow model}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -34,7 +34,15 @@ Because of the airGR SD model structure, the topology of the network will difere
 For example, the physical topology of the Aube lake is represented below:
 
 ```{r echo = FALSE, fig.height = 3}
-mermaid("graph LR
+
+mmd <- function(x) {
+  # For avoiding crash of R CMD build in console mode
+  if(Sys.getenv("RSTUDIO") == "1") {
+    mermaid(x)
+  }
+}
+
+mmd("graph LR
   TRANN_01 -->|1.5km| AUBE_P2
   AUBE_P2 -->|22km| AUBE_R3
   AUBE_P2 --> AUBE(AUBE)
@@ -49,7 +57,7 @@ style AUBE fill:#ccf
 In the SD model, we do not model intermediate flows as well as the reservoir in the catchment. As a result, an equivalent topology compatible with airGR will be the one below:
 
 ```{r echo = FALSE}
-mermaid("
+mmd("
 graph LR
 TRANN_01 -->|68km| ARCIS_24
 AUBE_P2 -->|66.5km| ARCIS_24
@@ -64,7 +72,7 @@ style AUBE_R3 fill:#fcc
 Configuration on lake Seine is similar:
 
 ```{r echo = FALSE, fig.height = 3}
-mermaid("
+mmd("
 graph LR
   BAR-S_06 -->|6km| SEINE_P7
   SEINE_P7 -->|32km| SEINE_R8
@@ -80,7 +88,7 @@ graph LR
 which can be translate as:
 
 ```{r echo = FALSE}
-mermaid("
+mmd("
 graph LR
   BAR-S_06 -->|79.7km| MERY-_22
   SEINE_P7 -->|73.7km| MERY-_22
@@ -93,7 +101,7 @@ graph LR
 Pannecière is an inline reservoir:
 
 ```{r echo = FALSE, fig.height = 2}
-mermaid("
+mmd("
 graph LR
 P(PANNECIERE)
 CHAUM_07 -->|0km| P
@@ -105,7 +113,7 @@ style P fill:#ccf
 It can be modelled as:
 
 ```{r echo = FALSE}
-mermaid("
+mmd("
 graph LR
 CHAUM_07 --> |153km| GURGY_02
 PANNEC_P --> |153km| GURGY_02
@@ -120,7 +128,7 @@ With $Q_{PANNEC\_P} = - Q_{CHAUM\_07}$ as all the upstream flow fills the reserv
 Marne lake can be mapped as:
 
 ```{r echo = FALSE}
-mermaid("
+mmd("
 graph LR
 LOUVE_19 -->|0.5km| MARNE_P28
 MARNE_P23 -->|3km| STDIZ_04
@@ -139,7 +147,7 @@ style M fill:#ccf
 And can be modeled as:
 
 ```{r echo = FALSE}
-mermaid("
+mmd("
 graph LR
 MARNE_P23 -->|3km| STDIZ_04
 LOUVE_19 -->|83km| CHALO_21
