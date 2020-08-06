@@ -4,7 +4,11 @@
 #' @param display if `TRUE` displays the diagram with `DiagrammeR::mermaid`, return the mermaid code otherwise.
 #' @param orientation Orientation of the graph. "LR" by default.
 #'
+#' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
+#' is not handled on some platforms
+#'
 #' @return Mermaid code of the diagram id display is `FALSE`.
+#'
 #' @export
 #'
 #' @examples
@@ -14,6 +18,9 @@
 #' DiagrammeR::mermaid(DiagramGriwrm(griwrm, display = FALSE), width = "100%", height = "100%")
 #'
 DiagramGriwrm <- function(griwrm, display = TRUE, orientation = "LR") {
+  if(Sys.getenv("RSTUDIO") != "1") {
+    return()
+  }
   g2 <- griwrm[!is.na(griwrm$down),]
   nodes <- paste(
     g2$id,
