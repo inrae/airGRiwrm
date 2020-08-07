@@ -1,5 +1,5 @@
 ---
-title: "03_First_Calibration"
+title: "First calibration of the model"
 author: "David Dorchies"
 vignette: >
   %\VignetteIndexEntry{Calibration of naturalised semi-distributive model}

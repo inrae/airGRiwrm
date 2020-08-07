@@ -78,7 +78,6 @@ The user must at least define the following arguments:
 
 
 ```{r}
-library(lubridate)
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + months(12))), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
