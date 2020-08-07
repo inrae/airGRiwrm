@@ -1,5 +1,6 @@
 ---
 title: "Running open-loop influenced semi-distributed flow model"
+author: "David Dorchies"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Running open-loop influenced semi-distributed flow model}
@@ -182,9 +183,17 @@ DiagramGriwrm(griwrm2)
 
 ## Loading reservoir observation time series
 
+Description of the files, the columns and the type of connection (inlet / outlet) are defined in the list below:
+
 ```{r}
 
 lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "griwrm"))
+str(lCfgReservoirs)
+```
+
+Then, we load observation data for each reservoir and each connection:
+
+```{r}
 
 for(reservoir_id in names(lCfgReservoirs)) {
   df <- readr::read_delim(
@@ -297,14 +306,13 @@ for(id in ids) {
   ts$Q <- ts$Q * 86.4 / griwrm$area[griwrm$id == id] / 1000
   # Setting data gaps to NA
   ts$Q[ts$Q <= 0] <- NA
-  # Qnat column is merged into Qobs dataframe
+  # Column is merged into Qobs dataframe
   Qobs2 <- MergeTS(Qobs2, id, ts[,c("Date", "Q")])
 }
 ```
 
-### Comparison with simulated flows
-
-```{r, fig.height = 5, fig.width = 8}
+## Save data for next vignettes
+```{r}
 ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
   items <- names(OutputsModels)
   OutputsModelsOut <- sapply(items, function(x) {OutputsModels[[x]] <- OutputsModels[[x]][IndPeriod]})
@@ -313,6 +321,13 @@ ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
   return(OutputsModelsOut)
 }
 
+QobsReservoirs <- Qobs[Qobs$DatesR < "2008-08-01",c("DatesR", reservoir_connections$id)]
+save(QobsReservoirs, Qobs2, griwrm2, ReduceOutputsModel, file = "_cache/V04.RData")
+```
+
+### Comparison with simulated flows
+
+```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
   ids,
   function(x) {
@@ -323,5 +338,6 @@ htmltools::tagList(lapply(
   }
 ))
 ```
+
 
 
