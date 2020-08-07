@@ -45,6 +45,13 @@ griwrm <- Griwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "di
 griwrm
 ```
 
+The diagram of the network structure is represented below with in blue the upstream nodes with a GR4J model and in green the intermediate nodes with an SD (GR4J + LAG) model.
+
+```{r fig.height = 7, fig.width = 8}
+DiagramGriwrm(griwrm)
+```
+
+
 
 ## Observation time series
 
@@ -109,8 +116,8 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 ## Save data for next vignettes
 
 ```{r}
-
 dir.create("_cache", showWarnings = FALSE)
 save(griwrm, Qobs, InputsModel, file = "_cache/V01.RData")
+save(griwrm, DatesR, Precip, PotEvap, Qobs, MergeTS, file = "_cache/V01b.RData")
 ```
 

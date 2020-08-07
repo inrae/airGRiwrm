@@ -1,6 +1,6 @@
 Package: griwrm
 Title: GR based Integrated Water Resource Management
-Version: 0.2.1
+Version: 0.3.0
 Authors@R:
     person(given = "David",
            family = "Dorchies",
@@ -21,6 +21,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    lattice
+    lattice,
+    DiagrammeR
 VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/griwrm

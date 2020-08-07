@@ -68,7 +68,7 @@ CreateOneGriwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
     LengthHydro <- griwrm$length[griwrm$id %in% UpstreamNodes]
     BasinAreas <- c(
         griwrm$area[griwrm$id %in% UpstreamNodes],
-        node$area - sum(griwrm$area[griwrm$id %in% UpstreamNodes])
+        node$area - sum(griwrm$area[griwrm$id %in% UpstreamNodes], na.rm = TRUE)
     )
   }
 
