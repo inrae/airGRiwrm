@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Loading libraries, network and time series data
 
-Run `vignette("01_First_network", package = "griwrm")` and `vignette("02_First_run", package = "griwrm")` before this one in order to create the Rdata files loaded below:
+Run `vignette("01_First_network", package = "airGRiwrm")` and `vignette("02_First_run", package = "airGRiwrm")` before this one in order to create the Rdata files loaded below:
 
 ```{r}
 library(airGRiwrm)

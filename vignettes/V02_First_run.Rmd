@@ -22,7 +22,7 @@ library(airGRiwrm)
 
 ### Loading network and time series data
 
-Run `vignette("01_First_network", package = "griwrm")` before this one in order to create the Rdata file loaded below:
+Run `vignette("01_First_network", package = "airGRiwrm")` before this one in order to create the Rdata file loaded below:
 
 ```{r}
 load("_cache/V01.RData")

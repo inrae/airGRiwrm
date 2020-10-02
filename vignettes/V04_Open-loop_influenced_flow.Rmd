@@ -165,7 +165,7 @@ Hence the topological connection to the reservoirs is described in the model as 
 
 ```{r}
 reservoir_connections <- readr::read_delim(
-  file = system.file("seine_data", "network_reservoir_connections.txt", package = "griwrm"),
+  file = system.file("seine_data", "network_reservoir_connections.txt", package = "airGRiwrm"),
   delim = "\t"
 )
 reservoir_connections
@@ -187,7 +187,7 @@ Description of the files, the columns and the type of connection (inlet / outlet
 
 ```{r}
 
-lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "griwrm"))
+lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "airGRiwrm"))
 str(lCfgReservoirs)
 ```
 

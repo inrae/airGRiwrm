@@ -22,7 +22,7 @@ List of nodes
 
 ```{r}
 seine_nodes <- readr::read_delim(
-  file = system.file("seine_data", "network_gauging_stations.txt", package = "griwrm"),
+  file = system.file("seine_data", "network_gauging_stations.txt", package = "airGRiwrm"),
   delim = "\t"
 )
 seine_nodes
