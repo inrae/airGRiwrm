@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Load libraries
 
 ```{r}
-library(griwrm)
+library(airGRiwrm)
 ```
 
 

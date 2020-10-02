@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-library(griwrm)
+library(airGRiwrm)
 ```
 
 This vignette proposes an example of calibration of influenced flow with the Marne reservoir. It will used influenced observation flows directly measured at gauging stations and flows recorded at reservoir inlets and outlet.
