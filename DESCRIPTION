@@ -1,5 +1,5 @@
-Package: griwrm
-Title: GR based Integrated Water Resource Management
+Package: airGRiwrm
+Title: airGR Integrated Water Resource Management
 Version: 0.3.1
 Authors@R:
     person(given = "David",
@@ -7,12 +7,12 @@ Authors@R:
            role = c("aut", "cre"),
            email = "david.dorchies@inrae.fr",
            comment = c(ORCID = "0000-0002-6595-7984"))
-Description: This R package aims to model water basin with a airGR based semi-distributive hydrology with the integration of human infrastructures and their management.
+Description: This R package aims to model water basin using airGR based semi-distributive model with the integration of human infrastructures and their management.
 License: AGPL-3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports:
     dplyr,
     utils,

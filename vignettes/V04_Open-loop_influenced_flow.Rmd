@@ -171,7 +171,7 @@ reservoir_connections <- readr::read_delim(
 reservoir_connections
 ```
 
-Reservoir connections are added to the griwrm object:
+Reservoir connections are added to the Griwrm object:
 
 ```{r}
 reservoir_connections$model <- NA
@@ -201,9 +201,9 @@ for(reservoir_id in names(lCfgReservoirs)) {
       "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/Reservoir_current_rules",
       paste0(lCfgReservoirs[[reservoir_id]]$file, "&dl=1")
     ),
-    delim = "\t", 
+    delim = "\t",
     col_types = readr::cols(
-      Date = readr::col_character(), 
+      Date = readr::col_character(),
       .default = readr::col_double()
     )
   )
@@ -217,7 +217,7 @@ for(reservoir_id in names(lCfgReservoirs)) {
       Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col] <- -Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]
     }
     Qobs <- cbind(
-      Qobs, 
+      Qobs,
       Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]
     )
     names(Qobs)[ncol(Qobs)] <- connect
@@ -230,7 +230,7 @@ Qobs[,-1] <- Qobs[,-1] * 86400
 
 ## How to handle online reservoir ? The Pannecière lake case.
 
-There are two possibilities: 
+There are two possibilities:
 
 - truncate the system and only simulate the release of the reservoir if we only care about downstream flows
 - add a fictive inlet to the reservoir that will store all upstream discharge into the reservoir
@@ -281,7 +281,7 @@ OutputsModels2 <- RunModel(
 
 ## Compare modelled flows with observed flows
 
-### Load observed flow 
+### Load observed flow
 
 ```{r, warning=FALSE, message=FALSE}
 

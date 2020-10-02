@@ -1,6 +1,6 @@
-# GR-IWRM: airGR based Integrated Water Resource Management R package
+# airGR-IWRM: airGR based Integrated Water Resource Management R package
 
-GR-IWRM is an extension of airGR for managing semi-distributive hydrological model on an anthropized catchment.
+airGR-IWRM is an extension of the airGR R package for managing semi-distributive hydrological model on an anthropized catchment.
 
 This package is developed as part of the IN-WOP project (http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop) by the mixed research unit G-EAU (https://g-eau.fr).
 

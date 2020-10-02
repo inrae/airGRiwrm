@@ -28,7 +28,7 @@ seine_nodes <- readr::read_delim(
 seine_nodes
 ```
 
-Create the griwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `Griwrm` and `Griwrm` with specific column names:
+Create the Griwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `Griwrm` and `Griwrm` with specific column names:
 
 - `id`: the identifier of the node in the network.
 - `down`: the identifier of the next hydrological node downstream.
@@ -40,7 +40,7 @@ Create the griwrm object which lists the nodes and describes the network diagram
 
 ```{r}
 seine_nodes$model <- "RunModel_GR4J"
-# Generate the griwrm object
+# Generate the Griwrm object
 griwrm <- Griwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
 griwrm
 ```
