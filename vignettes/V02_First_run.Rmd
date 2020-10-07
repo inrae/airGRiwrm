@@ -58,8 +58,8 @@ ParamClimAware <- sapply(griwrm$id, function(id) {
   if(length(UpstrNodes) > 0) {
     maxLength <- max(griwrm$length[UpstrNodes])
     Param <- c(
-      Param,
-      maxLength / ((nodeParam$Tau0 + nodeParam$K0) * 3600)
+      maxLength / ((nodeParam$Tau0 + nodeParam$K0) * 3600),
+      Param
     )
   }
   return(Param)
