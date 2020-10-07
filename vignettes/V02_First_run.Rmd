@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(airGRiwrm)
+library(lubridate)
 ```
 
 
@@ -79,7 +80,7 @@ The user must at least define the following arguments:
 
 ```{r}
 IndPeriod_Run <- seq(
-  which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + months(12))), # Set aside warm-up period
+  which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] %m+% years(1))), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
 )
 ```
