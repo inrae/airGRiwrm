@@ -11,7 +11,7 @@ This package is developed as part of the IN-WOP project (http://www.waterjpi.eu/
 This package depends on airGR version 1.6. or more which is currently under development. To install it, use the following instruction:
 
 ```
-remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr")
+remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr")
 ```
 
 ### Local installation
