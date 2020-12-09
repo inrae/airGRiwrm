@@ -1,6 +1,4 @@
 stages:
-    - update_packages
-    - build
     - checks
 
 default:
@@ -8,39 +6,35 @@ default:
 
 image: r-base:latest
 
+variables:
+  R_LIBS_USER: "$CI_PROJECT_DIR/ci/lib"
+  CHECK_DIR: "$CI_PROJECT_DIR/ci/logs"
+  BUILD_LOGS_DIR: "$CI_PROJECT_DIR/ci/logs/$CI_PROJECT_NAME.Rcheck"
+
 cache:
   paths:
-    - R_LIBS/
+    - $R_LIBS_USER
 
 before_script:
   - apt-get update && apt-get -y install libcurl4-openssl-dev libxml2-dev
-  - echo "R_LIBS='$(pwd)/R_LIBS'" > .Renviron
+  - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
+  - Rscript -e 'if(!dir.exists(file.path(Sys.getenv("R_LIBS_USER"), "remotes"))) install.packages("remotes", lib = Sys.getenv("R_LIBS_USER"))'
+  - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr", lib = Sys.getenv("R_LIBS_USER"))'
+  - R -e 'devtools::install_deps(dep = T, lib = Sys.getenv("R_LIBS_USER"))'
+  - Rscript -e "devtools::document(roclets = c('rd', 'collate', 'namespace'))"
 
-update_packages:
-  stage: update_packages
+.check:
+  stage: checks
   script:
-    - mkdir -p R_LIBS
-    - Rscript -e 'if(!dir.exists("R_LIBS/remotes")) install.packages("remotes", lib = "R_LIBS")'
-    - Rscript -e 'remotes::update_packages(c("dplyr", "rmarkdown", "readr", "lubridate", "zoo", "roxygen2", "DiagrammeR"), lib = "R_LIBS")'
-    - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr", lib = "R_LIBS")'
-
-build:
-  stage: build
-  script:
-    - Rscript -e "roxygen2::roxygenise()"
-    - R CMD build --no-build-vignettes ../griwrm
-  artifacts:
-    paths:
-      - airGRiwrm_*.tar.gz
+    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN"))'
+    - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
 check_not_cran:
-  stage: checks
-  variables:
+  variable:
     NOT_CRAN: "true"
-  script:
-    - R CMD check --no-manual airGRiwrm_*.tar.gz
+  extends: .check
 
 check_as_cran:
-  stage: checks
-  script:
-    - R CMD check --as-cran --no-manual airGRiwrm_*.tar.gz
+  variable:
+    NOT_CRAN: "false"
+  extends: .check
