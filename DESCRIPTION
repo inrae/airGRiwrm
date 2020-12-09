@@ -21,6 +21,7 @@ Suggests:
     knitr,
     rmarkdown,
     lattice,
-    DiagrammeR
+    DiagrammeR,
+    lubridate
 VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/griwrm
