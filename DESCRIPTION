@@ -16,8 +16,7 @@ RoxygenNote: 7.1.1
 Imports:
     dplyr,
     utils,
-    airGR (>= 1.6.1.11),
-    methods
+    airGR (>= 1.6.1.11)
 Suggests:
     knitr,
     rmarkdown,

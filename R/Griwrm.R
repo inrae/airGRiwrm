@@ -25,7 +25,7 @@ Griwrm <- function(db, cols = list(id = "id", down = "down", length = "length", 
 #' @return vector with the ordered node names.
 #' @export
 getNodeRanking <- function(griwrm) {
-  if(!is(griwrm, "Griwrm")) {
+  if(!inherits(griwrm, "Griwrm")) {
     stop("getNodeRanking: griwrm argument should be of class Griwrm")
   }
   # Remove nodes without model (direct flow connections treated as upstream flows only)
