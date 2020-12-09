@@ -30,11 +30,11 @@ before_script:
     - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
 check_not_cran:
-  variable:
+  variables:
     NOT_CRAN: "true"
   extends: .check
 
 check_as_cran:
-  variable:
+  variables:
     NOT_CRAN: "false"
   extends: .check
