@@ -18,10 +18,10 @@ cache:
 before_script:
   - apt-get update && apt-get -y install libcurl4-openssl-dev libxml2-dev
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
-  - R -e 'if(!dir.exists(file.path(Sys.getenv("R_LIBS_USER"), "remotes"))) install.packages("remotes", lib = Sys.getenv("R_LIBS_USER"))'
-  - R -e 'print(Sys.getenv("R_LIBS_USER"))'
-  - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr", lib = Sys.getenv("R_LIBS_USER"))'
-  - R -e 'devtools::install_deps(dep = T, lib = Sys.getenv("R_LIBS_USER"))'
+  - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
+  - R -e 'if(!dir.exists(file.path(Sys.getenv("R_LIBS_USER"), "remotes"))) install.packages("remotes")'
+  - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr")'
+  - R -e 'devtools::install_deps(dep = T)'
   - R -e "devtools::document(roclets = c('rd', 'collate', 'namespace'))"
 
 .check:
