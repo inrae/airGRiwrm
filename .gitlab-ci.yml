@@ -31,16 +31,16 @@ build:
     - R CMD build --no-build-vignettes ../griwrm
   artifacts:
     paths:
-      - griwrm_*.tar.gz
+      - airGRiwrm_*.tar.gz
 
 check_not_cran:
   stage: checks
   variables:
     NOT_CRAN: "true"
   script:
-    - R CMD check --no-manual griwrm_*.tar.gz
+    - R CMD check --no-manual airGRiwrm_*.tar.gz
 
 check_as_cran:
   stage: checks
   script:
-    - R CMD check --as-cran --no-manual griwrm_*.tar.gz
+    - R CMD check --as-cran --no-manual airGRiwrm_*.tar.gz
