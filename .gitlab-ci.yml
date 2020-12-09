@@ -27,7 +27,7 @@ before_script:
 .check:
   stage: checks
   script:
-    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN"))'
+    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN")))'
     - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
 check_not_cran:
