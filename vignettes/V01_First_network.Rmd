@@ -82,7 +82,7 @@ for(id in griwrm$id) {
   ts <- readr::read_delim(file = url,
                           delim = ";", skip = 16, trim_ws = TRUE)
   # Date conversion to POSIX
-  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+  ts$Date <- as.POSIXct(lubridate::ymd(ts$Date))
   # Ptot column  is merged into Precip dataframe
   Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
   # ETP column is merged into PotEvap dataframe
@@ -95,9 +95,9 @@ for(id in griwrm$id) {
   Qobs <- MergeTS(Qobs, id, ts[,c("Date", "Qnat")])
 }
 DatesR <- Precip$DatesR
-Precip$DateR <- NULL
-PotEvap$DateR <- NULL
-Qobs$DateR <- NULL
+Precip$DatesR <- NULL
+PotEvap$DatesR <- NULL
+Qobs$DatesR <- NULL
 ```
 
 ## Generate the GRIWRM InputsModel object

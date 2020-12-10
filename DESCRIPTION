@@ -1,6 +1,6 @@
 Package: airGRiwrm
 Title: airGR Integrated Water Resource Management
-Version: 0.3.1
+Version: 0.3.2
 Authors@R:
     person(given = "David",
            family = "Dorchies",

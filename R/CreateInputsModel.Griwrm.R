@@ -1,7 +1,7 @@
 #' Create InputsModel object for a GRIWRM network
 #'
 #' @param x Griwrm object describing the diagram of the semi-distributed model, see \code{[Griwrm]}.
-#' @param DateR Vector of POSIXlt observation time steps.
+#' @param DatesR Vector of POSIXt observation time steps.
 #' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
 #' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
 #' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.

@@ -207,7 +207,7 @@ for(reservoir_id in names(lCfgReservoirs)) {
       .default = readr::col_double()
     )
   )
-  df$Date <- format(as.POSIXlt(lubridate::dmy(df$Date)), "%Y-%m-%d")
+  df$Date <- format(as.POSIXct(lubridate::dmy(df$Date)), "%Y-%m-%d")
   Qreservoir <- merge(data.frame(Date = format(DatesR, "%Y-%m-%d")), df, by = "Date", all.x = TRUE)
   for(connect in names(lCfgReservoirs[[reservoir_id]]$connections)) {
     # Replace data gap by zeros (should be interpolated ?)
@@ -301,7 +301,7 @@ for(id in ids) {
   ts <- readr::read_delim(file = url,
                           delim = ";", skip = 24, trim_ws = TRUE)
   # Date conversion to POSIX
-  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+  ts$Date <- as.POSIXct(lubridate::ymd(ts$Date))
     # Convert Qobs from l/s to mm/time step
   ts$Q <- ts$Q * 86.4 / griwrm$area[griwrm$id == id] / 1000
   # Setting data gaps to NA
