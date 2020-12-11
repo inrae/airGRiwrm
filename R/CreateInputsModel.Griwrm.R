@@ -1,6 +1,6 @@
 #' Create InputsModel object for a GRIWRM network
 #'
-#' @param x Griwrm object describing the diagram of the semi-distributed model, see \code{[Griwrm]}.
+#' @param x GRiwrm object describing the diagram of the semi-distributed model, see \code{[GRiwrm]}.
 #' @param DatesR Vector of POSIXt observation time steps.
 #' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
 #' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
@@ -10,7 +10,7 @@
 #'
 #' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.Griwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
+CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
 
   InputsModel <- CreateEmptyGriwrmInputsModel()
   Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
@@ -38,7 +38,7 @@ CreateEmptyGriwrmInputsModel <- function() {
 #' Create one InputsModel for a GRIWRM node
 #'
 #' @param id string of the node identifier
-#' @param griwrm See \code{[Griwrm]}.
+#' @param griwrm See \code{[GRiwrm]}.
 #' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs.
 #' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step).
 #' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step).

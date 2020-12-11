@@ -1,7 +1,7 @@
 #' Create \emph{GriwrmInputsCrit} object for GR-IWRM.
-#' @param InputsModel  object of class \emph{GriwrmInputsModel}, see \code{\link{CreateInputsModel.Griwrm}} for details.
+#' @param InputsModel  object of class \emph{GriwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
 #' @param FUN_CRIT \[function (atomic or list)\] error criterion function (e.g. \code{\link[airGR]{ErrorCrit_RMSE}}, \code{\link[airGR]{ErrorCrit_NSE}})
-#' @param RunOptions object of class \emph{GriwrmRunOptions}, see \code{[CreateRunOptions.Griwrm]} for details.
+#' @param RunOptions object of class \emph{GriwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.
 #' @param Qobs matrix or data frame containing observed flows. Column names correspond to nodes ID
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsCrit}}.
 #'

@@ -171,7 +171,7 @@ reservoir_connections <- readr::read_delim(
 reservoir_connections
 ```
 
-Reservoir connections are added to the Griwrm object:
+Reservoir connections are added to the GRiwrm object:
 
 ```{r}
 reservoir_connections$model <- NA
