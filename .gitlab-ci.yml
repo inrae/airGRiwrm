@@ -4,7 +4,7 @@ stages:
 default:
   tags: [docker]
 
-image: r-base:latest
+image: rocker/tidyverse:3.6.3
 
 variables:
   R_LIBS_USER: "$CI_PROJECT_DIR/ci/lib"
@@ -16,10 +16,8 @@ cache:
     - $R_LIBS_USER
 
 before_script:
-  - apt-get update && apt-get -y install libcurl4-openssl-dev libxml2-dev libssl-dev
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
-  - R -e 'if(!dir.exists(file.path(Sys.getenv("R_LIBS_USER"), "devtools"))) install.packages("devtools")'
   - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr")'
   - R -e 'devtools::install_deps(dep = T)'
   - R -e "devtools::document(roclets = c('rd', 'collate', 'namespace'))"
