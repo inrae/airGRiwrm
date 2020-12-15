@@ -21,9 +21,9 @@ library(airGRiwrm)
 List of nodes
 
 ```{r}
-seine_nodes <- readr::read_delim(
+seine_nodes <- read.table(
   file = system.file("seine_data", "network_gauging_stations.txt", package = "airGRiwrm"),
-  delim = "\t"
+  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\""
 )
 seine_nodes
 ```
@@ -79,10 +79,9 @@ for(id in griwrm$id) {
       "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
       paste0(id, "_NAT.txt&dl=1")
     )
-  ts <- readr::read_delim(file = url,
-                          delim = ";", skip = 16, trim_ws = TRUE)
+  ts <- read.table(url, sep = ";", skip = 16, header = TRUE)
   # Date conversion to POSIX
-  ts$Date <- as.POSIXct(lubridate::ymd(ts$Date))
+  ts$Date <- as.POSIXct(as.character(ts$Date), format = "%Y%m%d")
   # Ptot column  is merged into Precip dataframe
   Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
   # ETP column is merged into PotEvap dataframe
