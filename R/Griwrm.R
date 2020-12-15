@@ -5,28 +5,28 @@
 #' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`.
 #' @param keep_all Keep all column of `db` or keep only columns defined in `cols`
 #'
-#' @return `Griwrm` class object containing the description of diagram of the semi-distributed catchment model
+#' @return `GRiwrm` class object containing the description of diagram of the semi-distributed catchment model
 #' @export
-Griwrm <- function(db, cols = list(id = "id", down = "down", length = "length", model = "model"), keep_all = FALSE) {
+GRiwrm <- function(db, cols = list(id = "id", down = "down", length = "length", model = "model"), keep_all = FALSE) {
   colsDefault <- list(id = "id", down = "down", length = "length", model = "model", area = "area")
   cols <- utils::modifyList(colsDefault, as.list(cols))
   db <- dplyr::rename(db, unlist(cols))
   if(!keep_all) {
     db <- dplyr::select(db, names(cols))
   }
-  class(db) <- append(class(db), c("Griwrm", "Griwrm"))
+  class(db) <- append(class(db), c("GRiwrm", "GRiwrm"))
   db
 }
 
 #' Sort the nodes from upstream to downstream.
 #'
-#' @param griwrm See \code{[Griwrm]}.
+#' @param griwrm See \code{[GRiwrm]}.
 #'
 #' @return vector with the ordered node names.
 #' @export
 getNodeRanking <- function(griwrm) {
-  if(!is(griwrm, "Griwrm")) {
-    stop("getNodeRanking: griwrm argument should be of class Griwrm")
+  if(!inherits(griwrm, "GRiwrm")) {
+    stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
   # Remove nodes without model (direct flow connections treated as upstream flows only)
   griwrm <- griwrm[!is.na(griwrm$model),]

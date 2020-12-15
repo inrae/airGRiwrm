@@ -164,14 +164,14 @@ style MARNE_R25 fill:#fcc
 Hence the topological connection to the reservoirs is described in the model as below:
 
 ```{r}
-reservoir_connections <- readr::read_delim(
+reservoir_connections <- read.table(
   file = system.file("seine_data", "network_reservoir_connections.txt", package = "airGRiwrm"),
-  delim = "\t"
+  sep = ";", header = TRUE
 )
 reservoir_connections
 ```
 
-Reservoir connections are added to the Griwrm object:
+Reservoir connections are added to the GRiwrm object:
 
 ```{r}
 reservoir_connections$model <- NA
@@ -196,18 +196,14 @@ Then, we load observation data for each reservoir and each connection:
 ```{r}
 
 for(reservoir_id in names(lCfgReservoirs)) {
-  df <- readr::read_delim(
+  df <- read.table(
     file = file.path(
       "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/Reservoir_current_rules",
       paste0(lCfgReservoirs[[reservoir_id]]$file, "&dl=1")
     ),
-    delim = "\t",
-    col_types = readr::cols(
-      Date = readr::col_character(),
-      .default = readr::col_double()
-    )
+    sep = "\t", header = TRUE, fill = TRUE
   )
-  df$Date <- format(as.POSIXlt(lubridate::dmy(df$Date)), "%Y-%m-%d")
+  df$Date <- format(as.POSIXct(df$Date))
   Qreservoir <- merge(data.frame(Date = format(DatesR, "%Y-%m-%d")), df, by = "Date", all.x = TRUE)
   for(connect in names(lCfgReservoirs[[reservoir_id]]$connections)) {
     # Replace data gap by zeros (should be interpolated ?)
@@ -224,7 +220,7 @@ for(reservoir_id in names(lCfgReservoirs)) {
   }
 }
 # Convert flows from m3/s to m3/day
-Qobs[,-1] <- Qobs[,-1] * 86400
+Qobs <- Qobs * 86400
 
 ```
 
@@ -298,10 +294,10 @@ for(id in ids) {
       "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
       paste0(id, "_BV.txt&dl=1")
     )
-  ts <- readr::read_delim(file = url,
-                          delim = ";", skip = 24, trim_ws = TRUE)
+  ts <- read.table(file = url,
+                   sep = ";", skip = 24, header = TRUE)
   # Date conversion to POSIX
-  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+  ts$Date <- as.POSIXct(as.character(ts$Date), format = "%Y%m%d")
     # Convert Qobs from l/s to mm/time step
   ts$Q <- ts$Q * 86.4 / griwrm$area[griwrm$id == id] / 1000
   # Setting data gaps to NA
@@ -321,7 +317,7 @@ ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
   return(OutputsModelsOut)
 }
 
-QobsReservoirs <- Qobs[Qobs$DatesR < "2008-08-01",c("DatesR", reservoir_connections$id)]
+QobsReservoirs <- Qobs[DatesR < "2008-08-01", reservoir_connections$id]
 save(QobsReservoirs, Qobs2, griwrm2, ReduceOutputsModel, file = "_cache/V04.RData")
 ```
 

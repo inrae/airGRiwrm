@@ -21,14 +21,14 @@ library(airGRiwrm)
 List of nodes
 
 ```{r}
-seine_nodes <- readr::read_delim(
+seine_nodes <- read.table(
   file = system.file("seine_data", "network_gauging_stations.txt", package = "airGRiwrm"),
-  delim = "\t"
+  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\""
 )
 seine_nodes
 ```
 
-Create the Griwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `Griwrm` and `Griwrm` with specific column names:
+Create the GRiwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `GRiwrm` and `GRiwrm` with specific column names:
 
 - `id`: the identifier of the node in the network.
 - `down`: the identifier of the next hydrological node downstream.
@@ -36,12 +36,12 @@ Create the Griwrm object which lists the nodes and describes the network diagram
 - `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
 - `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
-`Griwrm` function helps to rename the columns of the dataframe and assign the variable classes.
+`GRiwrm` function helps to rename the columns of the dataframe and assign the variable classes.
 
 ```{r}
 seine_nodes$model <- "RunModel_GR4J"
-# Generate the Griwrm object
-griwrm <- Griwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+# Generate the GRiwrm object
+griwrm <- GRiwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
 griwrm
 ```
 
@@ -79,10 +79,9 @@ for(id in griwrm$id) {
       "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
       paste0(id, "_NAT.txt&dl=1")
     )
-  ts <- readr::read_delim(file = url,
-                          delim = ";", skip = 16, trim_ws = TRUE)
+  ts <- read.table(url, sep = ";", skip = 16, header = TRUE)
   # Date conversion to POSIX
-  ts$Date <- as.POSIXlt(lubridate::ymd(ts$Date))
+  ts$Date <- as.POSIXct(as.character(ts$Date), format = "%Y%m%d")
   # Ptot column  is merged into Precip dataframe
   Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
   # ETP column is merged into PotEvap dataframe
@@ -95,9 +94,9 @@ for(id in griwrm$id) {
   Qobs <- MergeTS(Qobs, id, ts[,c("Date", "Qnat")])
 }
 DatesR <- Precip$DatesR
-Precip$DateR <- NULL
-PotEvap$DateR <- NULL
-Qobs$DateR <- NULL
+Precip$DatesR <- NULL
+PotEvap$DatesR <- NULL
+Qobs$DatesR <- NULL
 ```
 
 ## Generate the GRIWRM InputsModel object

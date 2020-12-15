@@ -1,6 +1,4 @@
 stages:
-    - update_packages
-    - build
     - checks
 
 default:
@@ -8,40 +6,36 @@ default:
 
 image: r-base:latest
 
+variables:
+  R_LIBS_USER: "$CI_PROJECT_DIR/ci/lib"
+  CHECK_DIR: "$CI_PROJECT_DIR/ci/logs"
+  BUILD_LOGS_DIR: "$CI_PROJECT_DIR/ci/logs/$CI_PROJECT_NAME.Rcheck"
+
 cache:
   paths:
-    - R_LIBS/
+    - $R_LIBS_USER
 
 before_script:
-  - echo "R_LIBS='$(pwd)/R_LIBS'" > .Renviron
+  - apt-get update && apt-get -y install libcurl4-openssl-dev libxml2-dev libssl-dev
+  - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
+  - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
+  - R -e 'if(!dir.exists(file.path(Sys.getenv("R_LIBS_USER"), "devtools"))) install.packages("devtools")'
+  - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr")'
+  - R -e 'devtools::install_deps(dep = T)'
+  - R -e "devtools::document(roclets = c('rd', 'collate', 'namespace'))"
 
-update_packages:
-  stage: update_packages
+.check:
+  stage: checks
   script:
-    - mkdir -p R_LIBS
-    - Rscript -e 'if(!dir.exists("R_LIBS/remotes")) install.packages("remotes", lib = "R_LIBS")'
-    - apt-get update && apt-get -y install libxml2-dev
-    - Rscript -e 'remotes::update_packages(c("dplyr", "rmarkdown", "readr", "lubridate", "zoo", "roxygen2", "DiagrammeR"), lib = "R_LIBS")'
-    - Rscript -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@sd", host = "gitlab.irstea.fr", lib = "R_LIBS")'
-
-build:
-  stage: build
-  script:
-    - apt-get update && apt-get -y install libxml2-dev
-    - Rscript -e "roxygen2::roxygenise()"
-    - R CMD build ../griwrm
-  artifacts:
-    paths:
-      - griwrm_*.tar.gz
+    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN")))'
+    - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
 check_not_cran:
-  stage: checks
   variables:
     NOT_CRAN: "true"
-  script:
-    - R CMD check --no-manual griwrm_*.tar.gz
+  extends: .check
 
 check_as_cran:
-  stage: checks
-  script:
-    - R CMD check --as-cran --no-manual griwrm_*.tar.gz
+  variables:
+    NOT_CRAN: "false"
+  extends: .check

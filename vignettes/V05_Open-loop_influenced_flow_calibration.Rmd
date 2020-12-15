@@ -43,7 +43,7 @@ Generate `GriwrmInputsModel` object
 
 ```{r}
 Qobs3 <- cbind(Qobs2, QobsReservoirs)
-iEnd <-which(DatesR == lubridate::ymd("2008-07-31"))
+iEnd <-which(DatesR == as.POSIXct("2008-07-31"))
 InputsModel3 <- CreateInputsModel(griwrm3, DatesR[1:iEnd], Precip[1:iEnd,], PotEvap[1:iEnd,], Qobs3)
 ```
 
@@ -52,7 +52,7 @@ InputsModel3 <- CreateInputsModel(griwrm3, DatesR[1:iEnd], Precip[1:iEnd,], PotE
 
 ```{r}
 IndPeriod_Run <- seq(
-  which(InputsModel3[[1]]$DatesR == (InputsModel3[[1]]$DatesR[1] + months(12))), # Set aside warm-up period
+  which(InputsModel3[[1]]$DatesR == (InputsModel3[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(InputsModel3[[1]]$DatesR) # Until the end of the time series
 )
 ```

@@ -1,6 +1,6 @@
-#' Display a diagram representing the network structure of a Griwrm object
+#' Display a diagram representing the network structure of a GRiwrm object
 #'
-#' @param griwrm the Griwrm object to display.
+#' @param griwrm the GRiwrm object to display.
 #' @param display if `TRUE` displays the diagram with `DiagrammeR::mermaid`, return the mermaid code otherwise.
 #' @param orientation Orientation of the graph. "LR" by default.
 #'
