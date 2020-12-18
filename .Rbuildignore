@@ -4,3 +4,4 @@
 ^\.gitlab-ci\.yml$
 ^R_LIBS
 ^vignettes/_cache
+^data-raw$
