@@ -5,7 +5,6 @@
 #' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see \code{\link{CreateInputsCrit.GRiwrm}} for details.
 #' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see \code{\link{CreateCalibOptions.GRiwrm}} for details.
 #' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}.
-#' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{Calibration}}.
 #'
 #' @return GRiwrmOutputsCalib object which is a list of OutputsCalib (See \code{\link[airGR]{Calibration}}) for each node of the semi-distributed model.
@@ -15,7 +14,6 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
                                           InputsCrit,
                                           CalibOptions,
                                           useUpstreamQsim = TRUE,
-                                          verbose = TRUE,
                                           ...) {
 
   OutputsCalib <- list()
@@ -25,7 +23,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   class(OutputsModel) <- append(class(OutputsModel), "GRiwrmOutputsModel")
 
   for(IM in InputsModel) {
-    if(verbose) cat("Calibration.GRiwrmInputsModel: Treating sub-basin", IM$id, "...\n")
+    message("Calibration.GRiwrmInputsModel: Treating sub-basin ", IM$id, "...")
 
     if(useUpstreamQsim) {
       # Update InputsModel$Qupstream with simulated upstream flows

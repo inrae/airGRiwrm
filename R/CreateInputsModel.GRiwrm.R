@@ -5,18 +5,17 @@
 #' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
 #' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
 #' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.
-#' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
 #' @return GRiwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
-CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
+CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
   InputsModel <- CreateEmptyGRiwrmInputsModel()
   Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
 
   for(id in getNodeRanking(x)) {
-    if(verbose) cat("CreateInputsModel.griwrm: Treating sub-basin", id, "...\n")
+    message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
     InputsModel[[id]] <- CreateOneGRiwrmInputsModel(
       id, x, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
     )
