@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Tutorial: structuration of a semi-distributive GR model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: airGRiwrm.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -15,33 +16,37 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
+The package 'airGRiwrm' is a modeling tool for integrated water resource management based on the package 'airGR' package @coron_airgr_2020.
+
+In a semi-distributive model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then a hydraulic link is set between sub-catchment outlets to model the flow at the outlet of the whole catchment. The aim of 'airGRiwrm' is to organise the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributive model.
+
+## Description of the example used in this tutorial
+
+The example of this tutorial takes place on the Severn River in United Kingdom. The data set comes from the CAMEL GB database @coxon_catchment_2020.
+
+```{r}
+data(Severn)
+Severn$BasinsInfo
+```
 
 ## Semi-distributive network description
 
-List of nodes
-
-```{r}
-seine_nodes <- read.table(
-  file = system.file("seine_data", "network_gauging_stations.txt", package = "airGRiwrm"),
-  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\""
-)
-seine_nodes
-```
-
-Create the GRiwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `GRiwrm` and `GRiwrm` with specific column names:
+Create the GRiwrm object which lists the nodes and describes the network diagram. It's a data.frame of class `GRiwrm` with specific column names:
 
 - `id`: the identifier of the node in the network.
 - `down`: the identifier of the next hydrological node downstream.
-- `length`: hydraulic distance to the next hydrological downstream node.
+- `length`: hydraulic distance to the next hydrological downstream node (m).
 - `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
 - `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
 `GRiwrm` function helps to rename the columns of the dataframe and assign the variable classes.
 
 ```{r}
-seine_nodes$model <- "RunModel_GR4J"
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$distance_downstream <- nodes$distance_downstream * 1000 # Conversion km -> m
+nodes$model <- "RunModel_GR4J"
 # Generate the GRiwrm object
-griwrm <- GRiwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 griwrm
 ```
 
@@ -55,48 +60,21 @@ DiagramGRiwrm(griwrm)
 
 ## Observation time series
 
-Loading hydrometeorological data on the Seine river basin from the ClimAware project:
+Observations (precipitation, potential evapotranspiration and flows) should be formatted in separated data.frame with one column of data per sub-catchment.
+
+```{r}
+BasinsObs <- Severn$BasinsObs
+str(BasinsObs)
+```
+
 
 ```{r, warning=FALSE, message=FALSE}
 
-Precip <- NULL
-PotEvap <- NULL
-Qobs <- NULL
+DatesR <- BasinsObs[[1]]$DatesR
 
-MergeTS <- function(dfOld, id, dfNew) {
-    names(dfNew) <- c("DatesR", id) # Renaming columns of the new input into date and sub-basin ID
-    if(is.null(dfOld)) {
-    dfOut <- dfNew # Creation of the first column
-  } else {
-    dfOut <- merge(dfOld, dfNew, by = "DatesR", all = TRUE) # Merge the new columns respecting to date column
-  }
-  return(dfOut)
-}
-
-for(id in griwrm$id) {
-  url <-
-    file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
-      paste0(id, "_NAT.txt&dl=1")
-    )
-  ts <- read.table(url, sep = ";", skip = 16, header = TRUE)
-  # Date conversion to POSIX
-  ts$Date <- as.POSIXct(as.character(ts$Date), format = "%Y%m%d")
-  # Ptot column  is merged into Precip dataframe
-  Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
-  # ETP column is merged into PotEvap dataframe
-  PotEvap <- MergeTS(PotEvap, id, ts[,c("Date", "ETP")])
-  # Convert Qobs from m3/s to mm/time step
-  ts$Qnat <- ts$Qnat * 86.4 / griwrm$area[griwrm$id == id]
-  # Setting data gaps to NA
-  ts$Qnat[ts$Qnat <= 0] <- NA
-  # Qnat column is merged into Qobs dataframe
-  Qobs <- MergeTS(Qobs, id, ts[,c("Date", "Qnat")])
-}
-DatesR <- Precip$DatesR
-Precip$DatesR <- NULL
-PotEvap$DatesR <- NULL
-Qobs$DatesR <- NULL
+Precip <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvap <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
 
 ## Generate the GRIWRM InputsModel object
@@ -117,6 +95,7 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 ```{r}
 dir.create("_cache", showWarnings = FALSE)
 save(griwrm, Qobs, InputsModel, file = "_cache/V01.RData")
-save(griwrm, DatesR, Precip, PotEvap, Qobs, MergeTS, file = "_cache/V01b.RData")
+save(griwrm, DatesR, Precip, PotEvap, Qobs, file = "_cache/V01b.RData")
 ```
 
+# References
