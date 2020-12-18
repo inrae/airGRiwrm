@@ -48,7 +48,7 @@ griwrm
 The diagram of the network structure is represented below with in blue the upstream nodes with a GR4J model and in green the intermediate nodes with an SD (GR4J + LAG) model.
 
 ```{r fig.height = 7, fig.width = 8}
-DiagramGriwrm(griwrm)
+DiagramGRiwrm(griwrm)
 ```
 
 

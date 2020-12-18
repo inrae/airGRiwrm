@@ -1,16 +1,16 @@
 #' Calibration of a semi-distributed run-off model
 #'
-#' @param InputsModel object of class \emph{GriwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
-#' @param RunOptions object of class \emph{GriwrmRunOptions}, see \code{\link{CreateRunOptiosn.GRiwrm}} for details.
-#' @param InputsCrit object of class \emph{GriwrmInputsCrit}, see \code{\link{CreateInputsCrit.GRiwrm}} for details.
-#' @param CalibOptions object of class \emph{GriwrmCalibOptions}, see \code{\link{CreateCalibOptions.GRiwrm}} for details.
+#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
+#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{\link{CreateRunOptiosn.GRiwrm}} for details.
+#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see \code{\link{CreateInputsCrit.GRiwrm}} for details.
+#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see \code{\link{CreateCalibOptions.GRiwrm}} for details.
 #' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}.
 #' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{Calibration}}.
 #'
-#' @return GriwrmOutputsCalib object which is a list of OutputsCalib (See \code{\link[airGR]{Calibration}}) for each node of the semi-distributed model.
+#' @return GRiwrmOutputsCalib object which is a list of OutputsCalib (See \code{\link[airGR]{Calibration}}) for each node of the semi-distributed model.
 #' @export
-Calibration.GriwrmInputsModel <- function(InputsModel,
+Calibration.GRiwrmInputsModel <- function(InputsModel,
                                           RunOptions,
                                           InputsCrit,
                                           CalibOptions,
@@ -19,13 +19,13 @@ Calibration.GriwrmInputsModel <- function(InputsModel,
                                           ...) {
 
   OutputsCalib <- list()
-  class(OutputsCalib) <- append(class(OutputsCalib), "GriwrmOutputsCalib")
+  class(OutputsCalib) <- append(class(OutputsCalib), "GRiwrmOutputsCalib")
 
   OutputsModel <- list()
-  class(OutputsModel) <- append(class(OutputsModel), "GriwrmOutputsModel")
+  class(OutputsModel) <- append(class(OutputsModel), "GRiwrmOutputsModel")
 
   for(IM in InputsModel) {
-    if(verbose) cat("Calibration.GriwrmInputsModel: Treating sub-basin", IM$id, "...\n")
+    if(verbose) cat("Calibration.GRiwrmInputsModel: Treating sub-basin", IM$id, "...\n")
 
     if(useUpstreamQsim) {
       # Update InputsModel$Qupstream with simulated upstream flows

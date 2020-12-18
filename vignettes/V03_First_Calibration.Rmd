@@ -32,7 +32,7 @@ InputsCrit <- CreateInputsCrit(
 str(InputsCrit)
 ```
 
-## GriwrmCalibOptions object
+## GRiwrmCalibOptions object
 
 ```{r}
 CalibOptions <- CreateCalibOptions(InputsModel)

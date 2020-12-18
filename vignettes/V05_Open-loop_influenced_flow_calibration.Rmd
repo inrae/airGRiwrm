@@ -36,10 +36,10 @@ Remove extra items from global configuration
 selectedNodes <- c("MARNE_P23", "STDIZ_04", "LOUVE_19", "VITRY_25", "MARNE_P28", "MARNE_R25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm3 <- griwrm2[griwrm2$id %in% selectedNodes,]
 griwrm3[griwrm3$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
-DiagramGriwrm(griwrm3)
+DiagramGRiwrm(griwrm3)
 ```
 
-Generate `GriwrmInputsModel` object
+Generate `GRiwrmInputsModel` object
 
 ```{r}
 Qobs3 <- cbind(Qobs2, QobsReservoirs)
@@ -83,7 +83,7 @@ InputsCrit <- CreateInputsCrit(
 )
 ```
 
-## GriwrmCalibOptions object
+## GRiwrmCalibOptions object
 
 ```{r}
 CalibOptions <- CreateCalibOptions(InputsModel3)

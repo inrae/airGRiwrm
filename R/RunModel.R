@@ -1,4 +1,4 @@
-#' RunModel function for both airGR and GriwrmInputsModel object
+#' RunModel function for both airGR and GRiwrmInputsModel object
 #'
 #' @param InputsModel object of class \emph{InputsModel}, see \code{\link[airGR]{CreateInputsModel}} for details.
 #' @param ... further arguments passed to or from other methods.

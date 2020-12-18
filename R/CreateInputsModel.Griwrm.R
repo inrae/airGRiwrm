@@ -8,16 +8,16 @@
 #' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
-#' @return GriwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
+#' @return GRiwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
 CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
 
-  InputsModel <- CreateEmptyGriwrmInputsModel()
+  InputsModel <- CreateEmptyGRiwrmInputsModel()
   Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
 
   for(id in getNodeRanking(x)) {
     if(verbose) cat("CreateInputsModel.griwrm: Treating sub-basin", id, "...\n")
-    InputsModel[[id]] <- CreateOneGriwrmInputsModel(
+    InputsModel[[id]] <- CreateOneGRiwrmInputsModel(
       id, x, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
     )
   }
@@ -27,10 +27,10 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose =
 
 #' Create an empty InputsModel object for GRIWRM nodes
 #'
-#' @return \emph{GriwrmInputsModel} empty object
-CreateEmptyGriwrmInputsModel <- function() {
+#' @return \emph{GRiwrmInputsModel} empty object
+CreateEmptyGRiwrmInputsModel <- function() {
   InputsModel <- list()
-  class(InputsModel) <- append(class(InputsModel), "GriwrmInputsModel")
+  class(InputsModel) <- append(class(InputsModel), "GRiwrmInputsModel")
   return(InputsModel)
 }
 
@@ -45,7 +45,7 @@ CreateEmptyGriwrmInputsModel <- function() {
 #' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs.
 ##'
 #' @return \emph{InputsModel} object for one.
-CreateOneGriwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs) {
   node <- griwrm[griwrm$id == id,]
   FUN_MOD <- griwrm$model[griwrm$id == id]
 

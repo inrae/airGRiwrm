@@ -14,12 +14,12 @@
 #' @examples
 #' \dontrun{
 #' # Display diagram
-#' DiagramGriwrm(griwrm)
+#' DiagramGRiwrm(griwrm)
 #' # Is the same as
-#' DiagrammeR::mermaid(DiagramGriwrm(griwrm, display = FALSE), width = "100%", height = "100%")
+#' DiagrammeR::mermaid(DiagramGRiwrm(griwrm, display = FALSE), width = "100%", height = "100%")
 #' }
 #'
-DiagramGriwrm <- function(griwrm, display = TRUE, orientation = "LR") {
+DiagramGRiwrm <- function(griwrm, display = TRUE, orientation = "LR") {
   if(Sys.getenv("RSTUDIO") != "1") {
     return()
   }

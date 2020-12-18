@@ -1,19 +1,19 @@
-#' Create \emph{GriwrmInputsCrit} object for GR-IWRM.
-#' @param InputsModel  object of class \emph{GriwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
+#' Create \emph{GRiwrmInputsCrit} object for GR-IWRM.
+#' @param InputsModel  object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
 #' @param FUN_CRIT \[function (atomic or list)\] error criterion function (e.g. \code{\link[airGR]{ErrorCrit_RMSE}}, \code{\link[airGR]{ErrorCrit_NSE}})
-#' @param RunOptions object of class \emph{GriwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.
+#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.
 #' @param Qobs matrix or data frame containing observed flows. Column names correspond to nodes ID
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsCrit}}.
 #'
-#' @return Object of class \emph{GriwrmInputsCrit}
+#' @return Object of class \emph{GRiwrmInputsCrit}
 #' @export
-CreateInputsCrit.GriwrmInputsModel <- function(InputsModel,
+CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
                                                FUN_CRIT = airGR::ErrorCrit_NSE,
                                                RunOptions,
                                                Qobs,
                                                ...) {
   InputsCrit <- list()
-  class(InputsCrit) <- append(class(InputsCrit), "GriwrmInputsCrit")
+  class(InputsCrit) <- append(class(InputsCrit), "GRiwrmInputsCrit")
 
   for(IM in InputsModel) {
     InputsCrit[[IM$id]] <- CreateInputsCrit.InputsModel(

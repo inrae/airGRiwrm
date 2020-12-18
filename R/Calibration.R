@@ -3,7 +3,7 @@
 #' @param InputsModel the class of the first parameter determine which calibration is used
 #' @param ... further arguments passed to or from other methods.
 #'
-#' @return \emph{OutputsCalib} or \emph{GriwrmOutputsCalib} object
+#' @return \emph{OutputsCalib} or \emph{GRiwrmOutputsCalib} object
 #' @export
 Calibration <- function(InputsModel, ...) {
   UseMethod("Calibration", InputsModel)

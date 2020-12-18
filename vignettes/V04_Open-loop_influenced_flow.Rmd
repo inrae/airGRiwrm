@@ -177,7 +177,7 @@ Reservoir connections are added to the GRiwrm object:
 reservoir_connections$model <- NA
 reservoir_connections$area <- NA
 griwrm2 <- rbind(griwrm, reservoir_connections)
-DiagramGriwrm(griwrm2)
+DiagramGRiwrm(griwrm2)
 ```
 
 
