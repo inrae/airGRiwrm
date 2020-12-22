@@ -9,7 +9,7 @@
 #' @return InputsModel object with updated QobsUpsr
 #'
 UpdateQsimUpstream <- function(InputsModel, IndPeriod_Run, OutputsModel) {
-  iQ <- which(!is.na(InputsModel$BasinAreas[1:length(InputsModel$LengthHydro)]))
+  iQ <- which(!is.na(InputsModel$BasinAreas[-length(InputsModel$BasinAreas)]))
   for(i in iQ) {
     InputsModel$Qupstream[IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$Qsim
   }
