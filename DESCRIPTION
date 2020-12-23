@@ -20,7 +20,8 @@ Suggests:
     knitr,
     rmarkdown,
     lattice,
-    DiagrammeR
+    DiagrammeR,
+    testthat
 VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/airGRiwrm
 Depends: 

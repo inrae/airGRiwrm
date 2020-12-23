@@ -16,13 +16,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
-The package 'airGRiwrm' is a modeling tool for integrated water resource management based on the package 'airGR' package @coron_airgr_2020.
+The package 'airGRiwrm' is a modeling tool for integrated water resource management based on the package 'airGR' package [See @coron_airgr_2020].
 
 In a semi-distributive model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then a hydraulic link is set between sub-catchment outlets to model the flow at the outlet of the whole catchment. The aim of 'airGRiwrm' is to organise the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributive model.
 
 ## Description of the example used in this tutorial
 
-The example of this tutorial takes place on the Severn River in United Kingdom. The data set comes from the CAMEL GB database @coxon_catchment_2020.
+The example of this tutorial takes place on the Severn River in United Kingdom. The data set comes from the CAMEL GB database [See @coxon_catchment_2020].
 
 ```{r}
 data(Severn)
@@ -76,6 +76,14 @@ Precip <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvap <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
+
+This meteorological data are mean precipitation and PE for each basin. The model needs mean precipitation and PE at sub-basin scale. The function `ConvertMeteoSD` calculates these values for downstream sub-basins:
+
+```{r}
+Precip <- ConvertMeteoSD(griwrm, Precip)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvap)
+```
+
 
 ## Generate the GRIWRM InputsModel object
 
