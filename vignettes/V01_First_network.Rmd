@@ -16,9 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
-The package 'airGRiwrm' is a modeling tool for integrated water resource management based on the package 'airGR' package [See @coron_airgr_2020].
+The package **airGRiwrm** is a modeling tool for integrated water resource management based on the package **airGR** package [See @coron_airgr_2020].
 
-In a semi-distributive model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then a hydraulic link is set between sub-catchment outlets to model the flow at the outlet of the whole catchment. The aim of 'airGRiwrm' is to organise the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributive model.
+In a semi-distributive model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then a hydraulic link is set between sub-catchment outlets to model the flow at the outlet of the whole catchment. The aim of **airGRiwrm** is to organise the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributive model.
+
+In this vignette, we show how to prepare observation data for the model.
 
 ## Description of the example used in this tutorial
 
@@ -31,7 +33,21 @@ Severn$BasinsInfo
 
 ## Semi-distributive network description
 
-Create the GRiwrm object which lists the nodes and describes the network diagram. It's a data.frame of class `GRiwrm` with specific column names:
+The semi-distributive model comprises nodes. Each node identified by an ID represents a location where water is injected to or withdrawn from the network. 
+
+The description of the topology consists in giving the first ID located downstream each node and the distance between these two nodes. These value are `NA` for the last downstream node.
+
+A hydrological model can be defined for each node and in that case the area related to the node should be filled.
+
+Here below, we constitute a `data.frame` bringing together all this information for the tutorial example:
+
+```{r}
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$distance_downstream <- nodes$distance_downstream * 1000 # Conversion km -> m
+nodes$model <- "RunModel_GR4J"
+```
+
+The network description consists in a `GRiwrm` object which lists the nodes and describes the network diagram. It's a `data.frame` of class `GRiwrm` with specific column names:
 
 - `id`: the identifier of the node in the network.
 - `down`: the identifier of the next hydrological node downstream.
@@ -39,14 +55,11 @@ Create the GRiwrm object which lists the nodes and describes the network diagram
 - `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
 - `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
-`GRiwrm` function helps to rename the columns of the dataframe and assign the variable classes.
+
+The `GRiwrm` function helps to create an object of class `GRiwrm`. It renames the columns of the `data.frame` and converts basin area into downstream sub-basin area for each node.
 
 ```{r}
-nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream * 1000 # Conversion km -> m
-nodes$model <- "RunModel_GR4J"
-# Generate the GRiwrm object
-griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"), convertAreas = TRUE)
 griwrm
 ```
 
@@ -72,16 +85,16 @@ str(BasinsObs)
 
 DatesR <- BasinsObs[[1]]$DatesR
 
-Precip <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-PotEvap <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
 
 This meteorological data are mean precipitation and PE for each basin. The model needs mean precipitation and PE at sub-basin scale. The function `ConvertMeteoSD` calculates these values for downstream sub-basins:
 
 ```{r}
-Precip <- ConvertMeteoSD(griwrm, Precip)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvap)
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 ```
 
 

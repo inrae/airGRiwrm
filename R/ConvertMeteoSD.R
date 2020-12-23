@@ -25,9 +25,17 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.character <- function(x, griwrm, meteo) {
-  griwrmUp <- griwrm[!is.na(griwrm$down),]
-  cols <- c(x, griwrmUp$id[griwrmUp$down == x])
-  output <- ConvertMeteoSD(meteo[,cols, drop = FALSE], griwrm$area[match(cols, griwrm$id)])
+  upperBasins <- !is.na(griwrm$down) & griwrm$down == x
+  if(all(!upperBasins)) {
+    return(meteo[,x])
+  }
+  upperIDs <- griwrm$id[upperBasins]
+  areas <- griwrm$area[match(c(x, upperIDs), griwrm$id)]
+  areas[1] <- sum(areas)
+  output <- ConvertMeteoSD(
+    meteo[,c(x, upperIDs), drop = FALSE],
+    areas = areas
+  )
   return(output)
 }
 
