@@ -1,8 +1,8 @@
 ---
-title: 'Tutorial: structuration of a semi-distributive GR model'
+title: 'Tutorial: structure of a semi-distributive GR model'
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Tutorial: structuration of a semi-distributive GR model}
+  %\VignetteIndexEntry{Tutorial: structure of a semi-distributive GR model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: airGRiwrm.bib
@@ -33,7 +33,7 @@ Severn$BasinsInfo
 
 ## Semi-distributive network description
 
-The semi-distributive model comprises nodes. Each node identified by an ID represents a location where water is injected to or withdrawn from the network. 
+The semi-distributive model comprises nodes. Each node identified by an ID represents a location where water is injected to or withdrawn from the network.
 
 The description of the topology consists in giving the first ID located downstream each node and the distance between these two nodes. These value are `NA` for the last downstream node.
 

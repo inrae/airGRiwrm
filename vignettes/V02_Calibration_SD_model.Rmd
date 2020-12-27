@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-'airGRiwrm' automates the execution of 'airGR' semi-distributive models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
+**airGRiwrm** automates the execution of **airGR** semi-distributive models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
 
 ## Load library
 
