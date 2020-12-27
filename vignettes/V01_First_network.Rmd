@@ -56,10 +56,10 @@ The network description consists in a `GRiwrm` object which lists the nodes and 
 - `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
 
 
-The `GRiwrm` function helps to create an object of class `GRiwrm`. It renames the columns of the `data.frame` and converts basin area into downstream sub-basin area for each node.
+The `GRiwrm` function helps to create an object of class `GRiwrm`. It renames the columns of the `data.frame`.
 
 ```{r}
-griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"), convertAreas = TRUE)
+griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 griwrm
 ```
 

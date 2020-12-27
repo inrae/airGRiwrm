@@ -4,13 +4,13 @@
 #' @details `db` is a [tibble] or a [data.frame] containing at least the columns containing at least:
 #'
 #'  * the id (column `id`),
-#'  * the id and the hydraulic distance to the node downstream (columns `down` and `length`). The last downstream node should have fields `down` and `length` set to `NA`,
-#'  * the hydrological model to use if so (column `model`).
+#'  * the id and the hydraulic distance to the node downstream ([character] columns `down` and [numeric] columns `length` in meters). The last downstream node should have fields `down` and `length` set to `NA`,
+#'  * the area of the basin ([numeric] column `area` in km<sup>2</sup>)
+#'  * the hydrological model to use if so ([character] column `model`).
 #'
 #' @param db a [tibble] or a [data.frame] containing the description of the network (See details)
-#' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`.
-#' @param keep_all keep all column of `db` or keep only columns defined in `cols`.
-#' @param convertArea calculate area of sub-basin. To use if provided areas correspond to the whole basin areas
+#' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
+#' @param keep_all keep all column of `db` or keep only columns defined in `cols`
 #'
 #' @return `GRiwrm` class object containing the description of diagram of the semi-distributed catchment model
 #' @export
@@ -19,10 +19,10 @@ GRiwrm <- function(db,
                      id = "id",
                      down = "down",
                      length = "length",
-                     model = "model"
+                     model = "model",
+                     area = "area"
                    ),
-                   keep_all = FALSE,
-                   convertAreas = TRUE) {
+                   keep_all = FALSE) {
   colsDefault <-
     list(
       id = "id",
@@ -38,9 +38,6 @@ GRiwrm <- function(db,
   }
   class(db) <- c("GRiwrm", class(db))
   db
-  if (convertAreas) {
-    db <- ConvertAreaSD(db)
-  }
 }
 
 #' Sort the nodes from upstream to downstream.
@@ -65,13 +62,4 @@ getNodeRanking <- function(griwrm) {
   }
   ranking <- unique(ranking, fromLast = TRUE)
   ranking <- ranking[-length(ranking)]
-}
-
-ConvertAreaSD <- function(griwrm) {
-  griwrm$area <- sapply(1:nrow(griwrm),
-                        function(x) {
-                          griwrm$area[x] - sum(griwrm$area[!is.na(griwrm$down) &
-                                                             griwrm$id[x] == griwrm$down])
-                        })
-  return(griwrm)
 }
