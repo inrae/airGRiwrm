@@ -1,8 +1,8 @@
 ---
-title: "First run of the model"
+title: "Calibration of the semi-distributive model"
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{First run of the model}
+  %\VignetteIndexEntry{Calibration of the semi-distributive model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,71 +11,53 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Load libraries
+'airGRiwrm' automates the execution of 'airGR' semi-distributive models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
+
+## Load library
 
 ```{r}
 library(airGRiwrm)
 ```
 
+## Preparation of functions inputs
 
-## Load parameters of GR4 run-off model
+To run a model, as for **airGR**, the functions of the  **airGRiwrm** package (e.g. the models, calibration and criteria calculation functions) require data and options with specific formats.
 
-### Loading network and time series data
+To facilitate the use of the package, there are several functions dedicated to the creation of these objects:
 
-Run `vignette("01_First_network", package = "airGRiwrm")` before this one in order to create the Rdata file loaded below:
+  * `CreateInputsModel()`: prepares the inputs for the different hydrological models (times series of dates, precipitation, observed discharge, etc.)
+  * `CreateRunOptions()`: prepares the options for the hydrological model run (warm up period, calibration period, etc.)
+  * `CreateInputsCrit()`: prepares the options in order to compute the efficiency criterion (choice of the criterion, choice of the transformation on discharge: "log", "sqrt", etc.)
+  * `CreateCalibOptions()`: prepares the options for the hydrological model calibration algorithm (choice of parameters to optimize, predefined values for uncalibrated parameters, etc.)
+
+### `GRiwrmInputsModel` object
+
+The production method of the `GRiwrmInputsModel` object is detailed in the vignette "01_First_network" of the package.
+
+Run `vignette("01_First_network", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
 
 ```{r}
 load("_cache/V01.RData")
+str(InputsModel)
 ```
 
-### Loading
-
-Data comes from calibration of ClimAware project with naturalised flows.
+The vignette "01_First_network" also provided a matrix with the observed flow of the nodes:
 
 ```{r}
-ClimAwareParams <- read.csv(
-  file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1"
-)
-
-ClimAwareParams
+head(Qobs)
 ```
 
-The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin.
-Almost all sub basin has only a lag parameter. The only exception is for La Marne à Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
 
-This lag parameter has to be converted in a speed in m/s used in the airGR lag model:
+## `GriwmRunOptions` object
 
-```{r}
-# Convert TGR routing parameter into speed
-params <- merge(griwrm, ClimAwareParams, by.x = "id", by.y = "id_sgl")
-
-ParamClimAware <- sapply(griwrm$id, function(id) {
-  nodeParam <- ClimAwareParams[ClimAwareParams$id_sgl == id,]
-  # Record hydrological model parameters
-  Param <- unlist(nodeParam[c("S", "IGF", "KR", "T")])
-  # Add lag model parameter if upstream nodes exist
-  UpstrNodes <- which(griwrm$down == id & !is.na(griwrm$down))
-  if(length(UpstrNodes) > 0) {
-    maxLength <- max(griwrm$length[UpstrNodes])
-    Param <- c(
-      maxLength / ((nodeParam$Tau0 + nodeParam$K0) * 3600),
-      Param
-    )
-  }
-  return(Param)
-})
-
-```
-
-## GriwmRunOptions object
-
-The `CreateRunOptions()` function allows to prepare the options required to the `RunModel()` function.
+The `CreateRunOptions()` function allows to prepare the options required for the `RunModel()` function.
 
 The user must at least define the following arguments:
 
-* InputsModel: the associated input data
-* IndPeriod_Run: the period on which the model is run
+* `InputsModel`: the associated input data
+* `IndPeriod_Run`: the period on which the model is run
 
+Here below, we start the period to run one year after the beginning of the time series.
 
 ```{r}
 IndPeriod_Run <- seq(
@@ -84,13 +66,13 @@ IndPeriod_Run <- seq(
 )
 ```
 
-The warmup period could also be defined as is:
+So the warmup period could be defined as:
 
 ```{r}
 IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
 ```
 
-
+Parameters of `CreateRunOptions` for **airGRiwrm** are the same as the function in **airGR** and are copied for each node running a rainfall-runoff model.
 
 ```{r}
 RunOptions <- CreateRunOptions(
@@ -100,31 +82,61 @@ RunOptions <- CreateRunOptions(
 )
 ```
 
+## `GRiwrmInputsCrit` object
 
+The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. It takes the following arguments:
 
-## Run the SD model for the whole basin
+* `InputsModel`: the inputs of the `GRiwrm` network previously prepared by the `CreateInputsModel()` function
+* `FUN_CRIT`: the name of the error criterion function (see the available functions description in the **airGR** package)
+* `RunOptions`: the options of the `GRiwrm` network previously prepared by the `CreateRunOptions()` function
+* `Qobs`: the observed variable time serie (e.g. the discharge expressed in *mm/time step*)
 
-```{r}
-OutputsModelsClimAware <- RunModel(
+```{r InputsCrit}
+InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
-  RunOptions = RunOptions,
-  Param = ParamClimAware
+  FUN_CRIT = airGR::ErrorCrit_KGE2,
+  RunOptions = RunOptions, Qobs = Qobs
 )
+str(InputsCrit)
 ```
 
-## Save data for next vignettes
 
-```{r}
-save(RunOptions, ParamClimAware, file = "_cache/V02.RData")
+### `GRiwrmCalibOptions` object
+
+Before using the automatic calibration tool, the user needs to prepare the calibration options with the `CreateCalibOptions()` function. The `GRiwrmInputsModel` argument contains all the necessary information:
+
+```{r CalibOption}
+CalibOptions <- CreateCalibOptions(InputsModel)
+str(CalibOptions)
+```
+
+## Calibration
+
+The **airGR** calibration process is applied on each node of the `GRiwrm` network from upstream nodes to downstream nodes.
+
+```{r Calibration}
+OutputsCalib <- suppressWarnings(
+  Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions))
+ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
+```
+
+## Run model with Michel calibration
+
+```{r RunModel}
+OutputsModels <- RunModel(
+  InputsModel = InputsModel,
+  RunOptions = RunOptions,
+  Param = ParamMichel
+)
 ```
 
 ## Plot the result for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
-  names(OutputsModelsClimAware),
+  names(OutputsModels),
   function(x) {
-    plot(OutputsModelsClimAware[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
+    plot(OutputsModels[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
   }
 ))
 ```
