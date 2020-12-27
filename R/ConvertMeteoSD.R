@@ -12,6 +12,7 @@ ConvertMeteoSD <- function(x, ...) {
   UseMethod("ConvertMeteoSD")
 }
 
+#' @param meteo [matrix] or [data.frame] containing meteorological data. Its [colnames] should be equal to the IDof the basins
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
@@ -22,6 +23,7 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
   return(meteoOut)
 }
 
+#' @param griwrm [GRiwrm] object describing the semi-distributive network
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.character <- function(x, griwrm, meteo) {
@@ -31,7 +33,6 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo) {
   }
   upperIDs <- griwrm$id[upperBasins]
   areas <- griwrm$area[match(c(x, upperIDs), griwrm$id)]
-  areas[1] <- sum(areas)
   output <- ConvertMeteoSD(
     meteo[,c(x, upperIDs), drop = FALSE],
     areas = areas
@@ -39,6 +40,8 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo) {
   return(output)
 }
 
+#' @param areas [numeric] vector with the total area of the basin followed by the areas of the upstream basins in km<sup>2</sup>
+#' @param temperature [logical] `TRUE` if the meteorological data is temperature. if `FALSE` minimum output values are bounded to zero
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE) {
