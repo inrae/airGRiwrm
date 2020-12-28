@@ -30,11 +30,11 @@ To facilitate the use of the package, there are several functions dedicated to t
   * `CreateInputsCrit()`: prepares the options in order to compute the efficiency criterion (choice of the criterion, choice of the transformation on discharge: "log", "sqrt", etc.)
   * `CreateCalibOptions()`: prepares the options for the hydrological model calibration algorithm (choice of parameters to optimize, predefined values for uncalibrated parameters, etc.)
 
-### `GRiwrmInputsModel` object
+### GRiwrmInputsModel object
 
 The production method of the `GRiwrmInputsModel` object is detailed in the vignette "01_First_network" of the package.
 
-Run `vignette("01_First_network", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
+Run `vignette("01_Structure_SD_model", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
 
 ```{r}
 load("_cache/V01.RData")
@@ -48,7 +48,7 @@ head(Qobs)
 ```
 
 
-## `GriwmRunOptions` object
+## GriwmRunOptions object
 
 The `CreateRunOptions()` function allows to prepare the options required for the `RunModel()` function.
 
@@ -82,7 +82,7 @@ RunOptions <- CreateRunOptions(
 )
 ```
 
-## `GRiwrmInputsCrit` object
+## GRiwrmInputsCrit object
 
 The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. It takes the following arguments:
 
@@ -101,13 +101,17 @@ str(InputsCrit)
 ```
 
 
-### `GRiwrmCalibOptions` object
+### GRiwrmCalibOptions object
 
 Before using the automatic calibration tool, the user needs to prepare the calibration options with the `CreateCalibOptions()` function. The `GRiwrmInputsModel` argument contains all the necessary information:
 
 ```{r CalibOption}
 CalibOptions <- CreateCalibOptions(InputsModel)
 str(CalibOptions)
+```
+
+```{r, echo=FALSE}
+save(RunOptions, InputsCrit, CalibOptions, IndPeriod_Run, file = "_cache/V02.RData")
 ```
 
 ## Calibration

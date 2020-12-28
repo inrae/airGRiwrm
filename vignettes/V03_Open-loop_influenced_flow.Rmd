@@ -1,0 +1,111 @@
+---
+title: "V03 Open-loop influenced flow"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{V03 Open-loop influenced flow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: airGRiwrm.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(airGRiwrm)
+```
+
+## Presentation of the study case
+
+
+
+We can see in vignette 'V02_Calibration_SD_model' that calibration result for the discharge simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') is not satisfactory. These upper basins are heavily influenced by impoundments and inter-basin transfers [@higgs_hydrological_1988].
+
+To cope with this influenced flow, we won't try to simulate it with an hydrological model and we will directly inject this discharge measurement in the model.
+
+## Convert a gauging station into a release spot
+
+### Modifying the GRiwrm object
+
+The production method of the `GRiwrm` object is detailed in the vignette "01_First_network" of the package.
+
+Run `vignette("01_Structure_SD_model", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
+
+```{r}
+load("_cache/V01.RData")
+``` 
+
+To notify the SD model that the provided flow on a node should be directly used instead of an hydrological model, you only need to declare its model as `NA`:
+
+```{r}
+griwrm_OL <- griwrm
+griwrm_OL$model[griwrm$id == "54002"] <- NA
+griwrm_OL$model[griwrm$id == "54095"] <- NA
+griwrm_OL
+```
+
+Here, we keep the area of this basin which means that the discharge will be provided in mm per time step. If the discharge is provided in m<sup>3</sup>/s, then the area should be set to `NA` and downstream basin areas should be modified subsequently. 
+
+The diagram of the network structure is represented below with:
+
+  * in blue the upstream nodes with a GR4J model 
+  * in green the intermediate nodes with an SD (GR4J + LAG) model
+  * in red the node with direct flow injection (no hydrological model)
+
+```{r diagram}
+DiagramGRiwrm(griwrm_OL)
+```
+
+### Generate the GRiwrmInputsModel object
+
+Since the network description has changed, the `GRiwrmInputsModel` should be generated again from its inputs recorded in the vignette "01_First_network":
+
+```{r}
+load("_cache/V01b.RData")
+IM_OL <- CreateInputsModel(griwrm_OL, DatesR, Precip, PotEvap, Qobs)
+```
+
+## Calibration of the new model
+
+We reuse the calibration options and criteria created in vignette "V02_Calibration_SD_model". Run `vignette("02_Calibration_SD_model", package = "airGRiwrm")` before this one in order to create these variables.
+
+```{r}
+load("_cache/V02.RData")
+```
+
+The **airGR** calibration process is applied on each hydrological node of the `GRiwrm` network from upstream nodes to downstream nodes.
+
+```{r Calibration}
+OC_OL <- suppressWarnings(
+  Calibration(IM_OL, RunOptions, InputsCrit, CalibOptions))
+Param_OL <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
+```
+
+## Run model with this newly calibrated parameters
+
+```{r RunModel}
+OM_OL <- RunModel(
+  InputsModel = IM_OL,
+  RunOptions = RunOptions,
+  Param = Param_OL
+)
+```
+
+## Plot the result
+
+As, we can see below, compare to results of vignette "V02_Calibration_SD_model", the use of measured flow on upstream influenced basins improves largely the model performance at downstream stations.
+
+```{r, fig.height = 5, fig.width = 8}
+htmltools::tagList(lapply(
+  names(OM_OL),
+  function(x) {
+    plot(OM_OL[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
+  }
+))
+```
+
+# References
