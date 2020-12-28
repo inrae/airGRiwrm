@@ -36,5 +36,5 @@ check_not_cran:
 
 check_as_cran:
   variables:
-    NOT_CRAN: "false"
+    NOT_CRAN: "true"
   extends: .check
