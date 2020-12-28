@@ -1,6 +1,6 @@
 Package: airGRiwrm
 Title: airGR Integrated Water Resource Management
-Version: 0.3.4
+Version: 0.4.0
 Authors@R: c(
     person("David", "Dorchies", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6595-7984"), email = "david.dorchies@inrae.fr"),
     person("Olivier", "Delaigue", role = c("ctb"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@inrae.fr"),
@@ -19,9 +19,9 @@ Imports:
 Suggests:
     knitr,
     rmarkdown,
-    lattice,
     DiagrammeR,
-    testthat
+    testthat,
+    htmltools
 VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/airGRiwrm
 Depends:
