@@ -17,7 +17,9 @@ RunModel.GRiwrmInputsModel <- function(InputsModel, RunOptions, Param, verbose =
     if(verbose) cat("RunModel.GRiwrmInputsModel: Treating sub-basin", IM$id, "...\n")
 
     # Update InputsModel$Qupstream with simulated upstream flows
-    IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
+    if(any(IM$UpstreamIsRunoff)) {
+      IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
+    }
 
     # Run the model for the sub-basin
     OutputsModel[[IM$id]] <- RunModel(

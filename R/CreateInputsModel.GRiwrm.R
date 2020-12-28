@@ -82,6 +82,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
   InputsModel$id <- id
   if(length(UpstreamNodes) > 0) {
     InputsModel$UpstreamNodes <- UpstreamNodes
+    InputsModel$UpstreamIsRunoff <- !is.na(griwrm$model[match(UpstreamNodes, griwrm$id)])
   }
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
