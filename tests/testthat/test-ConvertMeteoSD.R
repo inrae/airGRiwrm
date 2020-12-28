@@ -60,7 +60,13 @@ test_that("Downstream data should return 0", {
   )
 })
 
-griwrm <- data.frame(id = c("Up", "Down"), down = c("Down", NA), area = c(1,2))
+griwrm <-
+  data.frame(
+    id = c("Up", "Down"),
+    down = c("Down", NA),
+    area = c(1, 2),
+    stringsAsFactors = FALSE
+  )
 class(griwrm) <- c("GRiwrm", class(griwrm))
 
 test_that("Downstream data should return 2", {
