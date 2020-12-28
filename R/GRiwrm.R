@@ -1,14 +1,14 @@
 #' Generate a network description containing all hydraulic nodes and the description
 #' of their connections
 #'
-#' @details `db` is a [tibble] or a [data.frame] containing at least the columns containing at least:
+#' @details `db` is a [data.frame] which at least contains in its columns:
 #'
-#'  * the id (column `id`),
-#'  * the id and the hydraulic distance to the node downstream ([character] columns `down` and [numeric] columns `length` in meters). The last downstream node should have fields `down` and `length` set to `NA`,
-#'  * the area of the basin ([numeric] column `area` in km<sup>2</sup>)
+#'  * a node identifier (column `id`),
+#'  * the identifier and the hydraulic distance to the downstream node ([character] columns `down` and [numeric] columns `length` in meters). The last downstream node should have fields `down` and `length` set to `NA`,
+#'  * the area of the basin ([numeric] column `area` in km^2^)
 #'  * the hydrological model to use if so ([character] column `model`).
 #'
-#' @param db a [tibble] or a [data.frame] containing the description of the network (See details)
+#' @param db a [data.frame] containing the description of the network (See details)
 #' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
 #' @param keep_all keep all column of `db` or keep only columns defined in `cols`
 #'

@@ -1,9 +1,9 @@
 #' Calibration of a semi-distributed run-off model
 #'
 #' @param InputsModel object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
-#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{\link{CreateRunOptiosn.GRiwrm}} for details.
-#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see \code{\link{CreateInputsCrit.GRiwrm}} for details.
-#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see \code{\link{CreateCalibOptions.GRiwrm}} for details.
+#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{\link{CreateRunOptions.GRiwrmInputsModel}} for details.
+#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see \code{\link{CreateInputsCrit.GRiwrmInputsModel}} for details.
+#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see \code{\link{CreateCalibOptions.GRiwrmInputsModel}} for details.
 #' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}.
 #' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{Calibration}}.

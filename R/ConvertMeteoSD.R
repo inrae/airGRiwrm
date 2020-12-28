@@ -7,7 +7,6 @@
 #' @export
 #' @rdname ConvertMeteoSD
 #'
-#' @examples
 ConvertMeteoSD <- function(x, ...) {
   UseMethod("ConvertMeteoSD")
 }
@@ -26,7 +25,7 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
 #' @param griwrm [GRiwrm] object describing the semi-distributive network
 #' @export
 #' @rdname ConvertMeteoSD
-ConvertMeteoSD.character <- function(x, griwrm, meteo) {
+ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
   upperBasins <- !is.na(griwrm$down) & griwrm$down == x
   if(all(!upperBasins)) {
     return(meteo[,x])
@@ -40,11 +39,11 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo) {
   return(output)
 }
 
-#' @param areas [numeric] vector with the total area of the basin followed by the areas of the upstream basins in km<sup>2</sup>
+#' @param areas [numeric] vector with the total area of the basin followed by the areas of the upstream basins in km^2^
 #' @param temperature [logical] `TRUE` if the meteorological data is temperature. if `FALSE` minimum output values are bounded to zero
 #' @export
 #' @rdname ConvertMeteoSD
-ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE) {
+ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {
   # Check arguments
   if(nrow(x) < 2) {
     stop("Meteorological data matrix should contain more than one row")

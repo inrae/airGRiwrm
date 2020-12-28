@@ -1,6 +1,7 @@
 #' Wrapper for \code{\link[airGR]{RunModel}} for one sub-basin.
 #'
 #' @inherit airGR::RunModel
+#' @param ... Further arguments for compatibility with S3 method
 #' @export
 RunModel.InputsModel <- function(InputsModel, RunOptions, Param, FUN_MOD = NULL, ...) {
   if(is.null(FUN_MOD)) {
