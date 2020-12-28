@@ -1,4 +1,4 @@
-#' Create \emph{GRiwrmInputsCrit} object for GR-IWRM.
+#' Create \emph{GRiwrmInputsCrit} object for **airGRiwrm**.
 #' @param InputsModel  object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
 #' @param FUN_CRIT \[function (atomic or list)\] error criterion function (e.g. \code{\link[airGR]{ErrorCrit_RMSE}}, \code{\link[airGR]{ErrorCrit_NSE}})
 #' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.

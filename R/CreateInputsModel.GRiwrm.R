@@ -1,4 +1,4 @@
-#' Create InputsModel object for a GRIWRM network
+#' Create InputsModel object for a **airGRiwrm** network
 #'
 #' @param x GRiwrm object describing the diagram of the semi-distributed model, see \code{[GRiwrm]}.
 #' @param DatesR Vector of POSIXt observation time steps.
@@ -8,7 +8,7 @@
 #' @param verbose (optional) boolean indicating if the function is run in verbose mode or not, default = \code{TRUE}
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
-#' @return GRiwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
+#' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
 CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose = TRUE, ...) {
 
@@ -25,7 +25,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, verbose =
 }
 
 
-#' Create an empty InputsModel object for GRIWRM nodes
+#' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
 #' @return \emph{GRiwrmInputsModel} empty object
 CreateEmptyGRiwrmInputsModel <- function() {
@@ -35,7 +35,7 @@ CreateEmptyGRiwrmInputsModel <- function() {
 }
 
 
-#' Create one InputsModel for a GRIWRM node
+#' Create one InputsModel for a **airGRiwrm** node
 #'
 #' @param id string of the node identifier
 #' @param griwrm See \code{[GRiwrm]}.
@@ -67,7 +67,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
     names(BasinAreas) <- c(UpstreamNodes, id)
   }
 
-  # Set model inputs with the airGR function
+  # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
     FUN_MOD,
     DatesR = DatesR,
