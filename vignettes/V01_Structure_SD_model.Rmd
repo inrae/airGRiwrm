@@ -65,7 +65,7 @@ griwrm
 
 The diagram of the network structure is represented below with in blue the upstream nodes with a GR4J model and in green the intermediate nodes with an SD (GR4J + LAG) model.
 
-```{r fig.height = 7, fig.width = 8}
+```{r diagram}
 DiagramGRiwrm(griwrm)
 ```
 
@@ -98,11 +98,11 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 ```
 
 
-## Generate the GRIWRM InputsModel object
+## Generate the GRiwrmInputsModel object
 
-The GRIWRM InputsModel object is a list of airGR InputsModel. The identifier of the sub-basin is used as key in the list which is ordered from upstream to downstream.
+The `GRiwrmInputsModel` object is a list of **airGR** `InputsModel`. The identifier of the sub-basin is used as key in the list which is ordered from upstream to downstream.
 
-The airGR CreateInputsModel function is extended in order to handle the griwrm object which describe the basin diagram:
+The **airGR** `CreateInputsModel` function is extended in order to handle the `GRiwrm` object which describe the basin diagram:
 
 
 ```{r}
