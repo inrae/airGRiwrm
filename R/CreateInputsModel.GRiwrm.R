@@ -1,4 +1,4 @@
-#' Create InputsModel object for a GRIWRM network
+#' Create InputsModel object for a **airGRiwrm** network
 #'
 #' @param x GRiwrm object describing the diagram of the semi-distributed model, see \code{[GRiwrm]}.
 #' @param DatesR Vector of POSIXt observation time steps.
@@ -7,7 +7,7 @@
 #' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.
 #' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
 #'
-#' @return GRiwrmInputsModel object equivalent to airGR InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
+#' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
 #' @export
 CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
@@ -24,7 +24,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 }
 
 
-#' Create an empty InputsModel object for GRIWRM nodes
+#' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
 #' @return \emph{GRiwrmInputsModel} empty object
 CreateEmptyGRiwrmInputsModel <- function() {
@@ -34,7 +34,7 @@ CreateEmptyGRiwrmInputsModel <- function() {
 }
 
 
-#' Create one InputsModel for a GRIWRM node
+#' Create one InputsModel for a **airGRiwrm** node
 #'
 #' @param id string of the node identifier
 #' @param griwrm See \code{[GRiwrm]}.
@@ -56,22 +56,17 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
 
   if(length(UpstreamNodes) > 0) {
     # Sub-basin with hydraulic routing
-    for(idUpstrNode in UpstreamNodes) {
-      Qupstream1 <- matrix(Qobs[,idUpstrNode], ncol = 1)
-      if(is.null(Qupstream)) {
-        Qupstream <- Qupstream1
-      } else {
-        Qupstream <- cbind(Qupstream, Qupstream1)
-      }
-    }
+    Qupstream <- Qobs[ , UpstreamNodes, drop=FALSE]
     LengthHydro <- griwrm$length[griwrm$id %in% UpstreamNodes]
+    names(LengthHydro) <- UpstreamNodes
     BasinAreas <- c(
         griwrm$area[griwrm$id %in% UpstreamNodes],
         node$area - sum(griwrm$area[griwrm$id %in% UpstreamNodes], na.rm = TRUE)
     )
+    names(BasinAreas) <- c(UpstreamNodes, id)
   }
 
-  # Set model inputs with the airGR function
+  # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
     FUN_MOD,
     DatesR = DatesR,
@@ -86,6 +81,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
   InputsModel$id <- id
   if(length(UpstreamNodes) > 0) {
     InputsModel$UpstreamNodes <- UpstreamNodes
+    InputsModel$UpstreamIsRunoff <- !is.na(griwrm$model[match(UpstreamNodes, griwrm$id)])
   }
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD

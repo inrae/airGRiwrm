@@ -1,9 +1,9 @@
-#' CreateCalibOptions both available for \emph{InputsModel} and \emph{GrwirmInputsModel} objects
+#' CreateCalibOptions both available for \emph{InputsModel} and \emph{GRwirmInputsModel} objects
 #'
-#' @param InputsModel object of class \emph{InputsModel}, see \code{\link[airGR]{CreateInputsModel}} for details.
-#' @param ... further arguments passed to or from other methods.
+#' @param InputsModel object of class \emph{InputsModel} or \emph{GRwirmInputsModel}. See \code{\link{CreateInputsModel}} for details
+#' @param ... further arguments passed to or from other methods
 #'
-#' @return
+#' @return Either a `CalibOptions` or a `GRiwrmCalibOptions` object
 #' @export
 CreateCalibOptions <- function(InputsModel, ...) {
   UseMethod("CreateCalibOptions", InputsModel)

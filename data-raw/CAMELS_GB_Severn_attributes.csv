@@ -1,0 +1,7 @@
+gauge_id,gauge_name,gauge_lat,gauge_lon,area,elev_mean,station_type,flow_period_start,flow_period_end,bankfull_flow,downstream_id,distance_downstream
+54057,Severn at Haw Bridge,51.95,-2.23,9885.46,145,VA,1971-07-01,2015-09-30,460,,NA
+54032,Severn at Saxons Lode,52.05,-2.2,6864.88,170,US,1970-10-01,2015-09-30,340,54057,15
+54001,Severn at Bewdley,52.38,-2.32,4329.9,175,US,1970-10-01,2015-09-30,420,54032,45
+54095,Severn at Buildwas,52.64,-2.53,3722.68,186,US,1984-03-01,2015-09-30,285,54001,42
+54002,Avon at Evesham,52.09,-1.94,2207.95,99,VA,1970-10-01,2015-09-30,125,54057,43
+54029,Teme at Knightsford Bridge,52.2,-2.39,1483.65,212,FV,1970-10-01,2015-09-30,190,54032,32
