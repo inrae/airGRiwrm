@@ -22,8 +22,6 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
-  - sudo apt-get install -y libjpeg-dev
-  - R -e 'install.packages("qpdf")'
   - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr")'
   - R -e 'devtools::install_deps(dep = T)'
   - R -e "devtools::document(roclets = c('rd', 'collate', 'namespace'))"
@@ -31,6 +29,7 @@ before_script:
 .check:
   stage: checks
   script:
+    - if [$AS_CRAN = "false" ]; then sudo apt-get install -y qpdf; fi
     - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("AS_CRAN")), env_vars = c(NOT_CRAN = "true"))'
     - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
