@@ -53,6 +53,7 @@ GRiwrm <- function(db,
 #' @param coltypes named [list] with the name of the columns to check as key and the required type as value
 #'
 #' @return [NULL] or throw an error if a wrong type is detected.
+#' @export
 #' @examples
 #' CheckColumnTypes(
 #'   data.frame(string = c("A"), numeric = c(1)),
