@@ -36,8 +36,42 @@ GRiwrm <- function(db,
   if (!keep_all) {
     db <- dplyr::select(db, names(cols))
   }
+  CheckColumnTypes(db,
+                   list(id = "character",
+                        down = "character",
+                        length = "double",
+                        model = "character",
+                        area = "double"))
   class(db) <- c("GRiwrm", class(db))
   db
+}
+
+#' Check the column types of a [data.frame]
+#'
+#' @param df [data.frame] to check
+#' @param coltypes named [list] with the name of the columns to check as key and the required type as value
+#'
+#' @return [NULL] or throw an error if a wrong type is detected.
+#' @examples
+#' CheckColumnTypes(
+#'   data.frame(string = c("A"), numeric = c(1)),
+#'   list(string = "character", numeric = "double")
+#' )
+#'
+CheckColumnTypes <- function(df, coltypes) {
+  lapply(names(df), function(x) {
+    if (typeof(df[[x]]) != coltypes[[x]]) {
+      stop(
+        sprintf(
+          "The '%s' column is of type %s, a column of type %s is required",
+          x,
+          typeof(df[[x]]),
+          coltypes[[x]]
+        )
+      )
+    }
+  })
+  return(NULL)
 }
 
 #' Sort the nodes from upstream to downstream.
@@ -51,7 +85,7 @@ getNodeRanking <- function(griwrm) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
   # Remove nodes without model (direct flow connections treated as upstream flows only)
-  griwrm <- griwrm[!is.na(griwrm$model), ]
+  griwrm <- griwrm[!is.na(griwrm$model),]
   # Rank 1
   rank <- setdiff(griwrm$id, griwrm$down)
   ranking <- rank
