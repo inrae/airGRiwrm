@@ -22,6 +22,7 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
+  - R -e 'install.packages("qpdf")'
   - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@dev", host = "gitlab.irstea.fr")'
   - R -e 'devtools::install_deps(dep = T)'
   - R -e "devtools::document(roclets = c('rd', 'collate', 'namespace'))"
