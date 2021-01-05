@@ -42,6 +42,7 @@ GRiwrm <- function(db,
                         length = "double",
                         model = "character",
                         area = "double"))
+  rownames(db) <- db$id
   class(db) <- c("GRiwrm", class(db))
   db
 }
