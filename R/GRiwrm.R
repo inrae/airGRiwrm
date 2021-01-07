@@ -56,7 +56,7 @@ GRiwrm <- function(db,
 #' @export
 #' @examples
 #' CheckColumnTypes(
-#'   data.frame(string = c("A"), numeric = c(1)),
+#'   data.frame(string = c("A"), numeric = c(1), stringsAsFactors = FALSE),
 #'   list(string = "character", numeric = "double")
 #' )
 #'
