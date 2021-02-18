@@ -1,7 +1,7 @@
 #' Run rainfall-runoff part of a sub-basin model
 #'
 #' @inherit airGR::RunModel
-#' @param ...
+#' @param ... further arguments passed to or from other methods
 #'
 #' @export
 #'
