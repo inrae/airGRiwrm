@@ -1,4 +1,4 @@
-#' Title
+#' RunModel function for GRiwrmInputsModel object
 #'
 #' @param InputsModel object of class \emph{GRiwrmInputsModel}, see \code{[CreateInputsModel.GRiwrm]} for details.
 #' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.
@@ -9,22 +9,30 @@
 #' @export
 RunModel.GRiwrmInputsModel <- function(InputsModel, RunOptions, Param, ...) {
 
-  OutputsModel <- list()
+  # Run runoff model for each sub-basin
+  OutputsModel <- lapply(X = InputsModel, FUN = function(IM) {
+    RunModel.GR(InputsModel = IM,
+                RunOptions = RunOptions[[IM$id]],
+                Param = Param[[IM$id]])
+    })
   class(OutputsModel) <- append(class(OutputsModel), "GRiwrmOutputsModel")
 
-  for(IM in InputsModel) {
-    message("RunModel.GRiwrmInputsModel: Treating sub-basin ", IM$id, "...")
+  # Loop over sub-basin using SD model
+  for(id in getSD_Ids(InputsModel)) {
+    IM <- InputsModel[[id]]
+    message("RunModel.GRiwrmInputsModel: Treating sub-basin ", id, "...")
 
     # Update InputsModel$Qupstream with simulated upstream flows
     if(any(IM$UpstreamIsRunoff)) {
-      IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
+      IM <- UpdateQsimUpstream(IM, RunOptions[[id]]$IndPeriod_Run, OutputsModel)
     }
 
-    # Run the model for the sub-basin
-    OutputsModel[[IM$id]] <- RunModel(
+    # Run the SD model for the sub-basin
+    OutputsModel[[id]] <- RunModel.SD(
       InputsModel = IM,
-      RunOptions = RunOptions[[IM$id]],
-      Param = Param[[IM$id]]
+      RunOptions = RunOptions[[id]],
+      Param = Param[[id]],
+      OutputsModel[[id]]
     )
 
   }

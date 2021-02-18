@@ -23,7 +23,7 @@ DiagramGRiwrm <- function(griwrm, display = TRUE, orientation = "LR") {
   if(Sys.getenv("RSTUDIO") != "1") {
     return()
   }
-  if(!"DiagrammeR" %in% rownames(installed.packages())) {
+  if(!"DiagrammeR" %in% rownames(utils::installed.packages())) {
     stop("The 'DiagrammeR' package should be installed. Type: install.packages('DiagrammeR')")
   }
   g2 <- griwrm[!is.na(griwrm$down),]
