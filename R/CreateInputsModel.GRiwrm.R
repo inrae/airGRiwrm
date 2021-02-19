@@ -26,10 +26,12 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
 #' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
+#' @param griwrm [GRiwrm] object
+#'
 #' @return \emph{GRiwrmInputsModel} empty object
 CreateEmptyGRiwrmInputsModel <- function() {
   InputsModel <- list()
-  class(InputsModel) <- append(class(InputsModel), "GRiwrmInputsModel")
+  class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
   return(InputsModel)
 }
 
@@ -79,6 +81,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
 
   # Add Identifiers of connected nodes in order to be able to update them with simulated flows
   InputsModel$id <- id
+  InputsModel$down <- node$down
   if(length(UpstreamNodes) > 0) {
     InputsModel$UpstreamNodes <- UpstreamNodes
     InputsModel$UpstreamIsRunoff <- !is.na(griwrm$model[match(UpstreamNodes, griwrm$id)])

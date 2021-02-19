@@ -128,7 +128,7 @@ ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
 
 ```{r RunModel}
 OutputsModels <- RunModel(
-  InputsModel = InputsModel,
+  InputsModel,
   RunOptions = RunOptions,
   Param = ParamMichel
 )

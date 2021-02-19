@@ -89,7 +89,7 @@ Param_OL <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
 
 ```{r RunModel}
 OM_OL <- RunModel(
-  InputsModel = IM_OL,
+  IM_OL,
   RunOptions = RunOptions,
   Param = Param_OL
 )

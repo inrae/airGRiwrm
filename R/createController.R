@@ -39,10 +39,10 @@ createController <- function(ctrl.id, Y, U, FUN){
   if(exists(".isSupervisor") && .isSupervisor == "3FJKmDcJ4snDbVBg") {
     # Function called from Supervisor environment
     environment(ctrlr$FUN) <- supervisor
-    if(!is.null(supervisor$Controllers[[ctrl.id]])) {
+    if(!is.null(supervisor$controllers[[ctrl.id]])) {
       warning("Controller '", ctrl.id, "' already exists in the supervisor: overwriting")
     }
-    supervisor$Controllers[[ctrl.id]] <- ctrlr
+    supervisor$controllers[[ctrl.id]] <- ctrlr
     message("The controller has been added to the supervisor")
     invisible(ctrlr)
   } else {
