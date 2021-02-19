@@ -2,7 +2,7 @@
 #'
 #' @param InputsModel `GRiwrmInputsModel` The inputs of the basin model
 #'
-#' @return
+#' @return `Supervisor` object
 #' @export
 #'
 #' @examples
@@ -10,7 +10,10 @@
 #' nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 #' nodes$distance_downstream <- nodes$distance_downstream * 1000 # Conversion km -> m
 #' nodes$model <- "RunModel_GR4J"
-#' griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+#' griwrm <- GRiwrm(nodes,
+#'                  list(id = "gauge_id",
+#'                       down = "downstream_id",
+#'                       length = "distance_downstream"))
 #' BasinsObs <- Severn$BasinsObs
 #' DatesR <- BasinsObs[[1]]$DatesR
 #' PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
@@ -42,12 +45,6 @@ CreateSupervisor <- function(InputsModel) {
   # Copy functions to be used enclosed in the Supervisor environment
   e$createController <- createController
   environment(e$createController) <- e
-  e$getDataFromLocation <- getDataFromLocation
-  environment(getDataFromLocation) <- e
-  e$setDataToLocation <- setDataToLocation
-  environment(setDataToLocation) <- e
-  e$doSupervision <- doSupervision
-  environment(doSupervision) <- e
 
   # Time steps handling: these data are provided by RunModel
   # Index of the current time steps in the modelled time series between 1 and length(RunOptions$Ind_Period)

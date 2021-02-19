@@ -1,6 +1,6 @@
 #' RunModel function for GRiwrmInputsModel object
 #'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see \code{[CreateInputsModel.GRiwrm]} for details.
+#' @param x object of class `Supervisor`, see [CreateSupervisor] for details.
 #' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.
 #' @param Param list of parameter. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters.
 #' @param ... Mandatory for S3 method signature function compatibility with generic.

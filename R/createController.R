@@ -9,6 +9,7 @@
 #' for the previous time step and returns calculated `U`. These `U` will then be applied
 #' at their location for the current time step of calculation of the model.
 #'
+#' @param supervisor `Supervisor` object, see [CreateSupervisor]
 #' @param ctrl.id [character] id of the controller (see Details)
 #' @param Y [character] location of the controlled and/or measured variables in the model. See [createControl]
 #' @param U [character] location of the command variables in the model. See [createControl]
@@ -18,11 +19,13 @@
 #' @export
 #'
 #' @examples
+#' # First create a Supervisor from a model
+#' example("CreateSupervisor")
 #' # A controller which usually releases 0.1 m3/s and provides
 #' # extra release if the downstream flow is below 0.5 m3/s
 #' logicDamRelease <- function(Y) max(0.5 - Y[1], 0.1)
-#' createController("DamRelease", Y = c("54001"), U = c("54095"), FUN = logicDamRelease)
-createController <- function(ctrl.id, Y, U, FUN){
+#' createController(sv, "DamRelease", Y = c("54001"), U = c("54095"), FUN = logicDamRelease)
+createController <- function(supervisor, ctrl.id, Y, U, FUN){
 
   if(!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
 
@@ -36,19 +39,14 @@ createController <- function(ctrl.id, Y, U, FUN){
   )
   class(ctrlr) <- c("Controller", class(ctrlr))
 
-  if(exists(".isSupervisor") && .isSupervisor == "3FJKmDcJ4snDbVBg") {
-    # Function called from Supervisor environment
-    environment(ctrlr$FUN) <- supervisor
-    if(!is.null(supervisor$controllers[[ctrl.id]])) {
-      warning("Controller '", ctrl.id, "' already exists in the supervisor: overwriting")
-    }
-    supervisor$controllers[[ctrl.id]] <- ctrlr
-    message("The controller has been added to the supervisor")
-    invisible(ctrlr)
-  } else {
-    # Return the object to the user
-    return(ctrlr)
+  # Function called from Supervisor environment
+  environment(ctrlr$FUN) <- supervisor
+  if(!is.null(supervisor$controllers[[ctrl.id]])) {
+    warning("Controller '", ctrl.id, "' already exists in the supervisor: overwriting")
   }
+  supervisor$controllers[[ctrl.id]] <- ctrlr
+  message("The controller has been added to the supervisor")
+  invisible(ctrlr)
 }
 
 #' Create a list of controls for command (U) and controlled variables (Y)

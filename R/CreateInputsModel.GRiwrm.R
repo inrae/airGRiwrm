@@ -26,8 +26,6 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
 #' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
-#' @param griwrm [GRiwrm] object
-#'
 #' @return \emph{GRiwrmInputsModel} empty object
 CreateEmptyGRiwrmInputsModel <- function() {
   InputsModel <- list()
