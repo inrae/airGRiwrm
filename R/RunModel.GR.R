@@ -7,7 +7,6 @@
 #' @export
 #'
 RunModel.GR <- function(x, RunOptions, Param, ...) {
-  message("RunModel.GR")
 
   if (inherits(x, "SD")) {
     # Lag model take one parameter at the beginning of the vector

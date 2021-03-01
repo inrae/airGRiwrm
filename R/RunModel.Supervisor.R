@@ -14,32 +14,53 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   })
 
   # Run runoff model for each sub-basin
-  OutputsModel <- lapply(X = x$InputsModel, FUN = function(IM) {
+  x$OutputsModel <- lapply(X = x$InputsModel, FUN = function(IM) {
     RunModel.GR(IM,
                 RunOptions = RunOptions[[IM$id]],
                 Param = Param[[IM$id]])
     })
-  class(OutputsModel) <- append(class(OutputsModel), "GRiwrmOutputsModel")
+  class(x$OutputsModel) <- append(class(x$OutputsModel), "GRiwrmOutputsModel")
+  # Save Qsim for step by step simulation
+  Qsim <- lapply(x$OutputsModel, function(OM) {
+    OM$Qsim
+  })
+
+  # Adapt RunOptions to step by step simulation
+  for(id in getSD_Ids(x$InputsModel)) {
+    RunOptions[[id]]$IndPeriod_WarmUp <- 0L
+    RunOptions[[id]]$Outputs_Sim <- "StateEnd"
+  }
 
   # Loop over time steps
-  # Loop over sub-basin using SD model
-  for(id in getSD_Ids(x$InputsModel)) {
-    IM <- x$InputsModel[[id]]
-    message("RunModel.GRiwrmInputsModel: Treating sub-basin ", id, "...")
+  for(iTS in RunOptions[[1]]$IndPeriod_Run) {
+    # Run regulation on the whole basin for the current time step
+    x$ts.index <- iTS
+    x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
+    doSupervision(x)
 
-    # Update InputsModel$Qupstream with simulated upstream flows
-    if(any(IM$UpstreamIsRunoff)) {
-      IM <- UpdateQsimUpstream(IM, RunOptions[[id]]$IndPeriod_Run, OutputsModel)
+    # Loop over sub-basin using SD model
+    for(id in getSD_Ids(x$InputsModel)) {
+
+      # Update InputsModel$Qupstream with simulated upstream flows
+      for(i in which(x$InputsModel[[id]]$UpstreamIsRunoff)) {
+        x$InputsModel[[id]]$Qupstream[iTS, i] <-
+          x$OutputsModel[[x$InputsModel[[id]]$UpstreamNodes[i]]]$Qsim[iTS - x$ts.index0]
+      }
+
+      # Run the SD model for the sub-basin and one time step
+      RunOptions[[id]]$IndPeriod_Run <- iTS
+      RunOptions[[id]]$IniStates <- unlist(x$OutputsModel[[id]]$StateEnd)
+      x$OutputsModel[[id]] <- RunModel.SD(
+        x$InputsModel[[id]],
+        RunOptions = RunOptions[[id]],
+        Param = Param[[id]],
+        QsimDown = Qsim[[id]][iTS - x$ts.index0]
+      )
+      Qsim[[id]][iTS - x$ts.index0] <- x$OutputsModel[[id]]$Qsim
     }
-
-    # Run the SD model for the sub-basin
-    OutputsModel[[id]] <- RunModel.SD(
-      IM,
-      RunOptions = RunOptions[[id]],
-      Param = Param[[id]],
-      OutputsModel[[id]]
-    )
-
   }
-  return(OutputsModel)
+  for(id in getSD_Ids(x$InputsModel)) {
+    x$OutputsModel[[id]]$Qsim <- Qsim[[id]]
+  }
+  return(x$OutputsModel)
 }

@@ -6,6 +6,5 @@
 #' @return Either a [list] of OutputsModel object (for GRiwrmInputsModel) or an OutputsModel object (for InputsModel)
 #' @export
 RunModel <- function(x, ...) {
-  message("RunModel")
   UseMethod("RunModel", x)
 }

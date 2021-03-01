@@ -24,6 +24,7 @@
 #' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 #' sv <- CreateSupervisor(InputsModel)
 CreateSupervisor <- function(InputsModel) {
+  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
   # Create Supervisor environment in the parent of GlobalEnv
   e <- new.env(parent = parent.env(globalenv()))
   class(e) <- c("Supervisor", class(e))

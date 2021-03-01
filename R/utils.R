@@ -53,7 +53,6 @@ setDataToLocation <- function(control, supervisor) {
 #' @return [NULL]
 doSupervision <- function(supervisor) {
   for (id in names(supervisor$controllers)) {
-    ctrlr <- supervisor$controllers[[id]]
     # Read Y from locations in the model
     supervisor$controllers[[id]]$Y$v <-
       sapply(supervisor$controllers[[id]]$Y$loc, getDataFromLocation, supervisor = supervisor)
@@ -63,5 +62,21 @@ doSupervision <- function(supervisor) {
     # Write U to locations in the model
     sapply(supervisor$controllers[[id]]$U, setDataToLocation, supervisor = supervisor)
   }
+  return()
+}
+
+#' Check the parameters of RunModel methods
+#'
+#' Stop the execution if an error is detected.
+#'
+#' @param RunOptions a `GRiwrmRunOptions` object (See [CreateRunOptions.GRiwrmInputsModel])
+#' @param Param a [list] of [numeric] containing model parameters of each node of the network
+#'
+#' @return [NULL]
+#'
+checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
+  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmRunoptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if(!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if(!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
   return()
 }
