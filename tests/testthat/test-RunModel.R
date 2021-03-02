@@ -17,8 +17,9 @@ test_that("RunModelSupervisor with no regulation should returns same results as 
   Qobs <- cbind(sapply(Severn$BasinsObs, function(x) {x$discharge_spec}))
   InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
   # RunOptions
+  nTS <- 365
   IndPeriod_Run <- seq(
-    length(InputsModel[[1]]$DatesR) - 365,
+    length(InputsModel[[1]]$DatesR) - nTS + 1,
     length(InputsModel[[1]]$DatesR)
   )
   IndPeriod_WarmUp = seq(IndPeriod_Run[1]-366,IndPeriod_Run[1]-1)

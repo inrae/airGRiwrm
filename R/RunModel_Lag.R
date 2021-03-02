@@ -75,6 +75,7 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
       rep(0, floor(PT[x] + 1))
     })
   }
+  #message("Initstates: ",paste(IniStates, collapse = ", "))
 
   for (upstream_basin in seq_len(NbUpBasins)) {
     Qupstream <- InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin]
@@ -85,6 +86,9 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
     Qupstream1 <- c(IniStates[[upstream_basin]][-length(IniStates[[upstream_basin]])], Qupstream[1:(LengthTs - floor(PT[upstream_basin]))])
     Qupstream2 <- IniStates[[upstream_basin]]
     if(LengthTs - floor(PT[upstream_basin]) - 1 > 0) Qupstream2 <- c(Qupstream2, Qupstream[1:(LengthTs - floor(PT[upstream_basin]) - 1)])
+    #message("Qupstream1: ", paste(Qupstream1, collapse = ", "))
+    #message("Qupstream2: ", paste(Qupstream2, collapse = ", "))
+
     OutputsModel$Qsim <- OutputsModel$Qsim +
                          Qupstream1 * HUTRANS[1, upstream_basin] +
                          Qupstream2 * HUTRANS[2, upstream_basin]
@@ -96,12 +100,19 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
   }
   # Convert back Qsim to mm
   OutputsModel$Qsim <- OutputsModel$Qsim / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+  #message("Qsim: ",paste(OutputsModel$Qsim, collapse = ", "))
 
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
     OutputsModel$StateEnd$SD <- lapply(seq(NbUpBasins), function(x) {
       LengthTs <- tail(RunOptions$IndPeriod_Run,1)
-      InputsModel$Qupstream[(LengthTs - floor(PT[x])):LengthTs, x]
+      Qupstream <- InputsModel$Qupstream[(LengthTs - floor(PT[x])):LengthTs, x]
+      if (!is.na(InputsModel$BasinAreas[x])) {
+        # Upstream flow with area needs to be converted to m3 by time step
+        Qupstream <- Qupstream * InputsModel$BasinAreas[x] * 1e3
+      }
+      return(Qupstream)
     })
+    #message("StateEnd: ",paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }
 
   return(OutputsModel)
