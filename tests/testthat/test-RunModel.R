@@ -66,9 +66,9 @@ test_that("RunModelSupervisor with two regulations that cancel each other out sh
   InputsModel <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
   sv <- CreateSupervisor(InputsModel)
   # Function to withdraw half of the measured flow
-  fWithdrawal <- function(y) { message("fWithdrawal(", y, ")"); -y/2 }
+  fWithdrawal <- function(y) { -y/2 }
   # Function to release half of the the measured flow
-  fRelease <- function(y) { message("fWithdrawal(", y, ")"); y/2 }
+  fRelease <- function(y) { y/2 }
   # Controller that withdraw half of the flow measured at node "54002" at location "R1"
   createController(sv, "Withdrawal", Y = c("54002"), U = c("R1"), FUN = fWithdrawal)
   # Controller that release half of the flow measured at node "54002" at location "R2"

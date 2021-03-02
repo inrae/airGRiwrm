@@ -55,12 +55,10 @@ getDataFromLocation <- function(loc, sv) {
 #'
 #' @return [NULL]
 setDataToLocation <- function(control, sv) {
-  message("setDataToLocation[", control[1], "] <- ", control[2])
   node <- sv$griwrm$down[sv$griwrm$id == control[1]]
   # ! Qupstream contains warm up period and run period => the index is shifted
   sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, control[1]] <-
     as.numeric(control[2])
-  message("setDataToLocation[", control[1], "] <- ", control[2])
 }
 
 

@@ -44,7 +44,6 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     # Regulation occurs from second time step
     if(iTS > RunOptions[[1]]$IndPeriod_Run[1]) {
       doSupervision(x)
-      message("Supervision done")
     }
 
     # Loop over sub-basin using SD model
