@@ -87,6 +87,7 @@ doSupervision <- function(supervisor) {
 #'
 #' Stop the execution if an error is detected.
 #'
+#' @param InputsModel a `GRiwrmInputsModel` object (See [CreateInputsModel.GRiwrm])
 #' @param RunOptions a `GRiwrmRunOptions` object (See [CreateRunOptions.GRiwrmInputsModel])
 #' @param Param a [list] of [numeric] containing model parameters of each node of the network
 #'

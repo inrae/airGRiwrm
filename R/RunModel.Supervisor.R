@@ -63,7 +63,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
       Qsim[[id]][x$ts.index] <- x$OutputsModel[[id]]$Qsim
       # Routing Qsim to the downstream node
       if(!is.na(x$InputsModel[[id]]$down)) {
-        x$InputsModel[[x$InputsModel[[id]]$down]]$Qupstream[iTS, i] <-
+        x$InputsModel[[x$InputsModel[[id]]$down]]$Qupstream[iTS, id] <-
           x$OutputsModel[[id]]$Qsim
       }
     }

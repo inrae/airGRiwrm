@@ -101,8 +101,8 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
 
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
     OutputsModel$StateEnd$SD <- lapply(seq(NbUpBasins), function(x) {
-      LengthTs <- tail(RunOptions$IndPeriod_Run,1)
-      InputsModel$Qupstream[(LengthTs - floor(PT[x])):LengthTs, x]
+      lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
+      InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
     })
     #message("StateEnd: ",paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }
