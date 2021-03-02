@@ -9,9 +9,7 @@
 #' @export
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
-  x$ts.index0 <- sapply(RunOptions, function(x) {
-    x$IndPeriod_Run[1] - 1
-  })
+  x$ts.index0 <- RunOptions[[1]]$IndPeriod_Run[1] - 1
 
   # Run runoff model for each sub-basin
   x$OutputsModel <- lapply(X = x$InputsModel, FUN = function(IM) {
@@ -20,6 +18,13 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
                 Param = Param[[IM$id]])
     })
   class(x$OutputsModel) <- append(class(x$OutputsModel), "GRiwrmOutputsModel")
+  # Copy simulated pure runoff flows (no SD nodes) to Qupstream in downstream SD nodes
+  for(id in getNoSD_Ids(x$InputsModel)) {
+    downId <- x$InputsModel[[id]]$down
+    x$InputsModel[[downId]]$Qupstream[RunOptions[[downId]]$IndPeriod_Run, id] <-
+      x$OutputsModel[[id]]$Qsim
+  }
+
   # Save Qsim for step by step simulation
   Qsim <- lapply(x$OutputsModel, function(OM) {
     OM$Qsim
@@ -34,18 +39,16 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   # Loop over time steps
   for(iTS in RunOptions[[1]]$IndPeriod_Run) {
     # Run regulation on the whole basin for the current time step
-    x$ts.index <- iTS
+    x$ts.index <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
-    doSupervision(x)
+    # Regulation occurs from second time step
+    if(iTS > RunOptions[[1]]$IndPeriod_Run[1]) {
+      doSupervision(x)
+      message("Supervision done")
+    }
 
     # Loop over sub-basin using SD model
     for(id in getSD_Ids(x$InputsModel)) {
-
-      # Update InputsModel$Qupstream with simulated upstream flows
-      for(i in which(x$InputsModel[[id]]$UpstreamIsRunoff)) {
-        x$InputsModel[[id]]$Qupstream[iTS, i] <-
-          x$OutputsModel[[x$InputsModel[[id]]$UpstreamNodes[i]]]$Qsim[iTS - x$ts.index0]
-      }
 
       # Run the SD model for the sub-basin and one time step
       RunOptions[[id]]$IndPeriod_Run <- iTS
@@ -54,9 +57,15 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
         x$InputsModel[[id]],
         RunOptions = RunOptions[[id]],
         Param = Param[[id]],
-        QsimDown = Qsim[[id]][iTS - x$ts.index0]
+        QsimDown = Qsim[[id]][x$ts.index]
       )
-      Qsim[[id]][iTS - x$ts.index0] <- x$OutputsModel[[id]]$Qsim
+      # Storing Qsim in the data.frame Qsim
+      Qsim[[id]][x$ts.index] <- x$OutputsModel[[id]]$Qsim
+      # Routing Qsim to the downstream node
+      if(!is.na(x$InputsModel[[id]]$down)) {
+        x$InputsModel[[x$InputsModel[[id]]$down]]$Qupstream[iTS, i] <-
+          x$OutputsModel[[id]]$Qsim
+      }
     }
   }
   for(id in getSD_Ids(x$InputsModel)) {

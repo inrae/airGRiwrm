@@ -78,20 +78,17 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
   #message("Initstates: ",paste(IniStates, collapse = ", "))
 
   for (upstream_basin in seq_len(NbUpBasins)) {
-    Qupstream <- InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin]
+    Qupstream <- c(IniStates[[upstream_basin]],
+                   InputsModel$Qupstream[RunOptions$IndPeriod_Run, upstream_basin])
     if (!is.na(InputsModel$BasinAreas[upstream_basin])) {
       # Upstream flow with area needs to be converted to m3 by time step
       Qupstream <- Qupstream * InputsModel$BasinAreas[upstream_basin] * 1e3
     }
-    Qupstream1 <- c(IniStates[[upstream_basin]][-length(IniStates[[upstream_basin]])], Qupstream[1:(LengthTs - floor(PT[upstream_basin]))])
-    Qupstream2 <- IniStates[[upstream_basin]]
-    if(LengthTs - floor(PT[upstream_basin]) - 1 > 0) Qupstream2 <- c(Qupstream2, Qupstream[1:(LengthTs - floor(PT[upstream_basin]) - 1)])
-    #message("Qupstream1: ", paste(Qupstream1, collapse = ", "))
-    #message("Qupstream2: ", paste(Qupstream2, collapse = ", "))
-
-    OutputsModel$Qsim <- OutputsModel$Qsim +
-                         Qupstream1 * HUTRANS[1, upstream_basin] +
-                         Qupstream2 * HUTRANS[2, upstream_basin]
+    #message("Qupstream[", upstream_basin, "]: ", paste(Qupstream, collapse = ", "))
+    OutputsModel$Qsim <-
+      OutputsModel$Qsim +
+      Qupstream[2:(1 + LengthTs)] * HUTRANS[1, upstream_basin] +
+      Qupstream[1:LengthTs] * HUTRANS[2, upstream_basin]
   }
   # Warning for negative flows
   if (any(OutputsModel$Qsim < 0)) {
@@ -105,12 +102,7 @@ RunModel_Lag <- function(InputsModel, RunOptions, Param) {
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
     OutputsModel$StateEnd$SD <- lapply(seq(NbUpBasins), function(x) {
       LengthTs <- tail(RunOptions$IndPeriod_Run,1)
-      Qupstream <- InputsModel$Qupstream[(LengthTs - floor(PT[x])):LengthTs, x]
-      if (!is.na(InputsModel$BasinAreas[x])) {
-        # Upstream flow with area needs to be converted to m3 by time step
-        Qupstream <- Qupstream * InputsModel$BasinAreas[x] * 1e3
-      }
-      return(Qupstream)
+      InputsModel$Qupstream[(LengthTs - floor(PT[x])):LengthTs, x]
     })
     #message("StateEnd: ",paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }

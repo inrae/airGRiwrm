@@ -11,8 +11,8 @@
 #' @export
 CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
-  InputsModel <- CreateEmptyGRiwrmInputsModel()
-  Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
+  InputsModel <- CreateEmptyGRiwrmInputsModel(x)
+  Qobs[is.na(Qobs)] <- -99 # airGR::CreateInputsModel doesn't accept NA values
 
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
@@ -27,9 +27,10 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 #' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
 #' @return \emph{GRiwrmInputsModel} empty object
-CreateEmptyGRiwrmInputsModel <- function() {
+CreateEmptyGRiwrmInputsModel <- function(griwrm) {
   InputsModel <- list()
   class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
+  attr(InputsModel, "GRiwrm") <- griwrm
   return(InputsModel)
 }
 

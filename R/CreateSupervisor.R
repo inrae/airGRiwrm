@@ -25,7 +25,7 @@
 #' sv <- CreateSupervisor(InputsModel)
 CreateSupervisor <- function(InputsModel) {
   if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
-  # Create Supervisor environment in the parent of GlobalEnv
+  # Create Supervisor environment from the parent of GlobalEnv
   e <- new.env(parent = parent.env(globalenv()))
   class(e) <- c("Supervisor", class(e))
 
@@ -35,8 +35,9 @@ CreateSupervisor <- function(InputsModel) {
   # Add pointer to itself in order to assign variable from function environment
   e$supervisor <- e
 
-  # Copy of the InputsModel
+  # Copy of InputsModel, griwrm and prepare OutputsModel
   e$InputsModel <- InputsModel
+  e$griwrm <- attr(InputsModel, "GRiwrm")
   e$OutputsModel <- list()
 
   # Controller list
