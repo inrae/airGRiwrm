@@ -23,15 +23,15 @@ library(airGRiwrm)
 
 
 
-We can see in vignette 'V02_Calibration_SD_model' that calibration result for the discharge simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') is not satisfactory. These upper basins are heavily influenced by impoundments and inter-basin transfers [@higgs_hydrological_1988].
+We can see in vignette 'V02_Calibration_SD_model' that calibration result for the flow simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') is not satisfactory. These upper basins are heavily influenced by impoundments and inter-basin transfers [@higgs_hydrological_1988].
 
-To cope with this influenced flow, we won't try to simulate it with an hydrological model and we will directly inject this discharge measurement in the model.
+To cope with this influenced flow, we won't try to simulate it with a hydrological model and we will directly inject in the model the observed flow at these nodes.
 
 ## Convert a gauging station into a release spot
 
 ### Modifying the GRiwrm object
 
-The production method of the `GRiwrm` object is detailed in the vignette "01_First_network" of the package.
+The production method of the `GRiwrm` object is detailed in the vignette "01_First_network" of the package (and also in the documentation, type `?GRiwrm` to access to it).
 
 Run `vignette("01_Structure_SD_model", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
 
@@ -107,5 +107,13 @@ htmltools::tagList(lapply(
   }
 ))
 ```
+
+The resulting flow of each node in m3/s is directly available and can be plotted with these commands:
+
+```{r}
+Qm3s <- attr(OM_OL, "Qm3s")
+plot(Qm3s[1:100,])
+```
+
 
 # References

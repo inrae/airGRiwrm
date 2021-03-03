@@ -102,12 +102,12 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
 #' Create a data.frame with simulated flows at each nodes of the [GRiwrm] object
 #'
 #' @details
-#' This function can only be called inside [RunModel.GRiwrmInputsmodel] or [RunModel.Supervisor]
+#' This function can only be called inside [RunModel.GRiwrmInputsModel] or [RunModel.Supervisor]
 #' because it needs a `GRiwrmInputsModel` object internally modified by these functions
 #' (`Qupstream` updated with simulated flows).
 #'
 #' @param InputsModel a `GRiwrmInputsModel` object created by [CreateInputsModel.GRiwrm]
-#' @param OutputsModel a `GRiwrmOutputsModel` object created by [RunModel.GRiwrmInputsmodel] or [RunModel.Supervisor]
+#' @param OutputsModel a `GRiwrmOutputsModel` object created by [RunModel.GRiwrmInputsModel] or [RunModel.Supervisor]
 #' @param IndPeriod_Run an [integer] vector (See [airGR::CreateRunOptions])
 #'
 #' @return a [data.frame] containing the simulated flows (in m3/time step) structured with the following columns:
@@ -147,5 +147,6 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   names(lQsim) <- c(upperNodes, downNode)
   dfQsim <- cbind(data.frame(DatesR = as.POSIXct(InputsModel[[1]]$DatesR[IndPeriod_Run])),
                   do.call(cbind,lQsim))
+  class(dfQsim) <- c("Qm3s", class(dfQsim)) # For S3 methods
   return(dfQsim)
 }
