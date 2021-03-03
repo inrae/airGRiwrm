@@ -97,3 +97,55 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
   if(!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
   return()
 }
+
+
+#' Create a data.frame with simulated flows at each nodes of the [GRiwrm] object
+#'
+#' @details
+#' This function can only be called inside [RunModel.GRiwrmInputsmodel] or [RunModel.Supervisor]
+#' because it needs a `GRiwrmInputsModel` object internally modified by these functions
+#' (`Qupstream` updated with simulated flows).
+#'
+#' @param InputsModel a `GRiwrmInputsModel` object created by [CreateInputsModel.GRiwrm]
+#' @param OutputsModel a `GRiwrmOutputsModel` object created by [RunModel.GRiwrmInputsmodel] or [RunModel.Supervisor]
+#' @param IndPeriod_Run an [integer] vector (See [airGR::CreateRunOptions])
+#'
+#' @return a [data.frame] containing the simulated flows (in m3/time step) structured with the following columns:
+#' - 'DatesR' containing the timestamps of the time series
+#' - one column by node with the simulated flows
+#'
+OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
+  griwrm <- attr(InputsModel, "GRiwrm")
+  # Get simulated flow for each node
+  # Flow for each node is available in InputsModel$Qupstream except for the downstream node
+  upperNodes <- griwrm$id[!is.na(griwrm$down)]
+  lQsim <- lapply(
+    upperNodes,
+    function(x, griwrm, IndPeriod_Run) {
+      node <- griwrm$down[griwrm$id == x]
+      InputsModel[[node]]$Qupstream[IndPeriod_Run, x]
+    },
+    griwrm = griwrm, IndPeriod_Run = IndPeriod_Run
+  )
+  names(lQsim) <- upperNodes
+  # Flow of the downstream node is only available in OutputsModel[[node]]$Qsim
+  downNode <- names(InputsModel)[length(InputsModel)]
+  lQsim[[downNode]] <- OutputsModel[[downNode]]$Qsim
+
+  # Conversion to m3/s
+  lQsim <- lapply(
+    names(lQsim),
+    function(x) {
+      i <- which(griwrm$id == x)
+      if(is.na(griwrm$area[i])) { # m3/time step => m3/s
+        return(lQsim[[x]] / attr(InputsModel, "TimeStep"))
+      } else { # mm/time step => m3/s
+        return(lQsim[[x]] * griwrm$area[i] * 1E3 / attr(InputsModel, "TimeStep"))
+      }
+    }
+  )
+  names(lQsim) <- c(upperNodes, downNode)
+  dfQsim <- cbind(data.frame(DatesR = as.POSIXct(InputsModel[[1]]$DatesR[IndPeriod_Run])),
+                  do.call(cbind,lQsim))
+  return(dfQsim)
+}

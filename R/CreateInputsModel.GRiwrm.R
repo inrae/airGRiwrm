@@ -20,6 +20,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
       id, x, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
     )
   }
+  attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
   return(InputsModel)
 }
 
@@ -91,4 +92,29 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
   InputsModel$FUN_MOD <- FUN_MOD
 
   return(InputsModel)
+}
+
+
+#' Check time steps of the model of all the nodes and return the time step in seconds
+#'
+#' This function is called inside [CreateInputsModel.GRiwrm] for defining the time step of the big model.
+#'
+#' @param InputsModel a `GRiwrmInputsModel`
+#'
+#' @return A [numeric] representing the time step in seconds
+#'
+getModelTimeStep <- function(InputsModel) {
+  TS <- sapply(InputsModel, function(x) {
+    if (inherits(x, "hourly")) {
+      TimeStep <- 60 * 60
+    } else if (inherits(x, "daily")) {
+      TimeStep <- 60 * 60 * 24
+    } else {
+      stop("All models should be at hourly or daily time step")
+    }
+  })
+  if(length(unique(TS)) != 1) {
+    stop("Time steps of the model of all nodes should be identical")
+  }
+  return(unique(TS))
 }

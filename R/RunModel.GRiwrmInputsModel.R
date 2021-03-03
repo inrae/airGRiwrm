@@ -14,21 +14,21 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
   OutputsModel <- list()
   class(OutputsModel) <- c("GRiwrmOutputsModel", class(OutputsModel))
 
-  for(IM in x) {
-    message("RunModel.GRiwrmInputsModel: Treating sub-basin ", IM$id, "...")
+  for(id in names(x)) {
+    message("RunModel.GRiwrmInputsModel: Treating sub-basin ", x[[id]]$id, "...")
 
-    # Update x$Qupstream with simulated upstream flows
-    if(any(IM$UpstreamIsRunoff)) {
-      IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
+    # Update x[[id]]$Qupstream with simulated upstream flows
+    if(any(x[[id]]$UpstreamIsRunoff)) {
+      x[[id]] <- UpdateQsimUpstream(x[[id]], RunOptions[[id]]$IndPeriod_Run, OutputsModel)
     }
 
     # Run the model for the sub-basin
-    OutputsModel[[IM$id]] <- RunModel.InputsModel(
-      IM,
-      RunOptions = RunOptions[[IM$id]],
-      Param = Param[[IM$id]]
+    OutputsModel[[id]] <- RunModel.InputsModel(
+      x[[id]],
+      RunOptions = RunOptions[[id]],
+      Param = Param[[id]]
     )
-
   }
+  attr(OutputsModel, "Qm3s") <- OutputsModelQsim(x, OutputsModel, RunOptions[[1]]$IndPeriod_Run)
   return(OutputsModel)
 }

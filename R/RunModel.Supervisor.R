@@ -70,5 +70,6 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   for(id in getSD_Ids(x$InputsModel)) {
     x$OutputsModel[[id]]$Qsim <- Qsim[[id]]
   }
+  attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel)
   return(x$OutputsModel)
 }
