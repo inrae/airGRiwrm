@@ -9,7 +9,18 @@
 #' @export
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
+  # Time steps handling
   x$ts.index0 <- RunOptions[[1]]$IndPeriod_Run[1] - 1
+  ts.start <- RunOptions[[1]]$IndPeriod_Run[1]
+  ts.end <- RunOptions[[1]]$IndPeriod_Run[length(RunOptions[[1]]$IndPeriod_Run)]
+  superTSstarts <- seq(ts.start, ts.end, x$.TimeStep)
+  lSuperTS <- lapply(
+    superTSstarts, function(x, TS, xMax) {
+      seq(x, min(x + TS - 1, xMax))
+    },
+    TS = x$.TimeStep,
+    xMax = ts.end
+  )
 
   # Run runoff model for each sub-basin
   x$OutputsModel <- lapply(X = x$InputsModel, FUN = function(IM) {
@@ -36,19 +47,18 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     RunOptions[[id]]$Outputs_Sim <- "StateEnd"
   }
 
-  # Loop over time steps
-  for(iTS in RunOptions[[1]]$IndPeriod_Run) {
+  # Loop over time steps with a step equal to the supervision time step
+  for(iTS in lSuperTS) {
     # Run regulation on the whole basin for the current time step
     x$ts.index <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
     # Regulation occurs from second time step
-    if(iTS > RunOptions[[1]]$IndPeriod_Run[1]) {
+    if(iTS[1] > ts.start) {
       doSupervision(x)
     }
 
     # Loop over sub-basin using SD model
     for(id in getSD_Ids(x$InputsModel)) {
-
       # Run the SD model for the sub-basin and one time step
       RunOptions[[id]]$IndPeriod_Run <- iTS
       RunOptions[[id]]$IniStates <- unlist(x$OutputsModel[[id]]$StateEnd)
@@ -70,6 +80,6 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   for(id in getSD_Ids(x$InputsModel)) {
     x$OutputsModel[[id]]$Qsim <- Qsim[[id]]
   }
-  attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel)
+  attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel, RunOptions[[1]]$IndPeriod_Run)
   return(x$OutputsModel)
 }

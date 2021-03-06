@@ -1,6 +1,7 @@
 #' Create a Supervisor for handling regulation in a model
 #'
 #' @param InputsModel `GRiwrmInputsModel` The inputs of the basin model
+#' @param TimeStep [integer] The number of time steps between each supervision
 #'
 #' @return `Supervisor` object
 #' @export
@@ -23,8 +24,12 @@
 #' PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 #' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 #' sv <- CreateSupervisor(InputsModel)
-CreateSupervisor <- function(InputsModel) {
-  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
+CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
+  if(!inherits(InputsModel, "GRiwrmInputsModel")) {
+    stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
+  }
+  if(!is.integer(TimeStep)) stop("`TimeStep` parameter must be an integer")
+
   # Create Supervisor environment from the parent of GlobalEnv
   e <- new.env(parent = parent.env(globalenv()))
   class(e) <- c("Supervisor", class(e))
@@ -39,14 +44,15 @@ CreateSupervisor <- function(InputsModel) {
   e$InputsModel <- InputsModel
   e$griwrm <- attr(InputsModel, "GRiwrm")
   e$OutputsModel <- list()
+  e$.TimeStep <- TimeStep
 
   # Controller list
   e$controllers <- list()
   class(e$controllers) <- c("Controllers", class(e$controllers))
 
   # Copy functions to be used enclosed in the Supervisor environment
-  e$createController <- createController
-  environment(e$createController) <- e
+  e$CreateController <- CreateController
+  environment(e$CreateController) <- e
 
   # Time steps handling: these data are provided by RunModel
   # Index of the current time steps in the modelled time series between 1 and length(RunOptions$Ind_Period)

@@ -1,4 +1,4 @@
-#' Create a controller
+#' Create and add a controller in a supervisor
 #'
 #' @details
 #' `ctrl.id` parameter is a unique id for finding the controller in the supervisor.
@@ -24,8 +24,8 @@
 #' # A controller which usually releases 0.1 m3/s and provides
 #' # extra release if the downstream flow is below 0.5 m3/s
 #' logicDamRelease <- function(Y) max(0.5 - Y[1], 0.1)
-#' createController(sv, "DamRelease", Y = c("54001"), U = c("54095"), FUN = logicDamRelease)
-createController <- function(supervisor, ctrl.id, Y, U, FUN){
+#' CreateController(sv, "DamRelease", Y = c("54001"), U = c("54095"), FUN = logicDamRelease)
+CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 
   if(!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
 
@@ -34,7 +34,9 @@ createController <- function(supervisor, ctrl.id, Y, U, FUN){
   ctrlr <- list(
     id = ctrl.id,
     U = createControl(U),
+    Unames = U,
     Y = createControl(Y),
+    Ynames = Y,
     FUN = FUN
   )
   class(ctrlr) <- c("Controller", class(ctrlr))
@@ -53,9 +55,8 @@ createController <- function(supervisor, ctrl.id, Y, U, FUN){
 #'
 #' @param locations vector of [character] containing the location of the variable in the model (see details)
 #'
-#' @return [data.frame] of two columns:
-#' - 'loc' [character]: the locations of the variables
-#' - 'v' [numeric]: the value of the variable for the current time step which is [NA] at its creation
+#' @return a [matrix] with each column is the location of the variables and the rows
+#' the values of the variable for the current time steps (empty by default)
 #' @export
 #'
 #' @examples
@@ -65,5 +66,6 @@ createControl <- function(locations) {
   if(!is.character(locations)) {
     stop("Parameter `locations` should be character")
   }
-  data.frame(loc = locations, v = rep(NA, length(locations)))
+  m <- matrix(NA, ncol = length(locations), nrow = 0)
+  return(m)
 }

@@ -50,15 +50,16 @@ getDataFromLocation <- function(loc, sv) {
 
 #' Write data to model input for the current time step
 #'
-#' @param control [vector] A row of the `U` [data.frame] from a `Controller`
+#' @param ctrlr a `Controller` object (See [CreateController])
 #' @param sv `Supervisor` (See [CreateSupervisor])
 #'
 #' @return [NULL]
-setDataToLocation <- function(control, sv) {
-  node <- sv$griwrm$down[sv$griwrm$id == control[1]]
-  # ! Qupstream contains warm up period and run period => the index is shifted
-  sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, control[1]] <-
-    as.numeric(control[2])
+setDataToLocation <- function(ctrlr, sv) {
+  l <- lapply(seq(length(ctrlr$Unames)), function(i) {
+    node <- sv$griwrm$down[sv$griwrm$id == ctrlr$Unames[i]]
+    # ! Qupstream contains warm up period and run period => the index is shifted
+    sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, ctrlr$Unames[i]] <- ctrlr$U[,i]
+  })
 }
 
 
@@ -66,20 +67,21 @@ setDataToLocation <- function(control, sv) {
 #'
 #' @param supervisor `Supervisor` (See [CreateSupervisor])
 #'
-#' @return [NULL]
 doSupervision <- function(supervisor) {
   for (id in names(supervisor$controllers)) {
     # Read Y from locations in the model
-    supervisor$controllers[[id]]$Y$v <-
-      sapply(supervisor$controllers[[id]]$Y$loc, getDataFromLocation, sv = supervisor)
+    supervisor$controllers[[id]]$Y <- do.call(
+      cbind,
+      lapply(supervisor$controllers[[id]]$Ynames, getDataFromLocation, sv = supervisor)
+    )
     # Run logic
-    supervisor$controllers[[id]]$U$v <-
-      sapply(supervisor$controllers[[id]]$Y$v, supervisor$controllers[[id]]$FUN)
+    supervisor$controllers[[id]]$U <-
+      supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
     # Write U to locations in the model
-    apply(supervisor$controllers[[id]]$U, 1, setDataToLocation, sv = supervisor)
+    setDataToLocation(supervisor$controllers[[id]], sv = supervisor)
   }
-  return()
 }
+
 
 #' Check the parameters of RunModel methods
 #'
@@ -89,13 +91,10 @@ doSupervision <- function(supervisor) {
 #' @param RunOptions a `GRiwrmRunOptions` object (See [CreateRunOptions.GRiwrmInputsModel])
 #' @param Param a [list] of [numeric] containing model parameters of each node of the network
 #'
-#' @return [NULL]
-#'
 checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
   if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmRunoptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
   if(!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
   if(!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
-  return()
 }
 
 
