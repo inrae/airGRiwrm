@@ -57,10 +57,15 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   # Time steps handling: these data are provided by RunModel
   # Index of the current time steps in the modelled time series between 1 and length(RunOptions$Ind_Period)
   e$ts.index <- NA
+  # Index of the previous time steps in the modelled time series
+  e$ts.previous <- NA
   # Index of the time step preceding RunOptions$Ind_Period
   e$ts.index0 <- NA
   # Date/Time of the current time step (For controller calculations based on date)
   e$ts.date <- NULL
+
+  # Current Controller ID (Updated in doSupervision)
+  e$controller.id <- NULL
 
   return(e)
 }

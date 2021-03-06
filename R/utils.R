@@ -43,7 +43,8 @@ getDataFromLocation <- function(loc, sv) {
   if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
     stop("Reaching output of other controller is not implemented yet")
   } else {
-    sv$InputsModel[[sv$griwrm$down[sv$griwrm$id == loc]]]$Qupstream[sv$ts.index0 + sv$ts.index - 1, loc]
+    node <- sv$griwrm$down[sv$griwrm$id == loc]
+    sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.previous, loc]
   }
 }
 
@@ -69,6 +70,7 @@ setDataToLocation <- function(ctrlr, sv) {
 #'
 doSupervision <- function(supervisor) {
   for (id in names(supervisor$controllers)) {
+    supervisor$controller.id <- id
     # Read Y from locations in the model
     supervisor$controllers[[id]]$Y <- do.call(
       cbind,

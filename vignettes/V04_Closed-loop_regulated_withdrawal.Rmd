@@ -1,0 +1,334 @@
+---
+title: "Example of a regulated withdrawal (closed-loop control)"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Example of a regulated withdrawal (closed-loop control)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: airGRiwrm.bib
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(airGRiwrm)
+```
+
+# Presentation of the case study
+
+Starting from the network and the calibration set in the vignette "V03_Open-loop_influenced_flow", we add 2 intake points for irrigation.
+
+Vignettes "V01_Structure_SD_model.Rmd" and  "V03_Open-loop_influenced_flow" should be run in order to load input data and parameters of the model:
+
+```{r load_cache}
+load("_cache/V01b.RData")
+load("_cache/V02.RData")
+load("_cache/V03.RData")
+```
+
+## Network configuration
+
+The intake points are located: 
+
+- on the Severn at 35 km upstream Bewdley (Gauging station '54001');
+- on the Severn at 10 km upstream Saxons Lode (Gauging station '54032').
+
+We have to add this 2 nodes in the `GRiwrm` object that describes the network:
+
+```{r griwrm}
+griwrmV04 <- rbind(
+  griwrmV03,
+  data.frame(
+    id = c("Irrigation1", "Irrigation2"),
+    down = c("54001", "54032"),
+    length = c(35000, 10000),
+    model = NA,
+    area = NA
+  )
+)
+DiagramGRiwrm(griwrmV04)
+```
+Nodes in red color are direct injection points (positive or negative flow) in the model, green nodes simulate either sub-basin rainfall-runoff and routing of upstream node flows and grey nodes simulate sub-basin rainfall-runoff flows only.
+
+It's important to notice that even if the points "Irrigation1" and "Irrigation2" are located on Severn such as gauging stations "54095", "54001", "54032", there respective nodes are not represented on the same path in the model. Consequently, with this network configuration, it is not possible to know the value of the flow in the Severn river at "Irrigation1" or "Irrigation2" nodes. These values are only available in nodes "54095", "54001", "54032".
+
+## Irrigation objectives and flow demand at intakes
+
+Irrigation perimeters #1 cover an area of 15 km² and the perimeter #2 an area of 30 km².
+
+The objective of these irrigation system is to cover the deficit in rain [@burtIrrigationPerformanceMeasures1997] with 80% of success. Here's below the calculation of the 8th decile of monthly water need given meteorological data of catchments "54001" and "54032" (unit mm/day) :
+
+```{r monthly_water_need}
+dailyWaterNeed <- PotEvap - Precip
+dailyWaterNeed <- cbind(as.data.frame(DatesR), dailyWaterNeed[,c("54001", "54032")])
+monthlyWaterNeed <- airGR::SeriesAggreg(dailyWaterNeed, "%m", rep("q80",2))
+monthlyWaterNeed$DatesR <- as.numeric(format(monthlyWaterNeed$DatesR,"%m"))
+names(monthlyWaterNeed)[1] <- "month"
+monthlyWaterNeed
+```
+
+We bound the irrigation season between April and August, then the need for the crops can the be expressed in m3/s as follow:
+
+```{r}
+irrigationObjective <- monthlyWaterNeed
+# Conversion in m3/day
+irrigationObjective$"54001" <- monthlyWaterNeed$"54001" * 15 * 1E3
+irrigationObjective$"54032" <- monthlyWaterNeed$"54032" * 30 * 1E3
+# Irrigation period between April and August
+irrigationObjective[-seq(4,8),-1] <- 0 
+# Conversion in m3/s
+irrigationObjective[,c(2,3)] <- round(irrigationObjective[,c(2,3)] / 86400, 1)
+irrigationObjective$total <- rowSums(irrigationObjective[,c(2,3)])
+irrigationObjective
+```
+
+With an hypothesis of an efficiency of the irrigation systems of 50% as proposed by @secklerConceptEfficiencyWaterresources2003, the flow demand at intake for each irrigation perimeter is as follow (unit: m3/s):
+
+```{r}
+# Apply 50% of efficiency on the water demand
+irrigationObjective[,seq(2,4)] <- irrigationObjective[,seq(2,4)] / 0.5
+# Display result in m3/s
+irrigationObjective
+```
+
+
+
+## Restriction of irrigation in case of water scarcity
+
+### Minimal environmental flow at the intakes
+
+In UK, abstraction restrictions are driven by Environmental Flow Indicator (EFI) supporting Good Ecological Status (GES) [@klaarDevelopingHydroecologicalModels2014]. Abstraction restriction consists in limiting the proportion of available flow for abstraction in function of the current flow regime (Reference taken for a river highly sensitive to abstraction classified "ASB3").
+
+```{r abstraction restriction rule}
+restriction_rule <- data.frame(quantile_natural_flow = c(.05, .3, 0.5, 0.7),
+           abstraction_rate = c(0.1, 0.15, 0.20, 0.24))
+```
+
+The control of the abstraction will be done at the gauging station downstream all the abstraction locations (node "54032"). So we need the flow corresponding to the quantiles of natural flow and flow available for abstraction in each case.
+
+```{r}
+quant_m3s32 <- quantile(
+  Qobs[,"54032"] * griwrmV04[griwrmV04$id == "54032", "area"] / 86.4,
+  restriction_rule$quantile_natural_flow,
+  na.rm = TRUE
+)
+restriction_rule_m3s <- data.frame(
+  threshold_natural_flow = quant_m3s32,
+  abstraction_rate = restriction_rule$abstraction_rate
+)
+
+matplot(restriction_rule$quantile_natural_flow, 
+        cbind(restriction_rule_m3s$threshold_natural_flow, 
+              restriction_rule$abstraction_rate * restriction_rule_m3s$threshold_natural_flow,
+              max(irrigationObjective$total)), 
+        log = "x", type = "l", 
+        main = "Quantiles of flow on the Severn at Saxons Lode (54032)",
+        xlab = "quantiles", ylab = "Flow (m3/s)",
+        lty = 1, col = rainbow(3, rev = TRUE)
+        )
+legend("topleft", legend = c("Natural flow", "Abstraction limit", "Irrigation max. objective"), 
+       col = rainbow(3, rev = TRUE), lty = 1)
+```
+The water availability or abstraction restriction depending on the natural flow is calculated with the function below:
+
+```{r}
+# A function to enclose the parameters in the function (See: http://adv-r.had.co.nz/Functional-programming.html#closures)
+getAvailableAbstractionEnclosed <- function(restriction_rule_m3s) {
+  function(Qnat) approx(restriction_rule_m3s$threshold_natural_flow,
+                        restriction_rule_m3s$abstraction_rate,
+                        Qnat, 
+                        rule = 2)
+}
+# The function with the parameters inside it :)
+getAvailableAbstraction <- getAvailableAbstractionEnclosed(restriction_rule_m3s)
+# You can check the storage of the parameters in the function with 
+as.list(environment(getAvailableAbstraction))
+```
+
+
+### Restriction rules
+
+The figure below shows that restrictions will be imposed to the irrigation perimeter if the natural flow at Saxons Lode is under around 20 m3/s.
+
+Applying restriction on the intake on a real field is always challenging since it's difficult to regulate day by day the flow at the intake. Policy makers often decide to close the irrigation abstraction points in turn several days a week based on the mean flow of the previous week.
+
+The number of authorized days per week for irrigation can be calculated as follow. All the calculation are based on the mean flow measured the week previous the current time step. First, the naturalised flow $N$ is equal to 
+
+$$ N = M + I_l $$
+with: 
+
+- $M$, the measured flow at the downstream gauging station
+- $I_l$, the total abstracted flow for irrigation for the last week
+
+Available flow for abstraction $A$ is: 
+
+$$A = f_{a}(N)$$
+
+with $f_a$ the availability function calculated from quantiles of natural flow and related restriction rates.
+
+The flow planned for irrigation $Ip$ is then:
+
+$$ I_p = \min (O, A)$$
+
+with $O$ the irrigation objective flow.
+
+The number of day for irrigation $n$ per week is then equal to:
+
+$$ n = \lfloor \frac{I_p}{O} \times 7 \rfloor$$
+with $\lfloor x \rfloor$ the function that returns the largest integers not greater than $x$
+
+The rotation of restriction days between the 2 irrigation perimeters is operated as follow:
+
+```{r}
+restriction_rotation <- matrix(c(5,7,6,4,2,1,3,3,1,2,4,6,7,5), ncol = 2)
+m <- do.call(
+  rbind, 
+  lapply(seq(0,7), function(x) {
+    b <- restriction_rotation <= x
+    rowSums(b)
+  })
+)
+# Display the planning of restriction
+image(1:ncol(m), 1:nrow(m), t(m), col = heat.colors(3, rev = TRUE), 
+      axes = FALSE, xlab = "week day", ylab = "number of restriction days", 
+      main = "Number of closed irrigation perimeters")
+axis(1, 1:ncol(m), unlist(strsplit("SMTWTFS", "")))
+axis(2, 1:nrow(m), seq(0,7))
+for (x in 1:ncol(m))
+  for (y in 1:nrow(m))
+    text(x, y, m[y,x])
+```
+
+# Implementation of the model
+
+As for the previous model, we need to set up an `GRiwrmInputsModel` object containing all the model inputs:
+
+```{r}
+# a flow is needed for all the nodes in the network
+# even if it is overwritten after by a controller
+QobsIrrig <- cbind(Qobs, Irrigation1 = 0, Irrigation2 = 0)
+IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QobsIrrig)
+```
+
+# Implementation of the regulation controller
+
+## The supervisor
+
+The simulation is piloted through a `Supervisor` which can contain one or more `Controller`. This supervisor will work with a cycle of 7 days: the measurement are taken on the last 7 days and decisions are taken for each time step for the next seven days.
+
+```{r}
+sv <- CreateSupervisor(IM_Irrig, TimeStep = 7L)
+```
+
+## The control logic function
+
+We need a controller that measures the flow at Saxon Lodes ("54032") and adapts weekly the abstracted flow at the two irrigation points. The supervisor will stop the simulation every 7 days and provides to the controller the last 7 simulated flow at Saxon Lodes ("54032") (measured variables) and controller should provide "command variables" for the next 7 days for the 2 irrigation points.
+
+A control logic function should be provide to the controller. This control logic function processes the logic of the regulation taking measured flows as input and returning the "command variables". Both measured variables and command variables are of type `matrix` with the variables in columns and the time steps in rows.
+
+In this example, the logic function must do the following tasks:
+
+1. Calculate the objective of irrigation according to the month of the current days of simulation
+2. calculate the naturalised flow from the measured flow and the abstracted flow of the previous week
+3. calculate the number of days of restriction for each irrigation point
+4. Return the abstracted flow for the next week taking into account restriction days
+
+```{r}
+fIrrigationFactory <- function(supervisor, 
+                               irrigationObjective, 
+                               restriction_rule_m3s, 
+                               restriction_rotation) {
+  function(Y) {
+    # Y is in mm/day and the basin's area is 6864.88 km2
+    # Calculate the objective of irrigation according to the month of the current days of simulation
+    month <- as.numeric(format(supervisor$ts.date, "%m"))
+    U <- irrigationObjective[month, c(2,3)] # m3/s
+    meanU <- mean(rowSums(U))
+    if(meanU > 0) {
+      # calculate the naturalised flow from the measured flow and the abstracted flow of the previous week
+      lastU <- supervisor$controllers[[supervisor$controller.id]]$U # m3/day
+      Qnat <- (Y * 6864.88 * 1E3 - rowSums(lastU)) / 86400 # m3/s
+      # Maximum abstracted flow available
+      Qrestricted <- mean(
+        approx(restriction_rule_m3s$threshold_natural_flow,
+               restriction_rule_m3s$abstraction_rate,
+               Qnat, 
+               rule = 2)$y * Qnat
+      )
+      # Total for irrigation
+      QIrrig <- min(meanU, Qrestricted)
+      # Number of days of irrigation
+      n <- floor(QIrrig / meanU)
+      # Apply days off
+      U[restriction_rotation[seq(nrow(U)),] <= n] <- 0
+    }
+    return(-U * 86400) # withdrawal is a negative flow on an upstream node
+  }
+}
+fIrrigation <- fIrrigationFactory(sv, 
+                                  irrigationObjective, 
+                                  restriction_rule_m3s, 
+                                  restriction_rotation)
+```
+
+You can notice that the constant data required for processing the control logic are enclosed in the function through a function factory:
+
+- `fIrrigationFactory` takes the required data as arguments and return the logic control function
+- `fIrrigation` is the logic control function which contains the required data in its environment
+
+You can see what data is available in the environment of the function with:
+
+```{r}
+str(as.list(environment(fIrrigation)))
+```
+The logic control function is executed in the `Supervisor` environment and has access to all the `Supervisor` variables through the variable `supervisor` such as:
+
+- `supervisor$ts.index`: indexes of the current time steps of simulation (In `IndPeriod_Run`)
+- `e$ts.date`: date/time of the current time steps of simulation
+- `e$controller.id`: identifier of the current controller
+- `e$controllers`: the `list` of `Controller`
+
+## The controller
+
+The controller contains:
+
+- the location of the measured flows
+- the location of the control commands
+- the logic control function
+
+```{r}
+CreateController(sv, 
+                 ctrl.id = "Irrigation", 
+                 Y = "54032", 
+                 U = c("Irrigation1", "Irrigation2"), 
+                 FUN = fIrrigation)
+```
+
+# Running the simulation
+
+For running a model with a supervision, you only need to substitute `InputsModel` by a `Supervisor` in the `RunModel` function call.
+
+```{r}
+OM_Irrig <- RunModel(sv, RunOptions = RunOptions, Param = ParamV03)
+```
+
+
+
+```{r}
+Qm3s <- attr(OM_Irrig, "Qm3s")
+Qm3s <- Qm3s[Qm3s$DatesR > "2003-03-01" & Qm3s$DatesR < "2003-10-01",]
+par(mfrow=c(1,2))
+plot(Qm3s[, c("DatesR", "54095", "54001", "54032")])
+plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")])
+```
+
+
+# References

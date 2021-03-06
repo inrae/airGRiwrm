@@ -42,7 +42,7 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
   class(ctrlr) <- c("Controller", class(ctrlr))
 
   # Function called from Supervisor environment
-  environment(ctrlr$FUN) <- supervisor
+  #environment(ctrlr$FUN) <- supervisor
   if(!is.null(supervisor$controllers[[ctrl.id]])) {
     warning("Controller '", ctrl.id, "' already exists in the supervisor: overwriting")
   }

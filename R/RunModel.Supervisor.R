@@ -76,6 +76,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
           x$OutputsModel[[id]]$Qsim
       }
     }
+    x$ts.previous <- x$ts.index
   }
   for(id in getSD_Ids(x$InputsModel)) {
     x$OutputsModel[[id]]$Qsim <- Qsim[[id]]
