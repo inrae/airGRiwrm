@@ -58,8 +58,10 @@ getDataFromLocation <- function(loc, sv) {
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unames)), function(i) {
     node <- sv$griwrm$down[sv$griwrm$id == ctrlr$Unames[i]]
+    # limit U size to the number of simulation time steps of the current supervision time step
+    U <- ctrlr$U[seq.int(length(sv$ts.index)),i]
     # ! Qupstream contains warm up period and run period => the index is shifted
-    sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, ctrlr$Unames[i]] <- ctrlr$U[,i]
+    sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, ctrlr$Unames[i]] <- U
   })
 }
 
