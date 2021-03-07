@@ -266,35 +266,37 @@ fIrrigationFactory <- function(supervisor,
       # Total for irrigation
       QIrrig <- min(meanU, Qrestricted)
       # Number of days of irrigation
-      n <- floor(QIrrig / meanU)
+      n <- floor(7 * (1 - QIrrig / meanU))
       # Apply days off
       U[restriction_rotation[seq(nrow(U)),] <= n] <- 0
     }
     return(-U * 86400) # withdrawal is a negative flow on an upstream node
   }
 }
-fIrrigation <- fIrrigationFactory(sv, 
-                                  irrigationObjective, 
-                                  restriction_rule_m3s, 
-                                  restriction_rotation)
 ```
 
-You can notice that the constant data required for processing the control logic are enclosed in the function through a function factory:
+You can notice that the data required for processing the control logic are enclosed in the function `fIrrigationFactory` which takes the required data as arguments and return the control logic function.
 
-- `fIrrigationFactory` takes the required data as arguments and return the logic control function
-- `fIrrigation` is the logic control function which contains the required data in its environment
+Creating `fIrrigation` by calling `fIrrigationFactory` with the arguments currently in memory save these variables in the environment of the function:
 
+```{r}
+fIrrigation <- fIrrigationFactory(supervisor = sv, 
+                                  irrigationObjective = irrigationObjective, 
+                                  restriction_rule_m3s = restriction_rule_m3s, 
+                                  restriction_rotation = restriction_rotation)
+```
 You can see what data is available in the environment of the function with:
 
 ```{r}
 str(as.list(environment(fIrrigation)))
 ```
-The logic control function is executed in the `Supervisor` environment and has access to all the `Supervisor` variables through the variable `supervisor` such as:
+
+The `supervisor` variable is itself an environment which means that the variables contained inside it will be updated during the simulation. Some of them are useful for computing the control logic such as:
 
 - `supervisor$ts.index`: indexes of the current time steps of simulation (In `IndPeriod_Run`)
-- `e$ts.date`: date/time of the current time steps of simulation
-- `e$controller.id`: identifier of the current controller
-- `e$controllers`: the `list` of `Controller`
+- `supervisor$ts.date`: date/time of the current time steps of simulation
+- `supervisor$controller.id`: identifier of the current controller
+- `supervisor$controllers`: the `list` of `Controller`
 
 ## The controller
 
@@ -320,15 +322,15 @@ For running a model with a supervision, you only need to substitute `InputsModel
 OM_Irrig <- RunModel(sv, RunOptions = RunOptions, Param = ParamV03)
 ```
 
-
+Simulated flows can be extracted and plot as follows:
 
 ```{r}
 Qm3s <- attr(OM_Irrig, "Qm3s")
-Qm3s <- Qm3s[Qm3s$DatesR > "2003-03-01" & Qm3s$DatesR < "2003-10-01",]
-par(mfrow=c(1,2))
-plot(Qm3s[, c("DatesR", "54095", "54001", "54032")])
-plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")])
+Qm3s <- Qm3s[Qm3s$DatesR > "2003-03-25" & Qm3s$DatesR < "2003-09-05",]
+par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "", ylim = c(0,100))
+plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "")
 ```
-
+We can observe  that the irrigations points are alternatively closed some days a week when the flow at node "54032" becomes low.
 
 # References
