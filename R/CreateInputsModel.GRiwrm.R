@@ -11,8 +11,8 @@
 #' @export
 CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
-  InputsModel <- CreateEmptyGRiwrmInputsModel()
-  Qobs[is.na(Qobs)] <- -99 # airGRCreateInputsModel doesn't accept NA values
+  InputsModel <- CreateEmptyGRiwrmInputsModel(x)
+  Qobs[is.na(Qobs)] <- -99 # airGR::CreateInputsModel doesn't accept NA values
 
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
@@ -20,16 +20,20 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
       id, x, DatesR,Precip[,id], PotEvap[,id], Qobs, ...
     )
   }
+  attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
   return(InputsModel)
 }
 
 
 #' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
+#' @param griwrm a `GRiwrm` object (See [GRiwrm])
+#'
 #' @return \emph{GRiwrmInputsModel} empty object
-CreateEmptyGRiwrmInputsModel <- function() {
+CreateEmptyGRiwrmInputsModel <- function(griwrm) {
   InputsModel <- list()
-  class(InputsModel) <- append(class(InputsModel), "GRiwrmInputsModel")
+  class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
+  attr(InputsModel, "GRiwrm") <- griwrm
   return(InputsModel)
 }
 
@@ -79,6 +83,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
 
   # Add Identifiers of connected nodes in order to be able to update them with simulated flows
   InputsModel$id <- id
+  InputsModel$down <- node$down
   if(length(UpstreamNodes) > 0) {
     InputsModel$UpstreamNodes <- UpstreamNodes
     InputsModel$UpstreamIsRunoff <- !is.na(griwrm$model[match(UpstreamNodes, griwrm$id)])
@@ -87,4 +92,29 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs
   InputsModel$FUN_MOD <- FUN_MOD
 
   return(InputsModel)
+}
+
+
+#' Check time steps of the model of all the nodes and return the time step in seconds
+#'
+#' This function is called inside [CreateInputsModel.GRiwrm] for defining the time step of the big model.
+#'
+#' @param InputsModel a `GRiwrmInputsModel`
+#'
+#' @return A [numeric] representing the time step in seconds
+#'
+getModelTimeStep <- function(InputsModel) {
+  TS <- sapply(InputsModel, function(x) {
+    if (inherits(x, "hourly")) {
+      TimeStep <- 60 * 60
+    } else if (inherits(x, "daily")) {
+      TimeStep <- 60 * 60 * 24
+    } else {
+      stop("All models should be at hourly or daily time step")
+    }
+  })
+  if(length(unique(TS)) != 1) {
+    stop("Time steps of the model of all nodes should be identical")
+  }
+  return(unique(TS))
 }

@@ -30,7 +30,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
     }
 
-    OutputsCalib[[IM$id]] <- Calibration.InputsModel(
+    OutputsCalib[[IM$id]] <- Calibration(
       InputsModel = IM,
       RunOptions = RunOptions[[IM$id]],
       InputsCrit = InputsCrit[[IM$id]],
@@ -41,7 +41,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     if(useUpstreamQsim) {
       # Run the model for the sub-basin
       OutputsModel[[IM$id]] <- RunModel(
-        InputsModel = IM,
+        x = IM,
         RunOptions = RunOptions[[IM$id]],
         Param = OutputsCalib[[IM$id]]$ParamFinalR
       )

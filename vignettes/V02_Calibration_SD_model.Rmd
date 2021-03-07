@@ -128,7 +128,7 @@ ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
 
 ```{r RunModel}
 OutputsModels <- RunModel(
-  InputsModel = InputsModel,
+  InputsModel,
   RunOptions = RunOptions,
   Param = ParamMichel
 )
@@ -145,8 +145,9 @@ htmltools::tagList(lapply(
 ))
 ```
 
+The resulting flow of each node in m3/s is directly available and can be plotted with these commands:
 
-
-
-
-
+```{r}
+Qm3s <- attr(OutputsModels, "Qm3s")
+plot(Qm3s[1:100,])
+```

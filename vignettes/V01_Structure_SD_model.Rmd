@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
-The package **airGRiwrm** is a modeling tool for integrated water resource management based on the package **airGR** package [See @coron_airgr_2020].
+The package **airGRiwrm** is a modeling tool for integrated water resource management based on the package **airGR** package [See @coronSuiteLumpedGR2017].
 
 In a semi-distributive model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then a hydraulic link is set between sub-catchment outlets to model the flow at the outlet of the whole catchment. The aim of **airGRiwrm** is to organise the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributive model.
 
@@ -24,7 +24,7 @@ In this vignette, we show how to prepare observation data for the model.
 
 ## Description of the example used in this tutorial
 
-The example of this tutorial takes place on the Severn River in United Kingdom. The data set comes from the CAMEL GB database [See @coxon_catchment_2020].
+The example of this tutorial takes place on the Severn River in United Kingdom. The data set comes from the CAMEL GB database [See @coxonCatchmentAttributesHydrometeorological2020].
 
 ```{r}
 data(Severn)

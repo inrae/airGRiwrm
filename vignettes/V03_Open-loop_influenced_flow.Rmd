@@ -23,15 +23,15 @@ library(airGRiwrm)
 
 
 
-We can see in vignette 'V02_Calibration_SD_model' that calibration result for the discharge simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') is not satisfactory. These upper basins are heavily influenced by impoundments and inter-basin transfers [@higgs_hydrological_1988].
+We can see in vignette 'V02_Calibration_SD_model' that calibration result for the flow simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') is not satisfactory. These upper basins are heavily influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
 
-To cope with this influenced flow, we won't try to simulate it with an hydrological model and we will directly inject this discharge measurement in the model.
+To cope with this influenced flow, we won't try to simulate it with a hydrological model and we will directly inject in the model the observed flow at these nodes.
 
 ## Convert a gauging station into a release spot
 
 ### Modifying the GRiwrm object
 
-The production method of the `GRiwrm` object is detailed in the vignette "01_First_network" of the package.
+The production method of the `GRiwrm` object is detailed in the vignette "01_First_network" of the package (and also in the documentation, type `?GRiwrm` to access to it).
 
 Run `vignette("01_Structure_SD_model", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
 
@@ -42,10 +42,10 @@ load("_cache/V01.RData")
 To notify the SD model that the provided flow on a node should be directly used instead of an hydrological model, you only need to declare its model as `NA`:
 
 ```{r}
-griwrm_OL <- griwrm
-griwrm_OL$model[griwrm$id == "54002"] <- NA
-griwrm_OL$model[griwrm$id == "54095"] <- NA
-griwrm_OL
+griwrmV03 <- griwrm
+griwrmV03$model[griwrm$id == "54002"] <- NA
+griwrmV03$model[griwrm$id == "54095"] <- NA
+griwrmV03
 ```
 
 Here, we keep the area of this basin which means that the discharge will be provided in mm per time step. If the discharge is provided in m<sup>3</sup>/s, then the area should be set to `NA` and downstream basin areas should be modified subsequently. 
@@ -57,7 +57,7 @@ The diagram of the network structure is represented below with:
   * in red the node with direct flow injection (no hydrological model)
 
 ```{r diagram}
-DiagramGRiwrm(griwrm_OL)
+DiagramGRiwrm(griwrmV03)
 ```
 
 ### Generate the GRiwrmInputsModel object
@@ -66,7 +66,7 @@ Since the network description has changed, the `GRiwrmInputsModel` should be gen
 
 ```{r}
 load("_cache/V01b.RData")
-IM_OL <- CreateInputsModel(griwrm_OL, DatesR, Precip, PotEvap, Qobs)
+IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, Qobs)
 ```
 
 ## Calibration of the new model
@@ -82,16 +82,21 @@ The **airGR** calibration process is applied on each hydrological node of the `G
 ```{r Calibration}
 OC_OL <- suppressWarnings(
   Calibration(IM_OL, RunOptions, InputsCrit, CalibOptions))
-Param_OL <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
+ParamV03 <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
 ```
+
+```{r}
+save(griwrmV03, ParamV03, file = "_cache/V03.RData")
+```
+
 
 ## Run model with this newly calibrated parameters
 
 ```{r RunModel}
 OM_OL <- RunModel(
-  InputsModel = IM_OL,
+  IM_OL,
   RunOptions = RunOptions,
-  Param = Param_OL
+  Param = ParamV03
 )
 ```
 
@@ -107,5 +112,13 @@ htmltools::tagList(lapply(
   }
 ))
 ```
+
+The resulting flow of each node in m3/s is directly available and can be plotted with these commands:
+
+```{r}
+Qm3s <- attr(OM_OL, "Qm3s")
+plot(Qm3s[1:100,])
+```
+
 
 # References
