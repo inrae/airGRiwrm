@@ -1,12 +1,12 @@
 Package: airGRiwrm
-Title: airGR Integrated Water Resource Management
-Version: 0.4.0
+Title: 'airGR' Integrated Water Resource Management
+Version: 0.5.0
 Authors@R: c(
     person("David", "Dorchies", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6595-7984"), email = "david.dorchies@inrae.fr"),
     person("Olivier", "Delaigue", role = c("ctb"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@inrae.fr"),
     person("Guillaume", "Thirel", role = c("ctb"), comment = c(ORCID = "0000-0002-1444-1830"))
     )
-Description: This R package aims to model water basin using 'airGR' based semi-distributive model with the integration of human infrastructures and their management.
+Description: Semi-distributive Precipitation-Runoff Modelling based on 'airGR' package models integrating human infrastructures and their managements.
 License: AGPL-3
 Encoding: UTF-8
 LazyData: true
