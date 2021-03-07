@@ -6,10 +6,10 @@
 #' @param ylab a label for the y axis, defaults to "Flow (m3/s)"
 #' @param main a main title for the plot, defaults to "Simulated flows"
 #' @param col plotting color (See [par]), defaults to rainbow colors
-#' @param legend See parameter `legend` of [legend]
+#' @param legend See parameter `legend` of [legend]. Set to [NULL] to not display the legend
 #' @param legend.cex `cex` parameter for the text of the legend (See [par])
 #' @param lty The line type (See [par])
-#' @param ... Further arguments to pass to [plot] or [legend] functions
+#' @param ... Further arguments to pass to the [matplot] functions
 #'
 #' @importFrom grDevices rainbow
 #' @importFrom graphics matplot
@@ -24,7 +24,7 @@ plot.Qm3s <- function(x,
                       legend = colnames(x)[-1],
                       legend.cex = 0.7,
                       lty = 1,
-                       ...) {
+                      ...) {
   matplot(
     x$DatesR,
     x[, -1],
@@ -35,9 +35,11 @@ plot.Qm3s <- function(x,
     main = main,
     col = col, ...
   )
-  legend('topright',
-         legend = legend,
-         cex = legend.cex,
-         lty = lty,
-         col = col, ...)
+  if(!is.null(legend)) {
+    legend('topright',
+           legend = legend,
+           cex = legend.cex,
+           lty = lty,
+           col = col)
+  }
 }
