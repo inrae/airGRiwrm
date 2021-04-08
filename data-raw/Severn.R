@@ -2,6 +2,8 @@
 BasinsInfo <- read.csv("data-raw/CAMELS_GB_Severn_attributes.csv")
 BasinsInfo$gauge_id <- as.character(BasinsInfo$gauge_id)
 BasinsInfo$downstream_id <- as.character(BasinsInfo$downstream_id)
+BasinsInfo$bankfull_flow <- as.double(BasinsInfo$bankfull_flow)
+BasinsInfo$distance_downstream <- as.double(BasinsInfo$distance_downstream)
 
 # Loading gauging station time series
 stations <- paste0("540", sprintf("%02d", c(1, 2, 29, 32, 57, 95)))
