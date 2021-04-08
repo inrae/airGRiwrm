@@ -11,7 +11,7 @@
 UpdateQsimUpstream <- function(InputsModel, IndPeriod_Run, OutputsModel) {
   iQ <- which(InputsModel$UpstreamIsRunoff)
   for(i in iQ) {
-    InputsModel$Qupstream[IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$Qsim
+      InputsModel$Qupstream[IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$Qsim_m3
   }
   return(InputsModel)
 }

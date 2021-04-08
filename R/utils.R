@@ -133,23 +133,12 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   names(lQsim) <- upperNodes
   # Flow of the downstream node is only available in OutputsModel[[node]]$Qsim
   downNode <- names(InputsModel)[length(InputsModel)]
-  lQsim[[downNode]] <- OutputsModel[[downNode]]$Qsim
+  lQsim[[downNode]] <- OutputsModel[[downNode]]$Qsim_m3
 
-  # Conversion to m3/s
-  lQsim <- lapply(
-    names(lQsim),
-    function(x) {
-      i <- which(griwrm$id == x)
-      if(is.na(griwrm$area[i])) { # m3/time step => m3/s
-        return(lQsim[[x]] / attr(InputsModel, "TimeStep"))
-      } else { # mm/time step => m3/s
-        return(lQsim[[x]] * griwrm$area[i] * 1E3 / attr(InputsModel, "TimeStep"))
-      }
-    }
-  )
+
   names(lQsim) <- c(upperNodes, downNode)
   dfQsim <- cbind(data.frame(DatesR = as.POSIXct(InputsModel[[1]]$DatesR[IndPeriod_Run])),
-                  do.call(cbind,lQsim))
+                  do.call(cbind,lQsim) / attr(InputsModel, "TimeStep"))
   class(dfQsim) <- c("Qm3s", class(dfQsim)) # For S3 methods
   return(dfQsim)
 }
