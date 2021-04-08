@@ -11,7 +11,7 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
   OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
   if (is.null(OutputsModel$Qsim_m3)) {
     # Add Qsim_m3 in m3/timestep
-    OutputsModel$Qsim_m3 <- OutputsModel$Qsim * x$BasinAreas[length(x$BasinAreas)] * 1e3
+    OutputsModel$Qsim_m3 <- OutputsModel$Qsim * sum(x$BasinAreas) * 1e3
   }
   return(OutputsModel)
 }

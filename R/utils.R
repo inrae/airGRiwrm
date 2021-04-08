@@ -135,7 +135,6 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   downNode <- names(InputsModel)[length(InputsModel)]
   lQsim[[downNode]] <- OutputsModel[[downNode]]$Qsim_m3
 
-
   names(lQsim) <- c(upperNodes, downNode)
   dfQsim <- cbind(data.frame(DatesR = as.POSIXct(InputsModel[[1]]$DatesR[IndPeriod_Run])),
                   do.call(cbind,lQsim) / attr(InputsModel, "TimeStep"))

@@ -49,7 +49,7 @@ griwrmV04 <- rbind(
   data.frame(
     id = c("Irrigation1", "Irrigation2"),
     down = c("54001", "54032"),
-    length = c(35000, 10000),
+    length = c(35, 10),
     model = NA,
     area = NA
   )
