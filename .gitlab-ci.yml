@@ -28,16 +28,16 @@ before_script:
 .check:
   stage: checks
   script:
-    - if [ $AS_CRAN = "false" ]; then sudo apt-get install -y qpdf; fi
-    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("AS_CRAN")), env_vars = c(NOT_CRAN = "true"))'
+    - if [ $AS_CRAN = "true" ]; then sudo apt-get install -y qpdf; fi
+    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN")), env_vars = c(NOT_CRAN = Sys.getenv("NOT_CRAN")))'
     - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
 check_not_cran:
   variables:
-    AS_CRAN: "false"
+    NOT_CRAN: "true"
   extends: .check
 
 check_as_cran:
   variables:
-    AS_CRAN: "true"
+    NOT_CRAN: "false"
   extends: .check
