@@ -14,6 +14,12 @@ We need the package `remotes` to install the package from the Irstea Gitlab repo
 install.packages("remotes")
 ```
 
+This version is based on a development version of **airGR** which should be installed as below:
+
+```r
+remotes::install_gitlab("HYCAR-Hydro/airgr@67cd10", host = "gitlab.irstea.fr")
+```
+
 ### Local installation
 
 The package **airGRiwrm** is under development and is only available on Gitlab:
