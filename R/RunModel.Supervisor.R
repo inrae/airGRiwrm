@@ -90,7 +90,8 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   }
   for(id in getSD_Ids(x$InputsModel)) {
     x$OutputsModel[[id]]$Qsim_m3 <- Qsim_m3[, id]
-    x$OutputsModel[[id]]$Qsim <- Qsim_m3[, id] / x$griwrm$area[id] / 1e3
+    x$OutputsModel[[id]]$Qsim <-
+      Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
   }
   attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel, RunOptions[[1]]$IndPeriod_Run)
   return(x$OutputsModel)
