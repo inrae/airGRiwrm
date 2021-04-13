@@ -12,8 +12,30 @@
 #' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
 #' @param keep_all keep all column of `db` or keep only columns defined in `cols`
 #'
-#' @return `GRiwrm` class object containing the description of diagram of the semi-distributed catchment model
+#' @return `GRiwrm` class object containing the description of the semi-distributed model network
 #' @export
+#' @examples
+#' #################################################################
+#' # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
+#' #################################################################
+#'
+#' # Run airGR RunModel_Lag example for harvesting necessary data
+#' library(airGR)
+#' example(RunModel_Lag)
+#' # detach the package because airGR overwrite airGRiwrm functions here
+#' detach("package:airGR")
+#'
+#' # This example is a network of 2 nodes which can be describe like this:
+#' db <- data.frame(id = c("Reservoir", "GaugingDown"),
+#'                  length = c(LengthHydro, NA),
+#'                  down = c("GaugingDown", NA),
+#'                  area = c(NA, BasinInfo$BasinArea),
+#'                  model = c(NA, "RunModel_GR4J"))
+#'
+#' # Create GRiwrm object from the data.frame
+#' griwrm <- GRiwrm(db)
+#' str(griwrm)
+#'
 GRiwrm <- function(db,
                    cols = list(
                      id = "id",
