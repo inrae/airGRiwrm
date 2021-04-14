@@ -8,6 +8,7 @@
 #'
 #' @return [list] of plots
 #'
+#' @importFrom graphics plot
 #' @export
 #'
 #' @inherit RunModel.GRiwrmInputsModel return examples
