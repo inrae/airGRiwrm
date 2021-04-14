@@ -41,7 +41,8 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  length = c(LengthHydro, NA),
                  down = c("GaugingDown", NA),
                  area = c(NA, BasinInfo$BasinArea),
-                 model = c(NA, "RunModel_GR4J"))
+                 model = c(NA, "RunModel_GR4J"),
+                 stringsAsFactors = FALSE)
 
 # Create GRiwrm object from the data.frame
 griwrm <- GRiwrm(db)
@@ -61,7 +62,6 @@ Qobs = matrix(c(Qupstream, BasinObs$Qmm), ncol = 2)
 colnames(Qobs) <- griwrm$id
 str(Qobs)
 
-# Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)
 InputsModels <- CreateInputsModel(griwrm,
                             DatesR = BasinObs$DatesR,
                             Precip = Precip,
