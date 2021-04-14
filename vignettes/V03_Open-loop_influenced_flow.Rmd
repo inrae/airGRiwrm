@@ -36,8 +36,8 @@ The production method of the `GRiwrm` object is detailed in the vignette "01_Fir
 Run `vignette("01_Structure_SD_model", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
 
 ```{r}
-load("_cache/V01.RData")
-``` 
+load(file.path(tempdir(), "V01.RData"))
+```
 
 To notify the SD model that the provided flow on a node should be directly used instead of an hydrological model, you only need to declare its model as `NA`:
 
@@ -48,11 +48,11 @@ griwrmV03$model[griwrm$id == "54095"] <- NA
 griwrmV03
 ```
 
-Here, we keep the area of this basin which means that the discharge will be provided in mm per time step. If the discharge is provided in m<sup>3</sup>/s, then the area should be set to `NA` and downstream basin areas should be modified subsequently. 
+Here, we keep the area of this basin which means that the discharge will be provided in mm per time step. If the discharge is provided in m<sup>3</sup>/s, then the area should be set to `NA` and downstream basin areas should be modified subsequently.
 
 The diagram of the network structure is represented below with:
 
-  * in blue the upstream nodes with a GR4J model 
+  * in blue the upstream nodes with a GR4J model
   * in green the intermediate nodes with an SD (GR4J + LAG) model
   * in red the node with direct flow injection (no hydrological model)
 
@@ -65,7 +65,7 @@ DiagramGRiwrm(griwrmV03)
 Since the network description has changed, the `GRiwrmInputsModel` should be generated again from its inputs recorded in the vignette "01_First_network":
 
 ```{r}
-load("_cache/V01b.RData")
+load(file.path(tempdir(), "V01b.RData"))
 IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, Qobs)
 ```
 
@@ -74,7 +74,7 @@ IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, Qobs)
 We reuse the calibration options and criteria created in vignette "V02_Calibration_SD_model". Run `vignette("02_Calibration_SD_model", package = "airGRiwrm")` before this one in order to create these variables.
 
 ```{r}
-load("_cache/V02.RData")
+load(file.path(tempdir(), "V02.RData"))
 ```
 
 The **airGR** calibration process is applied on each hydrological node of the `GRiwrm` network from upstream nodes to downstream nodes.
@@ -86,7 +86,7 @@ ParamV03 <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
 ```
 
 ```{r}
-save(griwrmV03, ParamV03, file = "_cache/V03.RData")
+save(griwrmV03, ParamV03, file = file.path(tempdir(), "V03.RData"))
 ```
 
 
@@ -117,7 +117,7 @@ The resulting flow of each node in m3/s is directly available and can be plotted
 
 ```{r}
 Qm3s <- attr(OM_OL, "Qm3s")
-plot(Qm3s[1:100,])
+plot(Qm3s[1:150,])
 ```
 
 

@@ -37,7 +37,7 @@ The production method of the `GRiwrmInputsModel` object is detailed in the vigne
 Run `vignette("01_Structure_SD_model", package = "airGRiwrm")` before this one in order to create the Rdata file containing the `GRiwrmInputsModel` object:
 
 ```{r}
-load("_cache/V01.RData")
+load(file.path(tempdir(), "V01.RData"))
 str(InputsModel)
 ```
 
@@ -111,7 +111,7 @@ str(CalibOptions)
 ```
 
 ```{r, echo=FALSE}
-save(RunOptions, InputsCrit, CalibOptions, IndPeriod_Run, file = "_cache/V02.RData")
+save(RunOptions, InputsCrit, CalibOptions, IndPeriod_Run, file = file.path(tempdir(), "V02.RData"))
 ```
 
 ## Calibration
@@ -149,5 +149,5 @@ The resulting flow of each node in m3/s is directly available and can be plotted
 
 ```{r}
 Qm3s <- attr(OutputsModels, "Qm3s")
-plot(Qm3s[1:100,])
+plot(Qm3s[1:150,])
 ```
