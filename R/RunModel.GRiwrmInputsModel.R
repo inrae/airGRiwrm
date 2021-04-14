@@ -53,7 +53,7 @@
 #' str(InputsModels)
 #'
 #' # Creation of the GriwmRunOptions object
-#' RunOptions2 <- CreateRunOptions(InputsModel2,
+#' RunOptions2 <- CreateRunOptions(InputsModels,
 #'                                 IndPeriod_Run = Ind_Run)
 #' str(RunOptions2)
 #'

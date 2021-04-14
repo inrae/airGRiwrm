@@ -46,12 +46,12 @@
 #' colnames(Qobs) <- griwrm$id
 #' str(Qobs)
 #'
-#' InputsModel2 <- CreateInputsModel(griwrm,
+#' InputsModels <- CreateInputsModel(griwrm,
 #'                             DatesR = BasinObs$DatesR,
 #'                             Precip = Precip,
 #'                             PotEvap = PotEvap,
 #'                             Qobs = Qobs)
-#' str(InputsModel2)
+#' str(InputsModels)
 #'
 CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
