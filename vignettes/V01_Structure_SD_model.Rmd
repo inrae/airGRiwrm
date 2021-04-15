@@ -109,15 +109,4 @@ The **airGR** `CreateInputsModel` function is extended in order to handle the `G
 InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 ```
 
-
-
-## Save data for next vignettes
-
-```{r}
-getwd()
-dir.create("cache", showWarnings = FALSE)
-save(griwrm, Qobs, InputsModel, file = file.path(tempdir(), "V01.RData"))
-save(griwrm, DatesR, Precip, PotEvap, Qobs, file = file.path(tempdir(), "V01b.RData"))
-```
-
 # References

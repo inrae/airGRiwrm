@@ -26,12 +26,18 @@ library(airGRiwrm)
 
 Starting from the network and the calibration set in the vignette "V03_Open-loop_influenced_flow", we add 2 intake points for irrigation.
 
-Vignettes "V01_Structure_SD_model.Rmd" and  "V03_Open-loop_influenced_flow" should be run in order to load input data and parameters of the model:
+The following code chunk resumes the procedure of the vignette "V03_Open-loop_influenced_flow":
 
 ```{r load_cache}
-load(file.path(tempdir(), "V01b.RData"))
-load(file.path(tempdir(), "V02.RData"))
-load(file.path(tempdir(), "V03.RData"))
+data(Severn)
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$distance_downstream <- nodes$distance_downstream
+nodes$model <- "RunModel_GR4J"
+griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrmV03 <- griwrm
+griwrmV03$model[griwrm$id == "54002"] <- NA
+griwrmV03$model[griwrm$id == "54095"] <- NA
+griwrmV03
 ```
 
 ## Network configuration
@@ -67,6 +73,16 @@ Irrigation perimeters #1 cover an area of 15 km² and the perimeter #2 an area o
 The objective of these irrigation system is to cover the deficit in rain [@burtIrrigationPerformanceMeasures1997] with 80% of success. Here's below the calculation of the 8th decile of monthly water need given meteorological data of catchments "54001" and "54032" (unit mm/day) :
 
 ```{r monthly_water_need}
+# Formatting climatic data for CreateInputsModel (See vignette V01_Structure_SD_model for details)
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+
+# Calculation of the water need at the sub-basin scale
 dailyWaterNeed <- PotEvap - Precip
 dailyWaterNeed <- cbind(as.data.frame(DatesR), dailyWaterNeed[,c("54001", "54032")])
 monthlyWaterNeed <- airGR::SeriesAggreg(dailyWaterNeed, "%m", rep("q80",2))
@@ -212,9 +228,12 @@ for (x in 1:ncol(m))
 As for the previous model, we need to set up an `GRiwrmInputsModel` object containing all the model inputs:
 
 ```{r}
-# a flow is needed for all the nodes in the network
+# A flow is needed for all the nodes in the network
 # even if it is overwritten after by a controller
+# The Qobs matrix is completed with 2 new columns for the new nodes
 QobsIrrig <- cbind(Qobs, Irrigation1 = 0, Irrigation2 = 0)
+
+# Creation of the GRiwrmInputsModel object
 IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QobsIrrig)
 ```
 
@@ -315,6 +334,21 @@ CreateController(sv,
 ```
 
 # Running the simulation
+
+First we need to create a `GRiwrmRunOptions` object and load the parameters calibrated in the vignette "V03_Open-loop_influenced_flow":
+
+```{r}
+IndPeriod_Run <- seq(
+  which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+  length(DatesR) # Until the end of the time series
+)
+IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+RunOptions <- CreateRunOptions(IM_Irrig,
+                               IndPeriod_WarmUp = IndPeriod_WarmUp,
+                               IndPeriod_Run = IndPeriod_Run)
+ParamV03 <- readRDS(system.file("vignettes", "ParamV03.RDS", package = "airGRiwrm"))
+```
+
 
 For running a model with a supervision, you only need to substitute `InputsModel` by a `Supervisor` in the `RunModel` function call.
 
