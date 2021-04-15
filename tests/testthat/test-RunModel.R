@@ -5,7 +5,7 @@ data(Severn)
 
 # Network configuration
 nodes <- Severn$BasinsInfo[c(1,2,5), c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream * 1000 # Conversion km -> m
+nodes$distance_downstream <- nodes$distance_downstream # Conversion km -> m
 nodes$model <- NA
 nodes$model[1] <- "RunModel_GR4J"
 griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
@@ -55,7 +55,7 @@ griwrm2 <- rbind(griwrm,
                  data.frame(
                    id = c("R1", "R2"),
                    down = "54057",
-                   length = 100000,
+                   length = 100,
                    area = NA,
                    model = NA
                  ))

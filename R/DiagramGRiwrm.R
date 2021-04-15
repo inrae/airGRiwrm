@@ -30,7 +30,7 @@ DiagramGRiwrm <- function(griwrm, display = TRUE, orientation = "LR") {
   nodes <- paste(
     g2$id,
     "-->|",
-    format(g2$length/1000, trim = TRUE, digits = 0),
+    format(g2$length, trim = TRUE, digits = 0),
     "km|",
     g2$down
   )

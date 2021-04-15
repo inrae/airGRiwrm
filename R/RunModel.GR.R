@@ -17,6 +17,10 @@ RunModel.GR <- function(x, RunOptions, Param, ...) {
   }
 
   FUN_MOD <- match.fun(x$FUN_MOD)
-  FUN_MOD(x, RunOptions = RunOptions,
+  OutputsModel <- FUN_MOD(x, RunOptions = RunOptions,
           Param = Param[iFirstParamRunOffModel:length(Param)])
+  # Add Qsim_m3 in m3/timestep
+  OutputsModel$Qsim_m3 <- OutputsModel$Qsim * sum(x$BasinAreas) * 1e3
+
+  return(OutputsModel)
 }

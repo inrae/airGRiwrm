@@ -20,7 +20,7 @@ GRiwrm(
 \item{keep_all}{keep all column of \code{db} or keep only columns defined in \code{cols}}
 }
 \value{
-\code{GRiwrm} class object containing the description of diagram of the semi-distributed catchment model
+\code{GRiwrm} class object containing the description of the semi-distributed model network
 }
 \description{
 Generate a network description containing all hydraulic nodes and the description
@@ -34,4 +34,28 @@ of their connections
 \item the area of the basin (\link{numeric} column \code{area} in km^2^)
 \item the hydrological model to use if so (\link{character} column \code{model}).
 }
+}
+\examples{
+#################################################################
+# Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
+#################################################################
+
+# Run airGR RunModel_Lag example for harvesting necessary data
+library(airGR)
+example(RunModel_Lag)
+# detach the package because airGR overwrite airGRiwrm functions here
+detach("package:airGR")
+
+# This example is a network of 2 nodes which can be describe like this:
+db <- data.frame(id = c("Reservoir", "GaugingDown"),
+                 length = c(LengthHydro, NA),
+                 down = c("GaugingDown", NA),
+                 area = c(NA, BasinInfo$BasinArea),
+                 model = c(NA, "RunModel_GR4J"),
+                 stringsAsFactors = FALSE)
+
+# Create GRiwrm object from the data.frame
+griwrm <- GRiwrm(db)
+str(griwrm)
+
 }

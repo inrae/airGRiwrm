@@ -41,6 +41,7 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$supervisor <- e
 
   # Copy of InputsModel, griwrm and prepare OutputsModel
+  e$DatesR <- InputsModel[[1]]$DatesR
   e$InputsModel <- InputsModel
   e$griwrm <- attr(InputsModel, "GRiwrm")
   e$OutputsModel <- list()

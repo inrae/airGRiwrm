@@ -4,7 +4,7 @@
 \alias{RunModel.SD}
 \title{Run SD Model from run-off model outputs}
 \usage{
-\method{RunModel}{SD}(x, RunOptions, Param, QsimDown, ...)
+\method{RunModel}{SD}(x, RunOptions, Param, QcontribDown, ...)
 }
 \arguments{
 \item{x}{\code{InputsModel} used as \code{InputsModel} parameter for \link[airGR:RunModel_Lag]{airGR::RunModel_Lag}}
@@ -17,7 +17,7 @@
     }
   }
 
-\item{QsimDown}{a \link{numeric} corresponding to the runoff of the sub-basin (Typically the \code{Qsim} outputs of the GR model)}
+\item{QcontribDown}{[numeric] vector or [OutputsModel] containing the time series of the runoff contribution of the downstream sub-basin}
 
 \item{...}{further arguments passed to or from other methods}
 }

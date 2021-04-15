@@ -5,6 +5,8 @@
 #'
 #' @return \emph{GRiwrmRunOptions} object for running and calibrating model in **airGRiwrm**.
 #' @export
+#' @inherit RunModel.GRiwrmInputsModel return examples
+#'
 CreateRunOptions.GRiwrmInputsModel <- function(InputsModel, ...) {
 
   RunOptions <- list()

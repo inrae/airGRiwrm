@@ -9,10 +9,14 @@
 #' @export
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
+  # Save InputsModel for restoration at the end (Supervisor is an environment...)
+  InputsModelBackup <- x$InputsModel
+
   # Time steps handling
-  x$ts.index0 <- RunOptions[[1]]$IndPeriod_Run[1] - 1
-  ts.start <- RunOptions[[1]]$IndPeriod_Run[1]
-  ts.end <- RunOptions[[1]]$IndPeriod_Run[length(RunOptions[[1]]$IndPeriod_Run)]
+  IndPeriod_Run <- RunOptions[[1]]$IndPeriod_Run
+  x$ts.index0 <- IndPeriod_Run[1] - 1
+  ts.start <- IndPeriod_Run[1]
+  ts.end <- IndPeriod_Run[length(IndPeriod_Run)]
   superTSstarts <- seq(ts.start, ts.end, x$.TimeStep)
   lSuperTS <- lapply(
     superTSstarts, function(x, TS, xMax) {
@@ -27,19 +31,29 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     RunModel.GR(IM,
                 RunOptions = RunOptions[[IM$id]],
                 Param = Param[[IM$id]])
-    })
+  })
   class(x$OutputsModel) <- append(class(x$OutputsModel), "GRiwrmOutputsModel")
   # Copy simulated pure runoff flows (no SD nodes) to Qupstream in downstream SD nodes
   for(id in getNoSD_Ids(x$InputsModel)) {
     downId <- x$InputsModel[[id]]$down
     x$InputsModel[[downId]]$Qupstream[RunOptions[[downId]]$IndPeriod_Run, id] <-
-      x$OutputsModel[[id]]$Qsim
+      x$OutputsModel[[id]]$Qsim_m3
   }
 
   # Save Qsim for step by step simulation
-  Qsim <- lapply(x$OutputsModel, function(OM) {
-    OM$Qsim
-  })
+  QcontribDown <- do.call(
+    cbind,
+    lapply(x$OutputsModel, function(OM) {
+      OM$Qsim
+    })
+  )
+
+  Qsim_m3 <- do.call(
+    cbind,
+    lapply(x$OutputsModel, function(OM) {
+      OM$Qsim_m3
+    })
+  )
 
   # Adapt RunOptions to step by step simulation
   for(id in getSD_Ids(x$InputsModel)) {
@@ -66,21 +80,27 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
         x$InputsModel[[id]],
         RunOptions = RunOptions[[id]],
         Param = Param[[id]],
-        QsimDown = Qsim[[id]][x$ts.index]
+        QcontribDown = QcontribDown[x$ts.index, id]
       )
       # Storing Qsim in the data.frame Qsim
-      Qsim[[id]][x$ts.index] <- x$OutputsModel[[id]]$Qsim
+      Qsim_m3[x$ts.index, id] <- x$OutputsModel[[id]]$Qsim_m3
       # Routing Qsim to the downstream node
       if(!is.na(x$InputsModel[[id]]$down)) {
         x$InputsModel[[x$InputsModel[[id]]$down]]$Qupstream[iTS, id] <-
-          x$OutputsModel[[id]]$Qsim
+          x$OutputsModel[[id]]$Qsim_m3
       }
     }
     x$ts.previous <- x$ts.index
   }
   for(id in getSD_Ids(x$InputsModel)) {
-    x$OutputsModel[[id]]$Qsim <- Qsim[[id]]
+    x$OutputsModel[[id]]$Qsim_m3 <- Qsim_m3[, id]
+    x$OutputsModel[[id]]$Qsim <-
+      Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
   }
-  attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel, RunOptions[[1]]$IndPeriod_Run)
+  attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel, IndPeriod_Run)
+
+  # restoration of InputsModel (Supervisor is an environment...)
+  x$InputsModel <- InputsModelBackup
+
   return(x$OutputsModel)
 }
