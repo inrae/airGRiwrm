@@ -29,3 +29,5 @@ VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/airGRiwrm
 Depends:
     R (>= 2.10)
+Remotes:  
+    url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/5d52933b2c3ec9fe38f085c8a6fa04715bba753b/airgr-5d52933b2c3ec9fe38f085c8a6fa04715bba753b.zip
