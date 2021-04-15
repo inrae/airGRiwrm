@@ -14,10 +14,10 @@ install.packages("remotes")
 The package **airGRiwrm** is under development and is only available on Gitlab:
 
 ```r
-remotes::install_gitlab("in-wop/airGRiwrm", host = "gitlab.irstea.fr", dependencies = TRUE)
+remotes::install_gitlab("in-wop/airGRiwrm", host = "gitlab.irstea.fr", dependencies = TRUE, build_vignettes = TRUE)
 ```
 
-`dependencies = TRUE` triggers the installation of suggested packages used in the vignettes. Remove this argument if you don't need it.
+`dependencies = TRUE` and `build_vignettes = TRUE` are optional and respectively trigger the installation of suggested packages used in the vignettes and the compilation and the installation of the vignettes.
 
 ## Get started
 
