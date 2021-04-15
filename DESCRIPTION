@@ -23,7 +23,8 @@ Suggests:
     rmarkdown,
     DiagrammeR,
     testthat,
-    htmltools
+    htmltools,
+    markdown
 VignetteBuilder: knitr
 URL: https://gitlab.irstea.fr/in-wop/airGRiwrm
 Depends:
