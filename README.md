@@ -17,7 +17,7 @@ install.packages("remotes")
 This version is based on a development version of **airGR** which should be installed as below:
 
 ```r
-remotes::install_gitlab("HYCAR-Hydro/airgr@67cd10", host = "gitlab.irstea.fr")
+remotes::install_gitlab("HYCAR-Hydro/airgr@5d52933b", host = "gitlab.irstea.fr")
 ```
 
 ### Local installation
