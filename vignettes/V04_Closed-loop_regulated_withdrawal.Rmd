@@ -266,7 +266,7 @@ fIrrigationFactory <- function(supervisor,
                                restriction_rule_m3s,
                                restriction_rotation) {
   function(Y) {
-    # Y is in mm/day and the basin's area is 6864.88 km2
+    # Y is in m3/day and the basin's area is 6864.88 km2
     # Calculate the objective of irrigation according to the month of the current days of simulation
     month <- as.numeric(format(supervisor$ts.date, "%m"))
     U <- irrigationObjective[month, c(2,3)] # m3/s
@@ -274,7 +274,7 @@ fIrrigationFactory <- function(supervisor,
     if(meanU > 0) {
       # calculate the naturalised flow from the measured flow and the abstracted flow of the previous week
       lastU <- supervisor$controllers[[supervisor$controller.id]]$U # m3/day
-      Qnat <- (Y * 6864.88 * 1E3 - rowSums(lastU)) / 86400 # m3/s
+      Qnat <- (Y - rowSums(lastU)) / 86400 # m3/s
       # Maximum abstracted flow available
       Qrestricted <- mean(
         approx(restriction_rule_m3s$threshold_natural_flow,
@@ -289,7 +289,7 @@ fIrrigationFactory <- function(supervisor,
       # Apply days off
       U[restriction_rotation[seq(nrow(U)),] <= n] <- 0
     }
-    return(-U * 86400) # withdrawal is a negative flow on an upstream node
+    return(-U * 86400) # withdrawal is a negative flow in m3/day on an upstream node
   }
 }
 ```
@@ -304,6 +304,7 @@ fIrrigation <- fIrrigationFactory(supervisor = sv,
                                   restriction_rule_m3s = restriction_rule_m3s,
                                   restriction_rotation = restriction_rotation)
 ```
+
 You can see what data is available in the environment of the function with:
 
 ```{r}
