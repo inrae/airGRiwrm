@@ -65,6 +65,8 @@ GRiwrm <- function(db,
                         length = "double",
                         model = "character",
                         area = "double"))
+  checkNetworkConsistency(db)
+
   class(db) <- c("GRiwrm", class(db))
   db
 }
@@ -120,4 +122,18 @@ getNodeRanking <- function(griwrm) {
   }
   ranking <- unique(ranking, fromLast = TRUE)
   ranking <- ranking[-length(ranking)]
+}
+
+checkNetworkConsistency <- function(db) {
+  if(sum(is.na(db$down)) != 1 | sum(is.na(db$length)) != 1) {
+    stop("One and only one node must have 'NA' in columns 'down' and 'length")
+  }
+  if(which(is.na(db$down)) != which(is.na(db$length))) {
+    stop("The node with 'down = NA' must be the same as the one with 'length = NA'")
+  }
+  sapply(db$down[!is.na(db$down)], function(x) {
+    if(!(x %in% db$id)) {
+      stop("The 'down' id ", x, " is not found in the 'id' column")
+    }
+  })
 }
