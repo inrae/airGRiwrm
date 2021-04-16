@@ -24,11 +24,11 @@ library(airGR)
 data(L0123001)
 
 ## preparation of InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR, 
+InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
                                  Precip = BasinObs$P, PotEvap = BasinObs$E)
 
 ## calibration period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"), 
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
 ## preparation of RunOptions object
@@ -36,7 +36,7 @@ RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
                                InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
 
 ## calibration criterion: preparation of the InputsCrit object
-InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 
 ## preparation of CalibOptions object
@@ -45,31 +45,31 @@ CalibOptions <- CreateCalibOptions(FUN_MOD = RunModel_GR4J, FUN_CALIB = Calibrat
 ## calibration
 OutputsCalib <- Calibration(InputsModel = InputsModel, RunOptions = RunOptions,
                             InputsCrit = InputsCrit, CalibOptions = CalibOptions,
-                            FUN_MOD = RunModel_GR4J, 
+                            FUN_MOD = RunModel_GR4J,
                             FUN_CALIB = Calibration_Michel)
 
 ## simulation
 Param <- OutputsCalib$ParamFinalR
-OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions, 
+OutputsModel <- RunModel(InputsModel = InputsModel, RunOptions = RunOptions,
                          Param = Param, FUN = RunModel_GR4J)
 
 ## results preview
 plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
 
 ## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 
 ## efficiency criterion: Kling-Gupta Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel, 
+InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_KGE, InputsModel = InputsModel,
                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
 OutputsCrit <- ErrorCrit_KGE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
 }
 \seealso{
 \code{\link[airGR]{Calibration_Michel}},
 \code{\link[airGR]{ErrorCrit}}, \code{\link[airGR]{TransfoParam}},
-\code{\link[airGR]{CreateInputsModel}}, \code{\link[airGR]{CreateRunOptions}}, 
+\code{\link[airGR]{CreateInputsModel}}, \code{\link[airGR]{CreateRunOptions}},
 \code{\link[airGR]{CreateInputsCrit}}, \code{\link[airGR]{CreateCalibOptions}}.
 }
 \author{

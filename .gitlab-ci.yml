@@ -22,9 +22,8 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
-  - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@5d52933b", host = "gitlab.irstea.fr")'
   - R -e 'devtools::install_deps(dep = T)'
-  - sed -i 's/dplyr/dplyr, airGR/' DESCRIPTION
+  - R -e 'devtools::install_deps_dev()'
 
 .check:
   stage: checks
