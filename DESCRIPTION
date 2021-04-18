@@ -17,7 +17,7 @@ Imports:
     utils,
     grDevices,
     graphics,
-    airGR
+    airGR (>= 1.6.10.9000)
 Suggests:
     knitr,
     rmarkdown,
@@ -30,4 +30,4 @@ URL: https://gitlab.irstea.fr/in-wop/airGRiwrm
 Depends:
     R (>= 2.10)
 Remotes:
-    url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/03ecb8d2319ef526bdcfa9d07a10b7494d05298a/airgr-03ecb8d2319ef526bdcfa9d07a10b7494d05298a.zip
+    url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/dev/airgr-dev.zip
