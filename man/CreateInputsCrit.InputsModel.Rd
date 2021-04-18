@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateInputsCrit.InputsModel.R
 \name{CreateInputsCrit.InputsModel}
 \alias{CreateInputsCrit.InputsModel}
-\title{Wrapper to \code{\link[airGR]{CreateInputsCrit}} for one sub-basin.}
+\title{Wrapper to \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} for one sub-basin.}
 \usage{
 \method{CreateInputsCrit}{InputsModel}(InputsModel, FUN_CRIT, ...)
 }

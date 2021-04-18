@@ -5,9 +5,9 @@
 #' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
 #' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
 #' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.
-#' @param ... further arguments passed to \code{\link[airGR]{CreateInputsModel}}.
+#' @param ... further arguments passed to [airGR::CreateInputsModel].
 #'
-#' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
+#' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See [airGR::CreateInputsModel])
 #' @export
 #' @examples
 #' #################################################################

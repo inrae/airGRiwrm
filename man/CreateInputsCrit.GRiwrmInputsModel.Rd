@@ -13,11 +13,11 @@
 )
 }
 \arguments{
-\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.}
+\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \link{CreateInputsModel.GRiwrm} for details.}
 
-\item{FUN_CRIT}{[function (atomic or list)] error criterion function (e.g. \code{\link[airGR]{ErrorCrit_RMSE}}, \code{\link[airGR]{ErrorCrit_NSE}})}
+\item{FUN_CRIT}{[function (atomic or list)] error criterion function (e.g. \link[airGR:ErrorCrit_RMSE]{airGR::ErrorCrit_RMSE}, \link[airGR:ErrorCrit_NSE]{airGR::ErrorCrit_NSE})}
 
-\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.}
+\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \link{CreateRunOptions.GRiwrm} for details.}
 
 \item{Qobs}{matrix or data frame containing observed flows. Column names correspond to nodes ID}
 

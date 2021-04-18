@@ -7,7 +7,7 @@
 CreateInputsCrit(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{InputsModel for \strong{airGRiwrm} (See \code{[CreateInputsModel.GRiwrm]}) or \strong{airGR} (See \code{\link[airGR]{CreateInputsModel}})}
+\item{InputsModel}{InputsModel for \strong{airGRiwrm} (See \code{[CreateInputsModel.GRiwrmInputsModel]}) or \strong{airGR} (See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel})}
 
 \item{...}{further arguments passed to or from other methods.}
 }

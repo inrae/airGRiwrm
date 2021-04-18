@@ -1,7 +1,7 @@
-#' Wrapper to \code{\link[airGR]{CreateCalibOptions}} for one sub-basin.
+#' Wrapper to [airGR::CreateCalibOptions] for one sub-basin.
 #'
-#' @param InputsModel object of class \emph{InputsModel}. See \code{\link[airGR]{CreateInputsModel}} for details
-#' @param ... Arguments passed to \code{\link[airGR]{CreateCalibOptions}}
+#' @param InputsModel object of class \emph{InputsModel}. See [airGR::CreateInputsModel] for details
+#' @param ... Arguments passed to [airGR::CreateCalibOptions]
 #' @export
 CreateCalibOptions.InputsModel <- function(InputsModel,
                                ...) {

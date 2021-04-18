@@ -1,6 +1,6 @@
 #' Update InputsModel$Qupstream with simulated upstream flows provided by GRiwrmOutputsModels object.
 #'
-#' @param InputsModel \emph{InputsModel} object. See \code{\link[airGR]{CreateInputsModel}}
+#' @param InputsModel \emph{InputsModel} object. See [airGR::CreateInputsModel]
 #' @param IndPeriod_Run numeric index of period to be used for the model run (-)
 #' @param OutputsModel \emph{GRiwrmOutputsModel} object provided by [RunModel.GRiwrmInputsModel].
 #'

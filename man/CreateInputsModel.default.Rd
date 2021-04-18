@@ -2,15 +2,15 @@
 % Please edit documentation in R/CreateInputsModel.default.R
 \name{CreateInputsModel.default}
 \alias{CreateInputsModel.default}
-\title{Wrapper for \code{\link[airGR]{CreateInputsModel}} for one sub-basin.}
+\title{Wrapper for \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for one sub-basin.}
 \usage{
 \method{CreateInputsModel}{default}(x, ...)
 }
 \arguments{
-\item{x}{\link{function} hydrological model function (e.g. \code{\link[airGR]{RunModel_GR4J}}...)}
+\item{x}{\link{function} hydrological model function (e.g. \link[airGR:RunModel_GR4J]{airGR::RunModel_GR4J}...)}
 
-\item{...}{arguments passed to \code{\link[airGR]{CreateInputsModel}}}
+\item{...}{arguments passed to \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}}
 }
 \description{
-Wrapper for \code{\link[airGR]{CreateInputsModel}} for one sub-basin.
+Wrapper for \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for one sub-basin.
 }

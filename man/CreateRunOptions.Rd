@@ -2,12 +2,12 @@
 % Please edit documentation in R/CreateRunOptions.R
 \name{CreateRunOptions}
 \alias{CreateRunOptions}
-\title{Create \emph{RunOptions} object for \strong{airGR} and \strong{airGRiwrm}. See \code{\link[airGR]{CreateRunOptions}} and \code{[CreateOptions.GRiwrmInputsModel]}.}
+\title{Create \emph{RunOptions} object for \strong{airGR} and \strong{airGRiwrm}.}
 \usage{
 CreateRunOptions(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{InputsModel} (see \code{\link[airGR]{CreateInputsModel}}) or \emph{GRiwrmInputsModel} (See \code{[CreateInputsModel.GRiwrm]}).}
+\item{InputsModel}{object of class \emph{InputsModel} (see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}) or \emph{GRiwrmInputsModel} (See \link{CreateInputsModel.GRiwrm}).}
 
 \item{...}{further arguments passed to or from other methods.}
 }
@@ -15,5 +15,5 @@ CreateRunOptions(InputsModel, ...)
 Object of \emph{RunOptions} class family
 }
 \description{
-Create \emph{RunOptions} object for \strong{airGR} and \strong{airGRiwrm}. See \code{\link[airGR]{CreateRunOptions}} and \code{[CreateOptions.GRiwrmInputsModel]}.
+See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} and \link{CreateRunOptions.GRiwrmInputsModel} for usage.
 }

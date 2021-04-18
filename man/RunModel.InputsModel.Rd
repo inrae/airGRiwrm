@@ -2,7 +2,7 @@
 % Please edit documentation in R/RunModel.InputsModel.R
 \name{RunModel.InputsModel}
 \alias{RunModel.InputsModel}
-\title{Wrapper for \code{\link[airGR]{RunModel}} for one sub-basin.}
+\title{Wrapper for \link[airGR:RunModel]{airGR::RunModel} for one sub-basin.}
 \usage{
 \method{RunModel}{InputsModel}(x, RunOptions, Param, FUN_MOD = NULL, ...)
 }

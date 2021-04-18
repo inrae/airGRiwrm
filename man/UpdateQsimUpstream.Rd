@@ -7,7 +7,7 @@
 UpdateQsimUpstream(InputsModel, IndPeriod_Run, OutputsModel)
 }
 \arguments{
-\item{InputsModel}{\emph{InputsModel} object. See \code{\link[airGR]{CreateInputsModel}}}
+\item{InputsModel}{\emph{InputsModel} object. See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}}
 
 \item{IndPeriod_Run}{numeric index of period to be used for the model run (-)}
 

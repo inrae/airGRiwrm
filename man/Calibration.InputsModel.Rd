@@ -2,7 +2,7 @@
 % Please edit documentation in R/Calibration.InputsModel.R
 \name{Calibration.InputsModel}
 \alias{Calibration.InputsModel}
-\title{Wrapper to \code{\link[airGR]{Calibration}} for one sub-basin.}
+\title{Wrapper to \link[airGR:Calibration]{airGR::Calibration} for one sub-basin.}
 \usage{
 \method{Calibration}{InputsModel}(InputsModel, ...)
 }

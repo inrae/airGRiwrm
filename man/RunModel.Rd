@@ -7,7 +7,7 @@
 RunModel(x, ...)
 }
 \arguments{
-\item{x}{object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}. See \code{\link{CreateInputsModel}} for details}
+\item{x}{object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
 \item{...}{further arguments passed to or from other methods}
 }

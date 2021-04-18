@@ -16,7 +16,7 @@
 \item{...}{Mandatory for S3 method signature function compatibility with generic.}
 }
 \value{
-\emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \code{\link[airGR]{RunModel}}) for each node of the semi-distributed model.
+\emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \link[airGR:RunModel]{airGR::RunModel}) for each node of the semi-distributed model.
 }
 \description{
 RunModel function for GRiwrmInputsModel object

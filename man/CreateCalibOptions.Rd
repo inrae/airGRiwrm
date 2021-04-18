@@ -7,7 +7,7 @@
 CreateCalibOptions(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{InputsModel} or \emph{GRwirmInputsModel}. See \code{\link{CreateInputsModel}} for details}
+\item{InputsModel}{object of class \emph{InputsModel} or \emph{GRwirmInputsModel}. See \link{CreateInputsModel} for details}
 
 \item{...}{further arguments passed to or from other methods}
 }

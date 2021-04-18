@@ -7,9 +7,9 @@
 \method{CreateCalibOptions}{GRiwrmInputsModel}(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.}
+\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \link{CreateInputsModel.GRiwrm} for details.}
 
-\item{...}{further arguments passed to \code{\link[airGR]{CreateCalibOptions}}.}
+\item{...}{further arguments passed to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions}.}
 }
 \value{
 \emph{GRiwrmCalibOptions} object.

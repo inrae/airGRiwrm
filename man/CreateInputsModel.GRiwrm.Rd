@@ -17,10 +17,10 @@
 
 \item{Qobs}{Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.}
 
-\item{...}{further arguments passed to \code{\link[airGR]{CreateInputsModel}}.}
+\item{...}{further arguments passed to \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}.}
 }
 \value{
-GRiwrmInputsModel object equivalent to \strong{airGR} InputsModel object for a semi-distributed model (See \code{\link[airGR]{CreateInputsModel}})
+GRiwrmInputsModel object equivalent to \strong{airGR} InputsModel object for a semi-distributed model (See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel})
 }
 \description{
 Create InputsModel object for a \strong{airGRiwrm} network

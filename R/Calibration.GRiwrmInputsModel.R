@@ -1,13 +1,13 @@
 #' Calibration of a semi-distributed run-off model
 #'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.
-#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{\link{CreateRunOptions.GRiwrmInputsModel}} for details.
-#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see \code{\link{CreateInputsCrit.GRiwrmInputsModel}} for details.
-#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see \code{\link{CreateCalibOptions.GRiwrmInputsModel}} for details.
+#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
+#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see [CreateRunOptions.GRiwrmInputsModel] for details.
+#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see [CreateInputsCrit.GRiwrmInputsModel] for details.
+#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see [CreateCalibOptions.GRiwrmInputsModel] for details.
 #' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}.
-#' @param ... further arguments passed to \code{\link[airGR]{Calibration}}.
+#' @param ... further arguments passed to [airGR::Calibration].
 #'
-#' @return GRiwrmOutputsCalib object which is a list of OutputsCalib (See \code{\link[airGR]{Calibration}}) for each node of the semi-distributed model.
+#' @return GRiwrmOutputsCalib object which is a list of OutputsCalib (See [airGR::Calibration]) for each node of the semi-distributed model.
 #' @export
 Calibration.GRiwrmInputsModel <- function(InputsModel,
                                           RunOptions,

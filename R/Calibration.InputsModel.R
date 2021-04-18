@@ -1,4 +1,4 @@
-#' Wrapper to \code{\link[airGR]{Calibration}} for one sub-basin.
+#' Wrapper to [airGR::Calibration] for one sub-basin.
 #'
 #' @inherit airGR::Calibration
 #' @param ... Further arguments for compatibility with S3 method

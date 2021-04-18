@@ -5,7 +5,7 @@
 #' @param Param list of parameter. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters.
 #' @param ... Mandatory for S3 method signature function compatibility with generic.
 #'
-#' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \code{\link[airGR]{RunModel}}) for each node of the semi-distributed model.
+#' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model.
 #' @export
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 

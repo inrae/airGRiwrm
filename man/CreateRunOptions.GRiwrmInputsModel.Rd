@@ -7,9 +7,9 @@
 \method{CreateRunOptions}{GRiwrmInputsModel}(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \code{\link{CreateInputsModel.GRiwrm}} for details.}
+\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \link{CreateInputsModel.GRiwrm} for details.}
 
-\item{...}{further arguments passed to \code{\link[airGR]{CreateRunOptions}}.}
+\item{...}{further arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}.}
 }
 \value{
 \emph{GRiwrmRunOptions} object for running and calibrating model in \strong{airGRiwrm}.

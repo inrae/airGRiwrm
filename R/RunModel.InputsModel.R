@@ -1,4 +1,4 @@
-#' Wrapper for \code{\link[airGR]{RunModel}} for one sub-basin.
+#' Wrapper for [airGR::RunModel] for one sub-basin.
 #'
 #' @inherit airGR::RunModel
 #' @param x `InputsModel` used as `InputsModel` parameter for [airGR::RunModel]

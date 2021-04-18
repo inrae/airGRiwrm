@@ -2,15 +2,15 @@
 % Please edit documentation in R/CreateCalibOptions.InputsModel.R
 \name{CreateCalibOptions.InputsModel}
 \alias{CreateCalibOptions.InputsModel}
-\title{Wrapper to \code{\link[airGR]{CreateCalibOptions}} for one sub-basin.}
+\title{Wrapper to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions} for one sub-basin.}
 \usage{
 \method{CreateCalibOptions}{InputsModel}(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{InputsModel}. See \code{\link[airGR]{CreateInputsModel}} for details}
+\item{InputsModel}{object of class \emph{InputsModel}. See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for details}
 
-\item{...}{Arguments passed to \code{\link[airGR]{CreateCalibOptions}}}
+\item{...}{Arguments passed to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions}}
 }
 \description{
-Wrapper to \code{\link[airGR]{CreateCalibOptions}} for one sub-basin.
+Wrapper to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions} for one sub-basin.
 }

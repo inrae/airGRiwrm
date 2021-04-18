@@ -2,15 +2,15 @@
 % Please edit documentation in R/CreateRunOptions.InputsModel.R
 \name{CreateRunOptions.InputsModel}
 \alias{CreateRunOptions.InputsModel}
-\title{Wrapper for \code{\link[airGR]{CreateRunOptions}} for one sub-basin.}
+\title{Wrapper for \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for one sub-basin.}
 \usage{
 \method{CreateRunOptions}{InputsModel}(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{InputsModel}, see \code{\link[airGR]{CreateInputsModel}} for details.}
+\item{InputsModel}{object of class \emph{InputsModel}, see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for details.}
 
-\item{...}{Arguments passed to \code{\link[airGR]{CreateRunOptions}}}
+\item{...}{Arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}}
 }
 \description{
-Wrapper for \code{\link[airGR]{CreateRunOptions}} for one sub-basin.
+Wrapper for \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for one sub-basin.
 }
