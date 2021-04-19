@@ -17,7 +17,7 @@
 
 \item{FUN_CRIT}{[function (atomic or list)] error criterion function (e.g. \link[airGR:ErrorCrit_RMSE]{airGR::ErrorCrit_RMSE}, \link[airGR:ErrorCrit_NSE]{airGR::ErrorCrit_NSE})}
 
-\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \link{CreateRunOptions.GRiwrm} for details.}
+\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \link{CreateRunOptions.GRiwrmInputsModel} for details.}
 
 \item{Obs}{matrix or data frame containing observed flows. Column names correspond to nodes ID}
 
