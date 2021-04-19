@@ -44,7 +44,12 @@ getDataFromLocation <- function(loc, sv) {
     stop("Reaching output of other controller is not implemented yet")
   } else {
     node <- sv$griwrm$down[sv$griwrm$id == loc]
-    sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.previous, loc]
+    if(is.na(node)) {
+      # Downstream node: simulated flow at last supervision time step (bug #40)
+      sv$OutputsModel[[loc]]$Qsim_m3
+    } else {
+      sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.previous, loc]
+    }
   }
 }
 
