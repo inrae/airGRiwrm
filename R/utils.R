@@ -81,6 +81,9 @@ doSupervision <- function(supervisor) {
     # Run logic
     supervisor$controllers[[id]]$U <-
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
+    if(is.vector(supervisor$controllers[[id]]$U)) {
+      supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
+    }
     # Write U to locations in the model
     setDataToLocation(supervisor$controllers[[id]], sv = supervisor)
   }
