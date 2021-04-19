@@ -96,7 +96,7 @@ RunOptions <- CreateRunOptions(IM_OL,
                                IndPeriod_Run = IndPeriod_Run)
 InputsCrit <- CreateInputsCrit(IM_OL,
                                FUN_CRIT = airGR::ErrorCrit_KGE2,
-                               RunOptions = RunOptions, Qobs = Qobs)
+                               RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,])
 CalibOptions <- CreateCalibOptions(IM_OL)
 ```
 

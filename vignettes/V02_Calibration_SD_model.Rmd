@@ -98,7 +98,7 @@ The `CreateInputsCrit()` function allows to prepare the input in order to calcul
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Qobs = Qobs
+  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
 )
 str(InputsCrit)
 ```

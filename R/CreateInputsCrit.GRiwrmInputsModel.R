@@ -5,7 +5,7 @@
 #' @param InputsModel  object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
 #' @param FUN_CRIT \[function (atomic or list)\] error criterion function (e.g. [airGR::ErrorCrit_RMSE], [airGR::ErrorCrit_NSE])
 #' @param RunOptions object of class \emph{GRiwrmRunOptions}, see [CreateRunOptions.GRiwrm] for details.
-#' @param Qobs matrix or data frame containing observed flows. Column names correspond to nodes ID
+#' @param Obs matrix or data frame containing observed flows. Column names correspond to nodes ID
 #' @param ... further arguments passed to [airGR::CreateInputsCrit].
 #'
 #' @return Object of class \emph{GRiwrmInputsCrit} which is a list of `airGR::InputsCrit` objects (See [airGR::CreateInputsCrit])
@@ -13,7 +13,7 @@
 CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
                                                FUN_CRIT = airGR::ErrorCrit_NSE,
                                                RunOptions,
-                                               Qobs,
+                                               Obs,
                                                ...) {
   InputsCrit <- list()
   class(InputsCrit) <- append(class(InputsCrit), "GRiwrmInputsCrit")
@@ -23,7 +23,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
       InputsModel = IM,
       FUN_CRIT = FUN_CRIT,
       RunOptions = RunOptions[[IM$id]],
-      Obs = Qobs[RunOptions[[IM$id]]$IndPeriod_Run, IM$id],
+      Obs = Obs[, IM$id],
       ...
     )
   }

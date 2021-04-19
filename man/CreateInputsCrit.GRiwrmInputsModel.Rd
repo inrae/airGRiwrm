@@ -8,7 +8,7 @@
   InputsModel,
   FUN_CRIT = airGR::ErrorCrit_NSE,
   RunOptions,
-  Qobs,
+  Obs,
   ...
 )
 }
@@ -19,7 +19,7 @@
 
 \item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \link{CreateRunOptions.GRiwrm} for details.}
 
-\item{Qobs}{matrix or data frame containing observed flows. Column names correspond to nodes ID}
+\item{Obs}{matrix or data frame containing observed flows. Column names correspond to nodes ID}
 
 \item{...}{further arguments passed to \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit}.}
 }
