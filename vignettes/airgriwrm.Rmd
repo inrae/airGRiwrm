@@ -1,0 +1,21 @@
+---
+title: "Get started with the airGRiwrm package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started with the airGRiwrm package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## For getting started several materials are available:
+
+### [A slide-show of a training on **airGRiwrm** in French ](../training/fr/Formation_airGRiwrm.html)
+### [The vignettes provided with the package with example of use on the Severn River (UK)](index.html)
+### [An example of use on a large network of 25 nodes on the Seine River (France)](index.html)

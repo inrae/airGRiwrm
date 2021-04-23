@@ -1,0 +1,131 @@
+---
+title: "Seine_02: Run a semi-distributive GR model network"
+author: "David Dorchies"
+vignette: >
+  %\VignetteIndexEntry{Seine_02: Run a semi-distributive GR model network}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libraries
+
+```{r}
+library(airGRiwrm)
+```
+
+
+## Load parameters of GR4 run-off model
+
+### Loading network and time series data
+
+Run `vignette("01_First_network", package = "airGRiwrm")` before this one in order to create the Rdata file loaded below:
+
+```{r}
+load("_cache/V01.RData")
+```
+
+### Loading
+
+Data comes from calibration of ClimAware project with naturalised flows.
+
+```{r}
+ClimAwareParams <- read.csv(
+  file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1"
+)
+
+ClimAwareParams
+```
+
+The lag $\tau_0$ and route $K_0$ parameters of TGR are expressed as time delay in hours corresponding to the delay time between the farest upstream inlet and the outlet of the sub-basin.
+Almost all sub basin has only a lag parameter. The only exception is for La Marne à Noisiel (NOISI_17) that has a routing parameter which can be approximated to a single lag parameter equals to $\tau_0 + K_0$.
+
+This lag parameter has to be converted in a speed in m/s used in the **airGR** lag model:
+
+```{r}
+# Convert TGR routing parameter into speed
+params <- merge(griwrm, ClimAwareParams, by.x = "id", by.y = "id_sgl")
+
+ParamClimAware <- sapply(griwrm$id, function(id) {
+  nodeParam <- ClimAwareParams[ClimAwareParams$id_sgl == id,]
+  # Record hydrological model parameters
+  Param <- unlist(nodeParam[c("S", "IGF", "KR", "T")])
+  # Add lag model parameter if upstream nodes exist
+  UpstrNodes <- which(griwrm$down == id & !is.na(griwrm$down))
+  if(length(UpstrNodes) > 0) {
+    maxLength <- max(griwrm$length[UpstrNodes])
+    Param <- c(
+      maxLength * 1000 / ((nodeParam$Tau0 + nodeParam$K0) * 3600),
+      Param
+    )
+  }
+  return(Param)
+})
+
+```
+
+## GriwmRunOptions object
+
+The `CreateRunOptions()` function allows to prepare the options required to the `RunModel()` function.
+
+The user must at least define the following arguments:
+
+* InputsModel: the associated input data
+* IndPeriod_Run: the period on which the model is run
+
+
+```{r}
+IndPeriod_Run <- seq(
+  which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+  length(InputsModel[[1]]$DatesR) # Until the end of the time series
+)
+```
+
+The warmup period could also be defined as is:
+
+```{r}
+IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+```
+
+
+
+```{r}
+RunOptions <- CreateRunOptions(
+  InputsModel = InputsModel,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
+  IndPeriod_Run = IndPeriod_Run
+)
+```
+
+
+
+## Run the SD model for the whole basin
+
+```{r}
+OutputsModelsClimAware <- RunModel(
+  InputsModel,
+  RunOptions = RunOptions,
+  Param = ParamClimAware
+)
+```
+
+## Save data for next vignettes
+
+```{r}
+save(RunOptions, ParamClimAware, IndPeriod_Run, file = "_cache/V02.RData")
+```
+
+## Plot the result for each basin
+
+```{r, fig.height = 5, fig.width = 8}
+plot(OutputsModelsClimAware, Qobs = Qobs[IndPeriod_Run,])
+```
+
+
+
+
+
+

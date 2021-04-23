@@ -1,0 +1,99 @@
+---
+title: "Seine_06: Simulate naturalized flows with a model network calibrated with influenced flows"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Seine_06: Simulate naturalized flows with a model network calibrated with influenced flows}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(airGRiwrm)
+library(seinebasin)
+```
+
+
+## Set the data
+
+Loading naturalised data and influenced flow calibration:
+
+```{r}
+# Input data for the model
+load("_cache/V01b.RData")
+# Calibration in influenced flows
+load("_cache/V05.RData")
+```
+
+Remove lag parameter in `StDIZ_04` station because there is no longer upstream node on it.
+
+```{r}
+Param6 <- Param5
+Param6$STDIZ_04 <- Param6$STDIZ_04[-1]
+```
+
+
+Remove extra items from global configuration
+
+```{r}
+selectedNodes <- c("STDIZ_04", "LOUVE_19", "VITRY_25", "CHALO_21", "MONTR_18", "NOISI_17")
+griwrm4 <- griwrm[griwrm$id %in% selectedNodes,]
+griwrm4[griwrm4$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
+DiagramGRiwrm(griwrm4)
+```
+
+Generate `GRiwrmInputsModel` object
+
+```{r}
+InputsModel4 <- CreateInputsModel(griwrm4, DatesR, Precip, PotEvap, Qobs)
+```
+
+## GriwmRunOptions object
+
+
+```{r}
+IndPeriod_Run <- seq(366, length(DatesR)) # Until the end of the time series
+```
+
+The warmup period could also be defined as is:
+
+```{r}
+IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+```
+
+
+
+```{r}
+RunOptions <- CreateRunOptions(
+  InputsModel = InputsModel4,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
+  IndPeriod_Run = IndPeriod_Run
+)
+```
+
+## Run model with Michel calibration
+
+```{r}
+OutputsModels4 <- RunModel(
+  InputsModel4,
+  RunOptions = RunOptions,
+  Param = Param6
+)
+```
+
+## Compare simulated naturalised flow with the ones given by EPTB SGL
+
+```{r, fig.height = 5, fig.width = 8}
+htmltools::tagList(lapply(
+  names(OutputsModels4),
+  function(x) {
+    plot(OutputsModels4[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
+  }
+))
+```

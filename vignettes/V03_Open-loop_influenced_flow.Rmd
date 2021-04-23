@@ -1,8 +1,8 @@
 ---
-title: "V03 Open-loop influenced flow"
+title: "Severn_03: Calibration of an open-loop influenced flow model network"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{V03 Open-loop influenced flow}
+  %\VignetteIndexEntry{Severn_03: Calibration of an open-loop influenced flow model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: airGRiwrm.bib

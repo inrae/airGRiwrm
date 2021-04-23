@@ -1,8 +1,8 @@
 ---
-title: 'Tutorial: structure of a semi-distributive GR model'
+title: 'Severn_01: Set up of a semi-distributive GR model network'
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Tutorial: structure of a semi-distributive GR model}
+  %\VignetteIndexEntry{Severn_01: Set up of a semi-distributive GR model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: airGRiwrm.bib

@@ -6,3 +6,7 @@
 ^data-raw$
 ^\.vscode$
 ^ci$
+^logo.png$
+^_pkgdown\.yml$
+^pkgdown
+^docs

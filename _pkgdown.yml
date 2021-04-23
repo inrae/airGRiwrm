@@ -1,0 +1,45 @@
+url: https://airgriwrm.g-eau.fr
+development:
+  mode: unreleased
+
+template:
+  params:
+    bootswatch: cerulean
+
+navbar:
+  structure:
+    left:  [home, intro, reference, articles]
+    right: [gitlab]
+  components:
+    intro:
+      text: Get started
+      href: articles/airgriwrm.html
+    github: ~
+    gitlab:
+      icon: fab fa-gitlab fa-lg
+      href: https://gitlab.irstea.fr/in-wop/airGRiwrm
+
+repo:
+  url:
+    home: https://gitlab.irstea.fr/in-wop/airGRiwrm
+    source: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/tree/master
+    issue: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues
+
+articles:
+  - title: Quick start on the Severn River (UK)
+    navbar: Quick start on the Severn River
+    contents:
+      - V01_Structure_SD_model
+      - V02_Calibration_SD_model
+      - V03_Open-loop_influenced_flow
+      - V04_Closed-loop_regulated_withdrawal
+  - title: Example of a large network on the Seine River (France)
+    navbar: Example of a large network on the Seine River (France)
+    contents:
+      - seinebasin/V01_First_network
+      - seinebasin/V02_First_run
+      - seinebasin/V03_First_Calibration
+      - seinebasin/V04_Open-loop_influenced_flow
+      - seinebasin/V05_Open-loop_influenced_flow_calibration
+      - seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J
+      - seinebasin/V06_Naturalised_flow_simulation

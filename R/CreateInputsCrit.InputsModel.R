@@ -6,6 +6,7 @@
 CreateInputsCrit.InputsModel <- function(InputsModel,
                                          FUN_CRIT,
                                          ...) {
+browser()
   airGR::CreateInputsCrit(FUN_CRIT = FUN_CRIT,
                           InputsModel = InputsModel,
                           ...)
