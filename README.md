@@ -2,7 +2,7 @@
 
 **airGRiwrm** is an extension of the **airGR** R package for managing semi-distributive hydrological model on an anthropized catchment.
 
-This package is developed as part of the IN-WOP project (http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop) by the mixed research unit G-EAU (https://g-eau.fr) and the HYDRO team of the INRAE HYCAR research unit (https://www6.jouy.inrae.fr/hycar/Equipes-de-recherche/HYDRO).
+This package is developed as part of the IN-WOP project (http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop) by the mixed research unit G-EAU (https://g-eau.fr) and the HYDRO team of the INRAE HYCAR research unit (https://webgr.inrae.fr/en/home/).
 
 ## Installation
 
@@ -21,4 +21,4 @@ remotes::install_gitlab("in-wop/airGRiwrm", host = "gitlab.irstea.fr", dependenc
 
 ## Get started
 
-See the package vignettes for more information.
+Visit the website dedicated to the package at https://airgriwrm.g-eau.fr for tutorials, usage examples and documentation.
