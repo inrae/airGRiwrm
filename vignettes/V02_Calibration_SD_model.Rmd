@@ -1,8 +1,8 @@
 ---
-title: "Severn02: Calibration of a GR4J semi-distributive model network"
+title: "Severn_02: Calibration of a GR4J semi-distributive model network"
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Severn02: Calibration of a GR4J semi-distributive model network}
+  %\VignetteIndexEntry{Severn_02: Calibration of a GR4J semi-distributive model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

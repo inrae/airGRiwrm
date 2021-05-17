@@ -27,7 +27,7 @@ repo:
 
 articles:
   - title: Quick start on the Severn River (UK)
-    navbar: Quick start on the Severn River
+    navbar: Quick start on the Severn River (UK)
     contents:
       - V01_Structure_SD_model
       - V02_Calibration_SD_model
