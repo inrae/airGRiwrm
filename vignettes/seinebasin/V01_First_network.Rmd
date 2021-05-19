@@ -23,7 +23,7 @@ List of nodes
 ```{r}
 seine_nodes <- read.table(
   file = system.file("seine_data", "network_gauging_stations.txt", package = "seinebasin"),
-  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\""
+  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\"", stringsAsFactors = FALSE
 )
 seine_nodes
 ```
