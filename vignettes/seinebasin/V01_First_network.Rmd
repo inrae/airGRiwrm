@@ -78,7 +78,7 @@ MergeTS <- function(dfOld, id, dfNew) {
 for(id in griwrm$id) {
   url <-
     file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
+      paste0(seinebasin::url_data, "?p=/climaware_hydro/Q_OBS_NAT"), 
       paste0(id, "_NAT.txt&dl=1")
     )
   ts <- read.table(url, sep = ";", skip = 16, header = TRUE)

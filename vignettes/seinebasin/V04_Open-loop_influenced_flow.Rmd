@@ -199,7 +199,7 @@ Then, we load observation data for each reservoir and each connection:
 for(reservoir_id in names(lCfgReservoirs)) {
   df <- read.table(
     file = file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/Reservoir_current_rules",
+      paste0(seinebasin::url_data, "?p=/Reservoir_current_rules"),
       paste0(lCfgReservoirs[[reservoir_id]]$file, "&dl=1")
     ),
     sep = "\t", header = TRUE, fill = TRUE

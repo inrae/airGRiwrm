@@ -34,7 +34,7 @@ Data comes from calibration of ClimAware project with naturalised flows.
 
 ```{r}
 ClimAwareParams <- read.csv(
-  file = "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1"
+  file = paste0(seinebasin::url_data, "?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1")
 )
 
 ClimAwareParams
