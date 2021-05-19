@@ -1,5 +1,7 @@
 stages:
+    - install
     - checks
+    - website
 
 default:
   tags: [docker]
@@ -22,8 +24,12 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
-  - R -e 'devtools::install_deps(dep = T)'
-  - R -e 'devtools::install_dev_deps()'
+
+install:
+  stage: install
+  script:
+    - R -e 'devtools::install_deps(dep = T)'
+    - R -e 'devtools::install_dev_deps()'
 
 .check:
   stage: checks
@@ -41,3 +47,15 @@ check_as_cran:
   variables:
     NOT_CRAN: "false"
   extends: .check
+
+website:
+  stage: website
+  # only:
+  #   refs:
+  #     - master
+  #     - tags
+  script:
+    - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
+    - R -e 'pkgdown::build_site()'
+    - sudo apt-get install -y sshpass rsync
+    - sshpass -p "${OVH_PASS}" rsync -a docs ${OVH_LOGIN}@${OVH_SFTP}/airgriwrm
