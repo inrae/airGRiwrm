@@ -13,7 +13,7 @@
 
 \item{Param}{[numeric] vector of 1 parameter
     \tabular{ll}{
-      Velocity \tab Mean flow velocity [m/s]
+      Velocity \tab mean flow velocity [m/s]
     }
   }
 
