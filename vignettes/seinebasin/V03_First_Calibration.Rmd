@@ -15,44 +15,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Run `vignette("01_First_network", package = "airGRiwrm")` and `vignette("02_First_run", package = "airGRiwrm")` before this one in order to create the Rdata files loaded below:
 
-```{r}
+```{r load}
 library(airGRiwrm)
 load("_cache/V01.RData")
 load("_cache/V02.RData")
+library(seinebasin)
+data(QNAT)
 ```
 
 ## InputsCrit object
 
-```{r}
+```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
+  RunOptions = RunOptions, Obs = Qnat[IndPeriod_Run,]
 )
 str(InputsCrit)
 ```
 
 ## GRiwrmCalibOptions object
 
-```{r}
+```{r CreateCalibOptions}
 CalibOptions <- CreateCalibOptions(InputsModel)
 str(CalibOptions)
 ```
 
 ## Calibration
 
-```{r}
+```{r Calibration}
 OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 ```
 
-```{r}
-save(OutputsCalib, file = "_cache/V03.RData")
-```
-
-
 ## Run model with Michel calibration
 
-```{r}
+```{r RunModel}
 ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
 
 OutputsModels <- RunModel(
@@ -64,14 +61,14 @@ OutputsModels <- RunModel(
 
 ## Save calibration data for next vignettes
 
-```{r}
+```{r save}
 save(ParamMichel, file = "_cache/V03.RData")
 ```
 
 
 ## Plot the result for each basin
 
-```{r, fig.height = 5, fig.width = 8}
-plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,])
+```{r plot, fig.height = 5, fig.width = 8}
+plot(OutputsModels, Qobs = Qnat[IndPeriod_Run,])
 ```
 

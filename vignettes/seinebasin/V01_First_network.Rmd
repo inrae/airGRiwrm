@@ -5,25 +5,29 @@ vignette: >
   %\VignetteIndexEntry{Seine_01: Structuration of a semi-distributive GR4J model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: seinebasin.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r library}
 library(airGRiwrm)
 ```
 
+The example below is inspired by the semi-distributed model developed in the ClimAware project [@theobaldClimAwareImpactsClimate2014a].
 
 ## Semi-distributive network description
 
+The model is distributed according to the gauging stations described in @dorchiesClimateChangeImpacts2014.
+
 List of nodes
 
-```{r}
+```{r seine_nodes}
 seine_nodes <- read.table(
   file = system.file("seine_data", "network_gauging_stations.txt", package = "seinebasin"),
-  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\""
+  sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\"", stringsAsFactors = FALSE
 )
 seine_nodes
 ```
@@ -38,7 +42,7 @@ Create the GRiwrm object which lists the nodes and describes the network diagram
 
 `GRiwrm` function helps to rename the columns of the dataframe and assign the variable classes.
 
-```{r}
+```{r griwrm}
 seine_nodes$id_aval[seine_nodes$id_aval == ""] <- NA
 seine_nodes$distance_aval <- as.double(seine_nodes$distance_aval) / 1000
 seine_nodes$model <- "RunModel_GR4J"
@@ -49,7 +53,7 @@ griwrm
 
 The diagram of the network structure is represented below with in blue the upstream nodes with a GR4J model and in green the intermediate nodes with an SD (GR4J + LAG) model.
 
-```{r fig.height = 7, fig.width = 8}
+```{r DiagramGRiwrm, fig.height = 7, fig.width = 8}
 DiagramGRiwrm(griwrm)
 ```
 
@@ -57,48 +61,15 @@ DiagramGRiwrm(griwrm)
 
 ## Observation time series
 
-Loading hydrometeorological data on the Seine river basin from the ClimAware project:
+The daily mean precipitation and potential evaporation at the scale of the intermediate sub-basins are extracted from the SAFRAN reanalysis [@vidal50yearHighresolutionAtmospheric2010]. 
 
-```{r, warning=FALSE, message=FALSE}
+The daily naturalised flow is provided by @hydratecActualisationBaseDonnees2011a.
 
-Precip <- NULL
-PotEvap <- NULL
-Qobs <- NULL
+These data are embedded in a the R package 'seinebasin' which is not publicly available.
 
-MergeTS <- function(dfOld, id, dfNew) {
-    names(dfNew) <- c("DatesR", id) # Renaming columns of the new input into date and sub-basin ID
-    if(is.null(dfOld)) {
-    dfOut <- dfNew # Creation of the first column
-  } else {
-    dfOut <- merge(dfOld, dfNew, by = "DatesR", all = TRUE) # Merge the new columns respecting to date column
-  }
-  return(dfOut)
-}
-
-for(id in griwrm$id) {
-  url <-
-    file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
-      paste0(id, "_NAT.txt&dl=1")
-    )
-  ts <- read.table(url, sep = ";", skip = 16, header = TRUE)
-  # Date conversion to POSIX
-  ts$Date <- as.POSIXct(as.character(ts$Date), format = "%Y%m%d")
-  # Ptot column  is merged into Precip dataframe
-  Precip <- MergeTS(Precip, id, ts[,c("Date", "Ptot")])
-  # ETP column is merged into PotEvap dataframe
-  PotEvap <- MergeTS(PotEvap, id, ts[,c("Date", "ETP")])
-  # Convert Qobs from m3/s to mm/time step
-  ts$Qnat <- ts$Qnat * 86.4 / griwrm$area[griwrm$id == id]
-  # Setting data gaps to NA
-  ts$Qnat[ts$Qnat <= 0] <- NA
-  # Qnat column is merged into Qobs dataframe
-  Qobs <- MergeTS(Qobs, id, ts[,c("Date", "Qnat")])
-}
-DatesR <- Precip$DatesR
-Precip$DatesR <- NULL
-PotEvap$DatesR <- NULL
-Qobs$DatesR <- NULL
+```{r QNAT, warning=FALSE, message=FALSE}
+library(seinebasin)
+data(QNAT)
 ```
 
 ## Generate the GRIWRM InputsModel object
@@ -108,17 +79,17 @@ The GRIWRM InputsModel object is a list of **airGR** InputsModel. The identifier
 The **airGR** CreateInputsModel function is extended in order to handle the griwrm object which describe the basin diagram:
 
 
-```{r}
-InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+```{r CreateInputsModel}
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qnat)
 ```
 
 
 
 ## Save data for next vignettes
 
-```{r}
+```{r save}
 dir.create("_cache", showWarnings = FALSE)
-save(griwrm, Qobs, InputsModel, file = "_cache/V01.RData")
-save(griwrm, DatesR, Precip, PotEvap, Qobs, MergeTS, file = "_cache/V01b.RData")
+save(griwrm, InputsModel, file = "_cache/V01.RData")
 ```
 
+# References

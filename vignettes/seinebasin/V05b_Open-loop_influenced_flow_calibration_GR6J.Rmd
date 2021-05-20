@@ -8,31 +8,32 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+```{r library}
 library(airGRiwrm)
 ```
 
-As vignette V05, this vignette proposes an example of calibration of influenced flow with the Marne reservoir but here with the GR6J model instead of GR4J. It will used influenced observation flows directly measured at gauging stations and flows recorded at reservoir inlets and outlet.
+As in vignette V05, this vignette proposes an example of calibration of influenced flow with the Marne reservoir but here with the GR6J model instead of GR4J.
+It will used influenced observation flows directly measured at gauging stations and flows recorded at reservoir inlets and outlet.
 
 ## Set the data
 
 Loading naturalised data and influenced flow configuration:
 
-```{r}
-load("_cache/V01b.RData")
+```{r load}
+#load("_cache/V01.RData")
 load("_cache/V04.RData")
 ```
 
 Remove extra items from global configuration
 
-```{r}
+```{r griwrm3}
 selectedNodes <- c("MARNE_P23", "STDIZ_04", "LOUVE_19", "VITRY_25", "MARNE_P28", "MARNE_R25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm3 <- griwrm2[griwrm2$id %in% selectedNodes,]
 griwrm3$model[!is.na(griwrm3$model)] <- "RunModel_GR6J"
@@ -42,31 +43,35 @@ DiagramGRiwrm(griwrm3)
 
 Generate `GRiwrmInputsModel` object
 
-```{r}
-Qobs3 <- cbind(Qobs2, QobsReservoirs)
-iEnd <-which(DatesR == lubridate::ymd("2008-07-31"))
+```{r CreateInputsModel}
+library(seinebasin)
+data(QOBS)
+iEnd <-which(DatesR == as.POSIXct("2008-07-31"))
+
+data(Qreservoirs)
+Qobs3 <- cbind(Qobs, Qreservoirs[1:iEnd,])
 InputsModel3 <- CreateInputsModel(griwrm3, DatesR[1:iEnd], Precip[1:iEnd,], PotEvap[1:iEnd,], Qobs3)
 ```
 
 ## GriwmRunOptions object
 
 
-```{r}
-IndPeriod_Run <- seq(
-  which(InputsModel3[[1]]$DatesR == (InputsModel3[[1]]$DatesR[1] + months(12))), # Set aside warm-up period
-  length(InputsModel3[[1]]$DatesR) # Until the end of the time series
+```{r IndPeriod_Run}
+IndPeriod_Run <- seq.int(
+  which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+  iEnd # Until the end of the time series
 )
 ```
 
 The warmup period could also be defined as is:
 
-```{r}
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+```{r IndPeriod_WarmUp}
+IndPeriod_WarmUp = seq.int(1,IndPeriod_Run[1]-1)
 ```
 
 
 
-```{r}
+```{r CreateRunOptions}
 RunOptions <- CreateRunOptions(
   InputsModel = InputsModel3,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -76,7 +81,7 @@ RunOptions <- CreateRunOptions(
 
 ## InputsCrit object
 
-```{r}
+```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel3,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
@@ -86,32 +91,32 @@ InputsCrit <- CreateInputsCrit(
 
 ## GRiwrmCalibOptions object
 
-```{r}
+```{r CreateCalibOptions}
 CalibOptions <- CreateCalibOptions(InputsModel3)
 str(CalibOptions)
 ```
 
 ## Calibration
 
-```{r warning = FALSE}
+```{r Calibration, warning = FALSE}
 OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 ```
 
 ## Run model with Michel calibration
 
-```{r}
-ParamMichel <- sapply(griwrm3$id, function(x) {OutputsCalib[[x]]$Param})
+```{r RunModel}
+Param5 <- sapply(griwrm3$id, function(x) {OutputsCalib[[x]]$Param})
 
 OutputsModels3 <- RunModel(
   InputsModel3,
   RunOptions = RunOptions,
-  Param = ParamMichel
+  Param = Param5
 )
 ```
 
 ### Comparison with simulated flows
 
-```{r, fig.height = 5, fig.width = 8}
+```{r plot, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
   griwrm3$id[!is.na(griwrm3$model)],
   function(x) {
@@ -123,4 +128,3 @@ htmltools::tagList(lapply(
   }
 ))
 ```
-

@@ -1,5 +1,6 @@
 stages:
     - checks
+    - website
 
 default:
   tags: [docker]
@@ -23,12 +24,11 @@ before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
   - R -e 'devtools::install_deps(dep = T)'
-  - R -e 'devtools::install_dev_deps()'
 
 .check:
   stage: checks
   script:
-    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get install -y qpdf; fi
+    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y qpdf; fi
     - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN")), env_vars = c(NOT_CRAN = Sys.getenv("NOT_CRAN")))'
     - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
@@ -41,3 +41,15 @@ check_as_cran:
   variables:
     NOT_CRAN: "false"
   extends: .check
+
+website:
+  stage: website
+  # only:
+  #   refs:
+  #     - master
+  #     - tags
+  script:
+    - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
+    - R -e 'pkgdown::build_site()'
+    - sudo apt-get update && sudo apt-get install -y sshpass rsync
+    - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/home/${OVH_LOGIN}/airgriwrm/
