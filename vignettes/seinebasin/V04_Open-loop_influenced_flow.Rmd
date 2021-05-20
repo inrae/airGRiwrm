@@ -6,6 +6,7 @@ vignette: >
   %\VignetteIndexEntry{Seine_04: Running open-loop influenced flow semi-distributed model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: seinebasin.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -21,6 +22,8 @@ library(airGRiwrm)
 ```
 
 ## Integration of the reservoir connections into the model
+
+The goal of this vignette is to add reservoirs connections to the Seine River model previously set up. A complete description of the reservoir system of the Seine River can be found in @dehayEtudeImpactChangement2012
 
 ### Add connections to the reservoirs in the gauging station network
 
@@ -284,5 +287,4 @@ htmltools::tagList(lapply(
 ))
 ```
 
-
-
+# References

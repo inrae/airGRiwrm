@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Seine_01: Structuration of a semi-distributive GR4J model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: seinebasin.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -15,8 +16,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
+The example below is inspired by the semi-distributed model developed in the ClimAware project [@theobaldClimAwareImpactsClimate2014a].
 
 ## Semi-distributive network description
+
+The model is distributed according to the gauging stations described in @dorchiesClimateChangeImpacts2014.
 
 List of nodes
 
@@ -57,7 +61,11 @@ DiagramGRiwrm(griwrm)
 
 ## Observation time series
 
-Loading hydrometeorological data on the Seine river basin from the ClimAware project:
+The daily mean precipitation and potential evaporation at the scale of the intermediate sub-basins are extracted from the SAFRAN reanalysis [@vidal50yearHighresolutionAtmospheric2010]. 
+
+The daily naturalised flow is provided by @hydratecActualisationBaseDonnees2011a.
+
+These data are embedded in a the R package 'seinebasin' which is not publicly available.
 
 ```{r QNAT, warning=FALSE, message=FALSE}
 library(seinebasin)
@@ -84,3 +92,4 @@ dir.create("_cache", showWarnings = FALSE)
 save(griwrm, InputsModel, file = "_cache/V01.RData")
 ```
 
+# References

@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Seine_06: Simulate naturalized flows with a model network calibrated with influenced flows}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: seinebasin.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -19,6 +20,9 @@ library(airGRiwrm)
 library(seinebasin)
 ```
 
+This vignette is an example of flow naturalisation by modelling [@terrierStreamflowNaturalizationMethods2020].
+
+By using the model calibrated with influenced flow on the Marne River, it's now possible to model naturalised flows by dropping the connections to the Marne reservoir from the model. 
 
 ## Set the data
 
@@ -98,3 +102,5 @@ htmltools::tagList(lapply(
   }
 ))
 ```
+
+# References
