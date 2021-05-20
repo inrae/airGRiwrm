@@ -28,7 +28,7 @@ before_script:
 .check:
   stage: checks
   script:
-    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get install -y qpdf; fi
+    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y qpdf; fi
     - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN")), env_vars = c(NOT_CRAN = Sys.getenv("NOT_CRAN")))'
     - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
 
@@ -51,5 +51,5 @@ website:
   script:
     - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
     - R -e 'pkgdown::build_site()'
-    - sudo apt-get install -y sshpass rsync
+    - sudo apt-get update && sudo apt-get install -y sshpass rsync
     - sshpass -p "${OVH_PASS}" rsync -a docs/ ${OVH_LOGIN}@${OVH_SFTP}:/airgriwrm/
