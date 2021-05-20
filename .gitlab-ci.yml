@@ -52,4 +52,4 @@ website:
     - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
     - R -e 'pkgdown::build_site()'
     - sudo apt-get update && sudo apt-get install -y sshpass rsync
-    - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/airgriwrm/
+    - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/home/${OVH_LOGIN}/airgriwrm/
