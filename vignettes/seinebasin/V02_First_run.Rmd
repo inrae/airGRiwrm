@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Load libraries
 
-```{r}
+```{r library}
 library(airGRiwrm)
 ```
 
@@ -24,7 +24,7 @@ library(airGRiwrm)
 
 Run `vignette("01_First_network", package = "airGRiwrm")` before this one in order to create the Rdata file loaded below:
 
-```{r}
+```{r load}
 load("_cache/V01.RData")
 ```
 
@@ -32,11 +32,9 @@ load("_cache/V01.RData")
 
 Data comes from calibration of ClimAware project with naturalised flows.
 
-```{r}
-ClimAwareParams <- read.csv(
-  file = paste0(seinebasin::url_data, "?p=/climaware_hydro/Ident_NAT_P0P0.txt&dl=1")
-)
-
+```{r ClimAwareParams}
+library(seinebasin)
+data(ClimAwareParams)
 ClimAwareParams
 ```
 
@@ -45,7 +43,7 @@ Almost all sub basin has only a lag parameter. The only exception is for La Marn
 
 This lag parameter has to be converted in a speed in m/s used in the **airGR** lag model:
 
-```{r}
+```{r ParamClimAware}
 # Convert TGR routing parameter into speed
 params <- merge(griwrm, ClimAwareParams, by.x = "id", by.y = "id_sgl")
 
@@ -77,7 +75,7 @@ The user must at least define the following arguments:
 * IndPeriod_Run: the period on which the model is run
 
 
-```{r}
+```{r IndPeriod_Run}
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
@@ -86,13 +84,13 @@ IndPeriod_Run <- seq(
 
 The warmup period could also be defined as is:
 
-```{r}
+```{r IndPeriod_WarmUp}
 IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
 ```
 
 
 
-```{r}
+```{r CreateRunOptions}
 RunOptions <- CreateRunOptions(
   InputsModel = InputsModel,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -104,7 +102,7 @@ RunOptions <- CreateRunOptions(
 
 ## Run the SD model for the whole basin
 
-```{r}
+```{r RunModel}
 OutputsModelsClimAware <- RunModel(
   InputsModel,
   RunOptions = RunOptions,
@@ -114,14 +112,15 @@ OutputsModelsClimAware <- RunModel(
 
 ## Save data for next vignettes
 
-```{r}
+```{r save}
 save(RunOptions, ParamClimAware, IndPeriod_Run, file = "_cache/V02.RData")
 ```
 
 ## Plot the result for each basin
 
-```{r, fig.height = 5, fig.width = 8}
-plot(OutputsModelsClimAware, Qobs = Qobs[IndPeriod_Run,])
+```{r plot, fig.height = 5, fig.width = 8}
+data(QNAT)
+plot(OutputsModelsClimAware, Qobs = Qnat[IndPeriod_Run,])
 ```
 
 
