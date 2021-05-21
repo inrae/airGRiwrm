@@ -9,15 +9,15 @@ CreateOneGRiwrmInputsModel(id, griwrm, DatesR, Precip, PotEvap, Qobs)
 \arguments{
 \item{id}{string of the node identifier}
 
-\item{griwrm}{See \code{[GRiwrm]}.}
+\item{griwrm}{See \link{CreateGRiwrm})}
 
-\item{DatesR}{vector of dates required to create the GR model and CemaNeige module inputs.}
+\item{DatesR}{vector of dates required to create the GR model and CemaNeige module inputs}
 
-\item{Precip}{time series of potential evapotranspiration (catchment average) (mm/time step).}
+\item{Precip}{time series of potential evapotranspiration (catchment average) (mm/time step)}
 
-\item{PotEvap}{time series of potential evapotranspiration (catchment average) (mm/time step).}
+\item{PotEvap}{time series of potential evapotranspiration (catchment average) (mm/time step)}
 
-\item{Qobs}{Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs.}
+\item{Qobs}{Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs}
 }
 \value{
 \emph{InputsModel} object for one.

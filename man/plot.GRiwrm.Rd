@@ -14,7 +14,7 @@
 )
 }
 \arguments{
-\item{x}{a GRiwrm object to display (See \link{GRiwrm})}
+\item{x}{a GRiwrm object to display (See \link{CreateGRiwrm})}
 
 \item{display}{if \code{TRUE} displays the diagram with \link[DiagrammeR:mermaid]{DiagrammeR::mermaid}, return the mermaid code otherwise}
 

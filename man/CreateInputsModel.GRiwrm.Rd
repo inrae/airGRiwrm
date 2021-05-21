@@ -7,17 +7,17 @@
 \method{CreateInputsModel}{GRiwrm}(x, DatesR, Precip, PotEvap, Qobs, ...)
 }
 \arguments{
-\item{x}{GRiwrm object describing the diagram of the semi-distributed model, see \code{[GRiwrm]}.}
+\item{x}{GRiwrm object describing the diagram of the semi-distributed model (See \link{CreateGRiwrm})}
 
-\item{DatesR}{Vector of POSIXt observation time steps.}
+\item{DatesR}{Vector of POSIXt observation time steps}
 
-\item{Precip}{Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.}
+\item{Precip}{Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs}
 
-\item{PotEvap}{Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.}
+\item{PotEvap}{Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs}
 
-\item{Qobs}{Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.}
+\item{Qobs}{Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs}
 
-\item{...}{further arguments passed to \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}.}
+\item{...}{further arguments passed to \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}}
 }
 \value{
 GRiwrmInputsModel object equivalent to \strong{airGR} InputsModel object for a semi-distributed model (See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel})
@@ -45,7 +45,7 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  stringsAsFactors = FALSE)
 
 # Create GRiwrm object from the data.frame
-griwrm <- GRiwrm(db)
+griwrm <- CreateGRiwrm(db)
 str(griwrm)
 
 # Formatting observations for the hydrological models

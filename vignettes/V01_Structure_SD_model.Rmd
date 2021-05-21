@@ -59,7 +59,7 @@ The network description consists in a `GRiwrm` object which lists the nodes and 
 The `GRiwrm` function helps to create an object of class `GRiwrm`. It renames the columns of the `data.frame`.
 
 ```{r}
-griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 griwrm
 ```
 

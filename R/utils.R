@@ -110,7 +110,7 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
 }
 
 
-#' Create a data.frame with simulated flows at each nodes of the [GRiwrm] object
+#' Create a data.frame with simulated flows at each nodes of the GRiwrm object
 #'
 #' @details
 #' This function can only be called inside [RunModel.GRiwrmInputsModel] or [RunModel.Supervisor]

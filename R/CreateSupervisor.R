@@ -11,7 +11,7 @@
 #' nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 #' nodes$distance_downstream <- nodes$distance_downstream * 1000 # Conversion km -> m
 #' nodes$model <- "RunModel_GR4J"
-#' griwrm <- GRiwrm(nodes,
+#' griwrm <- CreateGRiwrm(nodes,
 #'                  list(id = "gauge_id",
 #'                       down = "downstream_id",
 #'                       length = "distance_downstream"))

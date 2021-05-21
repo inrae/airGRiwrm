@@ -1,6 +1,6 @@
 #' Display a diagram representing the network structure of a GRiwrm object
 #'
-#' @param x a GRiwrm object to display (See [GRiwrm])
+#' @param x a GRiwrm object to display (See [CreateGRiwrm])
 #' @param display if `TRUE` displays the diagram with [DiagrammeR::mermaid], return the mermaid code otherwise
 #' @param orientation a [character] describing the orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default
 #' @param width The width of the resulting graphic in pixels (See [DiagrammeR::mermaid])

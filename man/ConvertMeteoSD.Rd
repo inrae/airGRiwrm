@@ -16,13 +16,13 @@ ConvertMeteoSD(x, ...)
 \method{ConvertMeteoSD}{matrix}(x, areas, temperature = FALSE, ...)
 }
 \arguments{
-\item{x}{either a \link{GRiwrm} network description, a \link{character} id of a node, a \link{matrix} containing meteorological data}
+\item{x}{either a \code{GRiwrm} network description (See \link{CreateGRiwrm}), a \link{character} id of a node, a \link{matrix} containing meteorological data}
 
 \item{...}{Parameters passed to the methods}
 
 \item{meteo}{\link{matrix} or \link{data.frame} containing meteorological data. Its \link{colnames} should be equal to the IDof the basins}
 
-\item{griwrm}{\link{GRiwrm} object describing the semi-distributive network}
+\item{griwrm}{\code{GRiwrm} object describing the semi-distributive network (See \link{CreateGRiwrm})}
 
 \item{areas}{\link{numeric} vector with the total area of the basin followed by the areas of the upstream basins in km^2^}
 

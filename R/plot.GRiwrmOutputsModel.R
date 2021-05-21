@@ -3,7 +3,7 @@
 #' @param x object of class *GRiwrmOutputsModel*, see [RunModel.GRiwrmInputsModel]
 #' @param Qobs (optional) [numeric] [matrix] time series of observed flow
 #'        (for the same time steps than simulated) (mm/time step) with one column
-#'        by hydrological model output named with the node Id (See [GRiwrm])
+#'        by hydrological model output named with the node Id (See [CreateGRiwrm])
 #' @param ... Further arguments for [airGR::plot.OutputsModel] and [plot]
 #'
 #' @return [list] of plots

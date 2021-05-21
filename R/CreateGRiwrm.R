@@ -4,20 +4,29 @@
 #' @details `db` is a [data.frame] which at least contains in its columns:
 #'
 #'  * a node identifier (column `id`),
-#'  * the identifier and the hydraulic distance to the downstream node ([character] columns `down` and [numeric] columns `length` in meters). The last downstream node should have fields `down` and `length` set to `NA`,
+#'  * the identifier and the hydraulic distance to the downstream node ([character] columns `down` and [numeric] columns `length` in km). The last downstream node should have fields `down` and `length` set to `NA`,
 #'  * the area of the basin ([numeric] column `area` in km^2^)
-#'  * the hydrological model to use if so ([character] column `model`).
+#'  * the hydrological model to use if so ([character] column `model`) ([NA] for using observed flow instead of a run-off model output)
 #'
 #' @param db a [data.frame] containing the description of the network (See details)
 #' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
 #' @param keep_all keep all column of `db` or keep only columns defined in `cols`
 #'
-#' @return `GRiwrm` class object containing the description of the semi-distributed model network
+#' @return An object of class `GRiwrm` describing the airGR semi-distributed model network.
+#'
+#' It's a [data.frame] with each line corresponding to a location on the river network and with the following columns:
+#'  * `id` ([character]): node identifier
+#'  * `down` ([character]): the identifier of the node downstream of the current node ([NA] for the most downstream node)
+#'  * `length` ([numeric]): the hydraulic distance to the downstream node in km ([NA] for the most downstream node)
+#'  * `area` ([numeric]): the total area of the basin starting from the current node location in km^2^
+#'  * `model` ([character]): the hydrological model to use if so ([NA] for using observed flow instead of a run-off model output)
+#'
+#' @aliases GRiwrm
 #' @export
 #' @examples
-#' #################################################################
-#' # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
-#' #################################################################
+#' ###################################################################
+#' # Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
+#' ###################################################################
 #'
 #' # Run airGR RunModel_Lag example for harvesting necessary data
 #' library(airGR)
@@ -34,10 +43,10 @@
 #'                  stringsAsFactors = FALSE)
 #'
 #' # Create GRiwrm object from the data.frame
-#' griwrm <- GRiwrm(db)
+#' griwrm <- CreateGRiwrm(db)
 #' str(griwrm)
 #'
-GRiwrm <- function(db,
+CreateGRiwrm <- function(db,
                    cols = list(
                      id = "id",
                      down = "down",
@@ -102,10 +111,9 @@ CheckColumnTypes <- function(df, coltypes) {
 
 #' Sort the nodes from upstream to downstream.
 #'
-#' @param griwrm See \code{[GRiwrm]}.
+#' @param griwrm See [CreateGRiwrm]
 #'
 #' @return vector with the ordered node names.
-#' @export
 getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
