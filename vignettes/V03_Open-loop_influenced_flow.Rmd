@@ -58,7 +58,7 @@ The diagram of the network structure is represented below with:
   * in red the node with direct flow injection (no hydrological model)
 
 ```{r diagram}
-DiagramGRiwrm(griwrmV03)
+plot(griwrmV03)
 ```
 
 ### Generate the GRiwrmInputsModel object

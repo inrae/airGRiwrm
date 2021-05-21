@@ -22,7 +22,7 @@ library(seinebasin)
 
 This vignette is an example of flow naturalisation by modelling [@terrierStreamflowNaturalizationMethods2020].
 
-By using the model calibrated with influenced flow on the Marne River, it's now possible to model naturalised flows by dropping the connections to the Marne reservoir from the model. 
+By using the model calibrated with influenced flow on the Marne River, it's now possible to model naturalised flows by dropping the connections to the Marne reservoir from the model.
 
 ## Set the data
 
@@ -49,7 +49,7 @@ Remove extra items from global configuration
 selectedNodes <- c("STDIZ_04", "LOUVE_19", "VITRY_25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm4 <- griwrm[griwrm$id %in% selectedNodes,]
 griwrm4[griwrm4$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
-DiagramGRiwrm(griwrm4)
+plot(griwrm4)
 ```
 
 Generate `GRiwrmInputsModel` object

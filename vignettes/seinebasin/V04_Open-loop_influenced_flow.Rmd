@@ -176,7 +176,7 @@ reservoir_connections$model <- NA
 reservoir_connections$area <- NA
 load("_cache/V01.RData")
 griwrm2 <- rbind(griwrm, reservoir_connections[, names(griwrm)])
-DiagramGRiwrm(griwrm2)
+plot(griwrm2)
 ```
 
 
