@@ -1,8 +1,11 @@
 #' Display a diagram representing the network structure of a GRiwrm object
 #'
-#' @param griwrm the GRiwrm object to display.
-#' @param display if `TRUE` displays the diagram with `DiagrammeR::mermaid`, return the mermaid code otherwise.
-#' @param orientation Orientation of the graph. "LR" by default.
+#' @param x a GRiwrm object to display (See [GRiwrm])
+#' @param display if `TRUE` displays the diagram with [DiagrammeR::mermaid], return the mermaid code otherwise
+#' @param orientation a [character] describing the orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default
+#' @param width The width of the resulting graphic in pixels (See [DiagrammeR::mermaid])
+#' @param height The height of the resulting graphic in pixels (See [DiagrammeR::mermaid])
+#' @param ... Other arguments and parameters you would like to send to JavaScript (See [DiagrammeR::mermaid])
 #'
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
 #' is not handled on some platforms
@@ -14,19 +17,19 @@
 #' @examples
 #' \dontrun{
 #' # Display diagram
-#' DiagramGRiwrm(griwrm)
+#' plot.GRiwrm(griwrm)
 #' # Is the same as
-#' DiagrammeR::mermaid(DiagramGRiwrm(griwrm, display = FALSE), width = "100%", height = "100%")
+#' DiagrammeR::mermaid(plot.GRiwrm(griwrm, display = FALSE), width = "100%", height = "100%")
 #' }
 #'
-DiagramGRiwrm <- function(griwrm, display = TRUE, orientation = "LR") {
+plot.GRiwrm <- function(x, display = TRUE, orientation = "LR", width = "100%", height = "100%", ...) {
   if(Sys.getenv("RSTUDIO") != "1") {
     return()
   }
   if(!"DiagrammeR" %in% rownames(utils::installed.packages())) {
     stop("The 'DiagrammeR' package should be installed. Type: install.packages('DiagrammeR')")
   }
-  g2 <- griwrm[!is.na(griwrm$down),]
+  g2 <- x[!is.na(x$down),]
   nodes <- paste(
     g2$id,
     "-->|",
@@ -38,7 +41,7 @@ DiagramGRiwrm <- function(griwrm, display = TRUE, orientation = "LR") {
   styleDF <- paste("style", unique(g2$id[is.na(g2$model)]), "fill:#fcc")
   diagram <- paste(c(paste("graph", orientation), nodes, styleSD, styleDF), collapse = "\n")
   if(display) {
-    DiagrammeR::mermaid(diagram, width = "100%", height = "100%")
+    DiagrammeR::mermaid(diagram = diagram, width, height, ...)
   } else {
     return(diagram)
   }

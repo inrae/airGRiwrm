@@ -60,7 +60,7 @@ griwrmV04 <- rbind(
     area = NA
   )
 )
-DiagramGRiwrm(griwrmV04)
+plot(griwrmV04)
 ```
 Nodes in red color are direct injection points (positive or negative flow) in the model, green nodes simulate either sub-basin rainfall-runoff and routing of upstream node flows and grey nodes simulate sub-basin rainfall-runoff flows only.
 
