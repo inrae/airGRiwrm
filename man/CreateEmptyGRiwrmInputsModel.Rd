@@ -7,7 +7,7 @@
 CreateEmptyGRiwrmInputsModel(griwrm)
 }
 \arguments{
-\item{griwrm}{a \code{GRiwrm} object (See \link{GRiwrm})}
+\item{griwrm}{a \code{GRiwrm} object (See \link{CreateGRiwrm})}
 }
 \value{
 \emph{GRiwrmInputsModel} empty object

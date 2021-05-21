@@ -27,7 +27,7 @@
 #'                  stringsAsFactors = FALSE)
 #'
 #' # Create GRiwrm object from the data.frame
-#' griwrm <- GRiwrm(db)
+#' griwrm <- CreateGRiwrm(db)
 #' str(griwrm)
 #'
 #' # Formatting observations for the hydrological models

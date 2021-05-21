@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{OutputsModelQsim}
 \alias{OutputsModelQsim}
-\title{Create a data.frame with simulated flows at each nodes of the \link{GRiwrm} object}
+\title{Create a data.frame with simulated flows at each nodes of the GRiwrm object}
 \usage{
 OutputsModelQsim(InputsModel, OutputsModel, IndPeriod_Run)
 }
@@ -21,7 +21,7 @@ a \link{data.frame} containing the simulated flows (in m3/time step) structured 
 }
 }
 \description{
-Create a data.frame with simulated flows at each nodes of the \link{GRiwrm} object
+Create a data.frame with simulated flows at each nodes of the GRiwrm object
 }
 \details{
 This function can only be called inside \link{RunModel.GRiwrmInputsModel} or \link{RunModel.Supervisor}

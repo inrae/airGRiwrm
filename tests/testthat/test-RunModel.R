@@ -8,7 +8,7 @@ nodes <- Severn$BasinsInfo[c(1,2,5), c("gauge_id", "downstream_id", "distance_do
 nodes$distance_downstream <- nodes$distance_downstream # Conversion km -> m
 nodes$model <- NA
 nodes$model[1] <- "RunModel_GR4J"
-griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 
 # InputsModel
 DatesR <- Severn$BasinsObs[[1]]$DatesR

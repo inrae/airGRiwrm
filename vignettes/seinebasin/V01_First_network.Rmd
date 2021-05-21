@@ -47,7 +47,7 @@ seine_nodes$id_aval[seine_nodes$id_aval == ""] <- NA
 seine_nodes$distance_aval <- as.double(seine_nodes$distance_aval) / 1000
 seine_nodes$model <- "RunModel_GR4J"
 # Generate the GRiwrm object
-griwrm <- GRiwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+griwrm <- CreateGRiwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
 griwrm
 ```
 

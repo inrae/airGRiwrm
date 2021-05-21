@@ -1,6 +1,6 @@
 #' Convert meteorological data from basin scale to sub-basin scale
 #'
-#' @param x either a [GRiwrm] network description, a [character] id of a node, a [matrix] containing meteorological data
+#' @param x either a `GRiwrm` network description (See [CreateGRiwrm]), a [character] id of a node, a [matrix] containing meteorological data
 #' @param ... Parameters passed to the methods
 #'
 #' @return Either a [matrix] containing the converted meteorological data
@@ -22,7 +22,7 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
   return(meteoOut)
 }
 
-#' @param griwrm [GRiwrm] object describing the semi-distributive network
+#' @param griwrm `GRiwrm` object describing the semi-distributive network (See [CreateGRiwrm])
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {

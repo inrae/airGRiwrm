@@ -11,7 +11,7 @@
 
 \item{Qobs}{(optional) \link{numeric} \link{matrix} time series of observed flow
 (for the same time steps than simulated) (mm/time step) with one column
-by hydrological model output named with the node Id (See \link{GRiwrm})}
+by hydrological model output named with the node Id (See \link{CreateGRiwrm})}
 
 \item{...}{Further arguments for \link[airGR:plot.OutputsModel]{airGR::plot.OutputsModel} and \link{plot}}
 }
@@ -41,7 +41,7 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  stringsAsFactors = FALSE)
 
 # Create GRiwrm object from the data.frame
-griwrm <- GRiwrm(db)
+griwrm <- CreateGRiwrm(db)
 str(griwrm)
 
 # Formatting observations for the hydrological models

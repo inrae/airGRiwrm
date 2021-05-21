@@ -1,11 +1,11 @@
 #' Create InputsModel object for a **airGRiwrm** network
 #'
-#' @param x GRiwrm object describing the diagram of the semi-distributed model, see \code{[GRiwrm]}.
-#' @param DatesR Vector of POSIXt observation time steps.
-#' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs.
-#' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs.
-#' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs.
-#' @param ... further arguments passed to [airGR::CreateInputsModel].
+#' @param x GRiwrm object describing the diagram of the semi-distributed model (See [CreateGRiwrm])
+#' @param DatesR Vector of POSIXt observation time steps
+#' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs
+#' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs
+#' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs
+#' @param ... further arguments passed to [airGR::CreateInputsModel]
 #'
 #' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See [airGR::CreateInputsModel])
 #' @export
@@ -29,7 +29,7 @@
 #'                  stringsAsFactors = FALSE)
 #'
 #' # Create GRiwrm object from the data.frame
-#' griwrm <- GRiwrm(db)
+#' griwrm <- CreateGRiwrm(db)
 #' str(griwrm)
 #'
 #' # Formatting observations for the hydrological models
@@ -71,7 +71,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR, Precip, PotEvap, Qobs, ...) {
 
 #' Create an empty InputsModel object for **airGRiwrm** nodes
 #'
-#' @param griwrm a `GRiwrm` object (See [GRiwrm])
+#' @param griwrm a `GRiwrm` object (See [CreateGRiwrm])
 #'
 #' @return \emph{GRiwrmInputsModel} empty object
 CreateEmptyGRiwrmInputsModel <- function(griwrm) {
@@ -85,11 +85,11 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #' Create one InputsModel for a **airGRiwrm** node
 #'
 #' @param id string of the node identifier
-#' @param griwrm See \code{[GRiwrm]}.
-#' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs.
-#' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step).
-#' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step).
-#' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs.
+#' @param griwrm See [CreateGRiwrm])
+#' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs
+#' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step)
+#' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step)
+#' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs
 ##'
 #' @return \emph{InputsModel} object for one.
 CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, Precip, PotEvap, Qobs) {
