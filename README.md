@@ -1,4 +1,4 @@
-# airGRiwrm: airGR based Integrated Water Resource Management R package <img src="man/figures/logo.png" align="right" height="80px"/>
+# <img src="man/figures/logo.png" align="right" height="80px"/>airGRiwrm: airGR based Integrated Water Resource Management R package
 
 **airGRiwrm** is an extension of the **airGR** R package for managing semi-distributive hydrological model on an anthropized catchment.
 
