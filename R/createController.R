@@ -1,10 +1,10 @@
-#' Create and add a controller in a supervisor
+#' Creation and adding of a controller in a supervisor
 #'
 #' @details
-#' `ctrl.id` parameter is a unique id for finding the controller in the supervisor.
+#' The `ctrl.id` is a unique id for finding the controller in the supervisor.
 #' If a controller with the same id already exists, it is overwritten by this new one.
 #'
-#' `FUN` parameter should be a function with one [numeric] parameter.
+#' `FUN` should be a function with one [numeric] parameter.
 #' This parameter will receive the measured values of at `Y` locations as input
 #' for the previous time step and returns calculated `U`. These `U` will then be applied
 #' at their location for the current time step of calculation of the model.
@@ -51,11 +51,11 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
   invisible(ctrlr)
 }
 
-#' Create a list of controls for command (U) and controlled variables (Y)
+#' Creation of a list of controls for command (U) and controlled variables (Y)
 #'
-#' @param locations vector of [character] containing the location of the variable in the model (see details)
+#' @param locations [character] containing the location of the variable in the model (see details)
 #'
-#' @return a [matrix] with each column is the location of the variables and the rows
+#' @return [matrix] with each column being the location of the variables and the rows being
 #' the values of the variable for the current time steps (empty by default)
 #' @export
 #'

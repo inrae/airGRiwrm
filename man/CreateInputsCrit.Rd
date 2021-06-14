@@ -15,5 +15,5 @@ CreateInputsCrit(InputsModel, ...)
 Either a \code{InputsCrit} or a \code{GRiwrmInputsCrit} object
 }
 \description{
-Creation of the InputsCrit object required to the ErrorCrit functions
+Creation of the InputsCrit object required to the ErrorCrit functions either for \emph{InputsModel} or for \emph{GRwirmInputsModel} objects
 }

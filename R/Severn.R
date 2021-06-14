@@ -3,7 +3,7 @@
 #' @format a [list] with 2 items:
 #'
 #' - "BasinsInfo" which contains a [data.frame] with Gauging station identifier, name, coordinates (GPS), area (km^2^), mean elevation (m), station type, flow period start and end, the bank full flow (m^3^/s), the identifier of the following downstream station and the distance to the following downstream station
-#' - "BasinObs" which contains a [list] with an item by gauging station which contains a [data.frame] with [POSIXct] dates, precipitations (mm), potential evapotranspiration (mm) and measured flow (mm)
+#' - "BasinObs" which contains a [list] with an item by gauging station which contains a [data.frame] with [POSIXct] dates, precipitations (mm/time step), potential evapotranspiration (mm/time step) and measured flows (mm/time step)
 #'
 #' @source \url{https://doi.org/10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9}
 "Severn"

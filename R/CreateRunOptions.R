@@ -1,9 +1,9 @@
-#' Create \emph{RunOptions} object for **airGR** and **airGRiwrm**.
+#' Creation of the \emph{RunOptions} object for either **airGR** or **airGRiwrm**.
 #'
-#' See [airGR::CreateRunOptions] and [CreateRunOptions.GRiwrmInputsModel] for usage.
+#' See [airGR::CreateRunOptions] and [CreateRunOptions.GRiwrmInputsModel] for usage
 #'
-#' @param InputsModel object of class \emph{InputsModel} (see [airGR::CreateInputsModel]) or \emph{GRiwrmInputsModel} (See [CreateInputsModel.GRiwrm]).
-#' @param ... further arguments passed to or from other methods.
+#' @param InputsModel \[object of class \emph{InputsModel} (see [airGR::CreateInputsModel]) or \emph{GRiwrmInputsModel} (See [CreateInputsModel.GRiwrm])\]
+#' @param ... further arguments passed to or from other methods
 #'
 #' @return Object of \emph{RunOptions} class family
 #' @export

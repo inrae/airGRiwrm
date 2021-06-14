@@ -1,14 +1,14 @@
-#' Plot a `Qm3s` object (time series of simulated flows)
+#' Plot of a `Qm3s` object (time series of simulated flows)
 #'
-#' @param x a [data.frame] with a first column with [POSIXt] dates and followings columns with flows at each node of the network
-#' @param type 1-character string (See [plot.default]), default "l"
-#' @param xlab a label for the x axis, defaults to "Date"
-#' @param ylab a label for the y axis, defaults to "Flow (m3/s)"
-#' @param main a main title for the plot, defaults to "Simulated flows"
-#' @param col plotting color (See [par]), defaults to rainbow colors
-#' @param legend See parameter `legend` of [legend]. Set to [NULL] to not display the legend
-#' @param legend.cex `cex` parameter for the text of the legend (See [par])
-#' @param lty The line type (See [par])
+#' @param x [data.frame] with a first column with [POSIXt] dates and followings columns with flows at each node of the network
+#' @param type [character] plot type (See [plot.default]), default "l"
+#' @param xlab [character] label for the x axis, default to "Date"
+#' @param ylab [character] label for the y axis, default to "Flow (m3/s)"
+#' @param main [character] main title for the plot, default to "Simulated flows"
+#' @param col [character] plotting color (See [par]), default to rainbow colors
+#' @param legend [character] see parameter `legend` of [legend]. Set to [NULL] if display of the legend is not wanted
+#' @param legend.cex [character] `cex` parameter for the text of the legend (See [par])
+#' @param lty [character] or [numeric] The line type (See [par])
 #' @param ... Further arguments to pass to the [matplot] functions
 #'
 #' @importFrom grDevices rainbow

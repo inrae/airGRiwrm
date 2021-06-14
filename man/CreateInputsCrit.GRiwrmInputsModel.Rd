@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateInputsCrit.GRiwrmInputsModel.R
 \name{CreateInputsCrit.GRiwrmInputsModel}
 \alias{CreateInputsCrit.GRiwrmInputsModel}
-\title{Create \emph{GRiwrmInputsCrit} object for \strong{airGRiwrm}.}
+\title{Creation of the \emph{GRiwrmInputsCrit} object for the \strong{airGRiwrm} ErrorCrit functions.}
 \usage{
 \method{CreateInputsCrit}{GRiwrmInputsModel}(
   InputsModel,
@@ -13,19 +13,19 @@
 )
 }
 \arguments{
-\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \link{CreateInputsModel.GRiwrm} for details.}
+\item{InputsModel}{[object of class \emph{GRiwrmInputsModel}] see \link{CreateInputsModel.GRiwrm} for details}
 
 \item{FUN_CRIT}{[function (atomic or list)] error criterion function (e.g. \link[airGR:ErrorCrit_RMSE]{airGR::ErrorCrit_RMSE}, \link[airGR:ErrorCrit_NSE]{airGR::ErrorCrit_NSE})}
 
-\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \link{CreateRunOptions.GRiwrmInputsModel} for details.}
+\item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
 
-\item{Obs}{matrix or data frame containing observed flows. Column names correspond to nodes ID}
+\item{Obs}{\link{matrix} or \link{data.frame} series of observed flows. Column names must correspond to nodes ID}
 
-\item{...}{further arguments passed to \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit}.}
+\item{...}{further arguments passed to \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit}}
 }
 \value{
-Object of class \emph{GRiwrmInputsCrit} which is a list of \code{airGR::InputsCrit} objects (See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit})
+\link{list} Object of class \emph{GRiwrmInputsCrit} containing \code{airGR::InputsCrit} objects (See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit})
 }
 \description{
-This function does the same operations as \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} for all sub-basins of the GRiwrm model.
+This function does the same operations as \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} for all sub-basins of the GRiwrm model. It creates the InputsCrit object required to the ErrorCrit_ functions but for the \strong{airGRiwrm} package. This function is used to define whether the user wants to calculate a single criterion, multiple criteria at the same time, or a composite criterion, which averages several criteria.
 }

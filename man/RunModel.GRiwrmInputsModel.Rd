@@ -2,34 +2,34 @@
 % Please edit documentation in R/RunModel.GRiwrmInputsModel.R
 \name{RunModel.GRiwrmInputsModel}
 \alias{RunModel.GRiwrmInputsModel}
-\title{RunModel function for GRiwrmInputsModel object}
+\title{RunModel function for \emph{GRiwrmInputsModel} object}
 \usage{
 \method{RunModel}{GRiwrmInputsModel}(x, RunOptions, Param, ...)
 }
 \arguments{
-\item{x}{object of class \emph{GRiwrmInputsModel}, see \link{CreateInputsModel.GRiwrm} for details}
+\item{x}{[object of class \emph{GRiwrmInputsModel}] see \link{CreateInputsModel.GRiwrm} for details}
 
-\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \link{CreateRunOptions.GRiwrmInputsModel} for details}
+\item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
 
-\item{Param}{\link{list} of parameters. The list item names are the IDs of the sub-basins. Each item is a \link{numeric} \link{vector}}
+\item{Param}{\link{list} parameter values. The list item names are the IDs of the sub-basins. Each item is a \link{numeric} \link{vector}}
 
 \item{...}{Mandatory for S3 method signature function compatibility with generic.}
 }
 \value{
-\emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model.
+[\link{list} of class \emph{GRiwrmOutputsModel}] list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model
 }
 \description{
-RunModel function for GRiwrmInputsModel object
+RunModel function for \emph{GRiwrmInputsModel} object
 }
 \examples{
 #################################################################
 # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
 #################################################################
 
-# Run airGR RunModel_Lag example for harvesting necessary data
+# Run the airGR RunModel_Lag example for harvesting necessary data
 library(airGR)
 example(RunModel_Lag)
-# detach the package because airGR overwrite airGRiwrm functions here
+# detach the package because otherwise airGR overwrites the airGRiwrm functions
 detach("package:airGR")
 
 # This example is a network of 2 nodes which can be describe like this:

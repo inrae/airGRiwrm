@@ -2,18 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{getDataFromLocation}
 \alias{getDataFromLocation}
-\title{Retrieve data in the model for the current time steps}
+\title{Retrieval of data in the model for the current time steps}
 \usage{
 getDataFromLocation(loc, sv)
 }
 \arguments{
 \item{loc}{location of the data}
 
-\item{sv}{a \code{Supervisor} (See \link{CreateSupervisor})}
+\item{sv}{[object of class \code{Supervisor}] see \link{CreateSupervisor} for details}
 }
 \value{
 \link{numeric} retrieved data at the location
 }
 \description{
-This function should be call inside a Supervisor
+Function to be called inside a Supervisor
 }

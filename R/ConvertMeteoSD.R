@@ -1,9 +1,9 @@
-#' Convert meteorological data from basin scale to sub-basin scale
+#' Conversion of meteorological data from basin scale to sub-basin scale
 #'
-#' @param x either a `GRiwrm` network description (See [CreateGRiwrm]), a [character] id of a node, a [matrix] containing meteorological data
+#' @param x either a `GRiwrm` network description (See [CreateGRiwrm]), a [character] id of a node, or a [matrix] containing meteorological data
 #' @param ... Parameters passed to the methods
 #'
-#' @return Either a [matrix] containing the converted meteorological data
+#' @return [matrix] a matrix containing the converted meteorological data
 #' @export
 #' @rdname ConvertMeteoSD
 #'
@@ -11,7 +11,7 @@ ConvertMeteoSD <- function(x, ...) {
   UseMethod("ConvertMeteoSD")
 }
 
-#' @param meteo [matrix] or [data.frame] containing meteorological data. Its [colnames] should be equal to the IDof the basins
+#' @param meteo [matrix] or [data.frame] containing meteorological data. Its [colnames] should be equal to the ID of the basins
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
@@ -22,7 +22,7 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
   return(meteoOut)
 }
 
-#' @param griwrm `GRiwrm` object describing the semi-distributive network (See [CreateGRiwrm])
+#' @param griwrm `GRiwrm` object describing the semi-distributed network (See [CreateGRiwrm])
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
@@ -40,7 +40,7 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
 }
 
 #' @param areas [numeric] vector with the total area of the basin followed by the areas of the upstream basins in km^2^
-#' @param temperature [logical] `TRUE` if the meteorological data is temperature. if `FALSE` minimum output values are bounded to zero
+#' @param temperature [logical] `TRUE` if the meteorological data contain air temperature. If `FALSE` minimum output values are bounded to zero
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {

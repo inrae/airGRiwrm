@@ -1,6 +1,6 @@
-#' Calibration of either **airGR** model and **airGRiwrm** semi-distributive model
+#' Calibration of either a **airGR** model or a **airGRiwrm** semi-distributed model
 #'
-#' @param InputsModel the class of the first parameter determine which calibration is used
+#' @param InputsModel the class of the first parameter determines which calibration algorithm is used
 #' @param ... further arguments passed to or from other methods.
 #'
 #' @return \emph{OutputsCalib} or \emph{GRiwrmOutputsCalib} object

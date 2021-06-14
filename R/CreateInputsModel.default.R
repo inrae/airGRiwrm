@@ -1,4 +1,4 @@
-#' Wrapper for [airGR::CreateInputsModel] for one sub-basin.
+#' Wrapper for [airGR::CreateInputsModel] for one sub-basin
 #'
 #' @param x [function] hydrological model function (e.g. [airGR::RunModel_GR4J]...)
 #' @param ... arguments passed to [airGR::CreateInputsModel]

@@ -2,19 +2,19 @@
 % Please edit documentation in R/createController.R
 \name{createControl}
 \alias{createControl}
-\title{Create a list of controls for command (U) and controlled variables (Y)}
+\title{Creation of a list of controls for command (U) and controlled variables (Y)}
 \usage{
 createControl(locations)
 }
 \arguments{
-\item{locations}{vector of \link{character} containing the location of the variable in the model (see details)}
+\item{locations}{\link{character} containing the location of the variable in the model (see details)}
 }
 \value{
-a \link{matrix} with each column is the location of the variables and the rows
+\link{matrix} with each column being the location of the variables and the rows being
 the values of the variable for the current time steps (empty by default)
 }
 \description{
-Create a list of controls for command (U) and controlled variables (Y)
+Creation of a list of controls for command (U) and controlled variables (Y)
 }
 \examples{
 # For pointing the discharge at the oulet of basins "54095" and "54002"

@@ -2,20 +2,20 @@
 % Please edit documentation in R/CreateSupervisor.R
 \name{CreateSupervisor}
 \alias{CreateSupervisor}
-\title{Create a Supervisor for handling regulation in a model}
+\title{Creation of a Supervisor for handling regulation in a model}
 \usage{
 CreateSupervisor(InputsModel, TimeStep = 1L)
 }
 \arguments{
-\item{InputsModel}{\code{GRiwrmInputsModel} The inputs of the basin model}
+\item{InputsModel}{[object of type \code{GRiwrmInputsModel}] inputs of the model}
 
-\item{TimeStep}{\link{integer} The number of time steps between each supervision}
+\item{TimeStep}{\link{numeric} number of time steps between each supervision}
 }
 \value{
 \code{Supervisor} object
 }
 \description{
-Create a Supervisor for handling regulation in a model
+Creation of a Supervisor for handling regulation in a model
 }
 \examples{
 data(Severn)

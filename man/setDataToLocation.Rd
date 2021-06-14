@@ -2,18 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{setDataToLocation}
 \alias{setDataToLocation}
-\title{Write data to model input for the current time step}
+\title{Writing of data to model input for the current time step}
 \usage{
 setDataToLocation(ctrlr, sv)
 }
 \arguments{
-\item{ctrlr}{a \code{Controller} object (See \link{CreateController})}
+\item{ctrlr}{[object of type \code{Controller}] see \link{CreateController} for details}
 
-\item{sv}{\code{Supervisor} (See \link{CreateSupervisor})}
+\item{sv}{[object of type \code{Supervisor}] see \link{CreateSupervisor} for details}
 }
 \value{
 \link{NULL}
 }
 \description{
-Write data to model input for the current time step
+Writing of data to model input for the current time step
 }

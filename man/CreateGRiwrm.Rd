@@ -3,7 +3,7 @@
 \name{CreateGRiwrm}
 \alias{CreateGRiwrm}
 \alias{GRiwrm}
-\title{Generate a network description containing all hydraulic nodes and the description
+\title{Generation of a network description containing all hydraulic nodes and the description
 of their connections}
 \usage{
 CreateGRiwrm(
@@ -14,26 +14,24 @@ CreateGRiwrm(
 )
 }
 \arguments{
-\item{db}{a \link{data.frame} containing the description of the network (See details)}
+\item{db}{\link{data.frame} description of the network (See details)}
 
-\item{cols}{named list or vector for matching columns of \code{db} parameter. By default, mandatory columns names are: \code{id}, \code{down}, \code{length}. But other names can be handled with a named list or vector containing items defined as \code{"required name" = "column name in db"}}
+\item{cols}{\link{list} or \link{vector} columns of \code{db}. By default, mandatory column names are: \code{id}, \code{down}, \code{length}. Other names can be handled with a named list or vector containing items defined as \code{"required name" = "column name in db"}}
 
-\item{keep_all}{keep all column of \code{db} or keep only columns defined in \code{cols}}
+\item{keep_all}{\link{logical} indicating if all columns of \code{db} should be kept or if only columns defined in \code{cols} should be kept}
 }
 \value{
-An object of class \code{GRiwrm} describing the airGR semi-distributed model network.
-
-It's a \link{data.frame} with each line corresponding to a location on the river network and with the following columns:
+\link{data.frame} of class \code{GRiwrm} describing the airGR semi-distributed model network, with each line corresponding to a location on the river network and with the following columns:
 \itemize{
 \item \code{id} (\link{character}): node identifier
-\item \code{down} (\link{character}): the identifier of the node downstream of the current node (\link{NA} for the most downstream node)
-\item \code{length} (\link{numeric}): the hydraulic distance to the downstream node in km (\link{NA} for the most downstream node)
-\item \code{area} (\link{numeric}): the total area of the basin starting from the current node location in km^2^
-\item \code{model} (\link{character}): the hydrological model to use if so (\link{NA} for using observed flow instead of a run-off model output)
+\item \code{down} (\link{character}): identifier of the node downstream of the current node (\link{NA} for the most downstream node)
+\item \code{length} (\link{numeric}): hydraulic distance to the downstream node in km (\link{NA} for the most downstream node)
+\item \code{area} (\link{numeric}): total area of the basin starting from the current node location in km^2^
+\item \code{model} (\link{character}): hydrological model to use if necessary (\link{NA} for using observed flow instead of a runoff model output)
 }
 }
 \description{
-Generate a network description containing all hydraulic nodes and the description
+Generation of a network description containing all hydraulic nodes and the description
 of their connections
 }
 \details{
@@ -42,7 +40,7 @@ of their connections
 \item a node identifier (column \code{id}),
 \item the identifier and the hydraulic distance to the downstream node (\link{character} columns \code{down} and \link{numeric} columns \code{length} in km). The last downstream node should have fields \code{down} and \code{length} set to \code{NA},
 \item the area of the basin (\link{numeric} column \code{area} in km^2^)
-\item the hydrological model to use if so (\link{character} column \code{model}) (\link{NA} for using observed flow instead of a run-off model output)
+\item the hydrological model to use if necessary (\link{character} column \code{model}) (\link{NA} for using observed flow instead of a runoff model output)
 }
 }
 \examples{
@@ -50,13 +48,13 @@ of their connections
 # Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
 ###################################################################
 
-# Run airGR RunModel_Lag example for harvesting necessary data
+# Run the airGR RunModel_Lag example for harvesting the necessary data
 library(airGR)
 example(RunModel_Lag)
-# detach the package because airGR overwrite airGRiwrm functions here
+# detach the package because otherwise airGR overwrites the airGRiwrm functions
 detach("package:airGR")
 
-# This example is a network of 2 nodes which can be describe like this:
+# This example is a network of 2 nodes which can be described like this:
 db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  length = c(LengthHydro, NA),
                  down = c("GaugingDown", NA),

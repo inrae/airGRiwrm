@@ -1,10 +1,10 @@
-#' Update InputsModel$Qupstream with simulated upstream flows provided by GRiwrmOutputsModels object.
+#' Update of InputsModel$Qupstream with simulated upstream flows provided by a GRiwrmOutputsModels object
 #'
-#' @param InputsModel \emph{InputsModel} object. See [airGR::CreateInputsModel]
-#' @param IndPeriod_Run numeric index of period to be used for the model run (-)
-#' @param OutputsModel \emph{GRiwrmOutputsModel} object provided by [RunModel.GRiwrmInputsModel].
+#' @param InputsModel \[\emph{InputsModel} object\] see [airGR::CreateInputsModel] for details
+#' @param IndPeriod_Run [numeric] index of period to be used for the model run (-)
+#' @param OutputsModel \[\emph{GRiwrmOutputsModel} object\] output from [RunModel.GRiwrmInputsModel]
 #'
-#' @description This function is used by [RunModel.GRiwrmInputsModel] and [Calibration.GRiwrmInputsModel] in order to provide upstream simulated flows to a node.
+#' @description This function is used by [RunModel.GRiwrmInputsModel] and [Calibration.GRiwrmInputsModel] in order to provide upstream simulated flows to a node
 #'
 #' @return `InputsModel` object with updated `Qupstream`
 #'

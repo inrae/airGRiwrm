@@ -2,16 +2,16 @@
 % Please edit documentation in R/CreateGRiwrm.R
 \name{getNodeRanking}
 \alias{getNodeRanking}
-\title{Sort the nodes from upstream to downstream.}
+\title{Sorting of the nodes from upstream to downstream}
 \usage{
 getNodeRanking(griwrm)
 }
 \arguments{
-\item{griwrm}{See \link{CreateGRiwrm}}
+\item{griwrm}{[object of class \code{GRiwrm}] see \link{CreateGRiwrm} for details}
 }
 \value{
-vector with the ordered node names.
+\link{numeric} ordered node names
 }
 \description{
-Sort the nodes from upstream to downstream.
+Sorting of the nodes from upstream to downstream
 }

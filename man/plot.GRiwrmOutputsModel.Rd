@@ -2,16 +2,16 @@
 % Please edit documentation in R/plot.GRiwrmOutputsModel.R
 \name{plot.GRiwrmOutputsModel}
 \alias{plot.GRiwrmOutputsModel}
-\title{Function which creates screen plots giving an overview of the models outputs in the GRiwrm network.}
+\title{Function which creates screen plots giving an overview of the model outputs in the GRiwrm network}
 \usage{
 \method{plot}{GRiwrmOutputsModel}(x, Qobs = NULL, ...)
 }
 \arguments{
-\item{x}{object of class \emph{GRiwrmOutputsModel}, see \link{RunModel.GRiwrmInputsModel}}
+\item{x}{[object of class \emph{GRiwrmOutputsModel}] see \link{RunModel.GRiwrmInputsModel} for details}
 
-\item{Qobs}{(optional) \link{numeric} \link{matrix} time series of observed flow
+\item{Qobs}{(optional) \link{matrix} time series of observed flows
 (for the same time steps than simulated) (mm/time step) with one column
-by hydrological model output named with the node Id (See \link{CreateGRiwrm})}
+by hydrological model output named with the node ID (See \link{CreateGRiwrm} for details)}
 
 \item{...}{Further arguments for \link[airGR:plot.OutputsModel]{airGR::plot.OutputsModel} and \link{plot}}
 }
@@ -19,17 +19,17 @@ by hydrological model output named with the node Id (See \link{CreateGRiwrm})}
 \link{list} of plots
 }
 \description{
-Function which creates screen plots giving an overview of the models outputs in the GRiwrm network.
+Function which creates screen plots giving an overview of the model outputs in the GRiwrm network
 }
 \examples{
 #################################################################
 # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
 #################################################################
 
-# Run airGR RunModel_Lag example for harvesting necessary data
+# Run the airGR RunModel_Lag example for harvesting necessary data
 library(airGR)
 example(RunModel_Lag)
-# detach the package because airGR overwrite airGRiwrm functions here
+# detach the package because otherwise airGR overwrites the airGRiwrm functions
 detach("package:airGR")
 
 # This example is a network of 2 nodes which can be describe like this:

@@ -2,12 +2,12 @@
 % Please edit documentation in R/RunModel.InputsModel.R
 \name{RunModel.InputsModel}
 \alias{RunModel.InputsModel}
-\title{Wrapper for \link[airGR:RunModel]{airGR::RunModel} for one sub-basin.}
+\title{Wrapper for \link[airGR:RunModel]{airGR::RunModel} for one sub-basin}
 \usage{
 \method{RunModel}{InputsModel}(x, RunOptions, Param, FUN_MOD = NULL, ...)
 }
 \arguments{
-\item{x}{\code{InputsModel} used as \code{InputsModel} parameter for \link[airGR:RunModel]{airGR::RunModel}}
+\item{x}{[object of class \emph{InputsModel}] see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for details}
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link[airGR]{CreateRunOptions}} for details}
 

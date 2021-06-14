@@ -2,26 +2,26 @@
 % Please edit documentation in R/utils.R
 \name{OutputsModelQsim}
 \alias{OutputsModelQsim}
-\title{Create a data.frame with simulated flows at each nodes of the GRiwrm object}
+\title{Creation of a data.frame with simulated flows at each node of the GRiwrm object}
 \usage{
 OutputsModelQsim(InputsModel, OutputsModel, IndPeriod_Run)
 }
 \arguments{
-\item{InputsModel}{a \code{GRiwrmInputsModel} object created by \link{CreateInputsModel.GRiwrm}}
+\item{InputsModel}{[\code{GRiwrmInputsModel} object] see \link{CreateInputsModel.GRiwrm} for details}
 
-\item{OutputsModel}{a \code{GRiwrmOutputsModel} object created by \link{RunModel.GRiwrmInputsModel} or \link{RunModel.Supervisor}}
+\item{OutputsModel}{[\code{GRiwrmOutputsModel} object] see \link{RunModel.GRiwrmInputsModel} or \link{RunModel.Supervisor} for details}
 
-\item{IndPeriod_Run}{an \link{integer} vector (See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions})}
+\item{IndPeriod_Run}{\link{numeric} index of period to be used for the model run \link{-}. See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for details}
 }
 \value{
 a \link{data.frame} containing the simulated flows (in m3/time step) structured with the following columns:
 \itemize{
-\item 'DatesR' containing the timestamps of the time series
+\item 'DatesR' vector of dates  of the time series
 \item one column by node with the simulated flows
 }
 }
 \description{
-Create a data.frame with simulated flows at each nodes of the GRiwrm object
+Creation of a data.frame with simulated flows at each node of the GRiwrm object
 }
 \details{
 This function can only be called inside \link{RunModel.GRiwrmInputsModel} or \link{RunModel.Supervisor}

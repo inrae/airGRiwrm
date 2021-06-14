@@ -2,22 +2,22 @@
 % Please edit documentation in R/RunModel.Supervisor.R
 \name{RunModel.Supervisor}
 \alias{RunModel.Supervisor}
-\title{RunModel function for GRiwrmInputsModel object}
+\title{RunModel function for a GRiwrmInputsModel object}
 \usage{
 \method{RunModel}{Supervisor}(x, RunOptions, Param, ...)
 }
 \arguments{
-\item{x}{object of class \code{Supervisor}, see \link{CreateSupervisor} for details.}
+\item{x}{[object of class \code{Supervisor}] see \link{CreateSupervisor} for details}
 
-\item{RunOptions}{object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.}
+\item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \code{[CreateRunOptions.GRiwrm]} for details}
 
-\item{Param}{list of parameter. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters.}
+\item{Param}{\link{list} parameter values. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters}
 
-\item{...}{Mandatory for S3 method signature function compatibility with generic.}
+\item{...}{Mandatory for S3 method signature function compatibility with generic}
 }
 \value{
-\emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \link[airGR:RunModel]{airGR::RunModel}) for each node of the semi-distributed model.
+\emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \link[airGR:RunModel]{airGR::RunModel}) for each node of the semi-distributed model
 }
 \description{
-RunModel function for GRiwrmInputsModel object
+RunModel function for a GRiwrmInputsModel object
 }

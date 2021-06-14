@@ -1,7 +1,7 @@
-#' Create a Supervisor for handling regulation in a model
+#' Creation of a Supervisor for handling regulation in a model
 #'
-#' @param InputsModel `GRiwrmInputsModel` The inputs of the basin model
-#' @param TimeStep [integer] The number of time steps between each supervision
+#' @param InputsModel \[object of type `GRiwrmInputsModel`\] inputs of the model
+#' @param TimeStep [numeric] number of time steps between each supervision
 #'
 #' @return `Supervisor` object
 #' @export

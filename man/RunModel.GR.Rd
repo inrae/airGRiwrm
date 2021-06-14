@@ -2,12 +2,12 @@
 % Please edit documentation in R/RunModel.GR.R
 \name{RunModel.GR}
 \alias{RunModel.GR}
-\title{Run rainfall-runoff part of a sub-basin model}
+\title{Run of a rainfall-runoff model on a sub-basin}
 \usage{
 \method{RunModel}{GR}(x, RunOptions, Param, ...)
 }
 \arguments{
-\item{x}{\code{InputsModel} used as \code{InputsModel} parameter for \link[airGR:RunModel]{airGR::RunModel}}
+\item{x}{[object of class \code{InputsModel}] \code{InputsModel} for \link[airGR:RunModel]{airGR::RunModel}}
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link[airGR]{CreateRunOptions}} for details}
 

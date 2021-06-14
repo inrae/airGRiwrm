@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateCalibOptions.R
 \name{CreateCalibOptions}
 \alias{CreateCalibOptions}
-\title{CreateCalibOptions both available for \emph{InputsModel} and \emph{GRwirmInputsModel} objects}
+\title{Creation of the CalibOptions object either for \emph{InputsModel} or for \emph{GRwirmInputsModel} objects}
 \usage{
 CreateCalibOptions(InputsModel, ...)
 }
@@ -12,8 +12,8 @@ CreateCalibOptions(InputsModel, ...)
 \item{...}{further arguments passed to or from other methods}
 }
 \value{
-Either a \code{CalibOptions} or a \code{GRiwrmCalibOptions} object
+\link{list} Either a \code{CalibOptions} or a \code{GRiwrmCalibOptions} object
 }
 \description{
-CreateCalibOptions both available for \emph{InputsModel} and \emph{GRwirmInputsModel} objects
+Creation of the CalibOptions object either for \emph{InputsModel} or for \emph{GRwirmInputsModel} objects
 }

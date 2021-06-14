@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateGRiwrm.R
 \name{CheckColumnTypes}
 \alias{CheckColumnTypes}
-\title{Check the column types of a \link{data.frame}}
+\title{Check of the column types of a \link{data.frame}}
 \usage{
 CheckColumnTypes(df, coltypes)
 }
@@ -12,10 +12,10 @@ CheckColumnTypes(df, coltypes)
 \item{coltypes}{named \link{list} with the name of the columns to check as key and the required type as value}
 }
 \value{
-\link{NULL} or throw an error if a wrong type is detected.
+\link{NULL} or error message if a wrong type is detected
 }
 \description{
-Check the column types of a \link{data.frame}
+Check of the column types of a \link{data.frame}
 }
 \examples{
 CheckColumnTypes(

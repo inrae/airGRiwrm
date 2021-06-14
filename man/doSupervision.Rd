@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{doSupervision}
 \alias{doSupervision}
-\title{Do the supervision for the current time step}
+\title{Supervision for the current time step}
 \usage{
 doSupervision(supervisor)
 }
@@ -10,5 +10,5 @@ doSupervision(supervisor)
 \item{supervisor}{\code{Supervisor} (See \link{CreateSupervisor})}
 }
 \description{
-Do the supervision for the current time step
+Supervision for the current time step
 }

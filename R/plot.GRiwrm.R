@@ -1,16 +1,16 @@
-#' Display a diagram representing the network structure of a GRiwrm object
+#' Display of a diagram representing the network structure of a GRiwrm object
 #'
-#' @param x a GRiwrm object to display (See [CreateGRiwrm])
-#' @param display if `TRUE` displays the diagram with [DiagrammeR::mermaid], return the mermaid code otherwise
-#' @param orientation a [character] describing the orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default
-#' @param width The width of the resulting graphic in pixels (See [DiagrammeR::mermaid])
-#' @param height The height of the resulting graphic in pixels (See [DiagrammeR::mermaid])
+#' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
+#' @param display [logical] if `TRUE` displays the diagram with [DiagrammeR::mermaid], returns the mermaid code otherwise
+#' @param orientation [character] orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default
+#' @param width [numeric] width of the resulting graphic in pixels (See [DiagrammeR::mermaid])
+#' @param height [numeric] height of the resulting graphic in pixels (See [DiagrammeR::mermaid])
 #' @param ... Other arguments and parameters you would like to send to JavaScript (See [DiagrammeR::mermaid])
 #'
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
 #' is not handled on some platforms
 #'
-#' @return Mermaid code of the diagram id display is `FALSE`.
+#' @return Mermaid code of the diagram if display is `FALSE`.
 #'
 #' @export
 #'

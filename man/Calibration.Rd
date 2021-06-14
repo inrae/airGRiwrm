@@ -2,12 +2,12 @@
 % Please edit documentation in R/Calibration.R
 \name{Calibration}
 \alias{Calibration}
-\title{Calibration of either \strong{airGR} model and \strong{airGRiwrm} semi-distributive model}
+\title{Calibration of either a \strong{airGR} model or a \strong{airGRiwrm} semi-distributed model}
 \usage{
 Calibration(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{the class of the first parameter determine which calibration is used}
+\item{InputsModel}{the class of the first parameter determines which calibration algorithm is used}
 
 \item{...}{further arguments passed to or from other methods.}
 }
@@ -15,5 +15,5 @@ Calibration(InputsModel, ...)
 \emph{OutputsCalib} or \emph{GRiwrmOutputsCalib} object
 }
 \description{
-Calibration of either \strong{airGR} model and \strong{airGRiwrm} semi-distributive model
+Calibration of either a \strong{airGR} model or a \strong{airGRiwrm} semi-distributed model
 }

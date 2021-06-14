@@ -1,6 +1,6 @@
-#' Id of sub-basins using SD model
+#' Function to obtain the ID of sub-basins using SD model
 #'
-#' @param InputsModel `GRiwrmInputsModel` object
+#' @param InputsModel \[`GRiwrmInputsModel` object\]
 #'
 #' @return [character] IDs of the sub-basins using SD model
 #'
@@ -14,11 +14,11 @@ getSD_Ids <- function(InputsModel) {
   names(InputsModel)[bSDs]
 }
 
-#' Id of sub-basins not using SD model
+#' Function to obtain the ID of sub-basins not using SD model
 #'
-#' @param InputsModel `GRiwrmInputsModel` object
+#' @param InputsModel \[`GRiwrmInputsModel` object\]
 #'
-#' @return [character] IDs of the sub-basins not using SD model
+#' @return [character] IDs of the sub-basins not using the SD model
 #'
 getNoSD_Ids <- function(InputsModel) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
@@ -31,12 +31,12 @@ getNoSD_Ids <- function(InputsModel) {
 }
 
 
-#' Retrieve data in the model for the current time steps
+#' Retrieval of data in the model for the current time steps
 #'
-#' This function should be call inside a Supervisor
+#' Function to be called inside a Supervisor
 #'
 #' @param loc location of the data
-#' @param sv a `Supervisor` (See [CreateSupervisor])
+#' @param sv \[object of class `Supervisor`\] see [CreateSupervisor] for details
 #'
 #' @return [numeric] retrieved data at the location
 getDataFromLocation <- function(loc, sv) {
@@ -54,10 +54,10 @@ getDataFromLocation <- function(loc, sv) {
 }
 
 
-#' Write data to model input for the current time step
+#' Writing of data to model input for the current time step
 #'
-#' @param ctrlr a `Controller` object (See [CreateController])
-#' @param sv `Supervisor` (See [CreateSupervisor])
+#' @param ctrlr \[object of type `Controller`\] see [CreateController] for details
+#' @param sv \[object of type `Supervisor`\] see [CreateSupervisor] for details
 #'
 #' @return [NULL]
 setDataToLocation <- function(ctrlr, sv) {
@@ -71,7 +71,7 @@ setDataToLocation <- function(ctrlr, sv) {
 }
 
 
-#' Do the supervision for the current time step
+#' Supervision for the current time step
 #'
 #' @param supervisor `Supervisor` (See [CreateSupervisor])
 #'
@@ -95,13 +95,13 @@ doSupervision <- function(supervisor) {
 }
 
 
-#' Check the parameters of RunModel methods
+#' Check of the parameters of RunModel methods
 #'
 #' Stop the execution if an error is detected.
 #'
-#' @param InputsModel a `GRiwrmInputsModel` object (See [CreateInputsModel.GRiwrm])
-#' @param RunOptions a `GRiwrmRunOptions` object (See [CreateRunOptions.GRiwrmInputsModel])
-#' @param Param a [list] of [numeric] containing model parameters of each node of the network
+#' @param InputsModel \[`GRiwrmInputsModel` object\] see [CreateInputsModel.GRiwrm] for details
+#' @param RunOptions \[`GRiwrmRunOptions` object\] see [CreateRunOptions.GRiwrmInputsModel] for details
+#' @param Param [list] of containing model parameter values of each node of the network
 #'
 checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
   if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmRunoptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
@@ -110,19 +110,19 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
 }
 
 
-#' Create a data.frame with simulated flows at each nodes of the GRiwrm object
+#' Creation of a data.frame with simulated flows at each node of the GRiwrm object
 #'
 #' @details
 #' This function can only be called inside [RunModel.GRiwrmInputsModel] or [RunModel.Supervisor]
 #' because it needs a `GRiwrmInputsModel` object internally modified by these functions
 #' (`Qupstream` updated with simulated flows).
 #'
-#' @param InputsModel a `GRiwrmInputsModel` object created by [CreateInputsModel.GRiwrm]
-#' @param OutputsModel a `GRiwrmOutputsModel` object created by [RunModel.GRiwrmInputsModel] or [RunModel.Supervisor]
-#' @param IndPeriod_Run an [integer] vector (See [airGR::CreateRunOptions])
+#' @param InputsModel \[`GRiwrmInputsModel` object\] see [CreateInputsModel.GRiwrm] for details
+#' @param OutputsModel \[`GRiwrmOutputsModel` object\] see [RunModel.GRiwrmInputsModel] or [RunModel.Supervisor] for details
+#' @param IndPeriod_Run [numeric] index of period to be used for the model run [-]. See [airGR::CreateRunOptions] for details
 #'
 #' @return a [data.frame] containing the simulated flows (in m3/time step) structured with the following columns:
-#' - 'DatesR' containing the timestamps of the time series
+#' - 'DatesR' vector of dates  of the time series
 #' - one column by node with the simulated flows
 #'
 OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {

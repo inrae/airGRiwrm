@@ -2,20 +2,20 @@
 % Please edit documentation in R/UpdateQsimUpstream.R
 \name{UpdateQsimUpstream}
 \alias{UpdateQsimUpstream}
-\title{Update InputsModel$Qupstream with simulated upstream flows provided by GRiwrmOutputsModels object.}
+\title{Update of InputsModel$Qupstream with simulated upstream flows provided by a GRiwrmOutputsModels object}
 \usage{
 UpdateQsimUpstream(InputsModel, IndPeriod_Run, OutputsModel)
 }
 \arguments{
-\item{InputsModel}{\emph{InputsModel} object. See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}}
+\item{InputsModel}{[\emph{InputsModel} object] see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for details}
 
-\item{IndPeriod_Run}{numeric index of period to be used for the model run (-)}
+\item{IndPeriod_Run}{\link{numeric} index of period to be used for the model run (-)}
 
-\item{OutputsModel}{\emph{GRiwrmOutputsModel} object provided by \link{RunModel.GRiwrmInputsModel}.}
+\item{OutputsModel}{[\emph{GRiwrmOutputsModel} object] output from \link{RunModel.GRiwrmInputsModel}}
 }
 \value{
 \code{InputsModel} object with updated \code{Qupstream}
 }
 \description{
-This function is used by \link{RunModel.GRiwrmInputsModel} and \link{Calibration.GRiwrmInputsModel} in order to provide upstream simulated flows to a node.
+This function is used by \link{RunModel.GRiwrmInputsModel} and \link{Calibration.GRiwrmInputsModel} in order to provide upstream simulated flows to a node
 }

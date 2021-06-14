@@ -2,16 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{checkRunModelParameters}
 \alias{checkRunModelParameters}
-\title{Check the parameters of RunModel methods}
+\title{Check of the parameters of RunModel methods}
 \usage{
 checkRunModelParameters(InputsModel, RunOptions, Param)
 }
 \arguments{
-\item{InputsModel}{a \code{GRiwrmInputsModel} object (See \link{CreateInputsModel.GRiwrm})}
+\item{InputsModel}{[\code{GRiwrmInputsModel} object] see \link{CreateInputsModel.GRiwrm} for details}
 
-\item{RunOptions}{a \code{GRiwrmRunOptions} object (See \link{CreateRunOptions.GRiwrmInputsModel})}
+\item{RunOptions}{[\code{GRiwrmRunOptions} object] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
 
-\item{Param}{a \link{list} of \link{numeric} containing model parameters of each node of the network}
+\item{Param}{\link{list} of containing model parameter values of each node of the network}
 }
 \description{
 Stop the execution if an error is detected.

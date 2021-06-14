@@ -2,18 +2,18 @@
 % Please edit documentation in R/CreateRunOptions.R
 \name{CreateRunOptions}
 \alias{CreateRunOptions}
-\title{Create \emph{RunOptions} object for \strong{airGR} and \strong{airGRiwrm}.}
+\title{Creation of the \emph{RunOptions} object for either \strong{airGR} or \strong{airGRiwrm}.}
 \usage{
 CreateRunOptions(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{InputsModel} (see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}) or \emph{GRiwrmInputsModel} (See \link{CreateInputsModel.GRiwrm}).}
+\item{InputsModel}{[object of class \emph{InputsModel} (see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}) or \emph{GRiwrmInputsModel} (See \link{CreateInputsModel.GRiwrm})]}
 
-\item{...}{further arguments passed to or from other methods.}
+\item{...}{further arguments passed to or from other methods}
 }
 \value{
 Object of \emph{RunOptions} class family
 }
 \description{
-See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} and \link{CreateRunOptions.GRiwrmInputsModel} for usage.
+See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} and \link{CreateRunOptions.GRiwrmInputsModel} for usage
 }

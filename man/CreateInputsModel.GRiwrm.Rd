@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateInputsModel.GRiwrm.R
 \name{CreateInputsModel.GRiwrm}
 \alias{CreateInputsModel.GRiwrm}
-\title{Create InputsModel object for a \strong{airGRiwrm} network}
+\title{Creation of an InputsModel object for a \strong{airGRiwrm} network}
 \usage{
 \method{CreateInputsModel}{GRiwrm}(
   x,
@@ -21,15 +21,15 @@
 )
 }
 \arguments{
-\item{x}{GRiwrm object describing the diagram of the semi-distributed model (See \link{CreateGRiwrm})}
+\item{x}{[GRiwrm object] diagram of the semi-distributed model (See \link{CreateGRiwrm})}
 
-\item{DatesR}{Vector of POSIXt observation time steps}
+\item{DatesR}{\link{POSIXt} vector of dates}
 
-\item{Precip}{Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs}
+\item{Precip}{\link{matrix} or \link{data.frame} frame of numeric containing precipitation in [mm per time step]. Column names correspond to node IDs}
 
-\item{PotEvap}{Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs}
+\item{PotEvap}{\link{matrix} or \link{data.frame} frame of numeric containing potential evaporation [mm per time step]. Column names correspond to node IDs}
 
-\item{Qobs}{Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs}
+\item{Qobs}{\link{matrix} or \link{data.frame} frame of numeric containing observed flows in [mm per time step]. Column names correspond to node IDs}
 
 \item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default \code{TRUE} (the mean of the precipitation is kept to the original value)}
 
@@ -51,7 +51,7 @@
 GRiwrmInputsModel object equivalent to \strong{airGR} InputsModel object for a semi-distributed model (See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel})
 }
 \description{
-Create InputsModel object for a \strong{airGRiwrm} network
+Creation of an InputsModel object for a \strong{airGRiwrm} network
 }
 \details{
 Meteorological data are needed for the nodes of the network that represent a catchment simulated by a rainfall-runoff model. Instead of \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} that has \link{numeric} \link{vector} as time series inputs, this function uses \link{matrix} or \link{data.frame} with the id of the sub-catchment as column names. For single values (\code{ZInputs} or \code{NLayers}), the function requires named \link{vector} with the id of the sub-catchment as name item. If an argument is optional, only the column or the named item has to be provided.
@@ -59,17 +59,17 @@ Meteorological data are needed for the nodes of the network that represent a cat
 See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} documentation for details concerning each input.
 }
 \examples{
-#################################################################
-# Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
-#################################################################
+##################################################################
+# Run the `airGR RunModel_Lag` example in the GRiwrm fashion way #
+##################################################################
 
-# Run airGR RunModel_Lag example for harvesting necessary data
+# Run the airGR RunModel_Lag example for harvesting necessary data
 library(airGR)
 example(RunModel_Lag)
-# detach the package because airGR overwrite airGRiwrm functions here
+# detach the package because otherwise airGR overwrites the airGRiwrm functions
 detach("package:airGR")
 
-# This example is a network of 2 nodes which can be describe like this:
+# This example is a network of 2 nodes which can be described like this:
 db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  length = c(LengthHydro, NA),
                  down = c("GaugingDown", NA),
@@ -82,7 +82,7 @@ griwrm <- CreateGRiwrm(db)
 str(griwrm)
 
 # Formatting observations for the hydrological models
-# Each input data should be a matrix or a data.frame with the good id in the name of the column
+# Each input data should be a matrix or a data.frame with the correct id as the column name
 Precip <- matrix(BasinObs$P, ncol = 1)
 colnames(Precip) <- "GaugingDown"
 PotEvap <- matrix(BasinObs$E, ncol = 1)

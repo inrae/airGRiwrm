@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.Qm3s.R
 \name{plot.Qm3s}
 \alias{plot.Qm3s}
-\title{Plot a \code{Qm3s} object (time series of simulated flows)}
+\title{Plot of a \code{Qm3s} object (time series of simulated flows)}
 \usage{
 \method{plot}{Qm3s}(
   x,
@@ -18,26 +18,26 @@
 )
 }
 \arguments{
-\item{x}{a \link{data.frame} with a first column with \link{POSIXt} dates and followings columns with flows at each node of the network}
+\item{x}{\link{data.frame} with a first column with \link{POSIXt} dates and followings columns with flows at each node of the network}
 
-\item{type}{1-character string (See \link{plot.default}), default "l"}
+\item{type}{\link{character} plot type (See \link{plot.default}), default "l"}
 
-\item{xlab}{a label for the x axis, defaults to "Date"}
+\item{xlab}{\link{character} label for the x axis, default to "Date"}
 
-\item{ylab}{a label for the y axis, defaults to "Flow (m3/s)"}
+\item{ylab}{\link{character} label for the y axis, default to "Flow (m3/s)"}
 
-\item{main}{a main title for the plot, defaults to "Simulated flows"}
+\item{main}{\link{character} main title for the plot, default to "Simulated flows"}
 
-\item{col}{plotting color (See \link{par}), defaults to rainbow colors}
+\item{col}{\link{character} plotting color (See \link{par}), default to rainbow colors}
 
-\item{legend}{See parameter \code{legend} of \link{legend}. Set to \link{NULL} to not display the legend}
+\item{legend}{\link{character} see parameter \code{legend} of \link{legend}. Set to \link{NULL} if display of the legend is not wanted}
 
-\item{legend.cex}{\code{cex} parameter for the text of the legend (See \link{par})}
+\item{legend.cex}{\link{character} \code{cex} parameter for the text of the legend (See \link{par})}
 
-\item{lty}{The line type (See \link{par})}
+\item{lty}{\link{character} or \link{numeric} The line type (See \link{par})}
 
 \item{...}{Further arguments to pass to the \link{matplot} functions}
 }
 \description{
-Plot a \code{Qm3s} object (time series of simulated flows)
+Plot of a \code{Qm3s} object (time series of simulated flows)
 }

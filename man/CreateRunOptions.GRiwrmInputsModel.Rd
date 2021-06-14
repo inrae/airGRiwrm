@@ -2,30 +2,30 @@
 % Please edit documentation in R/CreateRunOptions.GRiwrmInputsModel.R
 \name{CreateRunOptions.GRiwrmInputsModel}
 \alias{CreateRunOptions.GRiwrmInputsModel}
-\title{Create \emph{GRiwrmRunOptions} object for running and calibrating model in \strong{airGRiwrm}.}
+\title{Creation of the \emph{GRiwrmRunOptions} object for running and calibrating a model in \strong{airGRiwrm}.}
 \usage{
 \method{CreateRunOptions}{GRiwrmInputsModel}(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{GRiwrmInputsModel}, see \link{CreateInputsModel.GRiwrm} for details.}
+\item{InputsModel}{[object of class \emph{GRiwrmInputsModel}] see \link{CreateInputsModel.GRiwrm} for details}
 
-\item{...}{further arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}.}
+\item{...}{further arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}}
 }
 \value{
-\emph{GRiwrmRunOptions} object for running and calibrating model in \strong{airGRiwrm}.
+\emph{GRiwrmRunOptions} object for running and calibrating a model in \strong{airGRiwrm}
 }
 \description{
-Create \emph{GRiwrmRunOptions} object for running and calibrating model in \strong{airGRiwrm}.
+Creation of the \emph{GRiwrmRunOptions} object for running and calibrating a model in \strong{airGRiwrm}.
 }
 \examples{
 #################################################################
 # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
 #################################################################
 
-# Run airGR RunModel_Lag example for harvesting necessary data
+# Run the airGR RunModel_Lag example for harvesting necessary data
 library(airGR)
 example(RunModel_Lag)
-# detach the package because airGR overwrite airGRiwrm functions here
+# detach the package because otherwise airGR overwrites the airGRiwrm functions
 detach("package:airGR")
 
 # This example is a network of 2 nodes which can be describe like this:

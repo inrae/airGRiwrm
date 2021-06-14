@@ -2,7 +2,7 @@
 % Please edit documentation in R/createController.R
 \name{CreateController}
 \alias{CreateController}
-\title{Create and add a controller in a supervisor}
+\title{Creation and adding of a controller in a supervisor}
 \usage{
 CreateController(supervisor, ctrl.id, Y, U, FUN)
 }
@@ -21,13 +21,13 @@ CreateController(supervisor, ctrl.id, Y, U, FUN)
 \code{Controller}
 }
 \description{
-Create and add a controller in a supervisor
+Creation and adding of a controller in a supervisor
 }
 \details{
-\code{ctrl.id} parameter is a unique id for finding the controller in the supervisor.
+The \code{ctrl.id} is a unique id for finding the controller in the supervisor.
 If a controller with the same id already exists, it is overwritten by this new one.
 
-\code{FUN} parameter should be a function with one \link{numeric} parameter.
+\code{FUN} should be a function with one \link{numeric} parameter.
 This parameter will receive the measured values of at \code{Y} locations as input
 for the previous time step and returns calculated \code{U}. These \code{U} will then be applied
 at their location for the current time step of calculation of the model.

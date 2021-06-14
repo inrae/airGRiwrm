@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.GRiwrm.R
 \name{plot.GRiwrm}
 \alias{plot.GRiwrm}
-\title{Display a diagram representing the network structure of a GRiwrm object}
+\title{Display of a diagram representing the network structure of a GRiwrm object}
 \usage{
 \method{plot}{GRiwrm}(
   x,
@@ -14,23 +14,23 @@
 )
 }
 \arguments{
-\item{x}{a GRiwrm object to display (See \link{CreateGRiwrm})}
+\item{x}{[GRiwrm object] data to display. See \link{CreateGRiwrm} for details}
 
-\item{display}{if \code{TRUE} displays the diagram with \link[DiagrammeR:mermaid]{DiagrammeR::mermaid}, return the mermaid code otherwise}
+\item{display}{\link{logical} if \code{TRUE} displays the diagram with \link[DiagrammeR:mermaid]{DiagrammeR::mermaid}, returns the mermaid code otherwise}
 
-\item{orientation}{a \link{character} describing the orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default}
+\item{orientation}{\link{character} orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default}
 
-\item{width}{The width of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
+\item{width}{\link{numeric} width of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 
-\item{height}{The height of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
+\item{height}{\link{numeric} height of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 
 \item{...}{Other arguments and parameters you would like to send to JavaScript (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 }
 \value{
-Mermaid code of the diagram id display is \code{FALSE}.
+Mermaid code of the diagram if display is \code{FALSE}.
 }
 \description{
-Display a diagram representing the network structure of a GRiwrm object
+Display of a diagram representing the network structure of a GRiwrm object
 }
 \details{
 This function only works inside RStudio because the HTMLwidget produced by DiagrammeR

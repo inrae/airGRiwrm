@@ -1,6 +1,6 @@
 ---
 title: "Severn_03: Calibration of an open-loop influenced flow model network"
-output: rmarkdown::html_vignette
+author: "David Dorchies"
 vignette: >
   %\VignetteIndexEntry{Severn_03: Calibration of an open-loop influenced flow model network}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,15 +21,15 @@ library(airGRiwrm)
 
 ## Presentation of the study case
 
-We can see in vignette 'V02_Calibration_SD_model' that calibration result for the flow simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') is not satisfactory. These upper basins are heavily influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
+The calibration results shown in vignette 'V02_Calibration_SD_model' for the flows simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') are not fully satisfactory, especially regarding low flows. These upper basins are actually heavily influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
 
-To cope with this influenced flow, we won't try to simulate it with a hydrological model and we will directly inject in the model the observed flow at these nodes.
+To cope with these influences, in this vignette, we will not try to simulate the basin functioning with an hydrological model but we will rather directly inject in the model the observed flows at these nodes.
 
-## Convert a gauging station into a release spot
+## Conversion of a gauging station into a release spot
 
-### Modifying the GRiwrm object
+### Modification of the GRiwrm object
 
-The production method of the `GRiwrm` object is detailed in the vignette "V01_Structure_SD_model" of the package. The following code chunk resumes all the necessary steps:
+The creation of the `GRiwrm` object is detailed in the vignette "V01_Structure_SD_model" of the package. The following code chunk resumes all the necessary steps:
 
 ```{r}
 data(Severn)
@@ -39,8 +39,7 @@ nodes$model <- "RunModel_GR4J"
 griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 ```
 
-
-To notify the SD model that the provided flow on a node should be directly used instead of an hydrological model, you only need to declare its model as `NA`:
+To notify the SD model that the provided flows on a node should be directly used instead of an hydrological model, one only needs to declare its model as `NA`:
 
 ```{r}
 griwrmV03 <- griwrm
@@ -53,17 +52,17 @@ Here, we keep the area of this basin which means that the discharge will be prov
 
 The diagram of the network structure is represented below with:
 
-  * in blue the upstream nodes with a GR4J model
-  * in green the intermediate nodes with an SD (GR4J + LAG) model
-  * in red the node with direct flow injection (no hydrological model)
+  * in blue, the upstream nodes with a GR4J model
+  * in green, the intermediate nodes with an SD (GR4J + LAG) model
+  * in red, the node with direct flow injection (no hydrological model)
 
 ```{r diagram}
-plot(griwrmV03)
+plot(griwrmV03) # ne fonctionne pas sur le site
 ```
 
-### Generate the GRiwrmInputsModel object
+### Generation of the GRiwrmInputsModel object
 
-The formatting of the input data is described in the vignette "V01_Structure_SD_model". the following code chunk resumes this formatting procedure:
+The formatting of the input data is described in the vignette "V01_Structure_SD_model". The following code chunk resumes this formatting procedure:
 
 ```{r}
 BasinsObs <- Severn$BasinsObs
@@ -83,7 +82,7 @@ IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, Qobs)
 
 ## Calibration of the new model
 
-Calibration options and criteria procedures are detailed in vignette "V02_Calibration_SD_model". The following code chunk resume this procedure:
+Calibration options and criteria procedures are detailed in vignette "V02_Calibration_SD_model". The following code chunk resumes this procedure:
 
 ```{r}
 IndPeriod_Run <- seq(
@@ -108,12 +107,7 @@ OC_OL <- suppressWarnings(
 ParamV03 <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
 ```
 
-```{r}
-save(griwrmV03, ParamV03, file = file.path(tempdir(), "V03.RData"))
-```
-
-
-## Run model with this newly calibrated parameters
+## Run of the model with this newly calibrated parameters
 
 ```{r RunModel}
 OM_OL <- RunModel(
@@ -123,9 +117,9 @@ OM_OL <- RunModel(
 )
 ```
 
-## Plot the result
+## Plotting of the results
 
-As, we can see below, compare to results of vignette "V02_Calibration_SD_model", the use of measured flow on upstream influenced basins improves largely the model performance at downstream stations.
+As can be seen below, compared to results of vignette "V02_Calibration_SD_model", the use of measured flows on upstream influenced basins improves largely the model performance at downstream stations (better low flow simulations).
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
@@ -136,7 +130,7 @@ htmltools::tagList(lapply(
 ))
 ```
 
-The resulting flow of each node in m3/s is directly available and can be plotted with these commands:
+The resulting flows of each node in m<sup>3</sup>/s is directly available and can be plotted with these commands:
 
 ```{r}
 Qm3s <- attr(OM_OL, "Qm3s")
