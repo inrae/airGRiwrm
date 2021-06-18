@@ -39,7 +39,7 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
   return(output)
 }
 
-#' @param areas [numeric] vector with the total area of the basin followed by the areas of the upstream basins in km^2^
+#' @param areas [numeric] vector with the total area of the basin followed by the areas of the upstream basins in km2
 #' @param temperature [logical] `TRUE` if the meteorological data contain air temperature. If `FALSE` minimum output values are bounded to zero
 #' @export
 #' @rdname ConvertMeteoSD

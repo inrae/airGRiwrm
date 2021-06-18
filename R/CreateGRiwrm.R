@@ -5,7 +5,7 @@
 #'
 #'  * a node identifier (column `id`),
 #'  * the identifier and the hydraulic distance to the downstream node ([character] columns `down` and [numeric] columns `length` in km). The last downstream node should have fields `down` and `length` set to `NA`,
-#'  * the area of the basin ([numeric] column `area` in km^2^)
+#'  * the area of the basin ([numeric] column `area` in km2)
 #'  * the hydrological model to use if necessary ([character] column `model`) ([NA] for using observed flow instead of a runoff model output)
 #'
 #' @param db [data.frame] description of the network (See details)
@@ -16,7 +16,7 @@
 #'  * `id` ([character]): node identifier
 #'  * `down` ([character]): identifier of the node downstream of the current node ([NA] for the most downstream node)
 #'  * `length` ([numeric]): hydraulic distance to the downstream node in km ([NA] for the most downstream node)
-#'  * `area` ([numeric]): total area of the basin starting from the current node location in km^2^
+#'  * `area` ([numeric]): total area of the basin starting from the current node location in km2
 #'  * `model` ([character]): hydrological model to use if necessary ([NA] for using observed flow instead of a runoff model output)
 #'
 #' @aliases GRiwrm
