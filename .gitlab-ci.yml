@@ -5,7 +5,7 @@ stages:
 default:
   tags: [docker]
 
-image: rocker/tidyverse:3.6.3
+image: rocker/tidyverse:latest
 
 cache:
   paths:
