@@ -44,10 +44,11 @@ check_as_cran:
 
 website:
   stage: website
-  # only:
-  #   refs:
-  #     - master
-  #     - tags
+  only:
+    refs:
+      - master
+      - dev
+      - tags
   script:
     - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
     - R -e 'pkgdown::build_site()'
