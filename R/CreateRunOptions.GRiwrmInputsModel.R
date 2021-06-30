@@ -3,7 +3,7 @@
 #' @param InputsModel \[object of class \emph{GRiwrmInputsModel}\] see [CreateInputsModel.GRiwrm] for details
 #' @param ... further arguments passed to [airGR::CreateRunOptions]
 #'
-#' @return \emph{GRiwrmRunOptions} object for running and calibrating a model in **airGRiwrm**
+#' @return [list] object of class \emph{GRiwrmRunOptions} containing a \emph{RunOptions} (See [airGR::CreateRunoptions]) object by hydrological node
 #' @export
 #' @inherit RunModel.GRiwrmInputsModel return examples
 #'
