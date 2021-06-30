@@ -23,6 +23,7 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
+  - R -e 'install.packages("rcmdcheck")'
   - R -e 'devtools::install_deps(dep = T)'
   - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@131-runmodel_lag-extra-names-attribute-on-outputsmodel-qsim", host = "gitlab.irstea.fr")'
 
@@ -30,8 +31,7 @@ before_script:
   stage: checks
   script:
     - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y qpdf; fi
-    - R -e 'devtools::check(check_dir = Sys.getenv("CHECK_DIR"), cran = !as.logical(Sys.getenv("NOT_CRAN")), env_vars = c(NOT_CRAN = Sys.getenv("NOT_CRAN")))'
-    - R -e 'if (length(devtools::check_failures(path = Sys.getenv("BUILD_LOGS_DIR"), note = FALSE)) > 0) stop()'
+    - R -e 'rcmdcheck::rcmdcheck(args = ifelse(as.logical(Sys.getenv("NOT_CRAN")), "", "--as-cran"), error_on = "warning")'
 
 check_not_cran:
   variables:
