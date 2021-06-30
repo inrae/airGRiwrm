@@ -55,6 +55,19 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     })
   )
 
+  # Initialisation of model states by running the model with no supervision on warm-up period
+  RunOptionsWarmUp <- RunOptions
+  for(id in names(x$InputsModel)) {
+    RunOptionsWarmUp[[id]]$IndPeriod_Run <- RunOptionsWarmUp[[id]]$IndPeriod_WarmUp
+    RunOptionsWarmUp[[id]]$IndPeriod_WarmUp <- 0L
+    RunOptionsWarmUp[[id]]$Outputs_Sim <- c("StateEnd", "Qsim")
+  }
+  x$OutputsModel <- suppressMessages(
+    RunModel.GRiwrmInputsModel(x$InputsModel,
+                               RunOptions = RunOptionsWarmUp,
+                               Param = Param)
+  )
+
   # Adapt RunOptions to step by step simulation
   for(id in getSD_Ids(x$InputsModel)) {
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
