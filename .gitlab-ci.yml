@@ -24,6 +24,7 @@ before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
   - R -e 'devtools::install_deps(dep = T)'
+  - R -e 'remotes::install_gitlab("HYCAR-Hydro/airgr@131-runmodel_lag-extra-names-attribute-on-outputsmodel-qsim", host = "gitlab.irstea.fr")'
 
 .check:
   stage: checks
