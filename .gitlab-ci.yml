@@ -31,7 +31,7 @@ before_script:
   stage: checks
   script:
     - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y qpdf; fi
-    - R -e 'rcmdcheck::rcmdcheck(args = paste("--no-manual", ifelse(as.logical(Sys.getenv("NOT_CRAN"))), "", "--as-cran"), error_on = "warning")'
+    - R -e 'rcmdcheck::rcmdcheck(args = paste("--no-manual", ifelse(as.logical(Sys.getenv("NOT_CRAN")), "", "--as-cran")), error_on = "warning")'
 
 check_not_cran:
   variables:
