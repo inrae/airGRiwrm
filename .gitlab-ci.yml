@@ -5,7 +5,7 @@ stages:
 default:
   tags: [docker]
 
-image: rocker/tidyverse:latest
+image: rocker/verse:latest
 
 cache:
   paths:
