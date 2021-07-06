@@ -1,23 +1,35 @@
-context("RunModel.Supervisor")
+# data set up
 
-# Load data
 data(Severn)
 
-# Network configuration
-nodes <- Severn$BasinsInfo[c(1,2,5), c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream # Conversion km -> m
-nodes$model <- NA
-nodes$model[1] <- "RunModel_GR4J"
-griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
-
-# InputsModel
-DatesR <- Severn$BasinsObs[[1]]$DatesR
-BasinsObs <- Severn$BasinsObs[griwrm$id]
+# Format observation
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+
+# Set network
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$distance_downstream <- nodes$distance_downstream
+nodes$model <- "RunModel_GR4J"
+griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+
+# Convert meteo data to SD (remove upstream areas)
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-Qobs <- cbind(sapply(Severn$BasinsObs, function(x) {x$discharge_spec}))
+
+# Calibration parameters
+ParamMichel <- list(
+  `54057` = c(0.777323612737634, 146.867455906443, -0.100520484469163, 0.0891311328631119, 8.61545521845828),
+  `54032` = c(1.10493336411855, 1925.34891922787, -0.144768939617915, 6.3210752928989, 1.81732963586905),
+  `54001` = c(2.3483563315249, 4402.81769423169, -10903.649376187, 35.1631971451066, 17.4996745805422),
+  `54095` = c(252.52391159181, 0.0314385375487947, 55.0975274220997, 3.2928681361255),
+  `54002` = c(223.631587680546, -0.0200013333600003, 18.915846312255, 2.1981981981982),
+  `54029` = c(220.600635340659, -0.0843239834153641, 37.743931332494, 2.11619461485516)
+)
+
+# set up inputs
 InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 
 # RunOptions
@@ -34,19 +46,50 @@ RunOptions <- CreateRunOptions(
 )
 
 # RunModel.GRiwrmInputsModel
-Param <- list("54057" = c(0.727,  175.493,   -0.082,    0.029,    4.654))
 OM_GriwrmInputs <- RunModel(
   InputsModel,
   RunOptions = RunOptions,
-  Param = Param
+  Param = ParamMichel
 )
 
-test_that("RunModelSupervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
+context("RunModel.GRiwrmInputsModel")
+
+test_that("RunModel.GRiwrmInputsModel should return same result with separated warm-up", {
+  RO_WarmUp <- CreateRunOptions(
+    InputsModel = InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = IndPeriod_WarmUp
+  )
+  OM_WarmUp <- RunModel(
+    InputsModel,
+    RunOptions = RO_WarmUp,
+    Param = ParamMichel
+  )
+  RO_Run <- CreateRunOptions(
+    InputsModel = InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = IndPeriod_Run
+  )
+  for(id in names(RO_Run)) {
+    RO_Run[[id]]$IniResLevels <- NULL
+    RO_Run[[id]]$IniStates <- airGRiwrm:::serializeIniStates(OM_WarmUp[[id]]$StateEnd)
+  }
+  OM_Run <- RunModel(
+    InputsModel,
+    RunOptions = RO_Run,
+    Param = ParamMichel
+  )
+  expect_equal(OM_GriwrmInputs[["54057"]]$Qsim, OM_Run[["54057"]]$Qsim)
+})
+
+context("RunModel.Supervisor")
+
+test_that("RunModel.Supervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel)
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
-    Param = Param
+    Param = ParamMichel
   )
   expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
 })
@@ -65,7 +108,7 @@ Qobs2 <- cbind(Qobs, matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2))
 colnames(Qobs2) <- c(colnames(Qobs2)[1:6], "R1", "R2")
 InputsModel <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
 
-test_that("RunModelSupervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
+test_that("RunModel.Supervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
   # Create Supervisor
   sv <- CreateSupervisor(InputsModel)
   # Function to withdraw half of the measured flow
@@ -80,12 +123,12 @@ test_that("RunModelSupervisor with two regulations that cancel each other out sh
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
-    Param = Param
+    Param = ParamMichel
   )
   expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
 })
 
-test_that("RunModelSupervisor with multi time steps controller, two regulations in 1 centralised controller that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
+test_that("RunModel.Supervisor with multi time steps controller, two regulations in 1 centralised controller that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel, TimeStep = 10L)
   fEverything <- function(y) {
     matrix(c(y[,1]/2, -y[,1]/2), ncol = 2)
@@ -94,7 +137,7 @@ test_that("RunModelSupervisor with multi time steps controller, two regulations 
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
-    Param = Param
+    Param = ParamMichel
   )
   expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
 })
