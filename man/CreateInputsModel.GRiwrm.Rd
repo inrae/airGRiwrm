@@ -48,7 +48,7 @@
 \item{...}{used for compatibility with S3 methods}
 }
 \value{
-GRiwrmInputsModel object equivalent to \strong{airGR} InputsModel object for a semi-distributed model (See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel})
+A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modelled sub-catchment.
 }
 \description{
 Creation of an InputsModel object for a \strong{airGRiwrm} network

@@ -3,7 +3,7 @@
 #' @param x \[object of class \emph{GRiwrmInputsModel}\] see [CreateInputsModel.GRiwrm] for details
 #' @param RunOptions \[object of class \emph{GRiwrmRunOptions}\] see [CreateRunOptions.GRiwrmInputsModel] for details
 #' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
-#' @param ... Mandatory for S3 method signature function compatibility with generic.
+#' @param ... Further arguments for compatibility with S3 methods
 #'
 #' @return [[list] of class \emph{GRiwrmOutputsModel}] list of \emph{OutputsModel} objects (See \[airGR::RunModel]) for each node of the semi-distributed model
 #' @export

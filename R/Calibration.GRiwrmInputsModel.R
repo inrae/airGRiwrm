@@ -1,13 +1,5 @@
-#' Calibration of a semi-distributed precipitation-runoff model
-#'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details
-#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see [CreateRunOptions.GRiwrmInputsModel] for details
-#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see [CreateInputsCrit.GRiwrmInputsModel] for details
-#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see [CreateCalibOptions.GRiwrmInputsModel] for details
 #' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}
-#' @param ... further arguments passed to [airGR::Calibration].
-#'
-#' @return [list] of [airGR::Calibration] outputs for each node of the semi-distributed model.
+#' @rdname Calibration
 #' @export
 Calibration.GRiwrmInputsModel <- function(InputsModel,
                                           RunOptions,

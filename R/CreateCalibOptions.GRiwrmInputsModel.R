@@ -1,9 +1,4 @@
-#' Title
-#'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
-#' @param ... further arguments passed to [airGR::CreateCalibOptions].
-#'
-#' @return \emph{GRiwrmCalibOptions} object.
+#' @rdname CreateCalibOptions
 #' @export
 CreateCalibOptions.GRiwrmInputsModel <- function(InputsModel, ...) {
 

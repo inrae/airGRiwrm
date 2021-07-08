@@ -63,9 +63,10 @@ griwrmV04 <- rbind(
 )
 plot(griwrmV04)
 ```
-Nodes in red color are direct injection points (positive or negative flow) in the model, green nodes simulate either sub-basin rainfall-runoff and routing of upstream node flows and grey nodes simulate sub-basin rainfall-runoff flows only.
+Blue-grey nodes figure upstream basins (rainfall-runoff modelling only) and green nodes figure intermediate basins, coupling rainfall-runoff and hydraulic routing modelling.
+Nodes in red color are direct injection points (positive or negative flow) in the model.
 
-It's important to notice that even if the points "Irrigation1" and "Irrigation2" are located on the Severn river as well as gauging stations "54095", "54001" and "54032", their respective nodes are not represented on the same path in the model. Consequently, with this network configuration, it is not possible to know the value of the flow in the Severn river at the "Irrigation1" or "Irrigation2" nodes. These values are only available in nodes "54095", "54001" and "54032".
+It's important to notice that even if the points "Irrigation1" and "Irrigation2" are physically located on a single branch of the Severn river as well as gauging stations "54095", "54001" and "54032", nodes "Irrigation1" and "Irrigation2" are not represented on the same branch in this conceptual model. Consequently, with this network configuration, it is not possible to know the value of the flow in the Severn river at the "Irrigation1" or "Irrigation2" nodes. These values are only available in nodes "54095", "54001" and "54032" where rainfall-runoff and hydraulic routing are actually modelled.
 
 ## Irrigation objectives and flow demand at intakes
 

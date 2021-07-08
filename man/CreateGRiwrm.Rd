@@ -26,7 +26,7 @@ CreateGRiwrm(
 \item \code{id} (\link{character}): node identifier
 \item \code{down} (\link{character}): identifier of the node downstream of the current node (\link{NA} for the most downstream node)
 \item \code{length} (\link{numeric}): hydraulic distance to the downstream node in km (\link{NA} for the most downstream node)
-\item \code{area} (\link{numeric}): total area of the basin starting from the current node location in km^2^
+\item \code{area} (\link{numeric}): total area of the basin starting from the current node location in km2
 \item \code{model} (\link{character}): hydrological model to use if necessary (\link{NA} for using observed flow instead of a runoff model output)
 }
 }
@@ -39,7 +39,7 @@ of their connections
 \itemize{
 \item a node identifier (column \code{id}),
 \item the identifier and the hydraulic distance to the downstream node (\link{character} columns \code{down} and \link{numeric} columns \code{length} in km). The last downstream node should have fields \code{down} and \code{length} set to \code{NA},
-\item the area of the basin (\link{numeric} column \code{area} in km^2^)
+\item the area of the basin (\link{numeric} column \code{area} in km2)
 \item the hydrological model to use if necessary (\link{character} column \code{model}) (\link{NA} for using observed flow instead of a runoff model output)
 }
 }

@@ -13,7 +13,7 @@
 
 \item{Param}{\link{list} parameter values. The list item names are the IDs of the sub-basins. Each item is a \link{numeric} \link{vector}}
 
-\item{...}{Mandatory for S3 method signature function compatibility with generic.}
+\item{...}{Further arguments for compatibility with S3 methods}
 }
 \value{
 [\link{list} of class \emph{GRiwrmOutputsModel}] list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model

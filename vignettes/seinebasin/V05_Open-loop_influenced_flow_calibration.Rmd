@@ -49,7 +49,12 @@ iEnd <-which(DatesR == as.POSIXct("2008-07-31"))
 
 data(Qreservoirs)
 Qobs3 <- cbind(Qobs, Qreservoirs[1:iEnd,])
-InputsModel3 <- CreateInputsModel(griwrm3, DatesR[1:iEnd], Precip[1:iEnd,], PotEvap[1:iEnd,], Qobs3)
+id_GR_nodes <- griwrm3$id[!is.na(griwrm3$model)]
+InputsModel3 <- CreateInputsModel(griwrm3, 
+                                  DatesR[1:iEnd], 
+                                  Precip[1:iEnd, id_GR_nodes], 
+                                  PotEvap[1:iEnd, id_GR_nodes], 
+                                  Qobs3[, griwrm3$id])
 ```
 
 ## GriwmRunOptions object

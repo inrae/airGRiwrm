@@ -24,7 +24,7 @@ ConvertMeteoSD(x, ...)
 
 \item{griwrm}{\code{GRiwrm} object describing the semi-distributed network (See \link{CreateGRiwrm})}
 
-\item{areas}{\link{numeric} vector with the total area of the basin followed by the areas of the upstream basins in km^2^}
+\item{areas}{\link{numeric} vector with the total area of the basin followed by the areas of the upstream basins in km2}
 
 \item{temperature}{\link{logical} \code{TRUE} if the meteorological data contain air temperature. If \code{FALSE} minimum output values are bounded to zero}
 }

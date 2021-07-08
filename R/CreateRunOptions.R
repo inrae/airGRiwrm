@@ -1,12 +1,21 @@
-#' Creation of the \emph{RunOptions} object for either **airGR** or **airGRiwrm**.
+#' Creation of the CalibOptions object
 #'
-#' See [airGR::CreateRunOptions] and [CreateRunOptions.GRiwrmInputsModel] for usage
+#' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
-#' @param InputsModel \[object of class \emph{InputsModel} (see [airGR::CreateInputsModel]) or \emph{GRiwrmInputsModel} (See [CreateInputsModel.GRiwrm])\]
-#' @param ... further arguments passed to or from other methods
+#' @param InputsModel object of class \emph{InputsModel} or \emph{GRwirmInputsModel}. See [CreateInputsModel] for details
+#' @param ... arguments passed to [airGR::CreateRunOptions], see details
 #'
-#' @return Object of \emph{RunOptions} class family
+#' @details See [airGR::CreateRunOptions] documentation for a complete list of arguments.
+#'
+#' With a \emph{GRwirmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+#'
+#' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
+#' - a `RunOptions` object (See [airGR::CreateRunOptions])
+#' - a `GRiwrmRunOptions` object which is a [list] of `RunOptions` object with one item per modelled sub-catchment
+#'
+#' @rdname CreateRunOptions
 #' @export
+#' @inherit RunModel.GRiwrmInputsModel return examples
 CreateRunOptions <- function(InputsModel, ...) {
   UseMethod("CreateRunOptions", InputsModel)
 }

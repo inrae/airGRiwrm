@@ -18,7 +18,7 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See [airGR::CreateInputsModel])
+#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by [airGR::CreateInputsModel] with one item per modelled sub-catchment.
 #' @export
 #' @examples
 #' ##################################################################

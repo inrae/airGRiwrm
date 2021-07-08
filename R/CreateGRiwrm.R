@@ -84,13 +84,13 @@ CreateGRiwrm <- function(db,
 #' @param coltypes named [list] with the name of the columns to check as key and the required type as value
 #'
 #' @return [NULL] or error message if a wrong type is detected
-#' @export
+
 #' @examples
 #' CheckColumnTypes(
 #'   data.frame(string = c("A"), numeric = c(1), stringsAsFactors = FALSE),
 #'   list(string = "character", numeric = "double")
 #' )
-#'
+#' @noRd
 CheckColumnTypes <- function(df, coltypes) {
   lapply(names(df), function(x) {
     if (typeof(df[[x]]) != coltypes[[x]]) {
@@ -112,6 +112,7 @@ CheckColumnTypes <- function(df, coltypes) {
 #' @param griwrm \[object of class `GRiwrm`\] see [CreateGRiwrm] for details
 #'
 #' @return [numeric] ordered node names
+#' @noRd
 getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")

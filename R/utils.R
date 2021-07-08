@@ -3,7 +3,7 @@
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
 #'
 #' @return [character] IDs of the sub-basins using SD model
-#'
+#' @noRd
 getSD_Ids <- function(InputsModel) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
@@ -19,7 +19,7 @@ getSD_Ids <- function(InputsModel) {
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
 #'
 #' @return [character] IDs of the sub-basins not using the SD model
-#'
+#' @noRd
 getNoSD_Ids <- function(InputsModel) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
@@ -39,6 +39,7 @@ getNoSD_Ids <- function(InputsModel) {
 #' @param sv \[object of class `Supervisor`\] see [CreateSupervisor] for details
 #'
 #' @return [numeric] retrieved data at the location
+#' @noRd
 getDataFromLocation <- function(loc, sv) {
   if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
     stop("Reaching output of other controller is not implemented yet")
@@ -60,6 +61,7 @@ getDataFromLocation <- function(loc, sv) {
 #' @param sv \[object of type `Supervisor`\] see [CreateSupervisor] for details
 #'
 #' @return [NULL]
+#' @noRd
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unames)), function(i) {
     node <- sv$griwrm$down[sv$griwrm$id == ctrlr$Unames[i]]
@@ -74,7 +76,7 @@ setDataToLocation <- function(ctrlr, sv) {
 #' Supervision for the current time step
 #'
 #' @param supervisor `Supervisor` (See [CreateSupervisor])
-#'
+#' @noRd
 doSupervision <- function(supervisor) {
   for (id in names(supervisor$controllers)) {
     supervisor$controller.id <- id
@@ -102,7 +104,7 @@ doSupervision <- function(supervisor) {
 #' @param InputsModel \[`GRiwrmInputsModel` object\] see [CreateInputsModel.GRiwrm] for details
 #' @param RunOptions \[`GRiwrmRunOptions` object\] see [CreateRunOptions.GRiwrmInputsModel] for details
 #' @param Param [list] of containing model parameter values of each node of the network
-#'
+#' @noRd
 checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
   if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmRunoptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
   if(!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
@@ -124,7 +126,7 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
 #' @return a [data.frame] containing the simulated flows (in m3/time step) structured with the following columns:
 #' - 'DatesR' vector of dates  of the time series
 #' - one column by node with the simulated flows
-#'
+#' @noRd
 OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   griwrm <- attr(InputsModel, "GRiwrm")
   # Get simulated flow for each node

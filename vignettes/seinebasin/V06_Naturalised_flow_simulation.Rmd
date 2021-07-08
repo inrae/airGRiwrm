@@ -56,7 +56,11 @@ Generate `GRiwrmInputsModel` object
 
 ```{r CreateInputsModel}
 data(QNAT)
-InputsModel4 <- CreateInputsModel(griwrm4, DatesR, Precip, PotEvap, Qnat)
+InputsModel4 <- CreateInputsModel(griwrm4, 
+                                  DatesR, 
+                                  Precip[, selectedNodes], 
+                                  PotEvap[, selectedNodes], 
+                                  Qnat[, selectedNodes])
 ```
 
 ## GriwmRunOptions object

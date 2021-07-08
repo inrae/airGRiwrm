@@ -11,11 +11,19 @@
 #'
 #' @param supervisor `Supervisor` object, see [CreateSupervisor]
 #' @param ctrl.id [character] id of the controller (see Details)
-#' @param Y [character] location of the controlled and/or measured variables in the model. See [createControl]
-#' @param U [character] location of the command variables in the model. See [createControl]
+#' @param Y [character] location of the controlled and/or measured variables in the model.
+#' @param U [character] location of the command variables in the model.
 #' @param FUN [function] controller logic which calculates `U` from `Y` (see Details)
 #'
-#' @return `Controller`
+#' @return a `Controller` object which is a list with the following items:
+#' - `id` [character]: the controller identifier
+#' - `U` [matrix]: the list of controls for command variables with each column being the location of the variables and the rows being
+#' the values of the variable for the current time steps (empty by default)
+#' - `Unames` [character]: location of the command variables
+#' - `Y` [matrix]: the lists of controls for controlled variables with each column being the location of the variables and the rows being
+#' the values of the variable for the current time steps (empty by default)
+#' - `Ynames` [character]: location of the controlled variables
+#' - `FUN` [function]: controller logic which calculates `U` from `Y`
 #' @export
 #'
 #' @examples
@@ -33,9 +41,9 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 
   ctrlr <- list(
     id = ctrl.id,
-    U = createControl(U),
+    U = CreateControl(U),
     Unames = U,
-    Y = createControl(Y),
+    Y = CreateControl(Y),
     Ynames = Y,
     FUN = FUN
   )
@@ -57,12 +65,12 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 #'
 #' @return [matrix] with each column being the location of the variables and the rows being
 #' the values of the variable for the current time steps (empty by default)
-#' @export
+#' @noRd
 #'
 #' @examples
 #' # For pointing the discharge at the oulet of basins "54095" and "54002"
-#' createControl(c("54095", "54002"))
-createControl <- function(locations) {
+#' CreateControl(c("54095", "54002"))
+CreateControl <- function(locations) {
   if(!is.character(locations)) {
     stop("Parameter `locations` should be character")
   }

@@ -7,7 +7,7 @@
 #' @description This function is used by [RunModel.GRiwrmInputsModel] and [Calibration.GRiwrmInputsModel] in order to provide upstream simulated flows to a node
 #'
 #' @return `InputsModel` object with updated `Qupstream`
-#'
+#' @noRd
 UpdateQsimUpstream <- function(InputsModel, IndPeriod_Run, OutputsModel) {
   iQ <- which(InputsModel$UpstreamIsRunoff)
   for(i in iQ) {
