@@ -1,21 +1,21 @@
-#' RunModel function for GRiwrmInputsModel object
+#' RunModel function for \emph{GRiwrmInputsModel} object
 #'
-#' @param x object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details
-#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see [CreateRunOptions.GRiwrmInputsModel] for details
-#' @param Param [list] of parameters. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
-#' @param ... Mandatory for S3 method signature function compatibility with generic.
+#' @param x \[object of class \emph{GRiwrmInputsModel}\] see [CreateInputsModel.GRiwrm] for details
+#' @param RunOptions \[object of class \emph{GRiwrmRunOptions}\] see [CreateRunOptions.GRiwrmInputsModel] for details
+#' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
+#' @param ... Further arguments for compatibility with S3 methods
 #'
-#' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \[airGR::RunModel]) for each node of the semi-distributed model.
+#' @return [[list] of class \emph{GRiwrmOutputsModel}] list of \emph{OutputsModel} objects (See \[airGR::RunModel]) for each node of the semi-distributed model
 #' @export
 #' @examples
 #' #################################################################
 #' # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
 #' #################################################################
 #'
-#' # Run airGR RunModel_Lag example for harvesting necessary data
+#' # Run the airGR RunModel_Lag example for harvesting necessary data
 #' library(airGR)
 #' example(RunModel_Lag)
-#' # detach the package because airGR overwrite airGRiwrm functions here
+#' # detach the package because otherwise airGR overwrites the airGRiwrm functions
 #' detach("package:airGR")
 #'
 #' # This example is a network of 2 nodes which can be describe like this:

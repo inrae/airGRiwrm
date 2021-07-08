@@ -1,12 +1,5 @@
-#' Create \emph{GRiwrmRunOptions} object for running and calibrating model in **airGRiwrm**.
-#'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
-#' @param ... further arguments passed to [airGR::CreateRunOptions].
-#'
-#' @return \emph{GRiwrmRunOptions} object for running and calibrating model in **airGRiwrm**.
+#' @rdname CreateRunOptions
 #' @export
-#' @inherit RunModel.GRiwrmInputsModel return examples
-#'
 CreateRunOptions.GRiwrmInputsModel <- function(InputsModel, ...) {
 
   RunOptions <- list()

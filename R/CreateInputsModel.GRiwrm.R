@@ -1,10 +1,10 @@
-#' Create InputsModel object for a **airGRiwrm** network
+#' Creation of an InputsModel object for a **airGRiwrm** network
 #'
-#' @param x GRiwrm object describing the diagram of the semi-distributed model (See [CreateGRiwrm])
-#' @param DatesR Vector of POSIXt observation time steps
-#' @param Precip Matrix or data frame of numeric containing precipitation in mm. Column names correspond to node IDs
-#' @param PotEvap Matrix or data frame of numeric containing potential evaporation in mm. Column names correspond to node IDs
-#' @param Qobs Matrix or data frame of numeric containing potential observed flow in mm. Column names correspond to node IDs
+#' @param x \[GRiwrm object\] diagram of the semi-distributed model (See [CreateGRiwrm])
+#' @param DatesR [POSIXt] vector of dates
+#' @param Precip [matrix] or [data.frame] frame of numeric containing precipitation in \[mm per time step\]. Column names correspond to node IDs
+#' @param PotEvap [matrix] or [data.frame] frame of numeric containing potential evaporation \[mm per time step\]. Column names correspond to node IDs
+#' @param Qobs [matrix] or [data.frame] frame of numeric containing observed flows in \[mm per time step\]. Column names correspond to node IDs
 #' @param PrecipScale (optional) named [vector] of [logical] indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default `TRUE` (the mean of the precipitation is kept to the original value)
 #' @param TempMean (optional) [matrix] or [data.frame] of time series of mean air temperature \[°C\], required to create the CemaNeige module inputs
 #' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum air temperature \[°C\], possibly used to create the CemaNeige module inputs
@@ -18,20 +18,20 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' @return GRiwrmInputsModel object equivalent to **airGR** InputsModel object for a semi-distributed model (See [airGR::CreateInputsModel])
+#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by [airGR::CreateInputsModel] with one item per modelled sub-catchment.
 #' @export
 #' @examples
-#' #################################################################
-#' # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
-#' #################################################################
+#' ##################################################################
+#' # Run the `airGR RunModel_Lag` example in the GRiwrm fashion way #
+#' ##################################################################
 #'
-#' # Run airGR RunModel_Lag example for harvesting necessary data
+#' # Run the airGR RunModel_Lag example for harvesting necessary data
 #' library(airGR)
 #' example(RunModel_Lag)
-#' # detach the package because airGR overwrite airGRiwrm functions here
+#' # detach the package because otherwise airGR overwrites the airGRiwrm functions
 #' detach("package:airGR")
 #'
-#' # This example is a network of 2 nodes which can be describe like this:
+#' # This example is a network of 2 nodes which can be described like this:
 #' db <- data.frame(id = c("Reservoir", "GaugingDown"),
 #'                  length = c(LengthHydro, NA),
 #'                  down = c("GaugingDown", NA),
@@ -44,7 +44,7 @@
 #' str(griwrm)
 #'
 #' # Formatting observations for the hydrological models
-#' # Each input data should be a matrix or a data.frame with the good id in the name of the column
+#' # Each input data should be a matrix or a data.frame with the correct id as the column name
 #' Precip <- matrix(BasinObs$P, ncol = 1)
 #' colnames(Precip) <- "GaugingDown"
 #' PotEvap <- matrix(BasinObs$E, ncol = 1)
@@ -124,7 +124,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
 }
 
 
-#' Create an empty InputsModel object for **airGRiwrm** nodes
+#' Creation of an empty InputsModel object for **airGRiwrm** nodes
 #'
 #' @param griwrm a `GRiwrm` object (See [CreateGRiwrm])
 #'
@@ -203,13 +203,13 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
 }
 
 
-#' Check time steps of the model of all the nodes and return the time step in seconds
+#' Check of time steps of the model for all nodes and return of the time step in seconds
 #'
-#' This function is called inside [CreateInputsModel.GRiwrm] for defining the time step of the big model.
+#' Function that is called inside [CreateInputsModel.GRiwrm] for defining the time step of the complete model
 #'
-#' @param InputsModel a `GRiwrmInputsModel`
+#' @param InputsModel \[object of class `GRiwrmInputsModel`\]
 #'
-#' @return A [numeric] representing the time step in seconds
+#' @return [numeric] time step in seconds
 #' @noRd
 getModelTimeStep <- function(InputsModel) {
   TS <- sapply(InputsModel, function(x) {

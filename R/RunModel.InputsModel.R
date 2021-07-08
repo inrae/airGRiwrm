@@ -1,8 +1,9 @@
-#' Wrapper for [airGR::RunModel] for one sub-basin.
+#' Wrapper for [airGR::RunModel] for one sub-basin
 #'
-#' @inherit airGR::RunModel
-#' @param x `InputsModel` used as `InputsModel` parameter for [airGR::RunModel]
-#' @param ... Further arguments for compatibility with S3 method
+#' @inheritParams airGR::RunModel
+#' @param x \[object of class \emph{InputsModel}\] see [airGR::CreateInputsModel] for details
+#' @param ... Further arguments for compatibility with S3 methods
+#'
 #' @export
 RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
   if(is.null(FUN_MOD)) {

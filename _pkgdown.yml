@@ -1,6 +1,6 @@
 url: https://airgriwrm.g-eau.fr
 development:
-  mode: unreleased
+  mode: devel
 
 template:
   params:
@@ -22,7 +22,7 @@ navbar:
 repo:
   url:
     home: https://gitlab.irstea.fr/in-wop/airGRiwrm
-    source: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/tree/master/
+    source: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/tree/dev/
     issue: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues
 
 articles:

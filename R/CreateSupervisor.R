@@ -1,9 +1,14 @@
-#' Create a Supervisor for handling regulation in a model
+#' Creation of a Supervisor for handling regulation in a model
 #'
-#' @param InputsModel `GRiwrmInputsModel` The inputs of the basin model
-#' @param TimeStep [integer] The number of time steps between each supervision
+#' @param InputsModel \[object of type `GRiwrmInputsModel`\] inputs of the model
+#' @param TimeStep [numeric] number of time steps between each supervision
 #'
-#' @return `Supervisor` object
+#' @return A `Supervisor` object which is an [environment] containing all the necessary variables to run a supervised simulation, such as:
+#' - `DatesR` [POSIXct]: vector of date from `InputsModel`
+#' - `InputsModel`: a copy of `InputsModel` provided by [CreateInputsModel.GRiwrm]
+#' - `griwrm`: a copy of `griwrm` provided by [CreateGRiwrm]
+#' - `Controllers` [list]: list of the controllers used in the supervised simulation (See [CreateController])
+#' - some internal state variables updated during simulation (`ts.index`, `ts.previous`, `ts.date`, `ts.index0`, `controller.id`)
 #' @export
 #'
 #' @examples

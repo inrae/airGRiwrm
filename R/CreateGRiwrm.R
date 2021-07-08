@@ -1,25 +1,23 @@
-#' Generate a network description containing all hydraulic nodes and the description
+#' Generation of a network description containing all hydraulic nodes and the description
 #' of their connections
 #'
 #' @details `db` is a [data.frame] which at least contains in its columns:
 #'
 #'  * a node identifier (column `id`),
 #'  * the identifier and the hydraulic distance to the downstream node ([character] columns `down` and [numeric] columns `length` in km). The last downstream node should have fields `down` and `length` set to `NA`,
-#'  * the area of the basin ([numeric] column `area` in km^2^)
-#'  * the hydrological model to use if so ([character] column `model`) ([NA] for using observed flow instead of a run-off model output)
+#'  * the area of the basin ([numeric] column `area` in km2)
+#'  * the hydrological model to use if necessary ([character] column `model`) ([NA] for using observed flow instead of a runoff model output)
 #'
-#' @param db a [data.frame] containing the description of the network (See details)
-#' @param cols named list or vector for matching columns of `db` parameter. By default, mandatory columns names are: `id`, `down`, `length`. But other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
-#' @param keep_all keep all column of `db` or keep only columns defined in `cols`
+#' @param db [data.frame] description of the network (See details)
+#' @param cols [list] or [vector] columns of `db`. By default, mandatory column names are: `id`, `down`, `length`. Other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
+#' @param keep_all [logical] indicating if all columns of `db` should be kept or if only columns defined in `cols` should be kept
 #'
-#' @return An object of class `GRiwrm` describing the airGR semi-distributed model network.
-#'
-#' It's a [data.frame] with each line corresponding to a location on the river network and with the following columns:
+#' @return [data.frame] of class `GRiwrm` describing the airGR semi-distributed model network, with each line corresponding to a location on the river network and with the following columns:
 #'  * `id` ([character]): node identifier
-#'  * `down` ([character]): the identifier of the node downstream of the current node ([NA] for the most downstream node)
-#'  * `length` ([numeric]): the hydraulic distance to the downstream node in km ([NA] for the most downstream node)
-#'  * `area` ([numeric]): the total area of the basin starting from the current node location in km^2^
-#'  * `model` ([character]): the hydrological model to use if so ([NA] for using observed flow instead of a run-off model output)
+#'  * `down` ([character]): identifier of the node downstream of the current node ([NA] for the most downstream node)
+#'  * `length` ([numeric]): hydraulic distance to the downstream node in km ([NA] for the most downstream node)
+#'  * `area` ([numeric]): total area of the basin starting from the current node location in km2
+#'  * `model` ([character]): hydrological model to use if necessary ([NA] for using observed flow instead of a runoff model output)
 #'
 #' @aliases GRiwrm
 #' @export
@@ -28,13 +26,13 @@
 #' # Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
 #' ###################################################################
 #'
-#' # Run airGR RunModel_Lag example for harvesting necessary data
+#' # Run the airGR RunModel_Lag example for harvesting the necessary data
 #' library(airGR)
 #' example(RunModel_Lag)
-#' # detach the package because airGR overwrite airGRiwrm functions here
+#' # detach the package because otherwise airGR overwrites the airGRiwrm functions
 #' detach("package:airGR")
 #'
-#' # This example is a network of 2 nodes which can be describe like this:
+#' # This example is a network of 2 nodes which can be described like this:
 #' db <- data.frame(id = c("Reservoir", "GaugingDown"),
 #'                  length = c(LengthHydro, NA),
 #'                  down = c("GaugingDown", NA),
@@ -80,19 +78,19 @@ CreateGRiwrm <- function(db,
   db
 }
 
-#' Check the column types of a [data.frame]
+#' Check of the column types of a [data.frame]
 #'
 #' @param df [data.frame] to check
 #' @param coltypes named [list] with the name of the columns to check as key and the required type as value
 #'
-#' @return [NULL] or throw an error if a wrong type is detected.
-#' @export
+#' @return [NULL] or error message if a wrong type is detected
+
 #' @examples
 #' CheckColumnTypes(
 #'   data.frame(string = c("A"), numeric = c(1), stringsAsFactors = FALSE),
 #'   list(string = "character", numeric = "double")
 #' )
-#'
+#' @noRd
 CheckColumnTypes <- function(df, coltypes) {
   lapply(names(df), function(x) {
     if (typeof(df[[x]]) != coltypes[[x]]) {
@@ -109,11 +107,12 @@ CheckColumnTypes <- function(df, coltypes) {
   return(NULL)
 }
 
-#' Sort the nodes from upstream to downstream.
+#' Sorting of the nodes from upstream to downstream
 #'
-#' @param griwrm See [CreateGRiwrm]
+#' @param griwrm \[object of class `GRiwrm`\] see [CreateGRiwrm] for details
 #'
-#' @return vector with the ordered node names.
+#' @return [numeric] ordered node names
+#' @noRd
 getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")

@@ -1,11 +1,11 @@
-#' RunModel function for GRiwrmInputsModel object
+#' RunModel function for a GRiwrmInputsModel object
 #'
-#' @param x object of class `Supervisor`, see [CreateSupervisor] for details.
-#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see \code{[CreateRunOptions.GRiwrm]} for details.
-#' @param Param list of parameter. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters.
-#' @param ... Mandatory for S3 method signature function compatibility with generic.
+#' @param x \[object of class `Supervisor`\] see [CreateSupervisor] for details
+#' @param RunOptions \[object of class \emph{GRiwrmRunOptions}\] see \code{[CreateRunOptions.GRiwrm]} for details
+#' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters
+#' @param ... Further arguments for compatibility with S3 methods
 #'
-#' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model.
+#' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model
 #' @export
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 

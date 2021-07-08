@@ -7,8 +7,8 @@
 \format{
 a \link{list} with 2 items:
 \itemize{
-\item "BasinsInfo" which contains a \link{data.frame} with Gauging station identifier, name, coordinates (GPS), area (km^2^), mean elevation (m), station type, flow period start and end, the bank full flow (m^3^/s), the identifier of the following downstream station and the distance to the following downstream station
-\item "BasinObs" which contains a \link{list} with an item by gauging station which contains a \link{data.frame} with \link{POSIXct} dates, precipitations (mm), potential evapotranspiration (mm) and measured flow (mm)
+\item "BasinsInfo" which contains a \link{data.frame} with Gauging station identifier, name, coordinates (GPS), area (km2), mean elevation (m), station type, flow period start and end, the bank full flow (m3/s), the identifier of the following downstream station and the distance to the following downstream station
+\item "BasinObs" which contains a \link{list} with an item by gauging station which contains a \link{data.frame} with \link{POSIXct} dates, precipitations (mm/time step), potential evapotranspiration (mm/time step) and measured flows (mm/time step)
 }
 }
 \source{

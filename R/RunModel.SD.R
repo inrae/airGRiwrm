@@ -1,7 +1,7 @@
-#' Run SD Model from run-off model outputs
+#' Run a semi-distributed model from rainfall-runoff model outputs
 #'
 #' @inheritParams airGR::RunModel_Lag
-#' @param x `InputsModel` used as `InputsModel` parameter for [airGR::RunModel_Lag]
+#' @param x \[object of class `InputsModel`\] used as `InputsModel` parameter for [airGR::RunModel_Lag]
 #' @param ... further arguments passed to or from other methods
 #'
 #' @return `OutputsModel` object. See [airGR::RunModel_Lag]

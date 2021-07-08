@@ -1,5 +1,5 @@
 ---
-title: "Severn_02: Calibration of a GR4J semi-distributive model network"
+title: "Severn_02: Calibration of a GR4J semi-distributed model network"
 author: "David Dorchies"
 vignette: >
   %\VignetteIndexEntry{Severn_02: Calibration of a GR4J semi-distributive model network}
@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**airGRiwrm** automates the execution of **airGR** semi-distributive models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
+**airGRiwrm** automates the execution of **airGR** semi-distributed models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
 
 ## Load library
 
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
-## Preparation of functions inputs
+## Preparation of function inputs
 
 To run a model, as for **airGR**, the functions of the  **airGRiwrm** package (e.g. the models, calibration and criteria calculation functions) require data and options with specific formats.
 
@@ -51,7 +51,7 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 str(InputsModel)
 ```
 
-## GriwmRunOptions object
+## GRiwmRunOptions object
 
 The `CreateRunOptions()` function allows to prepare the options required for the `RunModel()` function.
 
@@ -60,7 +60,7 @@ The user must at least define the following arguments:
 * `InputsModel`: the associated input data
 * `IndPeriod_Run`: the period on which the model is run
 
-Here below, we start the period to run one year after the beginning of the time series.
+Below, we start the run period one year after the beginning of the time series.
 
 ```{r}
 IndPeriod_Run <- seq(
@@ -69,13 +69,13 @@ IndPeriod_Run <- seq(
 )
 ```
 
-So the warmup period could be defined as:
+As a consequence, the warmup period is defined as:
 
 ```{r}
 IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
 ```
 
-Parameters of `CreateRunOptions` for **airGRiwrm** are the same as the function in **airGR** and are copied for each node running a rainfall-runoff model.
+Arguments of the `CreateRunOptions` function for **airGRiwrm** are the same as for the function in **airGR** and are copied for each node running a rainfall-runoff model.
 
 ```{r}
 RunOptions <- CreateRunOptions(
@@ -87,7 +87,7 @@ RunOptions <- CreateRunOptions(
 
 ## GRiwrmInputsCrit object
 
-The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. It takes the following arguments:
+The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. It needs the following arguments:
 
 * `InputsModel`: the inputs of the `GRiwrm` network previously prepared by the `CreateInputsModel()` function
 * `FUN_CRIT`: the name of the error criterion function (see the available functions description in the **airGR** package)
@@ -98,7 +98,8 @@ The `CreateInputsCrit()` function allows to prepare the input in order to calcul
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
+  RunOptions = RunOptions, 
+  Obs = Qobs[IndPeriod_Run,]
 )
 str(InputsCrit)
 ```
@@ -126,7 +127,7 @@ OutputsCalib <- suppressWarnings(
 ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
 ```
 
-## Run model with Michel calibration
+## Run the model with the optimised model parameters
 
 ```{r RunModel}
 OutputsModels <- RunModel(
@@ -136,7 +137,7 @@ OutputsModels <- RunModel(
 )
 ```
 
-## Plot the result for each basin
+## Plot the results for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
@@ -147,9 +148,9 @@ htmltools::tagList(lapply(
 ))
 ```
 
-The resulting flow of each node in m3/s is directly available and can be plotted with these commands:
+The resulting flows of each node in m<sup>3</sup>/s is directly available and can be plotted with these commands:
 
 ```{r}
 Qm3s <- attr(OutputsModels, "Qm3s")
-plot(Qm3s[1:150,])
+plot(Qm3s[1:150,]) #on ne voit pas la courbe jaune je crois, est-ce normal ?
 ```

@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateInputsModel.default.R
 \name{CreateInputsModel.default}
 \alias{CreateInputsModel.default}
-\title{Wrapper for \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for one sub-basin.}
+\title{Wrapper for \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for one sub-basin}
 \usage{
 \method{CreateInputsModel}{default}(x, ...)
 }
@@ -12,5 +12,5 @@
 \item{...}{arguments passed to \link[airGR:CreateInputsModel]{airGR::CreateInputsModel}}
 }
 \description{
-Wrapper for \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for one sub-basin.
+Wrapper for \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for one sub-basin
 }
