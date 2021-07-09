@@ -140,12 +140,7 @@ OutputsModels <- RunModel(
 ## Plot the results for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
-htmltools::tagList(lapply(
-  names(OutputsModels),
-  function(x) {
-    plot(OutputsModels[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
-  }
-))
+plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,])
 ```
 
 The resulting flows of each node in m<sup>3</sup>/s is directly available and can be plotted with these commands:

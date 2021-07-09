@@ -262,7 +262,9 @@ data(QOBS)
 ```{r save}
 ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
   items <- names(OutputsModels)
-  OutputsModelsOut <- sapply(items, function(x) {OutputsModels[[x]] <- OutputsModels[[x]][IndPeriod]})
+  OutputsModelsOut <- sapply(items, function(x) {
+    OutputsModels[[x]] <- OutputsModels[[x]][IndPeriod]
+  })
   OutputsModelsOut$StateEnd <- OutputsModels$StateEnd
   class(OutputsModelsOut) <- class(OutputsModels)
   return(OutputsModelsOut)

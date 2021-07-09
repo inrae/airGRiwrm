@@ -17,8 +17,18 @@ plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, ...) {
   lapply(
     names(x),
     function(id, OutputsModels) {
-      plot(OutputsModels[[id]], Qobs = Qobs[,id] , main = id)
+      ## the whole list of settable par's
+      opar <- par(no.readonly = TRUE)
+
+      ## define outer margins and a title inside it
+      par(oma = c(0, 0, 3, 0))
+      plot(OutputsModels[[id]], Qobs = Qobs[,id], ...)
+      title(main = id, outer = TRUE, line = 1.2, cex.main = 1.4)
+
+      ## reset original par
+      par(opar)
     },
     OutputsModels = x
   )
+  invisible(NULL)
 }
