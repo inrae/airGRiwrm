@@ -4,7 +4,7 @@
 #'
 #' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
-#' @param InputsModel \[object of class \emph{InputsModel} or \emph{GRwirmInputsModel}\] see [CreateInputsModel]
+#' @param InputsModel \[object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}\] see [CreateInputsModel]
 #' @param RunOptions \[object of class \emph{RunOptions} or \emph{GRiwrmRunOptions}\] see [CreateRunOptions]
 #' @param InputsCrit \[object of class \emph{InputsCrit} or \emph{GRiwrmInputsCrit}\] see [CreateInputsCrit]
 #' @param CalibOptions \[object of class \emph{CalibOptions} or \emph{GRiwrmCalibOptions}\] see [CreateCalibOptions] for details
