@@ -14,7 +14,7 @@
 CreateCalibOptions(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{object of class \emph{InputsModel} or \emph{GRwirmInputsModel}. See \link{CreateInputsModel} for details}
+\item{InputsModel}{object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
 \item{...}{arguments passed to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions}, see details}
 }
@@ -31,5 +31,5 @@ This function can be used either for a catchment (with an \emph{InputsModel} obj
 \details{
 See \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions} documentation for a complete list of arguments.
 
-With a \emph{GRwirmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 }

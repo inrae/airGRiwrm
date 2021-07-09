@@ -21,7 +21,7 @@
 Calibration(InputsModel, ...)
 }
 \arguments{
-\item{InputsModel}{[object of class \emph{InputsModel} or \emph{GRwirmInputsModel}] see \link{CreateInputsModel}}
+\item{InputsModel}{[object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}] see \link{CreateInputsModel}}
 
 \item{RunOptions}{[object of class \emph{RunOptions} or \emph{GRiwrmRunOptions}] see \link{CreateRunOptions}}
 
