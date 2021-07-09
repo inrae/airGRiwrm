@@ -122,7 +122,7 @@ OM_OL <- RunModel(
 As can be seen below, compared to results of vignette "V02_Calibration_SD_model", the use of measured flows on upstream influenced basins improves largely the model performance at downstream stations (better low flow simulations).
 
 ```{r, fig.height = 5, fig.width = 8}
-plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,], which = "Regime")
+plot(OM_OL, Qobs = Qobs[IndPeriod_Run,], which = "Regime")
 ```
 
 The resulting flows of each node in m<sup>3</sup>/s is directly available and can be plotted with these commands:
