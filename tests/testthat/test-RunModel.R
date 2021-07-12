@@ -38,7 +38,7 @@ IndPeriod_Run <- seq(
   length(InputsModel[[1]]$DatesR) - nTS + 1,
   length(InputsModel[[1]]$DatesR)
 )
-IndPeriod_WarmUp = seq(IndPeriod_Run[1]-366,IndPeriod_Run[1]-1)
+IndPeriod_WarmUp = seq(IndPeriod_Run[1]-365,IndPeriod_Run[1]-1)
 RunOptions <- CreateRunOptions(
   InputsModel = InputsModel,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -68,18 +68,18 @@ test_that("RunModel.GRiwrmInputsModel should return same result with separated w
   RO_Run <- CreateRunOptions(
     InputsModel = InputsModel,
     IndPeriod_WarmUp = 0L,
-    IndPeriod_Run = IndPeriod_Run
+    IndPeriod_Run = IndPeriod_Run,
+    IniStates = lapply(OM_WarmUp, "[[", "StateEnd")
   )
-  for(id in names(RO_Run)) {
-    RO_Run[[id]]$IniResLevels <- NULL
-    RO_Run[[id]]$IniStates <- airGRiwrm:::serializeIniStates(OM_WarmUp[[id]]$StateEnd)
-  }
   OM_Run <- RunModel(
     InputsModel,
     RunOptions = RO_Run,
     Param = ParamMichel
   )
-  expect_equal(OM_GriwrmInputs[["54057"]]$Qsim, OM_Run[["54057"]]$Qsim)
+  lapply(griwrm$id, function(id) {
+    # The 2 exclamation marks are for seeing the id in the test result (See ?quasi_label)
+    expect_equal(OM_GriwrmInputs[[!!id]]$Qsim, OM_Run[[!!id]]$Qsim)
+  })
 })
 
 context("RunModel.Supervisor")
@@ -91,7 +91,9 @@ test_that("RunModel.Supervisor with no regulation should returns same results as
     RunOptions = RunOptions,
     Param = ParamMichel
   )
-  expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
+  lapply(griwrm$id, function(id) {
+    expect_equal(OM_Supervisor[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
+  })
 })
 
 # Add 2 nodes to the network

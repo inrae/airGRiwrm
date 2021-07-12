@@ -43,16 +43,12 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   # Save Qsim for step by step simulation
   QcontribDown <- do.call(
     cbind,
-    lapply(x$OutputsModel, function(OM) {
-      OM$Qsim
-    })
+    lapply(x$OutputsModel, "[[", "Qsim")
   )
 
   Qsim_m3 <- do.call(
     cbind,
-    lapply(x$OutputsModel, function(OM) {
-      OM$Qsim_m3
-    })
+    lapply(x$OutputsModel, "[[", "Qsim_m3")
   )
 
   # Initialisation of model states by running the model with no supervision on warm-up period
@@ -62,16 +58,17 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     RunOptionsWarmUp[[id]]$IndPeriod_WarmUp <- 0L
     RunOptionsWarmUp[[id]]$Outputs_Sim <- c("StateEnd", "Qsim")
   }
-  x$OutputsModel <- suppressMessages(
+  OM_WarmUp <- suppressMessages(
     RunModel.GRiwrmInputsModel(x$InputsModel,
                                RunOptions = RunOptionsWarmUp,
                                Param = Param)
   )
 
-  # Adapt RunOptions to step by step simulation
+  # Adapt RunOptions to step by step simulation and copy states
   for(id in getSD_Ids(x$InputsModel)) {
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
-    RunOptions[[id]]$Outputs_Sim <- "StateEnd"
+    RunOptions[[id]]$Outputs_Sim <- c("Qsim_m3", "StateEnd")
+    x$OutputsModel[[id]]$StateEnd <- serializeIniStates(OM_WarmUp[[id]]$StateEnd)
   }
 
   # Loop over time steps with a step equal to the supervision time step
@@ -88,7 +85,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     for(id in getSD_Ids(x$InputsModel)) {
       # Run the SD model for the sub-basin and one time step
       RunOptions[[id]]$IndPeriod_Run <- iTS
-      RunOptions[[id]]$IniStates <- unlist(x$OutputsModel[[id]]$StateEnd)
+      RunOptions[[id]]$IniStates <- serializeIniStates(x$OutputsModel[[id]]$StateEnd)
       x$OutputsModel[[id]] <- RunModel.SD(
         x$InputsModel[[id]],
         RunOptions = RunOptions[[id]],

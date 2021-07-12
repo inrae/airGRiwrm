@@ -151,3 +151,16 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   class(dfQsim) <- c("Qm3s", class(dfQsim)) # For S3 methods
   return(dfQsim)
 }
+
+#' Convert IniStates list into a vector
+#'
+#' @param IniStates see [CreateIniStates]
+#'
+#' @return A vector as in `RunOptions$IniStates`
+#' @noRd
+#'
+serializeIniStates <- function(IniStates) {
+  IniStates <- unlist(IniStates)
+  IniStates[is.na(IniStates)] <- 0
+  return(IniStates)
+}
