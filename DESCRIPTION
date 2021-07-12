@@ -31,4 +31,4 @@ BugReports: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/
 Depends:
     R (>= 2.10)
 Remotes:
-    url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/dev/airgr-dev.zip
+    url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/132-runmodel_lag-add-warmupqsim-to-outputsmodel/airgr-132-runmodel_lag-add-warmupqsim-to-outputsmodel.zip
