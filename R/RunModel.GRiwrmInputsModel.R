@@ -80,9 +80,8 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
 
     # Update x[[id]]$Qupstream with simulated upstream flows
     if(any(x[[id]]$UpstreamIsRunoff)) {
-      x[[id]] <- UpdateQsimUpstream(x[[id]], RunOptions[[id]]$IndPeriod_Run, OutputsModel)
+      x[[id]] <- UpdateQsimUpstream(x[[id]], RunOptions[[id]], OutputsModel)
     }
-
     # Run the model for the sub-basin
     OutputsModel[[id]] <- RunModel.InputsModel(
       x[[id]],

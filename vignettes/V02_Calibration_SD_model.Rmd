@@ -124,7 +124,7 @@ The **airGR** calibration process is applied on each node of the `GRiwrm` networ
 ```{r Calibration}
 OutputsCalib <- suppressWarnings(
   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions))
-ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
+ParamMichel <- sapply(OutputsCalib, "[[", "ParamFinalR")
 ```
 
 ## Run the model with the optimised model parameters
@@ -147,5 +147,5 @@ The resulting flows of each node in m<sup>3</sup>/s is directly available and ca
 
 ```{r}
 Qm3s <- attr(OutputsModels, "Qm3s")
-plot(Qm3s[1:150,]) #on ne voit pas la courbe jaune je crois, est-ce normal ?
+plot(Qm3s[1:150,])
 ```

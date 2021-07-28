@@ -7,7 +7,7 @@
 \alias{CreateRunOptions}
 \title{Creation of the CalibOptions object}
 \usage{
-\method{CreateRunOptions}{GRiwrmInputsModel}(InputsModel, ...)
+\method{CreateRunOptions}{GRiwrmInputsModel}(InputsModel, IniStates = NULL, ...)
 
 \method{CreateRunOptions}{InputsModel}(InputsModel, ...)
 
@@ -16,10 +16,12 @@ CreateRunOptions(InputsModel, ...)
 \arguments{
 \item{InputsModel}{object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
+\item{IniStates}{(optional) \link{numeric} object or \link{list} of \link{numeric} object of class \emph{IniStates}, see \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
+
 \item{...}{arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}, see details}
 }
 \value{
-Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
+Depending on the class of \code{InputsModel} argument (respectively \emph{InputsModel} and \emph{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{RunOptions} object (See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions})
 \item a \code{GRiwrmRunOptions} object which is a \link{list} of \code{RunOptions} object with one item per modelled sub-catchment
@@ -30,6 +32,8 @@ This function can be used either for a catchment (with an \emph{InputsModel} obj
 }
 \details{
 See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} documentation for a complete list of arguments.
+
+If \code{InputsModel} argument is a \emph{GRiwrmInputsModel} object, \code{IniStates} must be a list of \link{numeric} object of class \emph{IniStates} with one item per modelled sub-catchment.
 
 With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 }
