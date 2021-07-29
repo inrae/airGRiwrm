@@ -45,7 +45,7 @@ Generate `GRiwrmInputsModel` object
 ```{r CreateInputsModel}
 library(seinebasin)
 data(QOBS)
-iEnd <-which(DatesR == as.POSIXct("2008-07-31"))
+iEnd <-which(DatesR == as.POSIXct("2008-07-31", tz = "UTC"))
 
 data(Qreservoirs)
 Qobs3 <- cbind(Qobs, Qreservoirs[1:iEnd,])
