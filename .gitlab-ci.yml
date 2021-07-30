@@ -23,7 +23,7 @@ before_script:
   - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
   - R -e 'devtools::install_deps(dep = T)'
-  - R -e 'devtools::install_dev_deps()'
+  - R -e 'install.packages("airGR")'
 
 .check:
   stage: checks
