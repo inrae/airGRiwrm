@@ -1,56 +1,8 @@
 # data set up
-
-data(Severn)
-
-# Format observation
-BasinsObs <- Severn$BasinsObs
-DatesR <- BasinsObs[[1]]$DatesR
-PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
-
-# Set network
-nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream
-nodes$model <- "RunModel_GR4J"
-griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
-
-# Convert meteo data to SD (remove upstream areas)
-Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-
-# Calibration parameters
-ParamMichel <- list(
-  `54057` = c(0.777323612737634, 146.867455906443, -0.100520484469163, 0.0891311328631119, 8.61545521845828),
-  `54032` = c(1.10493336411855, 1925.34891922787, -0.144768939617915, 6.3210752928989, 1.81732963586905),
-  `54001` = c(2.3483563315249, 4402.81769423169, -10903.649376187, 35.1631971451066, 17.4996745805422),
-  `54095` = c(252.52391159181, 0.0314385375487947, 55.0975274220997, 3.2928681361255),
-  `54002` = c(223.631587680546, -0.0200013333600003, 18.915846312255, 2.1981981981982),
-  `54029` = c(220.600635340659, -0.0843239834153641, 37.743931332494, 2.11619461485516)
-)
-
-# set up inputs
-InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
-
-# RunOptions
-nTS <- 365
-IndPeriod_Run <- seq(
-  length(InputsModel[[1]]$DatesR) - nTS + 1,
-  length(InputsModel[[1]]$DatesR)
-)
-IndPeriod_WarmUp = seq(IndPeriod_Run[1]-365,IndPeriod_Run[1]-1)
-RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel,
-  IndPeriod_WarmUp = IndPeriod_WarmUp,
-  IndPeriod_Run = IndPeriod_Run
-)
-
-# RunModel.GRiwrmInputsModel
-OM_GriwrmInputs <- RunModel(
-  InputsModel,
-  RunOptions = RunOptions,
-  Param = ParamMichel
-)
+e <- setupRunModel()
+# variables are copied from environment 'e' to the current environment
+# https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
+for(x in ls(e)) assign(x, get(x, e))
 
 context("RunModel.GRiwrmInputsModel")
 
@@ -144,7 +96,7 @@ test_that("RunModel.Supervisor with multi time steps controller, two regulations
   expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
 })
 
-test_that("RunModel.GRiwrm handles CemaNeige", {
+test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
   l <- setUpCemaNeigeData()
   l$griwrm[l$griwrm$id == "Down", "model"] <- "RunModel_GR4J"
   l$TempMean <- l$TempMean[,1:2]

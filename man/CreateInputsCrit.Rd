@@ -12,6 +12,8 @@
   FUN_CRIT = airGR::ErrorCrit_NSE,
   RunOptions,
   Obs,
+  AprioriIds = NULL,
+  k = 0.15,
   ...
 )
 
@@ -27,6 +29,10 @@ CreateInputsCrit(InputsModel, ...)
 \item{RunOptions}{object of class \emph{RunOptions} or \emph{GRiwrmRunOptions}, see \link{CreateRunOptions}}
 
 \item{Obs}{\link{numeric}, \link{matrix} or \link{data.frame} series of observed flows, see details}
+
+\item{AprioriIds}{(optional) named \link{list} or named \link{vector} of \link{character} used for the parameter regularisation (see details)}
+
+\item{k}{(optional) \link{numeric} weight coefficient used in the parameter regularisation (See \link[airGR:CreateInputsCrit_DeLavenne]{airGR::CreateInputsCrit_DeLavenne})}
 
 \item{...}{arguments passed to \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit}, see details}
 }
@@ -46,4 +52,10 @@ See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} documentation for a c
 \code{Obs} argument is equivalent to the same argument in \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} except that it must a \link{matrix} or a \link{data.frame} if \code{InputsModel} is a \emph{GRiwrmInputsModel} object. Then, each column of the \link{matrix} or \link{data.frame} represents the observations of one of the simulated node with the name of the columns representing the id of each node.
 
 With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+
+Parameter regularisation consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by de Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_DeLavenne]{airGR::CreateInputsCrit_DeLavenne}).
+The parameter \code{AprioriIds} allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: \code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)} where the quoted strings are the ids of the sub-catchments. See vignettes for more details.
+}
+\references{
+De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}
 }
