@@ -6,7 +6,7 @@ for(x in ls(e)) assign(x, get(x, e))
 
 context("CreateInputsCrit.GRiwrmInputsModel")
 
-test_that("Wrong argument class throw error", {
+test_that("Wrong argument class should throw error", {
   expect_error(CreateInputsCrit(InputsModel = InputsModel[[1]],
                                 RunOptions = RunOptions,
                                 Obs = Qobs[IndPeriod_Run,]))
@@ -25,7 +25,7 @@ test_that("Wrong argument class throw error", {
                regexp = "matrix or data.frame")
 })
 
-test_that("De Lavenne criteria is OK", {
+test_that("De Lavenne criterion is OK", {
   IC <- CreateInputsCrit(InputsModel = InputsModel,
                          RunOptions = RunOptions,
                          Obs = Qobs[IndPeriod_Run,],
@@ -35,4 +35,14 @@ test_that("De Lavenne criteria is OK", {
   IC57 <- DeLavenne_FUN(ParamMichel[["54032"]], 0.9)
   expect_s3_class(IC57, "InputsCrit")
   expect_s3_class(IC57, "Compo")
+})
+
+test_that("De Lavenne criterion: wrong sub-catchment order should throw error", {
+  expect_error(
+    CreateInputsCrit(InputsModel = InputsModel,
+                     RunOptions = RunOptions,
+                     Obs = Qobs[IndPeriod_Run,],
+                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029")),
+    regexp = "is not upstream the node"
+  )
 })

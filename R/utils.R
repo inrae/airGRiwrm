@@ -178,7 +178,7 @@ serializeIniStates <- function(IniStates) {
 #'
 isNodeDownstream <- function(InputsModel, current_node, down_node) {
   current_down_node <- InputsModel[[current_node]]$down
-  if (current_down_node == down_node) return(TRUE)
   if (is.na(current_down_node)) return(FALSE)
+  if (current_down_node == down_node) return(TRUE)
   return(isNodeDownstream(InputsModel, current_down_node, down_node))
 }

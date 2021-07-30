@@ -47,7 +47,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
       }
       if (! isNodeDownstream(InputsModel, AprioriIds[id], id)) {
         stop("'AprioriIds': the node \"", AprioriIds[id],
-             "\" is not upstream the node \"", AprioriIds[id],"\"")
+             "\" is not upstream the node \"", id,"\"")
       }
     })
   }
