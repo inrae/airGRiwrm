@@ -82,7 +82,9 @@ IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, Qobs)
 
 ## Calibration of the new model
 
-Calibration options and criteria procedures are detailed in vignette "V02_Calibration_SD_model". The following code chunk resumes this procedure:
+Calibration options and criteria procedures are detailed in vignette "V02_Calibration_SD_model". We also apply a parameter regularisation here but only where an upstream simulated catchment is available.
+
+The following code chunk resumes this procedure:
 
 ```{r}
 IndPeriod_Run <- seq(
@@ -95,7 +97,10 @@ RunOptions <- CreateRunOptions(IM_OL,
                                IndPeriod_Run = IndPeriod_Run)
 InputsCrit <- CreateInputsCrit(IM_OL,
                                FUN_CRIT = airGR::ErrorCrit_KGE2,
-                               RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,])
+                               RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,],
+                               AprioriIds = c("54057" = "54032", "54032" = "54001"), 
+                               transfo = "sqrt"
+)
 CalibOptions <- CreateCalibOptions(IM_OL)
 ```
 
