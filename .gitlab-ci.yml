@@ -4,7 +4,7 @@ stages:
 default:
   tags: [docker]
 
-image: rocker/tidyverse:devel
+image: rocker/verse:devel
 
 cache:
   paths:
@@ -29,7 +29,7 @@ before_script:
 .check:
   stage: checks
   script:
-    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y qpdf; fi
+    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-fonts-recommended qpdf; fi
     - R -e 'rcmdcheck::rcmdcheck(args = ifelse(as.logical(Sys.getenv("NOT_CRAN")), "--no-manual", "--as-cran"), error_on = "warning")'
 
 check_not_cran:
