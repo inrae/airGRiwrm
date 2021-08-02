@@ -243,6 +243,10 @@ ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
 ### Run simulation
 
 ```{r RunModel}
+RunOptions <- CreateRunOptions(
+  InputsModel = InputsModel2,
+  IndPeriod_Run = IndPeriod_Run
+)
 OutputsModels2 <- RunModel(
   InputsModel2,
   RunOptions = RunOptions,

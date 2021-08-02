@@ -3,7 +3,7 @@
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
 #'
 #' @return [character] IDs of the sub-basins using SD model
-#' @noRd
+#' @export
 getSD_Ids <- function(InputsModel) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
@@ -19,7 +19,7 @@ getSD_Ids <- function(InputsModel) {
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
 #'
 #' @return [character] IDs of the sub-basins not using the SD model
-#' @noRd
+#' @export
 getNoSD_Ids <- function(InputsModel) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
@@ -152,6 +152,7 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   return(dfQsim)
 }
 
+
 #' Convert IniStates list into a vector
 #'
 #' @param IniStates see [CreateIniStates]
@@ -163,4 +164,21 @@ serializeIniStates <- function(IniStates) {
   IniStates <- unlist(IniStates)
   IniStates[is.na(IniStates)] <- 0
   return(IniStates)
+}
+
+
+#' Check if a node is downstream another one
+#'
+#' @param InputsModel \[`GRiwrmInputsModel` object\] see [CreateInputsModel.GRiwrm] for details
+#' @param current_node [character] with the id of the current node
+#' @param down_node [character] with the id of the node for which we want to know if it is downstream `current_node`
+#'
+#' @return [logical] `TRUE` if the node with the id `down_node` is downstream the node with the id `current_node`
+#' @export
+#'
+isNodeDownstream <- function(InputsModel, current_node, down_node) {
+  current_down_node <- InputsModel[[current_node]]$down
+  if (is.na(current_down_node)) return(FALSE)
+  if (current_down_node == down_node) return(TRUE)
+  return(isNodeDownstream(InputsModel, current_down_node, down_node))
 }

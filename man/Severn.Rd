@@ -3,7 +3,7 @@
 \docType{data}
 \name{Severn}
 \alias{Severn}
-\title{Catchment Attributes and Hydro-Meteorological Timeseries for some gauging stations on the Severn River}
+\title{Catchment attributes and hydro-meteorological timeseries for some gauging stations on the Severn River}
 \format{
 a \link{list} with 2 items:
 \itemize{
@@ -12,12 +12,14 @@ a \link{list} with 2 items:
 }
 }
 \source{
-\url{https://doi.org/10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9}
+These data are extracted from the CAMEL-GB dataset.
+
+Coxon, G.; Addor, N.; Bloomfield, J.P.; Freer, J.; Fry, M.; Hannaford, J.; Howden, N.J.K.; Lane, R.; Lewis, M.; Robinson, E.L.; Wagener, T.; Woods, R. (2020). Catchment attributes and hydro-meteorological timeseries for 671 catchments across Great Britain (CAMELS-GB). NERC Environmental Information Data Centre. (Dataset). \doi{10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9}
 }
 \usage{
 Severn
 }
 \description{
-Catchment Attributes and Hydro-Meteorological Timeseries for some gauging stations on the Severn River
+Catchment attributes and hydro-meteorological timeseries for some gauging stations on the Severn River
 }
 \keyword{datasets}
