@@ -65,8 +65,8 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
     )
     if (!is.null(AprioriIds) && IM$id %in% names(AprioriIds)) {
       # De Lavenne regularisation for this sub-catchment
-      attr(InputsCrit[[IM$id]], "DeLavenne_FUN") <-
-        CreateDeLavenneFunction(
+      attr(InputsCrit[[IM$id]], "Lavenne_FUN") <-
+        CreateLavenneFunction(
           InputsModel = IM,
           FUN_CRIT = FUN_CRIT,
           RunOptions = RunOptions[[IM$id]],
@@ -75,16 +75,16 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
           ...
         )
       attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
-      class(InputsCrit[[IM$id]]) <- c("InputsCritDeLavenneFunction", class(InputsCrit[[IM$id]]))
+      class(InputsCrit[[IM$id]]) <- c("InputsCritLavenneFunction", class(InputsCrit[[IM$id]]))
     }
   }
 
   return(InputsCrit)
 }
 
-CreateDeLavenneFunction <- function(InputsModel, FUN_CRIT, RunOptions, Obs, k, ...) {
+CreateLavenneFunction <- function(InputsModel, FUN_CRIT, RunOptions, Obs, k, ...) {
   function(AprParamR, AprCrit) {
-    CreateInputsCrit_DeLavenne(FUN_CRIT = FUN_CRIT,
+    CreateInputsCrit_Lavenne(FUN_CRIT = FUN_CRIT,
                                InputsModel = InputsModel,
                                RunOptions = RunOptions,
                                Obs = Obs,

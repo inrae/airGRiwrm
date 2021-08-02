@@ -30,9 +30,9 @@ test_that("De Lavenne criterion is OK", {
                          RunOptions = RunOptions,
                          Obs = Qobs[IndPeriod_Run,],
                          AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54095"))
-  expect_s3_class(IC[["54057"]], "InputsCritDeLavenneFunction")
-  DeLavenne_FUN <- attr(IC[["54057"]], "DeLavenne_FUN")
-  IC57 <- DeLavenne_FUN(ParamMichel[["54032"]], 0.9)
+  expect_s3_class(IC[["54057"]], "InputsCritLavenneFunction")
+  Lavenne_FUN <- attr(IC[["54057"]], "Lavenne_FUN")
+  IC57 <- Lavenne_FUN(ParamMichel[["54032"]], 0.9)
   expect_s3_class(IC57, "InputsCrit")
   expect_s3_class(IC57, "Compo")
 })

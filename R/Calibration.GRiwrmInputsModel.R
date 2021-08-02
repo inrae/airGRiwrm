@@ -39,8 +39,8 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]], OutputsModel)
     }
 
-    if (inherits(InputsCrit[[IM$id]], "InputsCritDeLavenneFunction")) {
-      IC <- getInputsCrit_DeLavenne(IM$id, OutputsModel, InputsCrit)
+    if (inherits(InputsCrit[[IM$id]], "InputsCritLavenneFunction")) {
+      IC <- getInputsCrit_Lavenne(IM$id, OutputsModel, InputsCrit)
     } else {
       IC <- InputsCrit[[IM$id]]
     }
@@ -70,27 +70,27 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 
 #' Create InputsCrit for De Lavenne regularisation
 #'
-#' Internal function that run [airGR::CreateInputsCrit_DeLavenne] on-the-fly with a priori upstream
+#' Internal function that run [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori upstream
 #' sub-catchment parameters grabbed during network calibration process.
 #'
 #' @param id [character] the id of the current sub-catchment
 #' @param OutputsModel \[GRiwrmOutputsModel\] object with simulation results of upstream sub-catchments run with calibrated parameters
-#' @param InputsCrit \[InputsCritDeLavenneFunction\] object internally created by [CreateInputsCrit.GRiwrmInputsModel]
+#' @param InputsCrit \[InputsCritLavenneFunction\] object internally created by [CreateInputsCrit.GRiwrmInputsModel]
 #'
 #' @return \[InputsCrit\] object with De Lavenne regularisation
 #' @noRd
 #'
-getInputsCrit_DeLavenne <- function(id, OutputsModel, InputsCrit) {
-  if (!inherits(InputsCrit[[id]], "InputsCritDeLavenneFunction")) {
-    stop("'InputsCrit[[id]]' must be of class InputsCritDeLavenneFunction")
+getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
+  if (!inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
+    stop("'InputsCrit[[id]]' must be of class InputsCritLavenneFunction")
   }
   AprioriId <- attr(InputsCrit[[id]], "AprioriId")
-  DeLavenne_FUN <- attr(InputsCrit[[id]], "DeLavenne_FUN")
+  Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
   AprParamR <- OutputsModel[[AprioriId]]$Param
   if(!inherits(OutputsModel[[AprioriId]], "SD")) {
     # Add neutral velocity parameter for upstream catchment
     AprParamR <- c(NA, AprParamR)
   }
   AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
-  return(DeLavenne_FUN(AprParamR, AprCrit))
+  return(Lavenne_FUN(AprParamR, AprCrit))
 }

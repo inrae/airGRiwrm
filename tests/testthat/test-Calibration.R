@@ -47,12 +47,12 @@ test_that("Calibration with regularisation is OK", {
     CalibOptions = CalibOptions
   )
 
-  ParamDeLavenne <- lapply(OC, "[[", "ParamFinalR")
+  ParamLavenne <- lapply(OC, "[[", "ParamFinalR")
   expect_equal(OC[["54095"]]$CritFinal, ErrorCrit(
     InputsCrit[["54095"]],
-    RunModel(InputsModel, RunOptions, ParamDeLavenne)[["54095"]]
+    RunModel(InputsModel, RunOptions, ParamLavenne)[["54095"]]
   )$CritValue)
-  OM <- RunModel(InputsModel, RunOptions, ParamDeLavenne)
+  OM <- RunModel(InputsModel, RunOptions, ParamLavenne)
   lapply(names(OC), function(id) {
     expect_gt(
       ErrorCrit(

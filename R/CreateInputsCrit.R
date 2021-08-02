@@ -7,7 +7,7 @@
 #' @param RunOptions object of class \emph{RunOptions} or \emph{GRiwrmRunOptions}, see [CreateRunOptions]
 #' @param Obs [numeric], [matrix] or [data.frame] series of observed flows, see details
 #' @param AprioriIds (optional) named [list] or named [vector] of [character] used for the parameter regularisation (see details)
-#' @param k (optional) [numeric] weight coefficient used in the parameter regularisation (See [airGR::CreateInputsCrit_DeLavenne])
+#' @param k (optional) [numeric] weight coefficient used in the parameter regularisation (See [airGR::CreateInputsCrit_Lavenne])
 #' @param ... arguments passed to [airGR::CreateInputsCrit], see details
 #'
 #' @details See [airGR::CreateInputsCrit] documentation for a complete list of arguments.
@@ -16,7 +16,7 @@
 #'
 #' With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 #'
-#' Parameter regularisation consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by de Lavenne et al. (2019) (See [airGR::CreateInputsCrit_DeLavenne]).
+#' Parameter regularisation consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by de Lavenne et al. (2019) (See [airGR::CreateInputsCrit_Lavenne]).
 #' The parameter `AprioriIds` allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: `AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)` where the quoted strings are the ids of the sub-catchments. See vignettes for more details.
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
