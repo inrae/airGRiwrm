@@ -85,12 +85,19 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
     stop("'InputsCrit[[id]]' must be of class InputsCritLavenneFunction")
   }
   AprioriId <- attr(InputsCrit[[id]], "AprioriId")
-  Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
+  Lavenne_DATA <- attr(InputsCrit[[id]], "Lavenne_DATA")
   AprParamR <- OutputsModel[[AprioriId]]$Param
   if(!inherits(OutputsModel[[AprioriId]], "SD")) {
     # Add neutral velocity parameter for upstream catchment
     AprParamR <- c(NA, AprParamR)
   }
   AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
-  return(Lavenne_FUN(AprParamR, AprCrit))
+  CreateInputsCrit_Lavenne(FUN_CRIT = Lavenne_DATA$FUN_CRIT,
+                           InputsModel = Lavenne_DATA$InputsModel,
+                           RunOptions = Lavenne_DATA$RunOptions,
+                           Obs = Lavenne_DATA$Obs,
+                           AprParamR = AprParamR,
+                           AprCrit = AprCrit,
+                           k = Lavenne_DATA$k,
+                           transfo = Lavenne_DATA$transfo)
 }
