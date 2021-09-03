@@ -37,7 +37,14 @@ test_that("De Lavenne criterion is OK", {
   expect_s3_class(IC57, "Compo")
 })
 
-test_that("De Lavenne criterion: wrong sub-catchment order should throw error", {
+test_that("Lavenne embedded data is correct #57", {
+  lapply(names(AprioriIds), function(id) {
+    p <- as.list(environment(attr(IC[[id]], "Lavenne_FUN")))
+    expect_equal(id, p$InputsModel$id)
+  })
+})
+
+test_that("Lavenne criterion: wrong sub-catchment order should throw error", {
   expect_error(
     CreateInputsCrit(InputsModel = InputsModel,
                      RunOptions = RunOptions,

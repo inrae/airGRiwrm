@@ -82,15 +82,29 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
   return(InputsCrit)
 }
 
+#' Generate a `CreateInputsCrit_Lavenne` function which embeds know parameters
+#'
+#' The created function will be used in calibration for injecting necessary `AprParamR` and `AprCrit`
+#' parameters, which can be known only during calibration process, in the call of `CreateInputsCrit_Lavenne`.
+#'
+#' @param InputsModel See [CreateInputsCrit] parameters
+#' @param FUN_CRIT See [CreateInputsCrit] parameters
+#' @param RunOptions See [CreateInputsCrit] parameters
+#' @param Obs See [CreateInputsCrit] parameters
+#' @param k See [CreateInputsCrit] parameters
+#' @param ... further arguments for [airGR::CreateInputsCrit_Lavenne]
+#'
+#' @return A function with `AprParamR` and `AprCrit`
+#' @noRd
+#'
 CreateLavenneFunction <- function(InputsModel, FUN_CRIT, RunOptions, Obs, k, ...) {
+  # The following line solve the issue #57 by forcing the evaluation of all the parameters.
+  # See also: https://stackoverflow.com/questions/69016698/is-there-a-bug-on-closures-embedded-in-a-list-in-r/69028161#69028161
+  arguments <- c(as.list(environment()), list(...))
   function(AprParamR, AprCrit) {
-    CreateInputsCrit_Lavenne(FUN_CRIT = FUN_CRIT,
-                               InputsModel = InputsModel,
-                               RunOptions = RunOptions,
-                               Obs = Obs,
-                               AprParamR = AprParamR,
-                               AprCrit = AprCrit,
-                               k = k,
-                               ...)
+    do.call(
+      CreateInputsCrit_Lavenne,
+      c(arguments, list(AprParamR = AprParamR, AprCrit = AprCrit))
+    )
   }
 }
