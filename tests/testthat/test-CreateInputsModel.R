@@ -3,14 +3,16 @@ context("CreateInputsModel")
 l <- setUpCemaNeigeData()
 
 test_that("CemaNeige data should be in InputsModel", {
-  InputsModels <- CreateInputsModel(l$griwrm,
-                                    DatesR = l$DatesR,
-                                    Precip = l$Precip,
-                                    PotEvap = l$PotEvap,
-                                    TempMean = l$TempMean,
-                                    ZInputs = l$ZInputs,
-                                    HypsoData = l$HypsoData,
-                                    Qobs = l$Qobs)
+  InputsModels <- suppressWarnings(
+    CreateInputsModel(l$griwrm,
+                      DatesR = l$DatesR,
+                      Precip = l$Precip,
+                      PotEvap = l$PotEvap,
+                      TempMean = l$TempMean,
+                      ZInputs = l$ZInputs,
+                      HypsoData = l$HypsoData,
+                      Qobs = l$Qobs)
+  )
   l$DatesR <- as.data.frame(l$DatesR)
   lapply(InputsModels, function(IM) {
     lapply(c("DatesR", "Precip", "PotEvap"), function(varName) {
@@ -40,14 +42,16 @@ test_that("handles mix of with and without CemaNeige nodes", {
   l$ZInputs <- l$ZInputs[1:2]
   l$TempMean <- l$TempMean[,1:2]
   l$HypsoData <- l$HypsoData[,1:2]
-  InputsModels <- CreateInputsModel(l$griwrm,
-                                    DatesR = l$DatesR,
-                                    Precip = l$Precip,
-                                    PotEvap = l$PotEvap,
-                                    TempMean = l$TempMean,
-                                    ZInputs = l$ZInputs,
-                                    HypsoData = l$HypsoData,
-                                    Qobs = l$Qobs)
+  InputsModels <- suppressWarnings(
+    CreateInputsModel(l$griwrm,
+                      DatesR = l$DatesR,
+                      Precip = l$Precip,
+                      PotEvap = l$PotEvap,
+                      TempMean = l$TempMean,
+                      ZInputs = l$ZInputs,
+                      HypsoData = l$HypsoData,
+                      Qobs = l$Qobs)
+  )
   expect_false(inherits(InputsModels$Down, "CemaNeige"))
   expect_null(InputsModels$Down$LayerPrecip)
 })
