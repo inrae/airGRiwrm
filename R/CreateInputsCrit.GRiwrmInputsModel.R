@@ -11,9 +11,8 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
 
   # We invoke the mandatory arguments here for avoiding
   # a messy error message on "get(x)" if an argument is missing
-  InputsModel
-  RunOptions
-  Obs
+  # We also list all arguments in order to check arguments even in "..."
+  arguments <- c(as.list(environment()), list(...))
 
   # Checking argument classes
   lVars2Check <- list(InputsModel = "GRiwrmInputsModel",
@@ -35,6 +34,12 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
     }
     if (length(unique(names(AprioriIds))) != length(names(AprioriIds))) {
       stop("Each name of AprioriIds items must be unique: duplicate entry detected")
+    }
+    if ("Weights" %in% names(arguments)) {
+      stop("Argument 'Weights' cannot be used when using Lavenne criterion")
+    }
+    if (!"transfo" %in% names(arguments)) {
+      stop("Argument 'transfo' must be defined when using Lavenne criterion (Using \"sqrt\" is recommended)")
     }
     lapply(names(AprioriIds), function(id) {
       if (!id %in% names(InputsModel)) {
