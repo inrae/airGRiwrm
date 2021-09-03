@@ -37,7 +37,8 @@ test_that("Calibration with regularisation is OK", {
       "54057" = "54032",
       "54032" = "54001",
       "54001" = "54095"
-    )
+    ),
+    transfo = "sqrt"
   )
 
   OC <- Calibration(
@@ -59,7 +60,7 @@ test_that("Calibration with regularisation is OK", {
         InputsCrit[[id]],
         OM[[id]]
       )$CritValue,
-      0.9
+      0.89
     )
   })
 })

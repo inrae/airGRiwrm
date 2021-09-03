@@ -8,7 +8,7 @@
   x,
   type = "l",
   xlab = "Date",
-  ylab = expression("Flow (m"^"3"*"/s)"),
+  ylab = expression("Flow (m"^"3" * "/s)"),
   main = "Simulated flows",
   col = rainbow(ncol(x) - 1),
   legend = colnames(x)[-1],

@@ -41,7 +41,7 @@ setupRunModel <- function() {
   )
 
   # set up inputs
-  InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+  InputsModel <- suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs))
 
   # RunOptions
   nTS <- 365

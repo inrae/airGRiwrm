@@ -99,7 +99,6 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
   })
 
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
-  Qobs[is.na(Qobs)] <- -99 # airGR::CreateInputsModel doesn't accept NA values
 
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")

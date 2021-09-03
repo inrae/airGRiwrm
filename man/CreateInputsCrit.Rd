@@ -49,7 +49,8 @@ This function can be used either for a catchment (with an \emph{InputsModel} obj
 \details{
 See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} documentation for a complete list of arguments.
 
-\code{Obs} argument is equivalent to the same argument in \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} except that it must a \link{matrix} or a \link{data.frame} if \code{InputsModel} is a \emph{GRiwrmInputsModel} object. Then, each column of the \link{matrix} or \link{data.frame} represents the observations of one of the simulated node with the name of the columns representing the id of each node.
+\code{Obs} argument is equivalent to the same argument in \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit} except that it must be a \link{matrix} or a \link{data.frame} if \code{InputsModel} is a \emph{GRiwrmInputsModel} object.
+Then, each column of the \link{matrix} or \link{data.frame} represents the observations of one of the simulated node with the name of the columns representing the id of each node.
 
 With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 

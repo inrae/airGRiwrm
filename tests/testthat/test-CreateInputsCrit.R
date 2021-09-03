@@ -25,11 +25,33 @@ test_that("Wrong argument class should throw error", {
                regexp = "matrix or data.frame")
 })
 
-test_that("De Lavenne criterion is OK", {
-  IC <- CreateInputsCrit(InputsModel = InputsModel,
-                         RunOptions = RunOptions,
-                         Obs = Qobs[IndPeriod_Run,],
-                         AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54095"))
+test_that("Using Lavenne criterion with 'weight' should throw error", {
+  expect_error(
+    CreateInputsCrit(InputsModel = InputsModel,
+                     RunOptions = RunOptions,
+                     Obs = Qobs[IndPeriod_Run,],
+                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54095"),
+                     Weights = c(0.85)),
+    regexp = "Lavenne"
+  )
+})
+
+test_that("Lavenne criterion without defining `transfo` should throw error", {
+  expect_error(CreateInputsCrit(InputsModel = InputsModel,
+                                      RunOptions = RunOptions,
+                                      Obs = Qobs[IndPeriod_Run,],
+                                      AprioriIds = c("54057" = "54032")),
+               regexp = "transfo")
+})
+
+AprioriIds <- c("54057" = "54032", "54032" = "54001", "54001" = "54095")
+IC <- CreateInputsCrit(InputsModel = InputsModel,
+                       RunOptions = RunOptions,
+                       Obs = Qobs[IndPeriod_Run,],
+                       AprioriIds = AprioriIds,
+                       transfo = "sqrt")
+
+test_that("Lavenne criterion is OK", {
   expect_s3_class(IC[["54057"]], "InputsCritLavenneFunction")
   Lavenne_FUN <- attr(IC[["54057"]], "Lavenne_FUN")
   IC57 <- Lavenne_FUN(ParamMichel[["54032"]], 0.9)
@@ -37,12 +59,20 @@ test_that("De Lavenne criterion is OK", {
   expect_s3_class(IC57, "Compo")
 })
 
-test_that("De Lavenne criterion: wrong sub-catchment order should throw error", {
+test_that("Lavenne embedded data is correct #57", {
+  lapply(names(AprioriIds), function(id) {
+    p <- as.list(environment(attr(IC[[id]], "Lavenne_FUN")))
+    expect_equal(id, p$InputsModel$id)
+  })
+})
+
+test_that("Lavenne criterion: wrong sub-catchment order should throw error", {
   expect_error(
     CreateInputsCrit(InputsModel = InputsModel,
                      RunOptions = RunOptions,
                      Obs = Qobs[IndPeriod_Run,],
-                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029")),
+                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029"),
+                     transfo = "sqrt"),
     regexp = "is not upstream the node"
   )
 })

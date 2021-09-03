@@ -12,7 +12,8 @@
 #'
 #' @details See [airGR::CreateInputsCrit] documentation for a complete list of arguments.
 #'
-#' `Obs` argument is equivalent to the same argument in [airGR::CreateInputsCrit] except that it must a [matrix] or a [data.frame] if `InputsModel` is a \emph{GRiwrmInputsModel} object. Then, each column of the [matrix] or [data.frame] represents the observations of one of the simulated node with the name of the columns representing the id of each node.
+#' `Obs` argument is equivalent to the same argument in [airGR::CreateInputsCrit] except that it must be a [matrix] or a [data.frame] if `InputsModel` is a \emph{GRiwrmInputsModel} object.
+#' Then, each column of the [matrix] or [data.frame] represents the observations of one of the simulated node with the name of the columns representing the id of each node.
 #'
 #' With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 #'
