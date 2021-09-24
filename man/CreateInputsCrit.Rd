@@ -14,6 +14,7 @@
   Obs,
   AprioriIds = NULL,
   k = 0.15,
+  AprCelerity = 1,
   ...
 )
 
@@ -33,6 +34,8 @@ CreateInputsCrit(InputsModel, ...)
 \item{AprioriIds}{(optional) named \link{list} or named \link{vector} of \link{character} used for the parameter regularisation (see details)}
 
 \item{k}{(optional) \link{numeric} weight coefficient used in the parameter regularisation (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne})}
+
+\item{AprCelerity}{(optional) \link{numeric} Default celerity used as a priori parameter for upstream catchments}
 
 \item{...}{arguments passed to \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit}, see details}
 }
@@ -54,8 +57,8 @@ Then, each column of the \link{matrix} or \link{data.frame} represents the obser
 
 With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 
-Parameter regularisation consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by de Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
-The parameter \code{AprioriIds} allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: \code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)} where the quoted strings are the ids of the sub-catchments. See vignettes for more details.
+Parameter regularisation consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
+The parameter \code{AprioriIds} allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: \code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)} where the quoted strings are the ids of the sub-catchments. See vignettes for more details. The parameter \code{AprCelerity} is a default value used as a priori for the parameter 'Celerity' in case of an upstream catchment (without celerity parameter) is used as a priori catchment.
 }
 \references{
 De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}
