@@ -6,6 +6,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
                                                Obs,
                                                AprioriIds = NULL,
                                                k = 0.15,
+                                               AprCelerity = 1,
                                                ...) {
   # Parameter checks
 
@@ -80,6 +81,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
           ...
         )
       attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
+      attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
       class(InputsCrit[[IM$id]]) <- c("InputsCritLavenneFunction", class(InputsCrit[[IM$id]]))
     }
   }
