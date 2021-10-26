@@ -14,8 +14,8 @@ UpdateQsimUpstream <- function(InputsModel, Runoptions, OutputsModel) {
   iQ <- which(InputsModel$UpstreamIsRunoff)
   for(i in iQ) {
       InputsModel$Qupstream[Runoptions$IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$Qsim_m3
-      if (!is.null(OutputsModel[[InputsModel$UpstreamNodes[i]]]$WarmUpQsim_m3)) {
-        InputsModel$Qupstream[Runoptions$IndPeriod_WarmUp, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$WarmUpQsim_m3
+      if (!is.null(OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions$WarmUpQsim_m3)) {
+        InputsModel$Qupstream[Runoptions$IndPeriod_WarmUp, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions$WarmUpQsim_m3
       }
   }
   return(InputsModel)

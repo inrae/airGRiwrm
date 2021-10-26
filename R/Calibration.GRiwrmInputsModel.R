@@ -87,7 +87,7 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
   AprioriId <- attr(InputsCrit[[id]], "AprioriId")
   AprCelerity <- attr(InputsCrit[[id]], "AprCelerity")
   Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
-  AprParamR <- OutputsModel[[AprioriId]]$Param
+  AprParamR <- OutputsModel[[AprioriId]]$RunOptions$Param
   if(!inherits(OutputsModel[[AprioriId]], "SD")) {
     # Add default velocity parameter for a priori upstream catchment
     AprParamR <- c(AprCelerity, AprParamR)
