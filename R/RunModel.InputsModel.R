@@ -15,7 +15,7 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
     OutputsModel$Qsim_m3 <- OutputsModel$Qsim * sum(x$BasinAreas) * 1e3
   }
   if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
-    OutputsModel$WarmUpQsim_m3 <- OutputsModel$WarmUpQsim * sum(x$BasinAreas) * 1e3
+    OutputsModel$RunOptions$WarmUpQsim_m3 <- OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas) * 1e3
   }
   return(OutputsModel)
 }
