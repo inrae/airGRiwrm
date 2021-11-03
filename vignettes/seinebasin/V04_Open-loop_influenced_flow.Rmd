@@ -195,7 +195,6 @@ Then, we load observation data for each reservoir and each connection:
 library(seinebasin)
 data(QNAT)
 data(Qreservoirs)
-Qnat <- cbind(Qnat, Qreservoirs)
 ```
 
 ## How to handle online reservoir? The Pannecière lake case.
@@ -208,15 +207,15 @@ There are two possibilities:
 If we know in advance the flow released by the reservoir, upstream flow informations is not usefull for the simulation. But reservoir management simulation would need upstream flow informations for simulating the reservoir state during simulation. The second alternative will be useful for the next phases.
 
 ```{r Qnat}
-Qnat <- cbind(Qnat, -Qnat[,"CHAUM_07"] * griwrm2$area[griwrm2$id == "CHAUM_07"] * 1e3)
-colnames(Qnat)[ncol(Qnat)] <- "PANNEC_P"
+Qreservoirs <- cbind(Qreservoirs, -Qnat[,"CHAUM_07"] * griwrm2$area[griwrm2$id == "CHAUM_07"] * 1e3)
+colnames(Qreservoirs)[ncol(Qreservoirs)] <- "PANNEC_P"
 ```
 
 
 ## Create the InputsModel object
 
 ```{r CreateInputsModel}
-InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qnat)
+InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
 ```
 
 ## Run simulation with naturalised flow parameters

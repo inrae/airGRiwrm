@@ -49,13 +49,13 @@ data(QOBS)
 iEnd <-which(DatesR == as.POSIXct("2008-07-31", tz = "UTC"))
 
 data(Qreservoirs)
-Qobs3 <- cbind(Qobs, Qreservoirs[1:iEnd,])
+QresMarne <- Qreservoirs[1:iEnd, grep("MARNE", colnames(Qreservoirs))]
 id_GR_nodes <- griwrm3$id[!is.na(griwrm3$model)]
-InputsModel3 <- CreateInputsModel(griwrm3, 
-                                  DatesR[1:iEnd], 
-                                  Precip[1:iEnd, id_GR_nodes], 
-                                  PotEvap[1:iEnd, id_GR_nodes], 
-                                  Qobs3[, griwrm3$id])
+InputsModel3 <- CreateInputsModel(griwrm3,
+                                  DatesR[1:iEnd],
+                                  Precip[1:iEnd, id_GR_nodes],
+                                  PotEvap[1:iEnd, id_GR_nodes],
+                                  QresMarne)
 ```
 
 ## GriwmRunOptions object
@@ -90,7 +90,7 @@ RunOptions <- CreateRunOptions(
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel3,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qobs3[IndPeriod_Run,]
+  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
 )
 ```
 
@@ -125,7 +125,7 @@ OutputsModels3 <- RunModel(
 htmltools::tagList(lapply(
   griwrm3$id[!is.na(griwrm3$model)],
   function(x) {
-    Q3 <- Qobs3[RunOptions[[1]]$IndPeriod_Run,x]
+    Q3 <- Qobs[RunOptions[[1]]$IndPeriod_Run,x]
     iQ3 <- which(!is.na(Q3))
     IndPeriod_Obs <- iQ3[1]:tail(iQ3,1)
     OutputsModels <- ReduceOutputsModel(OutputsModels3[[x]], IndPeriod_Obs)
