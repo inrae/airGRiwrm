@@ -77,19 +77,24 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
   names(varNames) <- varNames
   lapply(varNames, function(varName) {
     v <- get(varName)
-    if(!is.null(v)) {
-      if(is.matrix(v) || is.data.frame(v)) {
-        if(is.null(colnames(v))) {
+    if (!is.null(v)) {
+      if (is.matrix(v) || is.data.frame(v)) {
+        if (is.null(colnames(v))) {
           stop(sprintf(
             "'%s' must have column names",
             varName
           ))
-        } else if(!all(colnames(v) %in% x$id)) {
+        } else if (!all(colnames(v) %in% x$id)) {
           stop(sprintf(
             "'%s' column names must be included in 'id's of the GRiwrm object",
             varName
           ))
         }
+        if (!varName %in% c("ZInputs", "NLayers", "HypsoData") && nrow(v) != length(DatesR)) {
+          stop("'%s' number of rows and the length of 'DatesR' must be equal",
+               varName)
+        }
+
       } else if (!varName %in% c("ZInputs", "NLayers")) {
         stop(sprintf("'%s' must be a matrix or a data.frame", varName))
       }
@@ -121,8 +126,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
   if (is.null(Qobs)) {
     Qobs <- Qobs0
   } else {
-
-    missingIDs <- which(!x$id %in% colnames(Qobs))
+    Qobs0[, colnames(Qobs)] <- Qobs
+    Qobs <- Qobs0
   }
 
   for(id in getNodeRanking(x)) {

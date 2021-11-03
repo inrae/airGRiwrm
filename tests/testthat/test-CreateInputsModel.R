@@ -87,6 +87,19 @@ test_that("throw error on missing column in inputs", {
                regexp = "Precip is missing")
 })
 
+test_that("throw error on wrong number of rows in inputs", {
+  l$Precip <- l$Precip[-1, ]
+  expect_error(CreateInputsModel(l$griwrm,
+                                 DatesR = l$DatesR,
+                                 Precip = l$Precip,
+                                 PotEvap = l$PotEvap,
+                                 TempMean = l$TempMean,
+                                 ZInputs = l$ZInputs,
+                                 HypsoData = l$HypsoData),
+               regexp = "number of rows and the length of 'DatesR' must be equal")
+})
+
+
 test_that("throws error when missing CemaNeige data", {
   expect_error(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
@@ -102,4 +115,28 @@ test_that("throws error when missing Qobs on node not related to an hydrological
                                  Precip = l$Precip,
                                  PotEvap = l$PotEvap),
                regexp = "'Qobs' column names must at least contain")
+
+  expect_error(CreateInputsModel(l$griwrm,
+                                 DatesR = l$DatesR,
+                                 Precip = l$Precip,
+                                 PotEvap = l$PotEvap,
+                                 Qobs = l$Qobs[, -1]),
+               regexp = "'Qobs' column names must at least contain")
 })
+
+test_that("must works with node not related to an hydrological model", {
+  l$griwrm$model[1] <- NA
+  IM <- suppressWarnings(CreateInputsModel(
+    l$griwrm,
+    DatesR = l$DatesR,
+    Precip = l$Precip,
+    PotEvap = l$PotEvap,
+    Qobs = l$Qobs[, 1, drop = FALSE],
+    TempMean = l$TempMean,
+    ZInputs = l$ZInputs,
+    HypsoData = l$HypsoData
+  ))
+  expect_equal(IM[[2]]$Qupstream[, "Up1"], l$Qobs[, "Up1"] * l$griwrm[1, "area"] * 1E3)
+  expect_equal(colnames(IM[[2]]$Qupstream), c("Up1", "Up2"))
+})
+
