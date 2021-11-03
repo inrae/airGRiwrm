@@ -2,9 +2,9 @@
 #'
 #' @param x \[GRiwrm object\] diagram of the semi-distributed model (See [CreateGRiwrm])
 #' @param DatesR [POSIXt] vector of dates
-#' @param Precip [matrix] or [data.frame] frame of numeric containing precipitation in \[mm per time step\]. Column names correspond to node IDs
-#' @param PotEvap [matrix] or [data.frame] frame of numeric containing potential evaporation \[mm per time step\]. Column names correspond to node IDs
-#' @param Qobs [matrix] or [data.frame] frame of numeric containing observed flows in \[mm per time step\]. Column names correspond to node IDs
+#' @param Precip (optional) [matrix] or [data.frame] frame of numeric containing precipitation in \[mm per time step\]. Column names correspond to node IDs
+#' @param PotEvap (optional) [matrix] or [data.frame] frame of numeric containing potential evaporation \[mm per time step\]. Column names correspond to node IDs
+#' @param Qobs (optional) [matrix] or [data.frame] frame of numeric containing observed flows in \[mm per time step\]. Column names correspond to node IDs
 #' @param PrecipScale (optional) named [vector] of [logical] indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default `TRUE` (the mean of the precipitation is kept to the original value)
 #' @param TempMean (optional) [matrix] or [data.frame] of time series of mean air temperature \[°C\], required to create the CemaNeige module inputs
 #' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum air temperature \[°C\], possibly used to create the CemaNeige module inputs
@@ -50,11 +50,9 @@
 #' PotEvap <- matrix(BasinObs$E, ncol = 1)
 #' colnames(PotEvap) <- "GaugingDown"
 #'
-#' # Observed flows are integrated now because we mix:
-#' #  - flows that are directly injected in the model
-#' #  - flows that could be used for the calibration of the hydrological models
-#' Qobs = matrix(c(Qupstream, BasinObs$Qmm), ncol = 2)
-#' colnames(Qobs) <- griwrm$id
+#' # Observed flows should at least contains flows that are directly injected in the model
+#' Qobs = matrix(Qupstream, ncol = 1)
+#' colnames(Qobs) <- "Reservoir"
 #' str(Qobs)
 #'
 #' InputsModels <- CreateInputsModel(griwrm,
@@ -65,16 +63,16 @@
 #' str(InputsModels)
 #'
 CreateInputsModel.GRiwrm <- function(x, DatesR,
-                                     Precip,
+                                     Precip = NULL,
                                      PotEvap = NULL,
-                                     Qobs,
+                                     Qobs = NULL,
                                      PrecipScale = TRUE,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
                                      HypsoData = NULL, NLayers = 5, ...) {
 
   # Check and format inputs
-  varNames <- c("Precip", "PotEvap", "TempMean",
+  varNames <- c("Precip", "PotEvap", "TempMean", "Qobs",
                 "TempMin", "TempMax", "ZInputs", "HypsoData", "NLayers")
   names(varNames) <- varNames
   lapply(varNames, function(varName) {
@@ -98,7 +96,34 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
+  directFlowIds <- x$id[is.na(x$model)]
+  if (length(directFlowIds) > 0) {
+    err <- FALSE
+    if (is.null(Qobs)) {
+      err <- TRUE
+    } else {
+      Qobs <- as.matrix(Qobs)
+      if (is.null(colnames(Qobs))) {
+      err <- TRUE
+      } else if (!all(directFlowIds %in% colnames(Qobs))) {
+      err <- TRUE
+      }
+    }
+    if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
+  }
+
+
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
+
+  # Qobs completion
+  Qobs0 <- matrix(0, nrow = length(DatesR), ncol = nrow(x))
+  colnames(Qobs0) <- x$id
+  if (is.null(Qobs)) {
+    Qobs <- Qobs0
+  } else {
+
+    missingIDs <- which(!x$id %in% colnames(Qobs))
+  }
 
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
@@ -141,9 +166,10 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @param id string of the node identifier
 #' @param griwrm See [CreateGRiwrm])
-#' @param DatesR vector of dates required to create the GR model and CemaNeige module inputs
-#' @param Precip time series of potential evapotranspiration (catchment average) (mm/time step)
-#' @param PotEvap time series of potential evapotranspiration (catchment average) (mm/time step)
+#' @param ... parameters sent to [airGR::CreateInputsModel]:
+#'        - `DatesR` [vector] of dates required to create the GR model and CemaNeige module inputs
+#'        - `Precip` [vector] time series of potential evapotranspiration (catchment average) (mm/time step)
+#'        - `PotEvap` [vector] time series of potential evapotranspiration (catchment average) (mm/time step)
 #' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs
 #'
 #' @return \emph{InputsModel} object for one.
