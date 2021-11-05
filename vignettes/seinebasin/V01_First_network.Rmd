@@ -80,7 +80,7 @@ The **airGR** CreateInputsModel function is extended in order to handle the griw
 
 
 ```{r CreateInputsModel}
-InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qnat)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 ```
 
 

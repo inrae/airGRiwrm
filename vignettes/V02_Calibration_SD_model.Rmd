@@ -47,7 +47,7 @@ PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 str(InputsModel)
 ```
 

@@ -69,15 +69,21 @@ BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
 
-The `GRiwrmInputsModel` object can be generated taking into account the new `GRiwrm` object:
+This time, we need to provide observed flows as inputs for the nodes '54002' and '54095':
 
 ```{r}
-IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, Qobs)
+QobsInputs <- Qobs[, c("54002", "54095")]
+```
+
+Then, the `GRiwrmInputsModel` object can be generated taking into account the new `GRiwrm` object:
+
+```{r}
+IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, QobsInputs)
 ```
 
 ## Calibration of the new model

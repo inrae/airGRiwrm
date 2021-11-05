@@ -7,9 +7,9 @@
 \method{CreateInputsModel}{GRiwrm}(
   x,
   DatesR,
-  Precip,
+  Precip = NULL,
   PotEvap = NULL,
-  Qobs,
+  Qobs = NULL,
   PrecipScale = TRUE,
   TempMean = NULL,
   TempMin = NULL,
@@ -25,11 +25,11 @@
 
 \item{DatesR}{\link{POSIXt} vector of dates}
 
-\item{Precip}{\link{matrix} or \link{data.frame} frame of numeric containing precipitation in [mm per time step]. Column names correspond to node IDs}
+\item{Precip}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing precipitation in [mm per time step]. Column names correspond to node IDs}
 
-\item{PotEvap}{\link{matrix} or \link{data.frame} frame of numeric containing potential evaporation [mm per time step]. Column names correspond to node IDs}
+\item{PotEvap}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing potential evaporation [mm per time step]. Column names correspond to node IDs}
 
-\item{Qobs}{\link{matrix} or \link{data.frame} frame of numeric containing observed flows in [mm per time step]. Column names correspond to node IDs}
+\item{Qobs}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing observed flows in [mm per time step]. Column names correspond to node IDs}
 
 \item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default \code{TRUE} (the mean of the precipitation is kept to the original value)}
 
@@ -88,11 +88,9 @@ colnames(Precip) <- "GaugingDown"
 PotEvap <- matrix(BasinObs$E, ncol = 1)
 colnames(PotEvap) <- "GaugingDown"
 
-# Observed flows are integrated now because we mix:
-#  - flows that are directly injected in the model
-#  - flows that could be used for the calibration of the hydrological models
-Qobs = matrix(c(Qupstream, BasinObs$Qmm), ncol = 2)
-colnames(Qobs) <- griwrm$id
+# Observed flows should at least contains flows that are directly injected in the model
+Qobs = matrix(Qupstream, ncol = 1)
+colnames(Qobs) <- "Reservoir"
 str(Qobs)
 
 InputsModels <- CreateInputsModel(griwrm,
