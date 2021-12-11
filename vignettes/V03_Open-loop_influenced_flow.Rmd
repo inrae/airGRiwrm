@@ -57,7 +57,7 @@ The diagram of the network structure is represented below with:
   * in red, the node with direct flow injection (no hydrological model)
 
 ```{r diagram}
-plot(griwrmV03) # ne fonctionne pas sur le site
+plot(griwrmV03)
 ```
 
 ### Generation of the GRiwrmInputsModel object
@@ -88,7 +88,8 @@ IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, QobsInputs)
 
 ## Calibration of the new model
 
-Calibration options and criteria procedures are detailed in vignette "V02_Calibration_SD_model". We also apply a parameter regularisation here but only where an upstream simulated catchment is available.
+Calibration options is detailed in vignette "V02_Calibration_SD_model".
+We also apply a parameter regularisation here but only where an upstream simulated catchment is available.
 
 The following code chunk resumes this procedure:
 
@@ -104,8 +105,8 @@ RunOptions <- CreateRunOptions(IM_OL,
 InputsCrit <- CreateInputsCrit(IM_OL,
                                FUN_CRIT = airGR::ErrorCrit_KGE2,
                                RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,],
-                               AprioriIds = c("54057" = "54032", "54032" = "54001"), 
-                               transfo = "sqrt"
+                               AprioriIds = c("54057" = "54032", "54032" = "54001"),
+                               transfo = "sqrt", k = 0.15
 )
 CalibOptions <- CreateCalibOptions(IM_OL)
 ```
@@ -130,17 +131,17 @@ OM_OL <- RunModel(
 
 ## Plotting of the results
 
-As can be seen below, compared to results of vignette "V02_Calibration_SD_model", the use of measured flows on upstream influenced basins improves largely the model performance at downstream stations (better low flow simulations).
+As can be seen below, compared to results of vignette "V02_Calibration_SD_model", the use of measured flows on upstream influenced basins largely improves the model performance at downstream stations (better low-flow simulations).
 
 ```{r, fig.height = 5, fig.width = 8}
-plot(OM_OL, Qobs = Qobs[IndPeriod_Run,], which = "Regime")
+plot(OM_OL, Qobs = Qobs[IndPeriod_Run, ], which = "Regime")
 ```
 
-The resulting flows of each node in m<sup>3</sup>/s is directly available and can be plotted with these commands:
+The resulting flows of each node in m<sup>3</sup>/s are directly available and can be plotted with these commands:
 
 ```{r}
 Qm3s <- attr(OM_OL, "Qm3s")
-plot(Qm3s[1:150,])
+plot(Qm3s[1:150, ])
 ```
 
 

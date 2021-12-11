@@ -1,8 +1,8 @@
 ---
-title: 'Seine_01: Structuration of a semi-distributive GR4J model network'
+title: 'Seine_01: Structuration of a semi-distributed GR4J model network'
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Seine_01: Structuration of a semi-distributive GR4J model network}
+  %\VignetteIndexEntry{Seine_01: Structuration of a semi-distributed GR4J model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: seinebasin.bib
@@ -16,13 +16,15 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
-The example below is inspired by the semi-distributed model developed in the ClimAware project [@theobaldClimAwareImpactsClimate2014a].
+The example below is inspired by the semi-distributed model developed in the ClimAware project [@theobaldClimAwareImpactsClimate2014a], in which we used the daily rainfall-runoff model GR4J.
 
-## Semi-distributive network description
+The aim of this vignette is to create the semi-distributed network necessary for the hydrological model.
+
+## Semi-distributed network description
 
 The model is distributed according to the gauging stations described in @dorchiesClimateChangeImpacts2014.
 
-List of nodes
+First, we must read the list of nodes and the associated metadata:
 
 ```{r seine_nodes}
 seine_nodes <- read.table(
@@ -32,22 +34,25 @@ seine_nodes <- read.table(
 seine_nodes
 ```
 
-Create the GRiwrm object which lists the nodes and describes the network diagram. It's a dataframe of class `GRiwrm` and `GRiwrm` with specific column names:
+Using that information, we must create the GRiwrm object that lists the nodes and describes the network diagram. It is a dataframe of class `GRiwrm` with specific column names:
 
 - `id`: the identifier of the node in the network.
 - `down`: the identifier of the next hydrological node downstream.
 - `length`: hydraulic distance to the next hydrological downstream node.
-- `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other type of node.
-- `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological model such as GR models. `NA` if not used.
+- `model`: Name of the hydrological model used (E.g. "RunModel_GR4J"). `NA` for other types of nodes.
+- `area`: Area of the sub-catchment (km<sup>2</sup>). Used for hydrological models such as GR models. `NA` if not used.
 
-`GRiwrm` function helps to rename the columns of the dataframe and assign the variable classes.
+The `CreateGRiwrm` function helps to rename the columns of the dataframe and assign the variable classes.
 
 ```{r griwrm}
 seine_nodes$id_aval[seine_nodes$id_aval == ""] <- NA
 seine_nodes$distance_aval <- as.double(seine_nodes$distance_aval) / 1000
 seine_nodes$model <- "RunModel_GR4J"
 # Generate the GRiwrm object
-griwrm <- CreateGRiwrm(seine_nodes, list(id = "id_sgl", down = "id_aval", length = "distance_aval"))
+griwrm <- CreateGRiwrm(seine_nodes,
+                       list(id = "id_sgl",
+                            down = "id_aval",
+                            length = "distance_aval"))
 griwrm
 ```
 
@@ -65,18 +70,18 @@ The daily mean precipitation and potential evaporation at the scale of the inter
 
 The daily naturalised flow is provided by @hydratecActualisationBaseDonnees2011a.
 
-These data are embedded in a the R package 'seinebasin' which is not publicly available.
+These data are embedded in the R package 'seinebasin', which is not publicly available.
 
 ```{r QNAT, warning=FALSE, message=FALSE}
 library(seinebasin)
 data(QNAT)
 ```
 
-## Generate the GRIWRM InputsModel object
+## Generate the GRiwrm InputsModel object
 
-The GRIWRM InputsModel object is a list of **airGR** InputsModel. The identifier of the sub-basin is used as key in the list which is ordered from upstream to downstream.
+The GRiwrm InputsModel object is a list of **airGR** InputsModel objects. The identifier of the sub-basin is used as a key in the list, which is ordered from upstream to downstream.
 
-The **airGR** CreateInputsModel function is extended in order to handle the griwrm object which describe the basin diagram:
+The **airGR** CreateInputsModel function is extended in order to handle the GRiwrm object that describes the basin diagram:
 
 
 ```{r CreateInputsModel}

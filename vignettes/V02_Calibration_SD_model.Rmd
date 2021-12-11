@@ -2,7 +2,7 @@
 title: "Severn_02: Calibration of a GR4J semi-distributed model network"
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Severn_02: Calibration of a GR4J semi-distributive model network}
+  %\VignetteIndexEntry{Severn_02: Calibration of a GR4J semi-distributed model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -32,7 +32,7 @@ To facilitate the use of the package, there are several functions dedicated to t
 
 ### GRiwrmInputsModel object
 
-The production method of the `GRiwrmInputsModel` object is detailed in the vignette "V01_Structure_SD_model" of the package. The following code chunk resumes all the steps of this vignette:
+The method used for producing the `GRiwrmInputsModel` object is detailed in the vignette "V01_Structure_SD_model" of the package. The following code chunk resumes all the steps of this vignette:
 
 ```{r}
 data(Severn)
@@ -51,7 +51,7 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 str(InputsModel)
 ```
 
-## GRiwmRunOptions object
+## GRiwrmRunOptions object
 
 The `CreateRunOptions()` function allows to prepare the options required for the `RunModel()` function.
 
@@ -60,19 +60,14 @@ The user must at least define the following arguments:
 * `InputsModel`: the associated input data
 * `IndPeriod_Run`: the period on which the model is run
 
-Below, we start the run period one year after the beginning of the time series.
+Below, we define a one-year warm up period and we start the run period just after the warmup period.
 
 ```{r}
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
 )
-```
-
-As a consequence, the warmup period is defined as:
-
-```{r}
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
 
 Arguments of the `CreateRunOptions` function for **airGRiwrm** are the same as for the function in **airGR** and are copied for each node running a rainfall-runoff model.
@@ -87,29 +82,32 @@ RunOptions <- CreateRunOptions(
 
 ## GRiwrmInputsCrit object
 
-The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. We use composed criterion with a parameter regularisation based on @delavenneRegularizationApproachImprove2019. 
+The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion.
+We use composed criterion with a parameter regularisation based on @delavenneRegularizationApproachImprove2019.
 
 It needs the following arguments:
 
 * `InputsModel`: the inputs of the `GRiwrm` network previously prepared by the `CreateInputsModel()` function
 * `FUN_CRIT`: the name of the error criterion function (see the available functions description in the **airGR** package)
 * `RunOptions`: the options of the `GRiwrm` network previously prepared by the `CreateRunOptions()` function
-* `Qobs`: the observed variable time serie (e.g. the discharge expressed in *mm/time step*)
+* `Qobs`: the observed variable time series (e.g. the discharge expressed in *mm/time step*)
 * `AprioriIds`: the list of the sub-catchments IDs where to apply a parameter regularisation based on the parameters of an upstream sub-catchment (e.g. here below the parameters of the sub-catchment "54057" is regulated by the parameters of the sub-catchment "54032")
-* `transfo`: a transformation function applied on the flow before criterion calculation (square-root transformation is recommended for the De Lavenne regularisation)
+* `transfo`: a transformation function applied on the flow before calculation of the criterion (square-root transformation is recommended for the De Lavenne regularisation)
+* `k`: coefficient used for the weighted average between the performance criterion and the gap between the optimised parameter set and an a priori parameter set (a value equal to 0.15 is recommended for the De Lavenne regularisation)
 
 ```{r InputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, 
-  Obs = Qobs[IndPeriod_Run,],
+  RunOptions = RunOptions,
+  Obs = Qobs[IndPeriod_Run, ],
   AprioriIds = c(
       "54057" = "54032",
       "54032" = "54001",
       "54001" = "54095"
   ),
-  transfo = "sqrt"
+  transfo = "sqrt",
+  k = 0.15
 )
 str(InputsCrit)
 ```
@@ -153,7 +151,7 @@ OutputsModels <- RunModel(
 plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,])
 ```
 
-The resulting flows of each node in m<sup>3</sup>/s is directly available and can be plotted with these commands:
+The resulting flows of each node in m<sup>3</sup>/s are directly available and can be plotted with these commands:
 
 ```{r}
 Qm3s <- attr(OutputsModels, "Qm3s")

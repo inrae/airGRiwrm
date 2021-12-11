@@ -1,8 +1,8 @@
 ---
-title: "Seine_03: Calibration of a semi-distributive GR model network"
+title: "Seine_03: Calibration of a semi-distributed GR model network"
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Seine_03: Calibration of a semi-distributive GR model network}
+  %\VignetteIndexEntry{Seine_03: Calibration of a semi-distributed GR model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,6 +10,8 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+The aim of this vignette is to perform a first calibration of the semi-distributed hydrological model, using naturalised discharge.
 
 ## Loading libraries, network and time series data
 
@@ -25,11 +27,14 @@ data(QNAT)
 
 ## InputsCrit object
 
+We need then to prepare the InputsCrit object that is necessary to define the calibration objective function. We chose here the KGE' criterion:
+
 ```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qnat[IndPeriod_Run,]
+  RunOptions = RunOptions,
+  Obs = Qnat[IndPeriod_Run,]
 )
 str(InputsCrit)
 ```
@@ -43,11 +48,15 @@ str(CalibOptions)
 
 ## Calibration
 
+The optimisation (i.e. calibration) of parameters can now be performed:
+
 ```{r Calibration}
 OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 ```
 
-## Run model with Michel calibration
+## Run the GR4J model with parameters obtained fromt the Michel calibration
+
+Now that the model is calibrated, we can run it with the optimised parameter values:
 
 ```{r RunModel}
 ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
@@ -59,16 +68,14 @@ OutputsModels <- RunModel(
 )
 ```
 
-## Save calibration data for next vignettes
-
-```{r save}
-save(ParamMichel, file = "_cache/V03.RData")
-```
-
-
 ## Plot the result for each basin
 
 ```{r plot, fig.height = 5, fig.width = 8}
 plot(OutputsModels, Qobs = Qnat[IndPeriod_Run,])
 ```
 
+## Save calibration data for next vignettes
+
+```{r save}
+save(ParamMichel, file = "_cache/V03.RData")
+```
