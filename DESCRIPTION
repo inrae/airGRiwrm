@@ -16,8 +16,7 @@ Imports:
     dplyr,
     utils,
     grDevices,
-    graphics,
-    airGR (>= 1.6.12.9001)
+    graphics
 Suggests:
     knitr,
     rmarkdown,
@@ -29,6 +28,7 @@ VignetteBuilder: knitr
 URL: https://airgriwrm.g-eau.fr/
 BugReports: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/
 Depends:
-    R (>= 2.10)
+    R (>= 2.10),
+    airGR (>= 1.6.12.9001)
 Remotes:
     url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/dev/airgr-dev.zip

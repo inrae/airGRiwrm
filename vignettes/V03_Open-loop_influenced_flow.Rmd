@@ -103,7 +103,7 @@ RunOptions <- CreateRunOptions(IM_OL,
                                IndPeriod_WarmUp = IndPeriod_WarmUp,
                                IndPeriod_Run = IndPeriod_Run)
 InputsCrit <- CreateInputsCrit(IM_OL,
-                               FUN_CRIT = airGR::ErrorCrit_KGE2,
+                               FUN_CRIT = ErrorCrit_KGE2,
                                RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,],
                                AprioriIds = c("54057" = "54032", "54032" = "54001"),
                                transfo = "sqrt", k = 0.15

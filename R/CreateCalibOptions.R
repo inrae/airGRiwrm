@@ -2,7 +2,7 @@
 #'
 #' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
-#' @param InputsModel object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}. See [CreateInputsModel] for details
+#' @template param_x
 #' @param ... arguments passed to [airGR::CreateCalibOptions], see details
 #'
 #' @details See [airGR::CreateCalibOptions] documentation for a complete list of arguments.
@@ -15,6 +15,43 @@
 #'
 #' @rdname CreateCalibOptions
 #' @export
-CreateCalibOptions <- function(InputsModel, ...) {
-  UseMethod("CreateCalibOptions", InputsModel)
+CreateCalibOptions <- function(x, ...) {
+  UseMethod("CreateCalibOptions", x)
+}
+
+#' @rdname CreateCalibOptions
+#' @export
+CreateCalibOptions.InputsModel <- function(x,
+                                           ...) {
+  if (!exists("FUN_MOD") && !is.null(x$FUN_MOD)) {
+    airGR::CreateCalibOptions(
+      FUN_MOD = x$FUN_MOD,
+      IsSD = !is.null(x$Qupstream),
+      ...
+    )
+  } else {
+    airGR::CreateCalibOptions(
+      ...
+    )
+  }
+}
+
+#' @rdname CreateCalibOptions
+#' @export
+CreateCalibOptions.character <- function(x,
+                                           ...) {
+  airGR::CreateCalibOptions(
+    FUN_MOD = x,
+    ...
+  )
+}
+
+#' @rdname CreateCalibOptions
+#' @export
+CreateCalibOptions.function <- function(x,
+                                         ...) {
+  airGR::CreateCalibOptions(
+    FUN_MOD = x,
+    ...
+  )
 }

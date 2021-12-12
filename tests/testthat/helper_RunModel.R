@@ -51,7 +51,7 @@ setupRunModel <- function() {
   )
   IndPeriod_WarmUp = seq(IndPeriod_Run[1]-365,IndPeriod_Run[1]-1)
   RunOptions <- CreateRunOptions(
-    InputsModel = InputsModel,
+    InputsModel,
     IndPeriod_WarmUp = IndPeriod_WarmUp,
     IndPeriod_Run = IndPeriod_Run
   )

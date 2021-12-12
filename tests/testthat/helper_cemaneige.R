@@ -15,9 +15,7 @@
 #' @examples
 setUpCemaNeigeData <- function() {
 
-  library(airGR)
   data(L0123001)
-  detach("package:airGR")
 
   # Formatting observations for the hydrological models
   # Each input data should be a matrix or a data.frame with the good id in the name of the column

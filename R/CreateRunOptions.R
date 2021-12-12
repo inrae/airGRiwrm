@@ -2,7 +2,7 @@
 #'
 #' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
-#' @param InputsModel object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}. See [CreateInputsModel] for details
+#' @template param_x
 #' @param ... arguments passed to [airGR::CreateRunOptions], see details
 #'
 #' @details See [airGR::CreateRunOptions] documentation for a complete list of arguments.
@@ -18,6 +18,35 @@
 #' @rdname CreateRunOptions
 #' @export
 #' @inherit RunModel.GRiwrmInputsModel return examples
-CreateRunOptions <- function(InputsModel, ...) {
-  UseMethod("CreateRunOptions", InputsModel)
+CreateRunOptions <- function(x, ...) {
+  UseMethod("CreateRunOptions", x)
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.InputsModel <- function(x, ...) {
+  if (!exists("FUN_MOD") && !is.null(x$FUN_MOD)) {
+    airGR::CreateRunOptions(FUN_MOD = x$FUN_MOD,
+                            InputsModel = x,
+                            ...)
+  } else {
+    airGR::CreateRunOptions(InputsModel = x,
+                            ...)
+  }
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.character <- function(x, ...) {
+
+  airGR::CreateRunOptions(FUN_MOD = x,
+                          ...)
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.function <- function(x, ...) {
+
+  airGR::CreateRunOptions(FUN_MOD = x,
+                          ...)
 }

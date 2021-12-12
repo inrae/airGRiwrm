@@ -1,3 +1,34 @@
+test_that("airGR::CreateInputsCrit should works", {
+  ## loading catchment data
+  data(L0123001)
+
+  ## preparation of InputsModel object
+  InputsModel <- CreateInputsModel(RunModel_GR4J, DatesR = BasinObs$DatesR,
+                                   Precip = BasinObs$P, PotEvap = BasinObs$E)
+
+  ## calibration period selection
+  Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1990-01-01"),
+                 which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1999-12-31"))
+  Ind_WarmUp <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1989-01-01"),
+                    which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1989-12-31"))
+
+  ## preparation of RunOptions object
+  RunOptions <- CreateRunOptions(RunModel_GR4J,
+                                 InputsModel = InputsModel,
+                                 IndPeriod_Run = Ind_Run,
+                                 IndPeriod_WarmUp = Ind_WarmUp)
+
+  ## calibration criterion: preparation of the InputsCrit object
+  InputsCrit <- airGR::CreateInputsCrit(ErrorCrit_NSE, InputsModel = InputsModel,
+                                 RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
+  expect_equal(CreateInputsCrit(ErrorCrit_NSE, InputsModel = InputsModel,
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run]),
+               InputsCrit)
+  expect_equal(CreateInputsCrit("ErrorCrit_NSE", InputsModel = InputsModel,
+                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run]),
+               InputsCrit)
+})
+
 # data set up
 e <- setupRunModel()
 # variables are copied from environment 'e' to the current environment

@@ -9,7 +9,7 @@
 \usage{
 \method{CreateInputsCrit}{GRiwrmInputsModel}(
   InputsModel,
-  FUN_CRIT = airGR::ErrorCrit_NSE,
+  FUN_CRIT = ErrorCrit_NSE,
   RunOptions,
   Obs,
   AprioriIds = NULL,

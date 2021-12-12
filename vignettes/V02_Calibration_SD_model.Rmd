@@ -74,7 +74,7 @@ Arguments of the `CreateRunOptions` function for **airGRiwrm** are the same as f
 
 ```{r}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel,
+  InputsModel,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )
@@ -98,7 +98,7 @@ It needs the following arguments:
 ```{r InputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
-  FUN_CRIT = airGR::ErrorCrit_KGE2,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions = RunOptions,
   Obs = Qobs[IndPeriod_Run, ],
   AprioriIds = c(

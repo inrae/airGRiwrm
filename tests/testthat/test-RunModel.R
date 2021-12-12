@@ -8,7 +8,7 @@ context("RunModel.GRiwrmInputsModel")
 
 test_that("RunModel.GRiwrmInputsModel should return same result with separated warm-up", {
   RO_WarmUp <- CreateRunOptions(
-    InputsModel = InputsModel,
+    InputsModel,
     IndPeriod_WarmUp = 0L,
     IndPeriod_Run = IndPeriod_WarmUp
   )
@@ -18,7 +18,7 @@ test_that("RunModel.GRiwrmInputsModel should return same result with separated w
     Param = ParamMichel
   )
   RO_Run <- CreateRunOptions(
-    InputsModel = InputsModel,
+    InputsModel,
     IndPeriod_WarmUp = 0L,
     IndPeriod_Run = IndPeriod_Run,
     IniStates = lapply(OM_WarmUp, "[[", "StateEnd")
@@ -60,7 +60,9 @@ griwrm2 <- rbind(griwrm,
 # Add Qobs for the 2 new nodes and create InputsModel
 Qobs2 <- cbind(Qobs, matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2))
 colnames(Qobs2) <- c(colnames(Qobs2)[1:6], "R1", "R2")
-InputsModel <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
+InputsModel <- suppressWarnings(
+  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
+)
 
 test_that("RunModel.Supervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
   # Create Supervisor
@@ -103,14 +105,18 @@ test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
   l$ZInputs <- l$ZInputs[1:2]
   l$TempMean <- l$TempMean[,1:2]
   l$HypsoData <- l$HypsoData[,1:2]
-  InputsModels <- CreateInputsModel(l$griwrm,
-                                    DatesR = l$DatesR,
-                                    Precip = l$Precip,
-                                    PotEvap = l$PotEvap,
-                                    TempMean = l$TempMean,
-                                    ZInputs = l$ZInputs,
-                                    HypsoData = l$HypsoData,
-                                    Qobs = l$Qobs)
+  InputsModels <- suppressWarnings(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData,
+      Qobs = l$Qobs
+    )
+  )
   ## run period selection
   Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1990-01-01"),
                  which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1999-12-31"))

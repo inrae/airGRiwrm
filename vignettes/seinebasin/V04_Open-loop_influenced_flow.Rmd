@@ -249,7 +249,7 @@ We can now run the model, using the parameters previously obtained:
 
 ```{r RunModel}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel2,
+  InputsModel2,
   IndPeriod_Run = IndPeriod_Run
 )
 OutputsModels2 <- RunModel(

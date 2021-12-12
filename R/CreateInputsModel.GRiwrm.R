@@ -20,47 +20,7 @@
 #'
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by [airGR::CreateInputsModel] with one item per modelled sub-catchment.
 #' @export
-#' @examples
-#' ##################################################################
-#' # Run the `airGR RunModel_Lag` example in the GRiwrm fashion way #
-#' ##################################################################
-#'
-#' # Run the airGR RunModel_Lag example for harvesting necessary data
-#' library(airGR)
-#' example(RunModel_Lag)
-#' # detach the package because otherwise airGR overwrites the airGRiwrm functions
-#' detach("package:airGR")
-#'
-#' # This example is a network of 2 nodes which can be described like this:
-#' db <- data.frame(id = c("Reservoir", "GaugingDown"),
-#'                  length = c(LengthHydro, NA),
-#'                  down = c("GaugingDown", NA),
-#'                  area = c(NA, BasinInfo$BasinArea),
-#'                  model = c(NA, "RunModel_GR4J"),
-#'                  stringsAsFactors = FALSE)
-#'
-#' # Create GRiwrm object from the data.frame
-#' griwrm <- CreateGRiwrm(db)
-#' str(griwrm)
-#'
-#' # Formatting observations for the hydrological models
-#' # Each input data should be a matrix or a data.frame with the correct id as the column name
-#' Precip <- matrix(BasinObs$P, ncol = 1)
-#' colnames(Precip) <- "GaugingDown"
-#' PotEvap <- matrix(BasinObs$E, ncol = 1)
-#' colnames(PotEvap) <- "GaugingDown"
-#'
-#' # Observed flows should at least contains flows that are directly injected in the model
-#' Qobs = matrix(Qupstream, ncol = 1)
-#' colnames(Qobs) <- "Reservoir"
-#' str(Qobs)
-#'
-#' InputsModels <- CreateInputsModel(griwrm,
-#'                             DatesR = BasinObs$DatesR,
-#'                             Precip = Precip,
-#'                             PotEvap = PotEvap,
-#'                             Qobs = Qobs)
-#' str(InputsModels)
+#' @inherit RunModel.GRiwrmInputsModel return examples
 #'
 CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      Precip = NULL,
