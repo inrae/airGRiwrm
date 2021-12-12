@@ -1,6 +1,6 @@
 url: https://airgriwrm.g-eau.fr
 development:
-  mode: devel
+  mode: auto
 
 template:
   params:
