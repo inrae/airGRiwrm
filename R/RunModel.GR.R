@@ -1,9 +1,11 @@
-#' Run rainfall-runoff part of a sub-basin model
+#' Run of a rainfall-runoff model on a sub-basin
 #'
-#' @inherit airGR::RunModel
-#' @param x `InputsModel` used as `InputsModel` parameter for [airGR::RunModel]
+#' @param x \[object of class `InputsModel`\] `InputsModel` for [airGR::RunModel]
+#' @param RunOptions \[object of class *RunOptions*\] see [airGR::CreateRunOptions] for details
+#' @param Param [numeric] vector of model parameters (See details for SD lag model)
 #' @param ... further arguments passed to or from other methods
 #'
+#' @inherit airGR::RunModel description details return
 #' @export
 #'
 RunModel.GR <- function(x, RunOptions, Param, ...) {
@@ -11,6 +13,7 @@ RunModel.GR <- function(x, RunOptions, Param, ...) {
   if (inherits(x, "SD")) {
     # Lag model take one parameter at the beginning of the vector
     iFirstParamRunOffModel <- 2
+    RunOptions$FeatFUN_MOD$NbParam <- RunOptions$FeatFUN_MOD$NbParam - 1
   } else {
     # All parameters
     iFirstParamRunOffModel <- 1

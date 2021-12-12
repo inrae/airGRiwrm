@@ -1,6 +1,6 @@
 Package: airGRiwrm
 Title: 'airGR' Integrated Water Resource Management
-Version: 0.5.0.9000
+Version: 0.5.0.9002
 Authors@R: c(
     person("David", "Dorchies", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6595-7984"), email = "david.dorchies@inrae.fr"),
     person("Olivier", "Delaigue", role = c("ctb"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@inrae.fr"),
@@ -16,8 +16,7 @@ Imports:
     dplyr,
     utils,
     grDevices,
-    graphics,
-    airGR (>= 1.6.12)
+    graphics
 Suggests:
     knitr,
     rmarkdown,
@@ -26,6 +25,10 @@ Suggests:
     htmltools,
     markdown
 VignetteBuilder: knitr
-URL: https://gitlab.irstea.fr/in-wop/airGRiwrm
+URL: https://airgriwrm.g-eau.fr/
+BugReports: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/
 Depends:
-    R (>= 2.10)
+    R (>= 2.10),
+    airGR (>= 1.6.12.9001)
+Remotes:
+    url::https://gitlab.irstea.fr/HYCAR-Hydro/airgr/-/archive/dev/airgr-dev.zip

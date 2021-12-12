@@ -1,8 +1,9 @@
-#' Wrapper to [airGR::Calibration] for one sub-basin.
-#'
-#' @inherit airGR::Calibration
-#' @param ... Further arguments for compatibility with S3 method
+#' @rdname Calibration
 #' @export
 Calibration.InputsModel <- function(InputsModel, ...) {
-  airGR::Calibration(InputsModel, FUN_MOD = InputsModel$FUN_MOD, ...)
+  if (!exists("FUN_MOD") && !is.null(InputsModel$FUN_MOD)) {
+    airGR::Calibration(InputsModel, FUN_MOD = InputsModel$FUN_MOD, ...)
+  } else {
+    airGR::Calibration(InputsModel, ...)
+  }
 }

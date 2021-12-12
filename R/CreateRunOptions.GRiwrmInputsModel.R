@@ -1,19 +1,13 @@
-#' Create \emph{GRiwrmRunOptions} object for running and calibrating model in **airGRiwrm**.
-#'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
-#' @param ... further arguments passed to [airGR::CreateRunOptions].
-#'
-#' @return \emph{GRiwrmRunOptions} object for running and calibrating model in **airGRiwrm**.
+#' @param IniStates (optional) [numeric] object or [list] of [numeric] object of class \emph{IniStates}, see [airGR::CreateIniStates] for details
+#' @rdname CreateRunOptions
 #' @export
-#' @inherit RunModel.GRiwrmInputsModel return examples
-#'
-CreateRunOptions.GRiwrmInputsModel <- function(InputsModel, ...) {
+CreateRunOptions.GRiwrmInputsModel <- function(x, IniStates = NULL, ...) {
 
   RunOptions <- list()
   class(RunOptions) <- append(class(RunOptions), "GRiwrmRunOptions")
 
-  for(InputsModelBasin in InputsModel) {
-    RunOptions[[InputsModelBasin$id]] <- CreateRunOptions(InputsModel = InputsModelBasin, ...)
+  for(id in names(x)) {
+    RunOptions[[id]] <- CreateRunOptions(x[[id]], IniStates = IniStates[[id]], ...)
   }
   return(RunOptions)
 }

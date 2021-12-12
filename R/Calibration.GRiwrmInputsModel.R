@@ -1,13 +1,5 @@
-#' Calibration of a semi-distributed run-off model
-#'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
-#' @param RunOptions object of class \emph{GRiwrmRunOptions}, see [CreateRunOptions.GRiwrmInputsModel] for details.
-#' @param InputsCrit object of class \emph{GRiwrmInputsCrit}, see [CreateInputsCrit.GRiwrmInputsModel] for details.
-#' @param CalibOptions object of class \emph{GRiwrmCalibOptions}, see [CreateCalibOptions.GRiwrmInputsModel] for details.
-#' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}.
-#' @param ... further arguments passed to [airGR::Calibration].
-#'
-#' @return GRiwrmOutputsCalib object which is a list of OutputsCalib (See [airGR::Calibration]) for each node of the semi-distributed model.
+#' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}
+#' @rdname Calibration
 #' @export
 Calibration.GRiwrmInputsModel <- function(InputsModel,
                                           RunOptions,
@@ -16,24 +8,47 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
                                           useUpstreamQsim = TRUE,
                                           ...) {
 
+  # Argument checks
+
+  # We invoke the mandatory arguments here for avoiding
+  # a messy error message on "get(x)" if an argument is missing
+  InputsModel
+  RunOptions
+  InputsCrit
+  CalibOptions
+
+  # Checking argument classes
+  vars2check <- c("InputsModel", "RunOptions", "InputsCrit", "CalibOptions")
+  lapply(vars2check, function(x) {
+    if (!inherits(get(x), paste0("GRiwrm", x))) {
+      stop(sprintf("'%1$s' must be of class GRiwrm%1$s, type '?Create%1$s' for help", x))
+    }
+  })
+
   OutputsCalib <- list()
-  class(OutputsCalib) <- append(class(OutputsCalib), "GRiwrmOutputsCalib")
+  class(OutputsCalib) <- append("GRiwrmOutputsCalib", class(OutputsCalib))
 
   OutputsModel <- list()
-  class(OutputsModel) <- append(class(OutputsModel), "GRiwrmOutputsModel")
+  class(OutputsModel) <- append("GRiwrmOutputsModel", class(OutputsModel))
 
   for(IM in InputsModel) {
     message("Calibration.GRiwrmInputsModel: Treating sub-basin ", IM$id, "...")
 
     if(useUpstreamQsim && any(IM$UpstreamIsRunoff)) {
       # Update InputsModel$Qupstream with simulated upstream flows
-      IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]]$IndPeriod_Run, OutputsModel)
+      IM <- UpdateQsimUpstream(IM, RunOptions[[IM$id]], OutputsModel)
+    }
+
+    if (inherits(InputsCrit[[IM$id]], "InputsCritLavenneFunction")) {
+      IC <- getInputsCrit_Lavenne(IM$id, OutputsModel, InputsCrit)
+    } else {
+      IC <- InputsCrit[[IM$id]]
     }
 
     OutputsCalib[[IM$id]] <- Calibration(
       InputsModel = IM,
       RunOptions = RunOptions[[IM$id]],
-      InputsCrit = InputsCrit[[IM$id]],
+      InputsCrit = IC,
       CalibOptions = CalibOptions[[IM$id]],
       ...
     )
@@ -51,4 +66,33 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 
   return(OutputsCalib)
 
+}
+
+#' Create InputsCrit for De Lavenne regularisation
+#'
+#' Internal function that run [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori upstream
+#' sub-catchment parameters grabbed during network calibration process.
+#'
+#' @param id [character] the id of the current sub-catchment
+#' @param OutputsModel \[GRiwrmOutputsModel\] object with simulation results of upstream sub-catchments run with calibrated parameters
+#' @param InputsCrit \[InputsCritLavenneFunction\] object internally created by [CreateInputsCrit.GRiwrmInputsModel]
+#'
+#' @return \[InputsCrit\] object with De Lavenne regularisation
+#' @import airGR
+#' @noRd
+#'
+getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
+  if (!inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
+    stop("'InputsCrit[[id]]' must be of class InputsCritLavenneFunction")
+  }
+  AprioriId <- attr(InputsCrit[[id]], "AprioriId")
+  AprCelerity <- attr(InputsCrit[[id]], "AprCelerity")
+  Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
+  AprParamR <- OutputsModel[[AprioriId]]$RunOptions$Param
+  if(!inherits(OutputsModel[[AprioriId]], "SD")) {
+    # Add default velocity parameter for a priori upstream catchment
+    AprParamR <- c(AprCelerity, AprParamR)
+  }
+  AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
+  return(Lavenne_FUN(AprParamR, AprCrit))
 }

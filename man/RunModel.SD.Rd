@@ -2,18 +2,18 @@
 % Please edit documentation in R/RunModel.SD.R
 \name{RunModel.SD}
 \alias{RunModel.SD}
-\title{Run SD Model from run-off model outputs}
+\title{Run a semi-distributed model from rainfall-runoff model outputs}
 \usage{
 \method{RunModel}{SD}(x, RunOptions, Param, QcontribDown, ...)
 }
 \arguments{
-\item{x}{\code{InputsModel} used as \code{InputsModel} parameter for \link[airGR:RunModel_Lag]{airGR::RunModel_Lag}}
+\item{x}{[object of class \code{InputsModel}] used as \code{InputsModel} parameter for \link[airGR:RunModel_Lag]{airGR::RunModel_Lag}}
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link[airGR]{CreateRunOptions}} for details}
 
 \item{Param}{[numeric] vector of 1 parameter
     \tabular{ll}{
-      Velocity \tab Mean flow velocity [m/s]
+      Velocity \tab mean flow velocity [m/s]
     }
   }
 
@@ -25,5 +25,5 @@
 \code{OutputsModel} object. See \link[airGR:RunModel_Lag]{airGR::RunModel_Lag}
 }
 \description{
-Run SD Model from run-off model outputs
+Run a semi-distributed model from rainfall-runoff model outputs
 }

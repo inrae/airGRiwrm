@@ -2,16 +2,16 @@
 % Please edit documentation in R/utils.R
 \name{getNoSD_Ids}
 \alias{getNoSD_Ids}
-\title{Id of sub-basins not using SD model}
+\title{Function to obtain the ID of sub-basins not using SD model}
 \usage{
 getNoSD_Ids(InputsModel)
 }
 \arguments{
-\item{InputsModel}{\code{GRiwrmInputsModel} object}
+\item{InputsModel}{[\code{GRiwrmInputsModel} object]}
 }
 \value{
-\link{character} IDs of the sub-basins not using SD model
+\link{character} IDs of the sub-basins not using the SD model
 }
 \description{
-Id of sub-basins not using SD model
+Function to obtain the ID of sub-basins not using SD model
 }

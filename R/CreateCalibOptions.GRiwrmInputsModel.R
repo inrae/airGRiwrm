@@ -1,17 +1,13 @@
-#' Title
-#'
-#' @param InputsModel object of class \emph{GRiwrmInputsModel}, see [CreateInputsModel.GRiwrm] for details.
-#' @param ... further arguments passed to [airGR::CreateCalibOptions].
-#'
-#' @return \emph{GRiwrmCalibOptions} object.
+#' @rdname CreateCalibOptions
 #' @export
-CreateCalibOptions.GRiwrmInputsModel <- function(InputsModel, ...) {
+CreateCalibOptions.GRiwrmInputsModel <- function(x, ...) {
 
   CalibOptions <- list()
+  class(CalibOptions) <- c("GRiwrmCalibOptions", class(CalibOptions))
 
-  for(IM in InputsModel) {
-    CalibOptions[[IM$id]] <- CreateCalibOptions.InputsModel(
-      InputsModel = IM,
+  for(IM in x) {
+    CalibOptions[[IM$id]] <- CreateCalibOptions(
+      IM,
       ...
     )
   }

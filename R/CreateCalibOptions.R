@@ -1,10 +1,57 @@
-#' CreateCalibOptions both available for \emph{InputsModel} and \emph{GRwirmInputsModel} objects
+#' Creation of the CalibOptions object
 #'
-#' @param InputsModel object of class \emph{InputsModel} or \emph{GRwirmInputsModel}. See [CreateInputsModel] for details
-#' @param ... further arguments passed to or from other methods
+#' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
-#' @return Either a `CalibOptions` or a `GRiwrmCalibOptions` object
+#' @template param_x
+#' @param ... arguments passed to [airGR::CreateCalibOptions], see details
+#'
+#' @details See [airGR::CreateCalibOptions] documentation for a complete list of arguments.
+#'
+#' With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+#'
+#' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
+#' - a `CalibOptions` object (See [airGR::CreateCalibOptions])
+#' - a `GRiwrmCalibOptions` object which is a [list] of `CalibOptions` object with one item per modelled sub-catchment
+#'
+#' @rdname CreateCalibOptions
 #' @export
-CreateCalibOptions <- function(InputsModel, ...) {
-  UseMethod("CreateCalibOptions", InputsModel)
+CreateCalibOptions <- function(x, ...) {
+  UseMethod("CreateCalibOptions", x)
+}
+
+#' @rdname CreateCalibOptions
+#' @export
+CreateCalibOptions.InputsModel <- function(x,
+                                           ...) {
+  if (!exists("FUN_MOD") && !is.null(x$FUN_MOD)) {
+    airGR::CreateCalibOptions(
+      FUN_MOD = x$FUN_MOD,
+      IsSD = !is.null(x$Qupstream),
+      ...
+    )
+  } else {
+    airGR::CreateCalibOptions(
+      ...
+    )
+  }
+}
+
+#' @rdname CreateCalibOptions
+#' @export
+CreateCalibOptions.character <- function(x,
+                                           ...) {
+  airGR::CreateCalibOptions(
+    FUN_MOD = x,
+    ...
+  )
+}
+
+#' @rdname CreateCalibOptions
+#' @export
+CreateCalibOptions.function <- function(x,
+                                         ...) {
+  airGR::CreateCalibOptions(
+    FUN_MOD = x,
+    ...
+  )
 }

@@ -1,53 +1,51 @@
+# data set up
+e <- setupRunModel()
+# variables are copied from environment 'e' to the current environment
+# https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
+for(x in ls(e)) assign(x, get(x, e))
+
+context("RunModel.GRiwrmInputsModel")
+
+test_that("RunModel.GRiwrmInputsModel should return same result with separated warm-up", {
+  RO_WarmUp <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = IndPeriod_WarmUp
+  )
+  OM_WarmUp <- RunModel(
+    InputsModel,
+    RunOptions = RO_WarmUp,
+    Param = ParamMichel
+  )
+  RO_Run <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = IndPeriod_Run,
+    IniStates = lapply(OM_WarmUp, "[[", "StateEnd")
+  )
+  OM_Run <- RunModel(
+    InputsModel,
+    RunOptions = RO_Run,
+    Param = ParamMichel
+  )
+  lapply(griwrm$id, function(id) {
+    # The 2 exclamation marks are for seeing the id in the test result (See ?quasi_label)
+    expect_equal(OM_GriwrmInputs[[!!id]]$Qsim, OM_Run[[!!id]]$Qsim)
+  })
+})
+
 context("RunModel.Supervisor")
 
-# Load data
-data(Severn)
-
-# Network configuration
-nodes <- Severn$BasinsInfo[c(1,2,5), c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream # Conversion km -> m
-nodes$model <- NA
-nodes$model[1] <- "RunModel_GR4J"
-griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
-
-# InputsModel
-DatesR <- Severn$BasinsObs[[1]]$DatesR
-PrecipTot <- cbind(sapply(Severn$BasinsObs, function(x) {x$precipitation}))
-PotEvapTot <- cbind(sapply(Severn$BasinsObs, function(x) {x$peti}))
-Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-Qobs <- cbind(sapply(Severn$BasinsObs, function(x) {x$discharge_spec}))
-InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
-
-# RunOptions
-nTS <- 365
-IndPeriod_Run <- seq(
-  length(InputsModel[[1]]$DatesR) - nTS + 1,
-  length(InputsModel[[1]]$DatesR)
-)
-IndPeriod_WarmUp = seq(IndPeriod_Run[1]-366,IndPeriod_Run[1]-1)
-RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel,
-  IndPeriod_WarmUp = IndPeriod_WarmUp,
-  IndPeriod_Run = IndPeriod_Run
-)
-
-# RunModel.GRiwrmInputsModel
-Param <- list("54057" = c(0.727,  175.493,   -0.082,    0.029,    4.654))
-OM_GriwrmInputs <- RunModel(
-  InputsModel,
-  RunOptions = RunOptions,
-  Param = Param
-)
-
-test_that("RunModelSupervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
+test_that("RunModel.Supervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel)
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
-    Param = Param
+    Param = ParamMichel
   )
-  expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
+  lapply(griwrm$id, function(id) {
+    expect_equal(OM_Supervisor[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
+  })
 })
 
 # Add 2 nodes to the network
@@ -62,9 +60,11 @@ griwrm2 <- rbind(griwrm,
 # Add Qobs for the 2 new nodes and create InputsModel
 Qobs2 <- cbind(Qobs, matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2))
 colnames(Qobs2) <- c(colnames(Qobs2)[1:6], "R1", "R2")
-InputsModel <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
+InputsModel <- suppressWarnings(
+  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
+)
 
-test_that("RunModelSupervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
+test_that("RunModel.Supervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
   # Create Supervisor
   sv <- CreateSupervisor(InputsModel)
   # Function to withdraw half of the measured flow
@@ -79,12 +79,12 @@ test_that("RunModelSupervisor with two regulations that cancel each other out sh
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
-    Param = Param
+    Param = ParamMichel
   )
   expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
 })
 
-test_that("RunModelSupervisor with multi time steps controller, two regulations in 1 centralised controller that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
+test_that("RunModel.Supervisor with multi time steps controller, two regulations in 1 centralised controller that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel, TimeStep = 10L)
   fEverything <- function(y) {
     matrix(c(y[,1]/2, -y[,1]/2), ncol = 2)
@@ -93,7 +93,49 @@ test_that("RunModelSupervisor with multi time steps controller, two regulations 
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
-    Param = Param
+    Param = ParamMichel
   )
   expect_equal(OM_Supervisor[["54057"]]$Qsim, OM_GriwrmInputs[["54057"]]$Qsim)
+})
+
+test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
+  l <- setUpCemaNeigeData()
+  l$griwrm[l$griwrm$id == "Down", "model"] <- "RunModel_GR4J"
+  l$TempMean <- l$TempMean[,1:2]
+  l$ZInputs <- l$ZInputs[1:2]
+  l$TempMean <- l$TempMean[,1:2]
+  l$HypsoData <- l$HypsoData[,1:2]
+  InputsModels <- suppressWarnings(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData,
+      Qobs = l$Qobs
+    )
+  )
+  ## run period selection
+  Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1990-01-01"),
+                 which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1999-12-31"))
+  ## preparation of the RunOptions object
+  RunOptions <- suppressWarnings(CreateRunOptions(InputsModels,
+                                                  IndPeriod_Run = Ind_Run))
+  ids <- l$griwrm$id
+  names(ids) <- ids
+  Params <- lapply(ids, function(x) {
+    c(X1 = 408.774, X2 = 2.646, X3 = 131.264, X4 = 1.174,
+      CNX1 = 0.962, CNX2 = 2.249)
+  })
+  Params$Down <- c(1, Params$Down[1:4])
+  OutputsModel <- RunModel(
+    InputsModels,
+    RunOptions = RunOptions,
+    Param = Params
+  )
+  expect_named(OutputsModel, l$griwrm$id)
+  Qm3s <- attr(OutputsModel, "Qm3s")
+  expect_equal(Qm3s[,4], rowSums(Qm3s[,2:3]))
 })

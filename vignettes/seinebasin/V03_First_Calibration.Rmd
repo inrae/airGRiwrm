@@ -1,8 +1,8 @@
 ---
-title: "Seine_03: Calibration of a semi-distributive GR model network"
+title: "Seine_03: Calibration of a semi-distributed GR model network"
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Seine_03: Calibration of a semi-distributive GR model network}
+  %\VignetteIndexEntry{Seine_03: Calibration of a semi-distributed GR model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,48 +11,54 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+The aim of this vignette is to perform a first calibration of the semi-distributed hydrological model, using naturalised discharge.
+
 ## Loading libraries, network and time series data
 
 Run `vignette("01_First_network", package = "airGRiwrm")` and `vignette("02_First_run", package = "airGRiwrm")` before this one in order to create the Rdata files loaded below:
 
-```{r}
+```{r load}
 library(airGRiwrm)
 load("_cache/V01.RData")
 load("_cache/V02.RData")
+library(seinebasin)
+data(QNAT)
 ```
 
 ## InputsCrit object
 
-```{r}
+We need then to prepare the InputsCrit object that is necessary to define the calibration objective function. We chose here the KGE' criterion:
+
+```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
-  FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
+  FUN_CRIT = ErrorCrit_KGE2,
+  RunOptions = RunOptions,
+  Obs = Qnat[IndPeriod_Run,]
 )
 str(InputsCrit)
 ```
 
 ## GRiwrmCalibOptions object
 
-```{r}
+```{r CreateCalibOptions}
 CalibOptions <- CreateCalibOptions(InputsModel)
 str(CalibOptions)
 ```
 
 ## Calibration
 
-```{r}
+The optimisation (i.e. calibration) of parameters can now be performed:
+
+```{r Calibration}
 OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 ```
 
-```{r}
-save(OutputsCalib, file = "_cache/V03.RData")
-```
+## Run the GR4J model with parameters obtained fromt the Michel calibration
 
+Now that the model is calibrated, we can run it with the optimised parameter values:
 
-## Run model with Michel calibration
-
-```{r}
+```{r RunModel}
 ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
 
 OutputsModels <- RunModel(
@@ -62,16 +68,14 @@ OutputsModels <- RunModel(
 )
 ```
 
-## Save calibration data for next vignettes
-
-```{r}
-save(ParamMichel, file = "_cache/V03.RData")
-```
-
-
 ## Plot the result for each basin
 
-```{r, fig.height = 5, fig.width = 8}
-plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,])
+```{r plot, fig.height = 5, fig.width = 8}
+plot(OutputsModels, Qobs = Qnat[IndPeriod_Run,])
 ```
 
+## Save calibration data for next vignettes
+
+```{r save}
+save(ParamMichel, file = "_cache/V03.RData")
+```

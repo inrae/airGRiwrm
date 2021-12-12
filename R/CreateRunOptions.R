@@ -1,12 +1,52 @@
-#' Create \emph{RunOptions} object for **airGR** and **airGRiwrm**.
+#' Creation of the CalibOptions object
 #'
-#' See [airGR::CreateRunOptions] and [CreateRunOptions.GRiwrmInputsModel] for usage.
+#' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
-#' @param InputsModel object of class \emph{InputsModel} (see [airGR::CreateInputsModel]) or \emph{GRiwrmInputsModel} (See [CreateInputsModel.GRiwrm]).
-#' @param ... further arguments passed to or from other methods.
+#' @template param_x
+#' @param ... arguments passed to [airGR::CreateRunOptions], see details
 #'
-#' @return Object of \emph{RunOptions} class family
+#' @details See [airGR::CreateRunOptions] documentation for a complete list of arguments.
+#'
+#' If `InputsModel` argument is a \emph{GRiwrmInputsModel} object, `IniStates` must be a list of [numeric] object of class \emph{IniStates} with one item per modelled sub-catchment.
+#'
+#' With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+#'
+#' @return Depending on the class of `InputsModel` argument (respectively \emph{InputsModel} and \emph{GRiwrmInputsModel} object), the returned value is respectively:
+#' - a `RunOptions` object (See [airGR::CreateRunOptions])
+#' - a `GRiwrmRunOptions` object which is a [list] of `RunOptions` object with one item per modelled sub-catchment
+#'
+#' @rdname CreateRunOptions
 #' @export
-CreateRunOptions <- function(InputsModel, ...) {
-  UseMethod("CreateRunOptions", InputsModel)
+#' @inherit RunModel.GRiwrmInputsModel return examples
+CreateRunOptions <- function(x, ...) {
+  UseMethod("CreateRunOptions", x)
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.InputsModel <- function(x, ...) {
+  if (!exists("FUN_MOD") && !is.null(x$FUN_MOD)) {
+    airGR::CreateRunOptions(FUN_MOD = x$FUN_MOD,
+                            InputsModel = x,
+                            ...)
+  } else {
+    airGR::CreateRunOptions(InputsModel = x,
+                            ...)
+  }
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.character <- function(x, ...) {
+
+  airGR::CreateRunOptions(FUN_MOD = x,
+                          ...)
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.function <- function(x, ...) {
+
+  airGR::CreateRunOptions(FUN_MOD = x,
+                          ...)
 }

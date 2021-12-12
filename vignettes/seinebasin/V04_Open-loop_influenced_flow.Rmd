@@ -6,35 +6,32 @@ vignette: >
   %\VignetteIndexEntry{Seine_04: Running open-loop influenced flow semi-distributed model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: seinebasin.bib
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+library(DiagrammeR)
 ```
 
-```{r setup}
+```{r library}
 library(airGRiwrm)
-library(DiagrammeR)
 ```
 
 ## Integration of the reservoir connections into the model
 
-### Loading naturalised data
-
-```{r}
-load("_cache/V01b.RData")
-```
+The aim of this vignette is to add reservoir connections to the Seine River model previously set up. A complete description of the reservoir system of the Seine River can be found in @dehayEtudeImpactChangement2012
 
 ### Add connections to the reservoirs in the gauging station network
 
-Because of the **airGR** SD model structure, the topology of the network will differ between the physical one and the modelled one.
+Because of the **airGR** SD model structure, the topology of the network will differ between the physical one and the modelled one. In the following, we provide details for each of the 4 lakes, and then we present the complete SD network.
 
-For example, the physical topology of the Aube lake is represented below:
+First, the physical topology of the Aube lake is represented below:
 
-```{r echo = FALSE, fig.height = 3}
+```{r mmd_aube_true, echo = FALSE, fig.height = 3}
 
 mmd <- function(x, ...) {
   # For avoiding crash of R CMD build in console mode
@@ -55,9 +52,9 @@ style AUBE fill:#ccf
 ", width = "100%")
 ```
 
-In the SD model, we do not model intermediate flows as well as the reservoir in the catchment. As a result, an equivalent topology compatible with **airGR** will be the one below:
+In the SD model, we do not simulate intermediate flows as well as the reservoir in the catchment. As a result, an equivalent topology compatible with **airGR** will be the one below:
 
-```{r echo = FALSE}
+```{r mmd_aube_model, echo = FALSE}
 mmd("
 graph LR
 TRANN_01 -->|68km| ARCIS_24
@@ -68,11 +65,11 @@ style AUBE_R3 fill:#fcc
 ", width = "100%")
 ```
 
-`AUBE_P2` will propagate negative flow to downstream (reservoir inflows) while `AUBE_R3` will propagate positive flow to downstream (reservoir releases).
+`AUBE_P2` will propagate negative flows downstream (reservoir inflows) while `AUBE_R3` will propagate positive flows downstream (reservoir releases).
 
-Configuration on lake Seine is similar:
+The configuration on the lake Seine is similar:
 
-```{r echo = FALSE, fig.height = 3}
+```{r mmd_seine_true, echo = FALSE, fig.height = 3}
 mmd("
 graph LR
   BAR-S_06 -->|6km| SEINE_P7
@@ -86,9 +83,9 @@ graph LR
 ", width = "100%")
 ```
 
-which can be translate as:
+which can be translated as:
 
-```{r echo = FALSE}
+```{r mmd_seine_model, echo = FALSE}
 mmd("
 graph LR
   BAR-S_06 -->|79.7km| MERY-_22
@@ -99,9 +96,9 @@ graph LR
 ", width = "100%")
 ```
 
-Pannecière is an inline reservoir:
+The Pannecière lake is an inline reservoir:
 
-```{r echo = FALSE, fig.height = 2}
+```{r mmd_pannec_true, echo = FALSE, fig.height = 2}
 mmd("
 graph LR
 P(PANNECIERE)
@@ -113,7 +110,7 @@ style P fill:#ccf
 
 It can be modelled as:
 
-```{r echo = FALSE}
+```{r mmd_pannec_model, echo = FALSE}
 mmd("
 graph LR
 CHAUM_07 --> |153km| GURGY_02
@@ -124,11 +121,11 @@ style PANNEC_R fill:#fcc
 ", width = "100%")
 ```
 
-With $Q_{PANNEC\_P} = - Q_{CHAUM\_07}$ as all the upstream flow fills the reservoir.
+With $Q_{PANNEC\_P} = - Q_{CHAUM\_07}$ as all the upstream flows fill the reservoir.
 
-Marne lake can be mapped as:
+The Marne lake can be mapped as:
 
-```{r echo = FALSE}
+```{r mmd_marne_true, echo = FALSE}
 mmd("
 graph LR
 LOUVE_19 -->|0.5km| MARNE_P28
@@ -145,9 +142,10 @@ style MARNE_R25 fill:#fcc
 style M fill:#ccf
 ", width = "100%")
 ```
-And can be modeled as:
 
-```{r echo = FALSE}
+And can be modelled as:
+
+```{r mmd_marne_model, echo = FALSE}
 mmd("
 graph LR
 MARNE_P23 -->|3km| STDIZ_04
@@ -163,7 +161,7 @@ style MARNE_R25 fill:#fcc
 
 Hence the topological connection to the reservoirs is described in the model as below:
 
-```{r}
+```{r reservoir_connections}
 reservoir_connections <- read.table(
   file = system.file("seine_data", "network_reservoir_connections.txt", package = "seinebasin"),
   sep = ";", header = TRUE
@@ -173,12 +171,13 @@ reservoir_connections
 
 Reservoir connections are added to the GRiwrm object:
 
-```{r}
+```{r griwrm2}
 reservoir_connections$length <- reservoir_connections$length / 1000
 reservoir_connections$model <- NA
 reservoir_connections$area <- NA
+load("_cache/V01.RData")
 griwrm2 <- rbind(griwrm, reservoir_connections[, names(griwrm)])
-DiagramGRiwrm(griwrm2)
+plot(griwrm2)
 ```
 
 
@@ -186,68 +185,48 @@ DiagramGRiwrm(griwrm2)
 
 Description of the files, the columns and the type of connection (inlet / outlet) are defined in the list below:
 
-```{r}
-
+```{r lCfgReservoirs}
 lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "seinebasin"))
 str(lCfgReservoirs)
 ```
 
 Then, we load observation data for each reservoir and each connection:
 
-```{r}
-
-for(reservoir_id in names(lCfgReservoirs)) {
-  df <- read.table(
-    file = file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/Reservoir_current_rules",
-      paste0(lCfgReservoirs[[reservoir_id]]$file, "&dl=1")
-    ),
-    sep = "\t", header = TRUE, fill = TRUE
-  )
-  df$DatesR <- as.POSIXct(df$Date, format = "%d/%m/%Y")
-  Qreservoir <- merge(data.frame(DatesR = DatesR), df, by = "DatesR", all.x = TRUE)
-  for(connect in names(lCfgReservoirs[[reservoir_id]]$connections)) {
-    message("Processing ", connect)
-    # Replace data gap by zeros (should be interpolated ?)
-    Qreservoir[is.na(Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]),lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col] <- 0
-    if(lCfgReservoirs[[reservoir_id]]$connections[[connect]]$type == "in") {
-      # Reservoir inlet flow is a withdrawal for the catchment: this is a negative flow to route
-      Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col] <- -Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col]
-    }
-    Qobs <- cbind(
-      Qobs,
-      Qreservoir[,lCfgReservoirs[[reservoir_id]]$connections[[connect]]$col] * 86400
-    )
-    names(Qobs)[ncol(Qobs)] <- connect
-  }
-}
+```{r seinebasin}
+library(seinebasin)
+data(QNAT)
+data(Qreservoirs)
 ```
 
-## How to handle online reservoir? The Pannecière lake case.
+## How to handle an inline reservoir? The Pannecière lake case.
 
 There are two possibilities:
 
 - truncate the system and only simulate the release of the reservoir if we only care about downstream flows
 - add a fictive inlet to the reservoir that will store all upstream discharge into the reservoir
 
-If we know in advance the flow released by the reservoir, upstream flow informations is not usefull for the simulation. But reservoir management simulation would need upstream flow informations for simulating the reservoir state during simulation. The second alternative will be useful for the next phases.
+If we know in advance the flows released by the reservoir, upstream flow informations is not useful for the simulation. However, reservoir management simulation would require upstream flow informations for simulating the reservoir state during simulation. The second alternative will therefore be useful for the next phases.
 
-```{r}
-Qobs$PANNEC_P <- -Qobs$CHAUM_07 * griwrm2$area[griwrm2$id == "CHAUM_07"] * 1e3
+```{r Qnat}
+Qreservoirs <- cbind(
+  Qreservoirs,
+  -Qnat[, "CHAUM_07"] * griwrm2$area[griwrm2$id == "CHAUM_07"] * 1e3
+)
+colnames(Qreservoirs)[ncol(Qreservoirs)] <- "PANNEC_P"
 ```
 
 
 ## Create the InputsModel object
 
-```{r}
-InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs)
+```{r CreateInputsModel}
+InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
 ```
 
 ## Run simulation with naturalised flow parameters
 
 ### Load calibration parameters
 
-```{r}
+```{r load}
 # Load RunOptions
 load("_cache/V02.RData")
 # Load calibrated parameters with Michel's method
@@ -257,16 +236,22 @@ load("_cache/V03.RData")
 
 ### How to handle former upstream sub-basins with upstream flows ?
 
-A lag parameter is now mandatory for these sub-basins. As no calibration is possible at that stage an arbitrary one will be used.
+A lag parameter is now mandatory for these sub-basins. As no calibration is possible at that stage an arbitrary one will be used (1 m/s).
 
-```{r}
+```{r ParamMichel}
 ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
 ```
 
 
 ### Run simulation
 
-```{r}
+We can now run the model, using the parameters previously obtained:
+
+```{r RunModel}
+RunOptions <- CreateRunOptions(
+  InputsModel2,
+  IndPeriod_Run = IndPeriod_Run
+)
 OutputsModels2 <- RunModel(
   InputsModel2,
   RunOptions = RunOptions,
@@ -276,57 +261,33 @@ OutputsModels2 <- RunModel(
 
 ## Compare modelled flows with observed flows
 
-### Load observed flow
+### Load observed flows
 
-```{r, warning=FALSE, message=FALSE}
-
-Qobs2 <- NULL
-
-# Files of observed flows doesn't exist for some basins
-NatIds <- c("CHAUM_07", "MONTE_15", "NOGEN_13", "STGER_09", "TRANN_01")
-
-ids <- griwrm$id[!griwrm$id %in% NatIds]
-
-for(id in ids) {
-  url <-
-    file.path(
-      "https://stratus.irstea.fr/d/0b18e688851a45478f7a/files/?p=/climaware_hydro/Q_OBS_NAT",
-      paste0(id, "_BV.txt&dl=1")
-    )
-  ts <- read.table(file = url,
-                   sep = ";", skip = 24, header = TRUE)
-  # Date conversion to POSIX
-  ts$Date <- as.POSIXct(as.character(ts$Date), format = "%Y%m%d")
-    # Convert Qobs from l/s to mm/time step
-  ts$Q <- ts$Q * 86.4 / griwrm$area[griwrm$id == id] / 1000
-  # Setting data gaps to NA
-  ts$Q[ts$Q <= 0] <- NA
-  # Column is merged into Qobs dataframe
-  Qobs2 <- MergeTS(Qobs2, id, ts[,c("Date", "Q")])
-}
+```{r QOBS, warning=FALSE, message=FALSE}
+data(QOBS)
 ```
 
-## Save data for next vignettes
-```{r}
+### Comparison with simulated flows
+
+We can compare these simulated flows with influenced discharge measurements:
+
+```{r plot, fig.height = 5, fig.width = 8}
 ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
   items <- names(OutputsModels)
-  OutputsModelsOut <- sapply(items, function(x) {OutputsModels[[x]] <- OutputsModels[[x]][IndPeriod]})
+  OutputsModelsOut <- sapply(items, function(x) {
+    OutputsModels[[x]] <- OutputsModels[[x]][IndPeriod]
+  })
   OutputsModelsOut$StateEnd <- OutputsModels$StateEnd
   class(OutputsModelsOut) <- class(OutputsModels)
   return(OutputsModelsOut)
 }
 
-QobsReservoirs <- Qobs[DatesR < "2008-08-01", reservoir_connections$id]
-save(QobsReservoirs, Qobs2, griwrm2, ReduceOutputsModel, file = "_cache/V04.RData")
-```
-
-### Comparison with simulated flows
-
-```{r, fig.height = 5, fig.width = 8}
+IndPeriod <- RunOptions[[1]]$IndPeriod_Run
+IndPeriod <- IndPeriod[IndPeriod <= nrow(Qobs)]
 htmltools::tagList(lapply(
-  ids,
+  colnames(Qobs),
   function(x) {
-    Q2 <- Qobs2[RunOptions[[1]]$IndPeriod_Run,x]
+    Q2 <- Qobs[IndPeriod, x]
     IndPeriod_Obs <- which(!is.na(Q2))
     OutputsModels <- ReduceOutputsModel(OutputsModels2[[x]], IndPeriod_Obs)
     plot(OutputsModels, Qobs = Q2[IndPeriod_Obs], main = x, which = c("Regime"))
@@ -334,5 +295,11 @@ htmltools::tagList(lapply(
 ))
 ```
 
+## Save data for next vignettes
+
+```{r save}
+save(griwrm2, ReduceOutputsModel, file = "_cache/V04.RData")
+```
 
 
+# References

@@ -1,0 +1,66 @@
+#' Prepare useful variables for GRiwrm tests
+#'
+#' @return [environment] with the variables (See examples section)
+#' @noRd
+#'
+#' @examples
+#' # data set up
+#' e <- setupRunModel()
+# variables are copied from environment 'e' to the current environment
+# https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
+#' for(x in ls(e)) assign(x, get(x, e))
+#'
+setupRunModel <- function() {
+  data(Severn)
+
+  # Format observation
+  BasinsObs <- Severn$BasinsObs
+  DatesR <- BasinsObs[[1]]$DatesR
+  PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+  PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+  Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+
+  # Set network
+  nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+  nodes$distance_downstream <- nodes$distance_downstream
+  nodes$model <- "RunModel_GR4J"
+  griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+
+  # Convert meteo data to SD (remove upstream areas)
+  Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+  PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+
+  # Calibration parameters
+  ParamMichel <- list(
+    `54057` = c(0.779999999999999, 57.9743110789593, -1.23788116619639, 0.960789439152323, 2.47147147147147),
+    `54032` = c(1.37562057772709, 1151.73462496385, -0.379248293750608, 6.2243898378232, 8.23716221550954),
+    `54001` = c(1.03, 24.7790862245877, -1.90430150145153, 21.7584023961971, 1.37837837837838),
+    `54095` = c(256.844150254651, 0.0650458497009288, 57.523675209819, 2.71809513102128),
+    `54002` = c(419.437754485522, 0.12473266292168, 13.0379482833606, 2.12230907892238),
+    `54029` = c(219.203385553954, 0.389211590110934, 48.4242150713452, 2.00300300300301)
+  )
+
+  # set up inputs
+  InputsModel <- suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs))
+
+  # RunOptions
+  nTS <- 365
+  IndPeriod_Run <- seq(
+    length(InputsModel[[1]]$DatesR) - nTS + 1,
+    length(InputsModel[[1]]$DatesR)
+  )
+  IndPeriod_WarmUp = seq(IndPeriod_Run[1]-365,IndPeriod_Run[1]-1)
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run
+  )
+
+  # RunModel.GRiwrmInputsModel
+  OM_GriwrmInputs <- RunModel(
+    InputsModel,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  )
+  return(environment())
+}

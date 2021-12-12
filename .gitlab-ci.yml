@@ -1,5 +1,6 @@
 stages:
     - checks
+    - website
 
 default:
   tags: [docker]
@@ -24,7 +25,6 @@ before_script:
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
   - R -e 'install.packages("rcmdcheck")'
   - R -e 'devtools::install_deps(dep = T)'
-  - R -e 'install.packages("airGR")'
 
 .check:
   stage: checks
@@ -41,3 +41,17 @@ check_as_cran:
   variables:
     NOT_CRAN: "false"
   extends: .check
+
+website:
+  stage: website
+  only:
+    refs:
+      - master
+      - dev
+      - tags
+  script:
+    - R -e 'install.packages("pkgdown")'
+    - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
+    - R -e 'pkgdown::build_site()'
+    - sudo apt-get update && sudo apt-get install -y sshpass rsync
+    - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/home/${OVH_LOGIN}/airgriwrm/

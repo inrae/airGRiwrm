@@ -8,66 +8,74 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+```{r library}
 library(airGRiwrm)
 ```
 
-This vignette proposes an example of calibration of influenced flow with the Marne reservoir. It will used influenced observation flows directly measured at gauging stations and flows recorded at reservoir inlets and outlet.
+This vignette aims at showing an example of calibrating the SD model on influenced flows while injecting observed uptakes and releases of the lakes.
+It will use influenced observation flows directly measured at gauging stations and flows recorded at reservoir inlets and outlets.
 
 ## Set the data
 
-Loading naturalised data and influenced flow configuration:
+Loading naturalised data and influenced flows configuration:
 
-```{r}
-load("_cache/V01b.RData")
+```{r load}
 load("_cache/V04.RData")
 ```
 
-Remove extra items from global configuration
+We remove extra items from a complete configuration to keep only the Marne system:
 
-```{r}
+```{r griwrm3}
 selectedNodes <- c("MARNE_P23", "STDIZ_04", "LOUVE_19", "VITRY_25", "MARNE_P28", "MARNE_R25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm3 <- griwrm2[griwrm2$id %in% selectedNodes,]
 griwrm3[griwrm3$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
-DiagramGRiwrm(griwrm3)
+plot(griwrm3)
 ```
 
-Generate `GRiwrmInputsModel` object
+We can now generate the new `GRiwrmInputsModel` object:
 
-```{r}
-Qobs3 <- cbind(Qobs2, QobsReservoirs)
-iEnd <-which(DatesR == as.POSIXct("2008-07-31"))
-InputsModel3 <- CreateInputsModel(griwrm3, DatesR[1:iEnd], Precip[1:iEnd,], PotEvap[1:iEnd,], Qobs3)
+```{r CreateInputsModel}
+library(seinebasin)
+data(QOBS)
+iEnd <- which(DatesR == as.POSIXct("2008-07-31", tz = "UTC"))
+
+data(Qreservoirs)
+QresMarne <- Qreservoirs[1:iEnd, grep("MARNE", colnames(Qreservoirs))]
+id_GR_nodes <- griwrm3$id[!is.na(griwrm3$model)]
+InputsModel3 <- CreateInputsModel(griwrm3,
+                                  DatesR[1:iEnd],
+                                  Precip[1:iEnd, id_GR_nodes],
+                                  PotEvap[1:iEnd, id_GR_nodes],
+                                  QresMarne)
 ```
 
 ## GriwmRunOptions object
 
+We first define the run period:
 
-```{r}
-IndPeriod_Run <- seq(
-  which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+```{r IndPeriod_Run}
+IndPeriod_Run <- seq.int(
+  which(DatesR == (DatesR[1] + 365 * 24 * 60 * 60)), # Set aside warm-up period
   iEnd # Until the end of the time series
 )
 ```
 
-The warmup period could also be defined as is:
+We define the (optional but recommended) warmup period as a one-year period before the run period:
 
-```{r}
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+```{r IndPeriod_WarmUp}
+IndPeriod_WarmUp <- seq.int(1, IndPeriod_Run[1] - 1)
 ```
 
-
-
-```{r}
+```{r CreateRunOptions}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel3,
+  InputsModel3,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )
@@ -75,30 +83,36 @@ RunOptions <- CreateRunOptions(
 
 ## InputsCrit object
 
-```{r}
+We define the objective function for the calibration:
+
+```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel3,
-  FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qobs3[IndPeriod_Run,]
+  FUN_CRIT = ErrorCrit_KGE2,
+  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
 )
 ```
 
 ## GRiwrmCalibOptions object
 
-```{r}
+```{r CreateCalibOptions}
 CalibOptions <- CreateCalibOptions(InputsModel3)
 str(CalibOptions)
 ```
 
 ## Calibration
 
-```{r warning = FALSE}
+The optimisation (i.e. calibration) of parameters can now be performed:
+
+```{r Calibration, warning = FALSE}
 OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 ```
 
 ## Run model with Michel calibration
 
-```{r}
+Now that the model is calibrated, we can run it with the optimised parameter values:
+
+```{r RunModel}
 Param5 <- sapply(griwrm3$id, function(x) {OutputsCalib[[x]]$Param})
 
 OutputsModels3 <- RunModel(
@@ -110,22 +124,24 @@ OutputsModels3 <- RunModel(
 
 ### Comparison with simulated flows
 
-```{r, fig.height = 5, fig.width = 8}
+We can compare these simulated flows with influenced discharge measurements:
+
+```{r plot, fig.height = 5, fig.width = 8}
 htmltools::tagList(lapply(
   griwrm3$id[!is.na(griwrm3$model)],
   function(x) {
-    Q3 <- Qobs3[RunOptions[[1]]$IndPeriod_Run,x]
+    Q3 <- Qobs[RunOptions[[1]]$IndPeriod_Run, x]
     iQ3 <- which(!is.na(Q3))
-    IndPeriod_Obs <- iQ3[1]:tail(iQ3,1)
+    IndPeriod_Obs <- iQ3[1]:tail(iQ3, 1)
     OutputsModels <- ReduceOutputsModel(OutputsModels3[[x]], IndPeriod_Obs)
-    plot(OutputsModels, Qobs = Q3[IndPeriod_Obs] , main = x)
+    plot(OutputsModels, Qobs = Q3[IndPeriod_Obs], main = x)
   }
 ))
 ```
 
 # Save data for following vignettes
 
-```{r}
+```{r save}
 save(Param5, file = "_cache/V05.RData")
 ```
 

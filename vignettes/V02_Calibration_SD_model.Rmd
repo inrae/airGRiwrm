@@ -1,8 +1,8 @@
 ---
-title: "Severn02: Calibration of a GR4J semi-distributive model network"
+title: "Severn_02: Calibration of a GR4J semi-distributed model network"
 author: "David Dorchies"
 vignette: >
-  %\VignetteIndexEntry{Severn02: Calibration of a GR4J semi-distributive model network}
+  %\VignetteIndexEntry{Severn_02: Calibration of a GR4J semi-distributed model network}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-**airGRiwrm** automates the execution of **airGR** semi-distributive models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
+**airGRiwrm** automates the execution of **airGR** semi-distributed models. The steps for running or calibrating the model are the same as the ones of 'airGR'.
 
 ## Load library
 
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(airGRiwrm)
 ```
 
-## Preparation of functions inputs
+## Preparation of function inputs
 
 To run a model, as for **airGR**, the functions of the  **airGRiwrm** package (e.g. the models, calibration and criteria calculation functions) require data and options with specific formats.
 
@@ -32,14 +32,14 @@ To facilitate the use of the package, there are several functions dedicated to t
 
 ### GRiwrmInputsModel object
 
-The production method of the `GRiwrmInputsModel` object is detailed in the vignette "V01_Structure_SD_model" of the package. The following code chunk resumes all the steps of this vignette:
+The method used for producing the `GRiwrmInputsModel` object is detailed in the vignette "V01_Structure_SD_model" of the package. The following code chunk resumes all the steps of this vignette:
 
 ```{r}
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$distance_downstream <- nodes$distance_downstream
 nodes$model <- "RunModel_GR4J"
-griwrm <- GRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
@@ -47,11 +47,11 @@ PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 str(InputsModel)
 ```
 
-## GriwmRunOptions object
+## GRiwrmRunOptions object
 
 The `CreateRunOptions()` function allows to prepare the options required for the `RunModel()` function.
 
@@ -60,26 +60,21 @@ The user must at least define the following arguments:
 * `InputsModel`: the associated input data
 * `IndPeriod_Run`: the period on which the model is run
 
-Here below, we start the period to run one year after the beginning of the time series.
+Below, we define a one-year warm up period and we start the run period just after the warmup period.
 
 ```{r}
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
 )
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
 
-So the warmup period could be defined as:
-
-```{r}
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
-```
-
-Parameters of `CreateRunOptions` for **airGRiwrm** are the same as the function in **airGR** and are copied for each node running a rainfall-runoff model.
+Arguments of the `CreateRunOptions` function for **airGRiwrm** are the same as for the function in **airGR** and are copied for each node running a rainfall-runoff model.
 
 ```{r}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel,
+  InputsModel,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )
@@ -87,18 +82,32 @@ RunOptions <- CreateRunOptions(
 
 ## GRiwrmInputsCrit object
 
-The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion. It takes the following arguments:
+The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion.
+We use composed criterion with a parameter regularisation based on @delavenneRegularizationApproachImprove2019.
+
+It needs the following arguments:
 
 * `InputsModel`: the inputs of the `GRiwrm` network previously prepared by the `CreateInputsModel()` function
 * `FUN_CRIT`: the name of the error criterion function (see the available functions description in the **airGR** package)
 * `RunOptions`: the options of the `GRiwrm` network previously prepared by the `CreateRunOptions()` function
-* `Qobs`: the observed variable time serie (e.g. the discharge expressed in *mm/time step*)
+* `Qobs`: the observed variable time series (e.g. the discharge expressed in *mm/time step*)
+* `AprioriIds`: the list of the sub-catchments IDs where to apply a parameter regularisation based on the parameters of an upstream sub-catchment (e.g. here below the parameters of the sub-catchment "54057" is regulated by the parameters of the sub-catchment "54032")
+* `transfo`: a transformation function applied on the flow before calculation of the criterion (square-root transformation is recommended for the De Lavenne regularisation)
+* `k`: coefficient used for the weighted average between the performance criterion and the gap between the optimised parameter set and an a priori parameter set (a value equal to 0.15 is recommended for the De Lavenne regularisation)
 
 ```{r InputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
-  FUN_CRIT = airGR::ErrorCrit_KGE2,
-  RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
+  FUN_CRIT = ErrorCrit_KGE2,
+  RunOptions = RunOptions,
+  Obs = Qobs[IndPeriod_Run, ],
+  AprioriIds = c(
+      "54057" = "54032",
+      "54032" = "54001",
+      "54001" = "54095"
+  ),
+  transfo = "sqrt",
+  k = 0.15
 )
 str(InputsCrit)
 ```
@@ -123,10 +132,10 @@ The **airGR** calibration process is applied on each node of the `GRiwrm` networ
 ```{r Calibration}
 OutputsCalib <- suppressWarnings(
   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions))
-ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
+ParamMichel <- sapply(OutputsCalib, "[[", "ParamFinalR")
 ```
 
-## Run model with Michel calibration
+## Run the model with the optimised model parameters
 
 ```{r RunModel}
 OutputsModels <- RunModel(
@@ -136,18 +145,13 @@ OutputsModels <- RunModel(
 )
 ```
 
-## Plot the result for each basin
+## Plot the results for each basin
 
 ```{r, fig.height = 5, fig.width = 8}
-htmltools::tagList(lapply(
-  names(OutputsModels),
-  function(x) {
-    plot(OutputsModels[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
-  }
-))
+plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,])
 ```
 
-The resulting flow of each node in m3/s is directly available and can be plotted with these commands:
+The resulting flows of each node in m<sup>3</sup>/s are directly available and can be plotted with these commands:
 
 ```{r}
 Qm3s <- attr(OutputsModels, "Qm3s")

@@ -5,73 +5,79 @@ vignette: >
   %\VignetteIndexEntry{Seine_06: Simulate naturalized flows with a model network calibrated with influenced flows}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: seinebasin.bib
 ---
 
-```{r, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
 ```
 
-```{r setup}
+```{r library}
 library(airGRiwrm)
 library(seinebasin)
 ```
 
+This vignette aims at showing an example of flow naturalisation by modelling [@terrierStreamflowNaturalizationMethods2020].
+
+By using the model calibrated with influenced flows on the Marne River, it is now possible to model naturalised flows by dropping the connections to the Marne reservoir from the model. Please note that this is not the only way to remove the influence of reservoirs.
 
 ## Set the data
 
-Loading naturalised data and influenced flow calibration:
+We first load the naturalised data and influenced flow calibrated parameters (for GR4J, see `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")`):
 
-```{r}
+```{r load}
 # Input data for the model
-load("_cache/V01b.RData")
+load("_cache/V01.RData")
 # Calibration in influenced flows
 load("_cache/V05.RData")
 ```
 
-Remove lag parameter in `StDIZ_04` station because there is no longer upstream node on it.
+We must remove the lag parameter in the `STDIZ_04` station because there is no longer upstream node on it since we remove the only upstream element for this station, a reservoir uptake:
 
-```{r}
+```{r Param}
 Param6 <- Param5
 Param6$STDIZ_04 <- Param6$STDIZ_04[-1]
 ```
 
+We remove extra items from a complete configuration to keep only the Marne system:
 
-Remove extra items from global configuration
-
-```{r}
+```{r griwrm4}
 selectedNodes <- c("STDIZ_04", "LOUVE_19", "VITRY_25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm4 <- griwrm[griwrm$id %in% selectedNodes,]
 griwrm4[griwrm4$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
-DiagramGRiwrm(griwrm4)
+plot(griwrm4)
 ```
 
-Generate `GRiwrmInputsModel` object
+We can now generate the new `GRiwrmInputsModel` object:
 
-```{r}
-InputsModel4 <- CreateInputsModel(griwrm4, DatesR, Precip, PotEvap, Qobs)
+```{r CreateInputsModel}
+data(QNAT)
+InputsModel4 <- CreateInputsModel(griwrm4,
+                                  DatesR,
+                                  Precip[, selectedNodes],
+                                  PotEvap[, selectedNodes])
 ```
 
 ## GriwmRunOptions object
 
+We first define the run period:
 
-```{r}
+```{r IndPeriod_Run}
 IndPeriod_Run <- seq(366, length(DatesR)) # Until the end of the time series
 ```
 
-The warmup period could also be defined as is:
+We define the (optional but recommended) warmup period as a one-year period before the run period:
 
-```{r}
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+```{r IndPeriod_WarmUp}
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
 
-
-
-```{r}
+```{r CreateRunOptions}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel4,
+  InputsModel4,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )
@@ -79,7 +85,9 @@ RunOptions <- CreateRunOptions(
 
 ## Run model with Michel calibration
 
-```{r}
+We keep the optimised parameter values obtained in `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")` and run the model:
+
+```{r RunModel}
 OutputsModels4 <- RunModel(
   InputsModel4,
   RunOptions = RunOptions,
@@ -89,11 +97,10 @@ OutputsModels4 <- RunModel(
 
 ## Compare simulated naturalised flow with the ones given by EPTB SGL
 
-```{r, fig.height = 5, fig.width = 8}
-htmltools::tagList(lapply(
-  names(OutputsModels4),
-  function(x) {
-    plot(OutputsModels4[[x]], Qobs = Qobs[IndPeriod_Run,x] , main = x)
-  }
-))
+We can finally compare the simulated naturalised flow with the ones given by @hydratecActualisationBaseDonnees2011a:
+
+```{r plot, fig.height = 5, fig.width = 8}
+plot(OutputsModels4, Qobs = Qnat[IndPeriod_Run,])
 ```
+
+# References
