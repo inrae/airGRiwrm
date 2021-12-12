@@ -6,7 +6,17 @@
 #' @param ... further arguments passed to or from other methods.
 #'
 #' @return InputsModel or GRiwrmInputsObject object
+#' @rdname CreateInputsModel
+#' @import airGR
 #' @export
 CreateInputsModel <- function(x, ...) {
   UseMethod("CreateInputsModel", x)
+}
+
+#' @rdname CreateInputsModel
+#' @export
+CreateInputsModel.default <- function(x,
+                                      ...) {
+
+  airGR::CreateInputsModel(FUN_MOD = x, ...)
 }

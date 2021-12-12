@@ -75,7 +75,7 @@ IndPeriod_WarmUp <- seq.int(1, IndPeriod_Run[1] - 1)
 
 ```{r CreateRunOptions}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel3,
+  InputsModel3,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )
@@ -88,7 +88,7 @@ We define the objective function for the calibration:
 ```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel3,
-  FUN_CRIT = airGR::ErrorCrit_KGE2,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,]
 )
 ```

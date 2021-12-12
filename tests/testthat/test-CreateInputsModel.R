@@ -1,4 +1,23 @@
-context("CreateInputsModel")
+test_that("airGR::CreateInputsModel should work", {
+  ## loading catchment data
+  data(L0123001)
+
+  ## preparation of InputsModel object
+  InputsModel <- airGR::CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
+                                   Precip = BasinObs$P, PotEvap = BasinObs$E)
+
+  expect_equal(CreateInputsModel(RunModel_GR4J,
+                                 DatesR = BasinObs$DatesR,
+                                 Precip = BasinObs$P,
+                                 PotEvap = BasinObs$E),
+               InputsModel)
+  expect_equal(CreateInputsModel("RunModel_GR4J",
+                                 DatesR = BasinObs$DatesR,
+                                 Precip = BasinObs$P,
+                                 PotEvap = BasinObs$E),
+               InputsModel)
+})
+
 
 l <- setUpCemaNeigeData()
 

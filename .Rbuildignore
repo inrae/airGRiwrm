@@ -11,3 +11,4 @@
 ^pkgdown
 ^docs
 ^vignettes/seinebasin$
+^man-roxygen$

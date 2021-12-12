@@ -2,9 +2,12 @@
 % Please edit documentation in R/CreateInputsModel.R
 \name{CreateInputsModel}
 \alias{CreateInputsModel}
+\alias{CreateInputsModel.default}
 \title{Generic function for creating \code{InputsModel} object for either \strong{airGR} or \strong{airGRiwrm}}
 \usage{
 CreateInputsModel(x, ...)
+
+\method{CreateInputsModel}{default}(x, ...)
 }
 \arguments{
 \item{x}{First parameter determining which InputsModel object is created}

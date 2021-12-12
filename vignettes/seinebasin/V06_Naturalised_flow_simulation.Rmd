@@ -77,7 +77,7 @@ IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 
 ```{r CreateRunOptions}
 RunOptions <- CreateRunOptions(
-  InputsModel = InputsModel4,
+  InputsModel4,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
   IndPeriod_Run = IndPeriod_Run
 )

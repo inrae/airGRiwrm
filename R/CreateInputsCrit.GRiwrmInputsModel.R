@@ -1,7 +1,8 @@
 #' @rdname CreateInputsCrit
+#' @import airGR
 #' @export
 CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
-                                               FUN_CRIT = airGR::ErrorCrit_NSE,
+                                               FUN_CRIT = ErrorCrit_NSE,
                                                RunOptions,
                                                Obs,
                                                AprioriIds = NULL,

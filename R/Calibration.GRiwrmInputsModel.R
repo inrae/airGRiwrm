@@ -78,6 +78,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 #' @param InputsCrit \[InputsCritLavenneFunction\] object internally created by [CreateInputsCrit.GRiwrmInputsModel]
 #'
 #' @return \[InputsCrit\] object with De Lavenne regularisation
+#' @import airGR
 #' @noRd
 #'
 getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {

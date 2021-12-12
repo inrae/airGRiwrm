@@ -8,15 +8,36 @@
 #' @return [[list] of class \emph{GRiwrmOutputsModel}] list of \emph{OutputsModel} objects (See \[airGR::RunModel]) for each node of the semi-distributed model
 #' @export
 #' @examples
-#' #################################################################
-#' # Run the `airGRRunModel_Lag` example in the GRiwrm fashion way #
-#' #################################################################
+#' ###################################################################
+#' # Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
+#' # Simulation of a reservoir with a purpose of low-flow mitigation #
+#' ###################################################################
 #'
-#' # Run the airGR RunModel_Lag example for harvesting necessary data
-#' library(airGR)
-#' example(RunModel_Lag)
-#' # detach the package because otherwise airGR overwrites the airGRiwrm functions
-#' detach("package:airGR")
+#' ## ---- preparation of the InputsModel object
+#'
+#' ## loading package and catchment data
+#' library(airGRiwrm)
+#' data(L0123001)
+#'
+#' ## ---- specifications of the reservoir
+#'
+#' ## the reservoir withdraws 1 m3/s when it's possible considering the flow observed in the basin
+#' Qupstream <- matrix(-sapply(BasinObs$Qls / 1000 - 1, function(x) {
+#'   min(1, max(0, x, na.rm = TRUE))
+#' }), ncol = 1)
+#'
+#' ## except between July and September when the reservoir releases 3 m3/s for low-flow mitigation
+#' month <- as.numeric(format(BasinObs$DatesR, "%m"))
+#' Qupstream[month >= 7 & month <= 9] <- 3
+#' Qupstream <- Qupstream * 86400 ## Conversion in m3/day
+#'
+#' ## the reservoir is not an upstream subcachment: its areas is NA
+#' BasinAreas <- c(NA, BasinInfo$BasinArea)
+#'
+#' ## delay time between the reservoir and the catchment outlet is 2 days and the distance is 150 km
+#' LengthHydro <- 150
+#' ## with a delay of 2 days for 150 km, the flow velocity is 75 km per day
+#' Velocity <- (LengthHydro * 1e3 / 2) / (24 * 60 * 60) ## Conversion km/day -> m/s
 #'
 #' # This example is a network of 2 nodes which can be describe like this:
 #' db <- data.frame(id = c("Reservoir", "GaugingDown"),
@@ -37,12 +58,9 @@
 #' PotEvap <- matrix(BasinObs$E, ncol = 1)
 #' colnames(PotEvap) <- "GaugingDown"
 #'
-#' # Observed flows are integrated now because we mix:
-#' #  - flows that are directly injected in the model
-#' #  - flows that could be used for the calibration of the hydrological models
-#' Qobs = matrix(c(Qupstream, BasinObs$Qmm), ncol = 2)
-#' colnames(Qobs) <- griwrm$id
-#' str(Qobs)
+#' # Observed flows contain flows that are directly injected in the model
+#' Qobs = matrix(Qupstream, ncol = 1)
+#' colnames(Qobs) <- "Reservoir"
 #'
 #' # Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)
 #' InputsModels <- CreateInputsModel(griwrm,
@@ -52,22 +70,27 @@
 #'                             Qobs = Qobs)
 #' str(InputsModels)
 #'
+#' ## run period selection
+#' Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1990-01-01"),
+#'                which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1999-12-31"))
+#'
 #' # Creation of the GriwmRunOptions object
-#' RunOptions2 <- CreateRunOptions(InputsModels,
+#' RunOptions <- CreateRunOptions(InputsModels,
 #'                                 IndPeriod_Run = Ind_Run)
-#' str(RunOptions2)
+#' str(RunOptions)
 #'
 #' # Parameters of the SD models should be encapsulated in a named list
-#' Param2 <- list(`GaugingDown` = c(Velocity, Param))
+#' ParamGR4J <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
+#' Param <- list(`GaugingDown` = c(Velocity, ParamGR4J))
 #'
 #' # RunModel for the whole network
 #' OutputsModels <- RunModel(InputsModels,
-#'                           RunOptions = RunOptions2,
-#'                           Param = Param2)
+#'                           RunOptions = RunOptions,
+#'                           Param = Param)
 #' str(OutputsModels)
 #'
-#' # Comparison between GRiwrm simulation and airGR simulation
-#' plot(OutputsModels, Qobs = data.frame(`GaugingDown` = OutputsModel$Qsim))
+#' # Compare Simulation with reservoir and observation of natural flow
+#' plot(OutputsModels, data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]))
 RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
 
   checkRunModelParameters(x, RunOptions, Param)

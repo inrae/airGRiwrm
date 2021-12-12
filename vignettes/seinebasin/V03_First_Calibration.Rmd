@@ -32,7 +32,7 @@ We need then to prepare the InputsCrit object that is necessary to define the ca
 ```{r CreateInputsCrit}
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
-  FUN_CRIT = airGR::ErrorCrit_KGE2,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions = RunOptions,
   Obs = Qnat[IndPeriod_Run,]
 )

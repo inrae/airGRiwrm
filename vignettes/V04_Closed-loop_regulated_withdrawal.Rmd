@@ -87,7 +87,7 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 # Calculation of the water need at the sub-basin scale
 dailyWaterNeed <- PotEvap - Precip
 dailyWaterNeed <- cbind(as.data.frame(DatesR), dailyWaterNeed[,c("54001", "54032")])
-monthlyWaterNeed <- airGR::SeriesAggreg(dailyWaterNeed, "%m", rep("q80",2))
+monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%m", rep("q80",2))
 monthlyWaterNeed$DatesR <- as.numeric(format(monthlyWaterNeed$DatesR,"%m"))
 names(monthlyWaterNeed)[1] <- "month"
 monthlyWaterNeed

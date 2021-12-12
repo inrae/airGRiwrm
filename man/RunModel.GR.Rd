@@ -9,9 +9,9 @@
 \arguments{
 \item{x}{[object of class \code{InputsModel}] \code{InputsModel} for \link[airGR:RunModel]{airGR::RunModel}}
 
-\item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link[airGR]{CreateRunOptions}} for details}
+\item{RunOptions}{[object of class \emph{RunOptions}] see \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for details}
 
-\item{Param}{[numeric] vector of model parameters (See details for SD lag model)}
+\item{Param}{\link{numeric} vector of model parameters (See details for SD lag model)}
 
 \item{...}{further arguments passed to or from other methods}
 }
@@ -25,43 +25,4 @@ Function which performs a single model run with the provided function over the s
 }
 \details{
 If \code{InputsModel} parameter has been created for using a semi-distributed (SD) lag model (See \code{\link[airGR]{CreateInputsModel}}), the first item of \code{Param} parameter should contain a constant lag parameter expressed as a velocity in m/s, parameters for the hydrological model are then shift one position to the right.
-}
-\examples{
-library(airGR)
-
-## loading catchment data
-data(L0123001)
-
-## preparation of the InputsModel object
-InputsModel <- CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
-                                 Precip = BasinObs$P, PotEvap = BasinObs$E)
-
-## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
-
-## preparation of the RunOptions object
-RunOptions <- CreateRunOptions(FUN_MOD = RunModel_GR4J,
-                               InputsModel = InputsModel, IndPeriod_Run = Ind_Run)
-
-## simulation
-Param <- c(X1 = 734.568, X2 = -0.840, X3 = 109.809, X4 = 1.971)
-OutputsModel <- RunModel(InputsModel = InputsModel,
-                         RunOptions = RunOptions, Param = Param,
-                         FUN_MOD = RunModel_GR4J)
-
-## results preview
-plot(OutputsModel, Qobs = BasinObs$Qmm[Ind_Run])
-
-## efficiency criterion: Nash-Sutcliffe Efficiency
-InputsCrit  <- CreateInputsCrit(FUN_CRIT = ErrorCrit_NSE, InputsModel = InputsModel,
-                                RunOptions = RunOptions, Obs = BasinObs$Qmm[Ind_Run])
-OutputsCrit <- ErrorCrit_NSE(InputsCrit = InputsCrit, OutputsModel = OutputsModel)
-}
-\seealso{
-\code{\link[airGR]{RunModel_GR4J}}, \code{\link[airGR]{RunModel_CemaNeigeGR4J}}, \code{\link[airGR]{CreateInputsModel}},
-\code{\link[airGR]{CreateRunOptions}}, \code{\link[airGR]{CreateIniStates}}.
-}
-\author{
-Laurent Coron, Olivier Delaigue
 }

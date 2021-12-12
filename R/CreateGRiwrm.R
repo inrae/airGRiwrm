@@ -21,28 +21,7 @@
 #'
 #' @aliases GRiwrm
 #' @export
-#' @examples
-#' ###################################################################
-#' # Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
-#' ###################################################################
-#'
-#' # Run the airGR RunModel_Lag example for harvesting the necessary data
-#' library(airGR)
-#' example(RunModel_Lag)
-#' # detach the package because otherwise airGR overwrites the airGRiwrm functions
-#' detach("package:airGR")
-#'
-#' # This example is a network of 2 nodes which can be described like this:
-#' db <- data.frame(id = c("Reservoir", "GaugingDown"),
-#'                  length = c(LengthHydro, NA),
-#'                  down = c("GaugingDown", NA),
-#'                  area = c(NA, BasinInfo$BasinArea),
-#'                  model = c(NA, "RunModel_GR4J"),
-#'                  stringsAsFactors = FALSE)
-#'
-#' # Create GRiwrm object from the data.frame
-#' griwrm <- CreateGRiwrm(db)
-#' str(griwrm)
+#' @inherit RunModel.GRiwrmInputsModel return examples
 #'
 CreateGRiwrm <- function(db,
                    cols = list(
