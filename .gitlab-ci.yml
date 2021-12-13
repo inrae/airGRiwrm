@@ -5,7 +5,7 @@ stages:
 default:
   tags: [docker]
 
-image: rocker/verse:latest
+image: rocker/verse:devel
 
 cache:
   paths:
