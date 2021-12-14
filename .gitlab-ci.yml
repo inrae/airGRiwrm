@@ -51,6 +51,8 @@ website:
       - tags
   script:
     - R -e 'install.packages("pkgdown")'
+    - sed -i 's/`function`/function/g' man/CreateRunOptions.Rd
+    - sed -i 's/`function`/function/g' man/CreateCalibOptions.Rd
     - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
     - R -e 'pkgdown::build_site()'
     - sudo apt-get update && sudo apt-get install -y sshpass rsync
