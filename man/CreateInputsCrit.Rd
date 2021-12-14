@@ -43,7 +43,7 @@ CreateInputsCrit(InputsModel, ...)
 Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{InputsCrit} object (See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit})
-\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} object with one item per modelled sub-catchment
+\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} objects with one item per modelled sub-catchment
 }
 }
 \description{

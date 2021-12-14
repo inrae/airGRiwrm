@@ -23,7 +23,7 @@
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `InputsCrit` object (See [airGR::CreateInputsCrit])
-#' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` object with one item per modelled sub-catchment
+#' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` objects with one item per modelled sub-catchment
 #'
 #' @references De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}
 #'

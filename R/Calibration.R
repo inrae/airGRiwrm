@@ -18,7 +18,7 @@
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `InputsCrit` object (See [airGR::CreateInputsCrit])
-#' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` object with one item per modelled sub-catchment
+#' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` objects with one item per modelled sub-catchment
 #'
 #' @rdname Calibration
 #' @export

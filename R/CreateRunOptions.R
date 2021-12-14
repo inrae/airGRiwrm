@@ -1,4 +1,4 @@
-#' Creation of the CalibOptions object
+#' Creation of the RunOptions object
 #'
 #' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
@@ -13,7 +13,7 @@
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively \emph{InputsModel} and \emph{GRiwrmInputsModel} object), the returned value is respectively:
 #' - a `RunOptions` object (See [airGR::CreateRunOptions])
-#' - a `GRiwrmRunOptions` object which is a [list] of `RunOptions` object with one item per modelled sub-catchment
+#' - a `GRiwrmRunOptions` object which is a [list] of `RunOptions` objects with one item per modelled sub-catchment
 #'
 #' @rdname CreateRunOptions
 #' @export
