@@ -7,40 +7,29 @@ default:
 
 image: rocker/verse:devel
 
-cache:
-  paths:
-    - "$CI_PROJECT_DIR/ci/lib/"
-
 variables:
   R_LIBS_USER: "$CI_PROJECT_DIR/ci/lib"
-  CHECK_DIR: "$CI_PROJECT_DIR/ci/logs"
-  BUILD_LOGS_DIR: "$CI_PROJECT_DIR/ci/logs/$CI_PROJECT_NAME.Rcheck"
 
 cache:
   paths:
     - $R_LIBS_USER
 
 before_script:
-  - mkdir -p $R_LIBS_USER $BUILD_LOGS_DIR
+  - mkdir -p $R_LIBS_USER
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
-  - R -e 'install.packages("rcmdcheck")'
   - R -e 'devtools::install_deps(dep = T)'
 
-.check:
+test_all:
   stage: checks
   script:
-    - if [[ $NOT_CRAN == "false" ]]; then sudo apt-get update && sudo apt-get install -y --no-install-recommends texlive-fonts-recommended qpdf; fi
-    - R -e 'rcmdcheck::rcmdcheck(args = ifelse(as.logical(Sys.getenv("NOT_CRAN")), "--no-manual", "--as-cran"), error_on = "warning")'
+  - R -q -e 'devtools::test()'
 
-check_not_cran:
-  variables:
-    NOT_CRAN: "true"
-  extends: .check
-
-check_as_cran:
-  variables:
-    NOT_CRAN: "false"
-  extends: .check
+check:
+  stage: checks
+  script:
+  - tlmgr update --self && tlmgr install ec epstopdf-pkg
+  - R -q -e 'remotes::update_packages("rcmdcheck")'
+  - R -q -e 'rcmdcheck::rcmdcheck(args = "--as-cran", error_on = "warning")'
 
 website:
   stage: website
