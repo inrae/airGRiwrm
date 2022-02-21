@@ -38,6 +38,9 @@ website:
       - master
       - dev
       - tags
+  except:
+    refs:
+      - schedules
   script:
     - R -e 'install.packages("pkgdown")'
     - sed -i 's/`function`/function/g' man/CreateRunOptions.Rd

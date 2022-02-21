@@ -8,12 +8,25 @@ template:
 
 navbar:
   structure:
-    left:  [home, intro, reference, articles]
+    left:  [home, intro, reference, articles, news, galaxy]
     right: [gitlab]
   components:
     intro:
       text: Get started
       href: articles/airgriwrm.html
+    galaxy:
+      text: airGR Galaxy
+      menu:
+      - text: airGR
+        href: https://hydrogr.github.io/airGR/
+      - text: airGRdatassim R-package
+        href: https://CRAN.R-project.org/package=airGRdatassim
+      - text: airGRmaps web app
+        href: https://sunshine.irstea.fr/app/airGRmaps
+      - text: airGRteaching R-package
+        href: https://hydroGR.github.io/airGRteaching/
+      - text: airGRteaching web app
+        href: https://sunshine.irstea.fr/app/airGRteaching
     github: ~
     gitlab:
       icon: fab fa-gitlab fa-lg
