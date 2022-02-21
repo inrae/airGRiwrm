@@ -50,7 +50,8 @@ CreateGRiwrm <- function(db,
                         down = "character",
                         length = "double",
                         model = "character",
-                        area = "double"))
+                        area = "double"),
+                   keep_all)
   checkNetworkConsistency(db)
 
   class(db) <- c("GRiwrm", class(db))
@@ -61,6 +62,7 @@ CreateGRiwrm <- function(db,
 #'
 #' @param df [data.frame] to check
 #' @param coltypes named [list] with the name of the columns to check as key and the required type as value
+#' @param keep_all [logical] if `df` contains extra columns
 #'
 #' @return [NULL] or error message if a wrong type is detected
 
@@ -70,17 +72,19 @@ CreateGRiwrm <- function(db,
 #'   list(string = "character", numeric = "double")
 #' )
 #' @noRd
-CheckColumnTypes <- function(df, coltypes) {
+CheckColumnTypes <- function(df, coltypes, keep_all) {
   lapply(names(df), function(x) {
-    if (typeof(df[[x]]) != coltypes[[x]]) {
-      stop(
-        sprintf(
-          "The '%s' column is of type %s, a column of type %s is required",
-          x,
-          typeof(df[[x]]),
-          coltypes[[x]]
+    if (x %in% names(coltypes)) {
+      if (typeof(df[[x]]) != coltypes[[x]]) {
+        stop(
+          sprintf(
+            "The '%s' column is of type %s, a column of type %s is required",
+            x,
+            typeof(df[[x]]),
+            coltypes[[x]]
+          )
         )
-      )
+      }
     }
   })
   return(NULL)
