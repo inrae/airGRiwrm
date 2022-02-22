@@ -92,6 +92,11 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
 
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
+    if (x$area[x$id == id] > 0 && any(Qobs[, id] < 0, na.rm = TRUE)) {
+      stop(sprintf("Negative flow found in 'Qobs[, \"%s\"]'. ", id),
+           "Catchment flow can't be negative, use `NA` for flow data gaps.")
+    }
+
     InputsModel[[id]] <-
       CreateOneGRiwrmInputsModel(id = id,
                                  griwrm = x,
