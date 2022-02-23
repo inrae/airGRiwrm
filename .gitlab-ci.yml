@@ -53,6 +53,7 @@ website:
 
 github:
   stage: github
+  image: bitnami/git:latest
   before_script:
     ##
     ## Install ssh-agent if not already installed, it is required by Docker.
