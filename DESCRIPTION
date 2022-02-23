@@ -25,8 +25,8 @@ Suggests:
     htmltools,
     markdown
 VignetteBuilder: knitr
-URL: https://airgriwrm.g-eau.fr/
-BugReports: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/
+URL: https://airgriwrm.g-eau.fr/, https://github.com/inrae/airGRiwrm#readme
+BugReports: https://github.com/inrae/airGRiwrm/issues
 Depends:
     R (>= 2.10),
     airGR (>= 1.7.0)
