@@ -54,6 +54,10 @@ website:
 github:
   stage: github
   image: bitnami/git:latest
+  only:
+    refs:
+      - master
+      - tags
   before_script:
     ##
     ## Install ssh-agent if not already installed, it is required by Docker.
@@ -90,8 +94,7 @@ github:
     - git config --global user.email "gitlab@inrae.fr"
     - git config --global user.name "Gitlab CI"
   script:
-    - git remote add github git@github.com:inrae/airGRiwrm.git || FAILED=true
-    - git remote set-url github git@github.com:inrae/airGRiwrm.git
+    - git remote add github git@github.com:inrae/airGRiwrm.git || git remote set-url github git@github.com:inrae/airGRiwrm.git
     - git fetch
     - git push github HEAD:refs/heads/master
     - git push --tags github
