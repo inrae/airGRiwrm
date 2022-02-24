@@ -51,7 +51,7 @@ website:
     - sudo apt-get update && sudo apt-get install -y sshpass rsync
     - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/home/${OVH_LOGIN}/airgriwrm/
 
-github:
+.github:
   stage: github
   image: bitnami/git:latest
   only:
@@ -94,8 +94,24 @@ github:
     ##
     - git config --global user.email "gitlab@inrae.fr"
     - git config --global user.name "Gitlab CI"
-  script:
     - git remote add github git@github.com:inrae/airGRiwrm.git || git remote set-url github git@github.com:inrae/airGRiwrm.git
     - git fetch
-    - "[[ ! -z \"$CI_COMMIT_BRANCH\" ]] && git push github HEAD:refs/heads/$CI_COMMIT_BRANCH"
-    - "[[ ! -z \"$CI_COMMIT_TAG\" ]] && git push --tags github"
+
+github_master_dev:
+  extends:
+    - .github
+  only:
+    refs:
+      - master
+      - dev
+  script:
+    - git push github HEAD:refs/heads/$CI_COMMIT_BRANCH
+
+github_tags:
+  extends:
+    - .github
+  only:
+    refs:
+      - tags
+  script:
+    - git push --tags github
