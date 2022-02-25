@@ -27,7 +27,7 @@ The aim of this vignette is to add reservoir connections to the Seine River mode
 
 ### Add connections to the reservoirs in the gauging station network
 
-Because of the **airGR** SD model structure, the topology of the network will differ between the physical one and the modelled one. In the following, we provide details for each of the 4 lakes, and then we present the complete SD network.
+Because of the **airGR** SD model structure, the topology of the network will differ between the physical one and the modeled one. In the following, we provide details for each of the 4 lakes, and then we present the complete SD network.
 
 First, the physical topology of the Aube lake is represented below:
 
@@ -108,7 +108,7 @@ style P fill:#ccf
 ", width = "100%")
 ```
 
-It can be modelled as:
+It can be modeled as:
 
 ```{r mmd_pannec_model, echo = FALSE}
 mmd("
@@ -143,7 +143,7 @@ style M fill:#ccf
 ", width = "100%")
 ```
 
-And can be modelled as:
+And can be modeled as:
 
 ```{r mmd_marne_model, echo = FALSE}
 mmd("
@@ -222,7 +222,7 @@ colnames(Qreservoirs)[ncol(Qreservoirs)] <- "PANNEC_P"
 InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
 ```
 
-## Run simulation with naturalised flow parameters
+## Run simulation with naturalized flow parameters
 
 ### Load calibration parameters
 
@@ -259,7 +259,7 @@ OutputsModels2 <- RunModel(
 )
 ```
 
-## Compare modelled flows with observed flows
+## Compare modeled flows with observed flows
 
 ### Load observed flows
 

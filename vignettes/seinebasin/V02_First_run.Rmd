@@ -32,7 +32,7 @@ load("_cache/V01.RData")
 
 ### Loading
 
-GR4J parameters come from a calibration realised during the ClimAware project using naturalised flows.
+GR4J parameters come from a calibration realized during the ClimAware project using naturalized flows.
 
 ```{r ClimAwareParams}
 library(seinebasin)
@@ -80,12 +80,12 @@ The user must at least define the following arguments:
 
 ```{r IndPeriod_Run}
 IndPeriod_Run <- seq(
-  which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside a one-year period for warmup
+  which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside a one-year period for warm up
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
 )
 ```
 
-We define the (optional but recommended) warmup period as a one-year period before the run period:
+We define the (optional but recommended) warm up period as a one-year period before the run period:
 
 ```{r IndPeriod_WarmUp}
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
@@ -115,7 +115,7 @@ OutputsModelsClimAware <- RunModel(
 
 ## Plot the result for each basin
 
-We plot the simulated discharges against the naturalised ones.
+We plot the simulated discharges against the naturalized ones.
 
 ```{r plot, fig.height = 5, fig.width = 8}
 data(QNAT)

@@ -11,7 +11,7 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The aim of this vignette is to perform a first calibration of the semi-distributed hydrological model, using naturalised discharge.
+The aim of this vignette is to perform a first calibration of the semi-distributed hydrological model, using naturalized discharge.
 
 ## Loading libraries, network and time series data
 
@@ -48,15 +48,15 @@ str(CalibOptions)
 
 ## Calibration
 
-The optimisation (i.e. calibration) of parameters can now be performed:
+The optimization (i.e. calibration) of parameters can now be performed:
 
 ```{r Calibration}
 OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 ```
 
-## Run the GR4J model with parameters obtained fromt the Michel calibration
+## Run the GR4J model with parameters obtained from the Michel calibration
 
-Now that the model is calibrated, we can run it with the optimised parameter values:
+Now that the model is calibrated, we can run it with the optimized parameter values:
 
 ```{r RunModel}
 ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})

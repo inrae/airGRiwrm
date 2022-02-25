@@ -48,7 +48,7 @@
 \item{...}{used for compatibility with S3 methods}
 }
 \value{
-A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modelled sub-catchment.
+A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modeled sub-catchment.
 }
 \description{
 Creation of an InputsModel object for a \strong{airGRiwrm} network

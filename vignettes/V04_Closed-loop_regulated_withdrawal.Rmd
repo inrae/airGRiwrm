@@ -63,10 +63,10 @@ griwrmV04 <- rbind(
 )
 plot(griwrmV04)
 ```
-Blue-grey nodes figure upstream basins (rainfall-runoff modelling only) and green nodes figure intermediate basins, coupling rainfall-runoff and hydraulic routing modelling.
+Blue-grey nodes figure upstream basins (rainfall-runoff modeling only) and green nodes figure intermediate basins, coupling rainfall-runoff and hydraulic routing modeling.
 Nodes in red color are direct injection points (positive or negative flow) in the model.
 
-It's important to notice that even if the points "Irrigation1" and "Irrigation2" are physically located on a single branch of the Severn river as well as gauging stations "54095", "54001" and "54032", nodes "Irrigation1" and "Irrigation2" are not represented on the same branch in this conceptual model. Consequently, with this network configuration, it is not possible to know the value of the flow in the Severn river at the "Irrigation1" or "Irrigation2" nodes. These values are only available in nodes "54095", "54001" and "54032" where rainfall-runoff and hydraulic routing are actually modelled.
+It's important to notice that even if the points "Irrigation1" and "Irrigation2" are physically located on a single branch of the Severn river as well as gauging stations "54095", "54001" and "54032", nodes "Irrigation1" and "Irrigation2" are not represented on the same branch in this conceptual model. Consequently, with this network configuration, it is not possible to know the value of the flow in the Severn river at the "Irrigation1" or "Irrigation2" nodes. These values are only available in nodes "54095", "54001" and "54032" where rainfall-runoff and hydraulic routing are actually modeled.
 
 ## Irrigation objectives and flow demand at intakes
 
@@ -179,7 +179,7 @@ The figure above shows that restrictions will be imposed to the irrigation perim
 
 Applying restriction on the intake on a real field is always challenging since it is difficult to regulate day by day the flow at the intake. Policy makers often decide to close the irrigation abstraction points in turn several days a week based on the mean flow of the previous week.
 
-The number of authorized days per week for irrigation can be calculated as follows. All calculations are based on the mean flow measured the week previous the current time step. First, the naturalised flow $N$ is equal to
+The number of authorized days per week for irrigation can be calculated as follows. All calculations are based on the mean flow measured the week previous the current time step. First, the naturalized flow $N$ is equal to
 
 $$ N = M + I_l $$
 with:
@@ -259,7 +259,7 @@ A control logic function should be provided to the controller. This control logi
 In this example, the logic function must do the following tasks:
 
 1. Calculate the objective of irrigation according to the month of the current days of simulation
-2. Calculate the naturalised flow from the measured flow and the abstracted flow of the previous week
+2. Calculate the naturalized flow from the measured flow and the abstracted flow of the previous week
 3. Calculate the number of days of restriction for each irrigation point
 4. Return the abstracted flow for the next week taking into account restriction days
 
@@ -275,7 +275,7 @@ fIrrigationFactory <- function(supervisor,
     U <- irrigationObjective[month, c(2,3)] # m3/s
     meanU <- mean(rowSums(U))
     if(meanU > 0) {
-      # calculate the naturalised flow from the measured flow and the abstracted flow of the previous week
+      # calculate the naturalized flow from the measured flow and the abstracted flow of the previous week
       lastU <- supervisor$controllers[[supervisor$controller.id]]$U # m3/day
       Qnat <- (Y - rowSums(lastU)) / 86400 # m3/s
       # Maximum abstracted flow available

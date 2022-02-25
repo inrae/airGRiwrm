@@ -89,7 +89,7 @@ IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, QobsInputs)
 ## Calibration of the new model
 
 Calibration options is detailed in vignette "V02_Calibration_SD_model".
-We also apply a parameter regularisation here but only where an upstream simulated catchment is available.
+We also apply a parameter regularization here but only where an upstream simulated catchment is available.
 
 The following code chunk resumes this procedure:
 

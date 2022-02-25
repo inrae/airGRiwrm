@@ -31,9 +31,9 @@ CreateInputsCrit(InputsModel, ...)
 
 \item{Obs}{\link{numeric}, \link{matrix} or \link{data.frame} series of observed flows, see details}
 
-\item{AprioriIds}{(optional) named \link{list} or named \link{vector} of \link{character} used for the parameter regularisation (see details)}
+\item{AprioriIds}{(optional) named \link{list} or named \link{vector} of \link{character} used for the parameter regularization (see details)}
 
-\item{k}{(optional) \link{numeric} weight coefficient used in the parameter regularisation (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne})}
+\item{k}{(optional) \link{numeric} weight coefficient used in the parameter regularization (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne})}
 
 \item{AprCelerity}{(optional) \link{numeric} Default celerity used as a priori parameter for upstream catchments}
 
@@ -43,7 +43,7 @@ CreateInputsCrit(InputsModel, ...)
 Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{InputsCrit} object (See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit})
-\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} objects with one item per modelled sub-catchment
+\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} objects with one item per modeled sub-catchment
 }
 }
 \description{
@@ -57,7 +57,7 @@ Then, each column of the \link{matrix} or \link{data.frame} represents the obser
 
 With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 
-Parameter regularisation consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
+Parameter regularization consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
 The parameter \code{AprioriIds} allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: \code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)} where the quoted strings are the ids of the sub-catchments. See vignettes for more details. The parameter \code{AprCelerity} is a default value used as a priori for the parameter 'Celerity' in case of an upstream catchment (without celerity parameter) is used as a priori catchment.
 }
 \references{

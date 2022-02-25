@@ -37,7 +37,7 @@ New features:
 * Handle CemaNeige compatibility #52
 * Use S3 plot method for GRiwrmOutputsModel class objects #26
 * Handling correctly initial conditions #48
-* Calibration with parameter regularisation #54
+* Calibration with parameter regularization #54
 
 Changes:
 --------
@@ -47,7 +47,7 @@ Changes:
 * Update URLs in the DESCRIPTION file #45
 * Use S3 plot method for GRiwrm class objects #26
 * Rename function GRiwrm to CreateGRiwrm #46
-* CreateInputsCrit: transfo is mandatory for parameter regularisation #56
+* CreateInputsCrit: `transfo` is mandatory for parameter regularization #56
 
 Bug fixes:
 ----------
@@ -58,7 +58,7 @@ Bug fixes:
 * `RunModel.Supervisor`: Error in ctrlr$U[seq.int(length(sv$ts.index)), i] #39
 * Supervisor: measurement on network downstream node returns `NULL` #40
 * RunModel: Suspected bug on `OutputsModel$Qsim` in the training example #41
-* Test fail after airGR update on outputing warm-up Qsim #50
+* Test fail after airGR update on outputting warm-up Qsim #50
 * Wrong Qobs use in Lavenne function criteria #57
 
 
@@ -155,5 +155,5 @@ airGRiwrm v0.1.0 (Release date: 2020-05-25)
 New features:
 -------------
 
-* Database structuration #1
+* Database structuring #1
 * Scheduling airGR model runs #2

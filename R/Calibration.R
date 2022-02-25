@@ -1,6 +1,6 @@
 #' Calibration of the parameters of one catchment or a network of sub-catchments
 #'
-#' Calibration algorithm that optimises the error criterion selected as objective function using the provided functions.
+#' Calibration algorithm that optimizes the error criterion selected as objective function using the provided functions.
 #'
 #' This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 #'
@@ -18,7 +18,7 @@
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `InputsCrit` object (See [airGR::CreateInputsCrit])
-#' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` objects with one item per modelled sub-catchment
+#' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` objects with one item per modeled sub-catchment
 #'
 #' @rdname Calibration
 #' @export
