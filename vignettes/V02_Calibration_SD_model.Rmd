@@ -8,7 +8,13 @@ vignette: >
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  comment = "#>",
+  fig.width = 6,
+  fig.asp = 0.68,
+  out.width = "70%",
+  fig.align = "center"
+)
 ```
 
 **airGRiwrm** automates the execution of **airGR** semi-distributed models. The steps for running or calibrating the model are the same as the ones of 'airGR'.

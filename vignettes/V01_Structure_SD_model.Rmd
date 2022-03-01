@@ -9,7 +9,13 @@ bibliography: airGRiwrm.bib
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  comment = "#>",
+  fig.width = 6,
+  fig.asp = 0.68,
+  out.width = "70%",
+  fig.align = "center"
+)
 ```
 
 ```{r}
@@ -69,7 +75,7 @@ griwrm
 The diagram of the network structure is represented below with in blue the upstream nodes with a GR4J model and in green the intermediate nodes with an SD (GR4J + LAG) model.
 
 ```{r diagram}
-plot(griwrm) #ça ne fonctionne pas sur le site
+plot(griwrm)
 ```
 
 

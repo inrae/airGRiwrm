@@ -11,7 +11,11 @@ bibliography: airGRiwrm.bib
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 6,
+  fig.asp = 0.68,
+  out.width = "70%",
+  fig.align = "center"
 )
 ```
 
