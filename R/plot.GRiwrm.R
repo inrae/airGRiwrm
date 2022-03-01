@@ -23,12 +23,6 @@
 #' }
 #'
 plot.GRiwrm <- function(x, display = TRUE, orientation = "LR", width = "100%", height = "100%", ...) {
-  if(Sys.getenv("RSTUDIO") != "1") {
-    return()
-  }
-  if(!"DiagrammeR" %in% rownames(utils::installed.packages())) {
-    stop("The 'DiagrammeR' package should be installed. Type: install.packages('DiagrammeR')")
-  }
   g2 <- x[!is.na(x$down),]
   nodes <- paste(
     g2$id,
