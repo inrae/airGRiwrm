@@ -1,4 +1,5 @@
 # Prepare for CRAN ----
+# @source https://github.com/ThinkR-open/prepare-for-cran
 
 # Update dependencies in DESCRIPTION
 attachment::att_amend_desc()
