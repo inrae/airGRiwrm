@@ -90,9 +90,11 @@ al
 anthropized
 ctrlr
 decile
+dev
 et
 evapotranspiration
 frac
+github
 grey
 hydrological
 impoundments
@@ -100,6 +102,7 @@ irrigations
 lfloor
 modelled
 optimises
+pkgdown
 priori
 rfloor
 roxygen
