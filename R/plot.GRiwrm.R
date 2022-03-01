@@ -27,7 +27,7 @@ plot.GRiwrm <- function(x, display = TRUE, orientation = "LR", width = "100%", h
   nodes <- paste(
     g2$id,
     "-->|",
-    format(g2$length, trim = TRUE, digits = 0),
+    round(g2$length, digits = 0),
     "km|",
     g2$down
   )
