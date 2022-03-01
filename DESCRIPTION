@@ -1,6 +1,6 @@
 Package: airGRiwrm
 Title: 'airGR' Integrated Water Resource Management
-Version: 0.5.0.9002
+Version: 0.6.0
 Authors@R: c(
     person("David", "Dorchies", , "david.dorchies@inrae.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6595-7984")),
