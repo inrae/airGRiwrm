@@ -1,6 +1,7 @@
 ---
 title: 'Severn_01: Set up of a semi-distributed GR model network'
 author: "David Dorchies"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Severn_01: Set up of a semi-distributed GR model network}
   %\VignetteEngine{knitr::rmarkdown}

@@ -27,14 +27,18 @@ plot.GRiwrm <- function(x, display = TRUE, orientation = "LR", width = "100%", h
   nodes <- paste(
     g2$id,
     "-->|",
-    format(g2$length, trim = TRUE, digits = 0),
+    round(g2$length, digits = 0),
     "km|",
     g2$down
   )
   styleSD <- paste("style", unique(g2$down), "fill:#cfc")
-  styleDF <- paste("style", unique(g2$id[is.na(g2$model)]), "fill:#fcc")
+  if (length(g2$id[is.na(g2$model)]) > 0) {
+    styleDF <- paste("style", unique(g2$id[is.na(g2$model)]), "fill:#fcc")
+  } else {
+    styleDF <- ""
+  }
   diagram <- paste(c(paste("graph", orientation), nodes, styleSD, styleDF), collapse = "\n")
-  if(display) {
+  if (display) {
     DiagrammeR::mermaid(diagram = diagram, width, height, ...)
   } else {
     return(diagram)
