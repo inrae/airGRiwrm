@@ -44,7 +44,23 @@ at their location for the current time step of calculation of the model.
 }
 \examples{
 # First create a Supervisor from a model
-example("CreateSupervisor")
+data(Severn)
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$model <- "RunModel_GR4J"
+griwrm <- CreateGRiwrm(nodes,
+                 list(id = "gauge_id",
+                      down = "downstream_id",
+                      length = "distance_downstream"))
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+sv <- CreateSupervisor(InputsModel)
+
 # A controller which usually releases 0.1 m3/s and provides
 # extra release if the downstream flow is below 0.5 m3/s
 logicDamRelease <- function(Y) max(0.5 - Y[1], 0.1)

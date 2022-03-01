@@ -28,7 +28,7 @@ CreateCalibOptions(x, ...)
 Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{CalibOptions} object (See \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions})
-\item a \code{GRiwrmCalibOptions} object which is a \link{list} of \code{CalibOptions} object with one item per modelled sub-catchment
+\item a \code{GRiwrmCalibOptions} object which is a \link{list} of \code{CalibOptions} object with one item per modeled sub-catchment
 }
 }
 \description{

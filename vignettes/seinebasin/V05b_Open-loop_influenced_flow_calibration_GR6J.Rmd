@@ -24,7 +24,7 @@ It will use influenced observation flows directly measured at gauging stations a
 
 ## Set the data
 
-Loading naturalised data and influenced flow configuration:
+Loading naturalized data and influenced flow configuration:
 
 ```{r load}
 #load("_cache/V01.RData")
@@ -69,7 +69,7 @@ IndPeriod_Run <- seq.int(
 )
 ```
 
-We define the (optional but recommended) warmup period as a one-year period before the run period:
+We define the (optional but recommended) warm up period as a one-year period before the run period:
 
 ```{r IndPeriod_WarmUp}
 IndPeriod_WarmUp <- seq.int(1,IndPeriod_Run[1] - 1)
@@ -104,7 +104,7 @@ str(CalibOptions)
 
 ## Calibration
 
-The optimisation (i.e. calibration) of parameters can now be performed:
+The optimization (i.e. calibration) of parameters can now be performed:
 
 ```{r Calibration, warning = FALSE}
 OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
@@ -112,7 +112,7 @@ OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 
 ## Run model with Michel calibration
 
-Now that the model is calibrated, we can run it with the optimised parameter values:
+Now that the model is calibrated, we can run it with the optimized parameter values:
 
 ```{r RunModel}
 Param5 <- sapply(griwrm3$id, function(x) {OutputsCalib[[x]]$Param})

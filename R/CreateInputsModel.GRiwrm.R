@@ -18,7 +18,7 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by [airGR::CreateInputsModel] with one item per modelled sub-catchment.
+#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
 #' @export
 #' @inherit RunModel.GRiwrmInputsModel return examples
 #'

@@ -10,5 +10,6 @@
 ^_pkgdown\.yml$
 ^pkgdown
 ^docs
-^vignettes/seinebasin$
-^man-roxygen$
+^vignettes/seinebasin
+^man-roxygen
+^dev

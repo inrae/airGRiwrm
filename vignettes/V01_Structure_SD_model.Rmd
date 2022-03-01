@@ -18,7 +18,7 @@ library(airGRiwrm)
 
 The package **airGRiwrm** is a modeling tool for integrated water resources management based on the **airGR** package [See @coronSuiteLumpedGR2017].
 
-In a semi-distributed model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then, these flows are propagated from sub-catchment outlets thanks to a hydraulic function to model the flow at the outlet of the whole catchment. The aim of **airGRiwrm** is to organise the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributed model.
+In a semi-distributed model, the catchment is divided into several sub-catchments. Each sub-catchment is an hydrological entity where a runfall-runoff model produces a flow time series at the outlet of the sub-catchment. Then, these flows are propagated from sub-catchment outlets thanks to a hydraulic function to model the flow at the outlet of the whole catchment. The aim of **airGRiwrm** is to organize the structure and schedule the execution of the hydrological and hydraulic sub-models contained in the semi-distributed model.
 
 In this vignette, we show how to prepare observation data for the model.
 
@@ -35,9 +35,9 @@ Severn$BasinsInfo
 
 The semi-distributed model comprises nodes. Each node, identified by an ID, represents a location where water is injected to or withdrawn from the network.
 
-The description of the topology consists, for each node, in providing several fields: 
+The description of the topology consists, for each node, in providing several fields:
 
-- the node ID, 
+- the node ID,
 - the ID of the first node located downstream (set to `NA` for the last downstream node (i.e. the outlet of the simulated catchment)),
 - the distance (m) between these two nodes (set to `NA` for the last downstream node),
 - an area (km<sup>2</sup>) related to the node in case a hydrological model is used (otherwise set to `NA`).

@@ -20,13 +20,13 @@ library(airGRiwrm)
 library(seinebasin)
 ```
 
-This vignette aims at showing an example of flow naturalisation by modelling [@terrierStreamflowNaturalizationMethods2020].
+This vignette aims at showing an example of flow naturalization by modeling [@terrierStreamflowNaturalizationMethods2020].
 
-By using the model calibrated with influenced flows on the Marne River, it is now possible to model naturalised flows by dropping the connections to the Marne reservoir from the model. Please note that this is not the only way to remove the influence of reservoirs.
+By using the model calibrated with influenced flows on the Marne River, it is now possible to model naturalized flows by dropping the connections to the Marne reservoir from the model. Please note that this is not the only way to remove the influence of reservoirs.
 
 ## Set the data
 
-We first load the naturalised data and influenced flow calibrated parameters (for GR4J, see `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")`):
+We first load the naturalized data and influenced flow calibrated parameters (for GR4J, see `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")`):
 
 ```{r load}
 # Input data for the model
@@ -69,7 +69,7 @@ We first define the run period:
 IndPeriod_Run <- seq(366, length(DatesR)) # Until the end of the time series
 ```
 
-We define the (optional but recommended) warmup period as a one-year period before the run period:
+We define the (optional but recommended) warm up period as a one-year period before the run period:
 
 ```{r IndPeriod_WarmUp}
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
@@ -85,7 +85,7 @@ RunOptions <- CreateRunOptions(
 
 ## Run model with Michel calibration
 
-We keep the optimised parameter values obtained in `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")` and run the model:
+We keep the optimized parameter values obtained in `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")` and run the model:
 
 ```{r RunModel}
 OutputsModels4 <- RunModel(
@@ -95,9 +95,9 @@ OutputsModels4 <- RunModel(
 )
 ```
 
-## Compare simulated naturalised flow with the ones given by EPTB SGL
+## Compare simulated naturalized flow with the ones given by EPTB SGL
 
-We can finally compare the simulated naturalised flow with the ones given by @hydratecActualisationBaseDonnees2011a:
+We can finally compare the simulated naturalized flow with the ones given by @hydratecActualisationBaseDonnees2011a:
 
 ```{r plot, fig.height = 5, fig.width = 8}
 plot(OutputsModels4, Qobs = Qnat[IndPeriod_Run,])

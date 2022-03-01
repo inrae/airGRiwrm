@@ -11,7 +11,7 @@
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `CalibOptions` object (See [airGR::CreateCalibOptions])
-#' - a `GRiwrmCalibOptions` object which is a [list] of `CalibOptions` object with one item per modelled sub-catchment
+#' - a `GRiwrmCalibOptions` object which is a [list] of `CalibOptions` object with one item per modeled sub-catchment
 #'
 #' @rdname CreateCalibOptions
 #' @export

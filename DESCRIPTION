@@ -1,32 +1,40 @@
 Package: airGRiwrm
 Title: 'airGR' Integrated Water Resource Management
-Version: 0.5.0.9002
+Version: 0.6.0
 Authors@R: c(
-    person("David", "Dorchies", role = c("aut", "cre"), comment = c(ORCID = "0000-0002-6595-7984"), email = "david.dorchies@inrae.fr"),
-    person("Olivier", "Delaigue", role = c("ctb"), comment = c(ORCID = "0000-0002-7668-8468"), email = "airGR@inrae.fr"),
-    person("Guillaume", "Thirel", role = c("ctb"), comment = c(ORCID = "0000-0002-1444-1830"))
-    )
-Description: Semi-distributive Precipitation-Runoff Modelling based on 'airGR' package models integrating human infrastructures and their managements.
+    person("David", "Dorchies", , "david.dorchies@inrae.fr", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-6595-7984")),
+    person("Olivier", "Delaigue", , "airGR@inrae.fr", role = "ctb",
+           comment = c(ORCID = "0000-0002-7668-8468")),
+    person("Guillaume", "Thirel", role = "ctb",
+           comment = c(ORCID = "0000-0002-1444-1830"))
+  )
+Description: Semi-distributive Precipitation-Runoff Modelling based on
+    'airGR' package models integrating human infrastructures and their
+    managements.
 License: AGPL-3
+URL: https://airgriwrm.g-eau.fr/,
+    https://github.com/inrae/airGRiwrm#readme
+BugReports: https://github.com/inrae/airGRiwrm/issues
+Depends:
+    airGR (>= 1.7.0),
+    R (>= 2.10)
+Imports:
+    DiagrammeR,
+    dplyr,
+    graphics,
+    grDevices,
+    utils
+Suggests:
+    spelling,
+    htmltools,
+    knitr,
+    rmarkdown,
+    testthat
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
-Imports:
-    dplyr,
-    utils,
-    grDevices,
-    graphics
-Suggests:
-    knitr,
-    rmarkdown,
-    DiagrammeR,
-    testthat,
-    htmltools,
-    markdown
-VignetteBuilder: knitr
-URL: https://airgriwrm.g-eau.fr/, https://github.com/inrae/airGRiwrm#readme
-BugReports: https://github.com/inrae/airGRiwrm/issues
-Depends:
-    R (>= 2.10),
-    airGR (>= 1.7.0)
+Language: en-US
