@@ -18,5 +18,5 @@ CreateInputsModel(x, ...)
 InputsModel or GRiwrmInputsObject object
 }
 \description{
-See the methods \link{CreateInputsModel.GRiwrm} for \strong{airGRiwrm} and \link{CreateInputsModel.default} for \strong{airGR}.
+See the methods \link{CreateInputsModel.GRiwrm} for \strong{airGRiwrm} and \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for \strong{airGR}.
 }

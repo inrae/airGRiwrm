@@ -62,7 +62,7 @@ test_that("Calibrated parameters remains unchanged", {
 
 })
 
-test_that("Calibration with regularisation is OK", {
+test_that("Calibration with regularization is OK", {
   InputsCrit <- CreateInputsCrit(
     InputsModel = InputsModel,
     RunOptions = RunOptions,

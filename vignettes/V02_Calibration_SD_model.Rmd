@@ -60,7 +60,7 @@ The user must at least define the following arguments:
 * `InputsModel`: the associated input data
 * `IndPeriod_Run`: the period on which the model is run
 
-Below, we define a one-year warm up period and we start the run period just after the warmup period.
+Below, we define a one-year warm up period and we start the run period just after the warm up period.
 
 ```{r}
 IndPeriod_Run <- seq(
@@ -83,7 +83,7 @@ RunOptions <- CreateRunOptions(
 ## GRiwrmInputsCrit object
 
 The `CreateInputsCrit()` function allows to prepare the input in order to calculate a criterion.
-We use composed criterion with a parameter regularisation based on @delavenneRegularizationApproachImprove2019.
+We use composed criterion with a parameter regularization based on @delavenneRegularizationApproachImprove2019.
 
 It needs the following arguments:
 
@@ -91,9 +91,9 @@ It needs the following arguments:
 * `FUN_CRIT`: the name of the error criterion function (see the available functions description in the **airGR** package)
 * `RunOptions`: the options of the `GRiwrm` network previously prepared by the `CreateRunOptions()` function
 * `Qobs`: the observed variable time series (e.g. the discharge expressed in *mm/time step*)
-* `AprioriIds`: the list of the sub-catchments IDs where to apply a parameter regularisation based on the parameters of an upstream sub-catchment (e.g. here below the parameters of the sub-catchment "54057" is regulated by the parameters of the sub-catchment "54032")
-* `transfo`: a transformation function applied on the flow before calculation of the criterion (square-root transformation is recommended for the De Lavenne regularisation)
-* `k`: coefficient used for the weighted average between the performance criterion and the gap between the optimised parameter set and an a priori parameter set (a value equal to 0.15 is recommended for the De Lavenne regularisation)
+* `AprioriIds`: the list of the sub-catchments IDs where to apply a parameter regularization based on the parameters of an upstream sub-catchment (e.g. here below the parameters of the sub-catchment "54057" is regulated by the parameters of the sub-catchment "54032")
+* `transfo`: a transformation function applied on the flow before calculation of the criterion (square-root transformation is recommended for the De Lavenne regularization)
+* `k`: coefficient used for the weighted average between the performance criterion and the gap between the optimized parameter set and an a priori parameter set (a value equal to 0.15 is recommended for the De Lavenne regularization)
 
 ```{r InputsCrit}
 InputsCrit <- CreateInputsCrit(
@@ -135,7 +135,7 @@ OutputsCalib <- suppressWarnings(
 ParamMichel <- sapply(OutputsCalib, "[[", "ParamFinalR")
 ```
 
-## Run the model with the optimised model parameters
+## Run the model with the optimized model parameters
 
 ```{r RunModel}
 OutputsModels <- RunModel(

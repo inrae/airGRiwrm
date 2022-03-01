@@ -37,11 +37,11 @@ Calibration(InputsModel, ...)
 Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{InputsCrit} object (See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit})
-\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} object with one item per modelled sub-catchment
+\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} objects with one item per modeled sub-catchment
 }
 }
 \description{
-Calibration algorithm that optimises the error criterion selected as objective function using the provided functions.
+Calibration algorithm that optimizes the error criterion selected as objective function using the provided functions.
 }
 \details{
 This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)

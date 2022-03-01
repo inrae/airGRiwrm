@@ -68,7 +68,7 @@ plot(griwrm)
 
 The daily mean precipitation and potential evaporation at the scale of the intermediate sub-basins are extracted from the SAFRAN reanalysis [@vidal50yearHighresolutionAtmospheric2010].
 
-The daily naturalised flow is provided by @hydratecActualisationBaseDonnees2011a.
+The daily naturalized flow is provided by @hydratecActualisationBaseDonnees2011a.
 
 These data are embedded in the R package 'seinebasin', which is not publicly available.
 

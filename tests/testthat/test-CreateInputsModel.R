@@ -159,3 +159,26 @@ test_that("must works with node not related to an hydrological model", {
   expect_equal(colnames(IM[[2]]$Qupstream), c("Up1", "Up2"))
 })
 
+test_that("negative observed flow on catchment should throw error", {
+  l$Qobs[100, 1] <- -99
+  expect_error(CreateInputsModel(l$griwrm,
+                                 DatesR = l$DatesR,
+                                 Precip = l$Precip,
+                                 PotEvap = l$PotEvap,
+                                 Qobs = l$Qobs),
+               regexp = "Negative flow found")
+  l$griwrm$model[1] <- NA
+  expect_s3_class(suppressWarnings(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      Qobs = l$Qobs,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    )
+  ),
+  "GRiwrmInputsModel")
+})

@@ -71,7 +71,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
       ...
     )
     if (!is.null(AprioriIds) && IM$id %in% names(AprioriIds)) {
-      # De Lavenne regularisation for this sub-catchment
+      # De Lavenne regularization for this sub-catchment
       attr(InputsCrit[[IM$id]], "Lavenne_FUN") <-
         CreateLavenneFunction(
           InputsModel = IM,

@@ -68,7 +68,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 
 }
 
-#' Create InputsCrit for De Lavenne regularisation
+#' Create InputsCrit for De Lavenne regularization
 #'
 #' Internal function that run [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori upstream
 #' sub-catchment parameters grabbed during network calibration process.
@@ -77,7 +77,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 #' @param OutputsModel \[GRiwrmOutputsModel\] object with simulation results of upstream sub-catchments run with calibrated parameters
 #' @param InputsCrit \[InputsCritLavenneFunction\] object internally created by [CreateInputsCrit.GRiwrmInputsModel]
 #'
-#' @return \[InputsCrit\] object with De Lavenne regularisation
+#' @return \[InputsCrit\] object with De Lavenne regularization
 #' @import airGR
 #' @noRd
 #'

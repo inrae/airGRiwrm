@@ -20,7 +20,7 @@ CreateCalibOptions(x, ...)
 \method{CreateCalibOptions}{`function`}(x, ...)
 }
 \arguments{
-\item{x}{\link{function}, \link{character}, or object of class \emph{InputsModel} runs \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}for a catchment. Use object of class \emph{GRiwrmInputsModel} for a network. See \link{CreateInputsModel} for details}
+\item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
 \item{...}{arguments passed to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions}, see details}
 }
@@ -28,7 +28,7 @@ CreateCalibOptions(x, ...)
 Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{CalibOptions} object (See \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions})
-\item a \code{GRiwrmCalibOptions} object which is a \link{list} of \code{CalibOptions} object with one item per modelled sub-catchment
+\item a \code{GRiwrmCalibOptions} object which is a \link{list} of \code{CalibOptions} object with one item per modeled sub-catchment
 }
 }
 \description{
