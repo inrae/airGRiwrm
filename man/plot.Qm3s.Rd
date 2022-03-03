@@ -38,6 +38,9 @@
 
 \item{...}{Further arguments to pass to the \link{matplot} functions}
 }
+\value{
+Screen plot window.
+}
 \description{
 Plot of a \code{Qm3s} object (time series of simulated flows)
 }

@@ -6,7 +6,7 @@
 #'        by hydrological model output named with the node ID (See [CreateGRiwrm] for details)
 #' @param ... Further arguments for [airGR::plot.OutputsModel] and [plot]
 #'
-#' @return [list] of plots
+#' @return [list] of plots.
 #'
 #' @importFrom graphics plot par title
 #' @export

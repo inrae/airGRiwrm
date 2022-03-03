@@ -7,7 +7,7 @@
 #' @description This function is used by [RunModel.GRiwrmInputsModel] and [Calibration.GRiwrmInputsModel]
 #' in order to provide upstream simulated flows to a node.
 #'
-#' @return `InputsModel` object with updated `Qupstream`
+#' @return `InputsModel` object with updated `Qupstream` (See [airGR::CreateInputsModel] for the detail of the object).
 #' @noRd
 #'
 UpdateQsimUpstream <- function(InputsModel, Runoptions, OutputsModel) {

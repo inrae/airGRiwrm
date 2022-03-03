@@ -27,7 +27,7 @@
 \item{...}{Other arguments and parameters you would like to send to JavaScript (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 }
 \value{
-Mermaid code of the diagram if display is \code{FALSE}.
+Mermaid code of the diagram if display is \code{FALSE}, otherwise the function returns the diagram itself.
 }
 \description{
 Display of a diagram representing the network structure of a GRiwrm object

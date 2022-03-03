@@ -5,7 +5,7 @@
 #' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
 #' @param ... Further arguments for compatibility with S3 methods
 #'
-#' @return [[list] of class \emph{GRiwrmOutputsModel}] list of \emph{OutputsModel} objects (See \[airGR::RunModel]) for each node of the semi-distributed model
+#' @return A object of class \emph{GRiwrmOutputsModel}. This object is a [list] of *OutputsModel* objects produced by [RunModel.InputsModel] for each node of the semi-distributed model.
 #' @export
 #' @examples
 #' ###################################################################

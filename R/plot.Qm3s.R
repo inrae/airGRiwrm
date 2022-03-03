@@ -11,6 +11,8 @@
 #' @param lty [character] or [numeric] The line type (See [par])
 #' @param ... Further arguments to pass to the [matplot] functions
 #'
+#' @return Screen plot window.
+#'
 #' @importFrom grDevices rainbow
 #' @importFrom graphics matplot
 #' @export

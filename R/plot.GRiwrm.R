@@ -10,7 +10,7 @@
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
 #' is not handled on some platforms
 #'
-#' @return Mermaid code of the diagram if display is `FALSE`.
+#' @return Mermaid code of the diagram if display is `FALSE`, otherwise the function returns the diagram itself.
 #'
 #' @export
 #'

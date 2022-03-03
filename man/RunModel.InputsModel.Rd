@@ -17,6 +17,16 @@
 
 \item{...}{Further arguments for compatibility with S3 methods}
 }
+\value{
+[list] see \code{\link[airGR]{RunModel_GR4J}} or \code{\link[airGR]{RunModel_CemaNeigeGR4J}} for details.
+
+If \code{InputsModel} parameter has been created for using a semi-distributed (SD) lag model (See \code{\link[airGR]{CreateInputsModel}}), the list value contains an extra item named \code{QsimDown} which is a numeric series of simulated discharge [mm/time step] related to the run-off contribution of the downstream sub-catchment.
+}
 \description{
 Wrapper for \link[airGR:RunModel]{airGR::RunModel} for one sub-basin
+}
+\details{
+This function calls \link[airGR:RunModel]{airGR::RunModel} (See \link[airGR:RunModel]{airGR::RunModel} for further details).
+
+The list produced by the function (See Value section of \link[airGR:RunModel_GR4J]{airGR::RunModel_GR4J}) is here completed by an item \emph{$Qsim_m3} storing the simulated discharge series in m3/s.
 }

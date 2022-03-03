@@ -16,7 +16,7 @@ by hydrological model output named with the node ID (See \link{CreateGRiwrm} for
 \item{...}{Further arguments for \link[airGR:plot.OutputsModel]{airGR::plot.OutputsModel} and \link{plot}}
 }
 \value{
-\link{list} of plots
+\link{list} of plots.
 }
 \description{
 Function which creates screen plots giving an overview of the model outputs in the GRiwrm network
