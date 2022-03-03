@@ -1,4 +1,4 @@
-airGRiwrm 0.6.0
+airGRiwrm 0.6.1
 ===============
 
 Changes:
@@ -16,6 +16,7 @@ Changes:
 New features:
 -------------
 
+* `plot.Qm3s`: customize legend position (#75)
 * Regularisation: Add default value for parameter Celerity (#58)
 * Add network consistency checks in `GRiwrm` (#36)
 * Handle CemaNeige compatibility (#52)
@@ -26,6 +27,9 @@ New features:
 Bug fixes:
 ----------
 
+* Results differences between versions on vignette V04 (#75)
+* `plot.GRiwrm` not working in gitlab-ci (#74)
+* `plot.GRiwrm`: mermaid code is displayed with the diagram (#73)
 * `CreateGRiwrm` crashes when keeping all columns and rename some (#64)
 * Breaking change in airGR in issue HYCAR-Hydro/airgr#137 (#62)
 * Review documentation for publication on CRAN (#43)
@@ -41,6 +45,7 @@ Bug fixes:
 Internal changes:
 -----------------
 
+* Prepare the package for v0.6.x CRAN submission (#71)
 * Clone on github master and dev branches of the repository (#68)
 * Update airGR dependency to CRAN v1.7.0 (#69)
 * Add an airGR galaxy tab on the website? (#49)
