@@ -8,6 +8,7 @@
 #' @param col [character] plotting color (See [par]), default to rainbow colors
 #' @param legend [character] see parameter `legend` of [legend]. Set to [NULL] if display of the legend is not wanted
 #' @param legend.cex [character] `cex` parameter for the text of the legend (See [par])
+#' @param legend.x,legend.y Legend position, see `x` and `y` parameters in [graphics::legend]
 #' @param lty [character] or [numeric] The line type (See [par])
 #' @param ... Further arguments to pass to the [matplot] functions
 #'
@@ -18,13 +19,15 @@
 #' @export
 #'
 plot.Qm3s <- function(x,
-                      type = 'l',
+                      type = "l",
                       xlab = "Date",
                       ylab = expression("Flow (m"^"3"*"/s)"),
                       main = "Simulated flows",
                       col = rainbow(ncol(x) - 1),
                       legend = colnames(x)[-1],
                       legend.cex = 0.7,
+                      legend.x = "topright",
+                      legend.y = NULL,
                       lty = 1,
                       ...) {
   matplot(
@@ -38,7 +41,8 @@ plot.Qm3s <- function(x,
     col = col, ...
   )
   if(!is.null(legend)) {
-    legend('topright',
+    legend(x = legend.x,
+           y = legend.y,
            legend = legend,
            cex = legend.cex,
            lty = lty,

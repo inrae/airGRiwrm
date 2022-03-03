@@ -13,6 +13,8 @@
   col = rainbow(ncol(x) - 1),
   legend = colnames(x)[-1],
   legend.cex = 0.7,
+  legend.x = "topright",
+  legend.y = NULL,
   lty = 1,
   ...
 )
@@ -33,6 +35,8 @@
 \item{legend}{\link{character} see parameter \code{legend} of \link{legend}. Set to \link{NULL} if display of the legend is not wanted}
 
 \item{legend.cex}{\link{character} \code{cex} parameter for the text of the legend (See \link{par})}
+
+\item{legend.x, legend.y}{Legend position, see \code{x} and \code{y} parameters in \link[graphics:legend]{graphics::legend}}
 
 \item{lty}{\link{character} or \link{numeric} The line type (See \link{par})}
 
