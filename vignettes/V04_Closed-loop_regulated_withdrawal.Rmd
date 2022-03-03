@@ -91,21 +91,24 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 # Calculation of the water need at the sub-basin scale
 dailyWaterNeed <- PotEvap - Precip
 dailyWaterNeed <- cbind(as.data.frame(DatesR), dailyWaterNeed[,c("54001", "54032")])
+monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%Y%m", rep("mean",2))
 monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%m", rep("q80",2))
+monthlyWaterNeed[monthlyWaterNeed < 0] <- 0
 monthlyWaterNeed$DatesR <- as.numeric(format(monthlyWaterNeed$DatesR,"%m"))
 names(monthlyWaterNeed)[1] <- "month"
+monthlyWaterNeed <- monthlyWaterNeed[order(monthlyWaterNeed$month),]
 monthlyWaterNeed
 ```
 
-We restrict the irrigation season between April and August. As a consequence, the crop requirement can be expressed in m<sup>3</sup>/s as follows:
+We restrict the irrigation season between March and September As a consequence, the crop requirement can be expressed in m<sup>3</sup>/s as follows:
 
 ```{r}
 irrigationObjective <- monthlyWaterNeed
 # Conversion in m3/day
 irrigationObjective$"54001" <- monthlyWaterNeed$"54001" * 15 * 1E3
 irrigationObjective$"54032" <- monthlyWaterNeed$"54032" * 30 * 1E3
-# Irrigation period between April and August
-irrigationObjective[-seq(4,8),-1] <- 0
+# Irrigation period between March and September
+irrigationObjective[-seq(3,9),-1] <- 0
 # Conversion in m3/s
 irrigationObjective[,c(2,3)] <- round(irrigationObjective[,c(2,3)] / 86400, 1)
 irrigationObjective$total <- rowSums(irrigationObjective[,c(2,3)])
@@ -131,7 +134,7 @@ In the UK, abstraction restrictions are driven by Environmental Flow Indicator (
 
 ```{r abstraction restriction rule}
 restriction_rule <- data.frame(quantile_natural_flow = c(.05, .3, 0.5, 0.7),
-           abstraction_rate = c(0.1, 0.15, 0.20, 0.24))
+                               abstraction_rate = c(0.1, 0.15, 0.20, 0.24))
 ```
 
 The control of the abstraction will be done at the gauging station downstream all the abstraction locations (node "54032"). So we need the flow corresponding to the quantiles of natural flow and flow available for abstraction in each case.
@@ -368,10 +371,10 @@ Simulated flows can be extracted and plot as follows:
 
 ```{r}
 Qm3s <- attr(OM_Irrig, "Qm3s")
-Qm3s <- Qm3s[Qm3s$DatesR > "2003-03-25" & Qm3s$DatesR < "2003-09-05",]
+Qm3s <- Qm3s[Qm3s$DatesR > "2003-05-25" & Qm3s$DatesR < "2003-10-05",]
 oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
-plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "", ylim = c(0,170))
-plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "")
+plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "", ylim = c(0,40))
+plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "", legend.x = "bottomright")
 par(oldpar)
 ```
 
