@@ -369,11 +369,12 @@ Simulated flows can be extracted and plot as follows:
 ```{r}
 Qm3s <- attr(OM_Irrig, "Qm3s")
 Qm3s <- Qm3s[Qm3s$DatesR > "2003-03-25" & Qm3s$DatesR < "2003-09-05",]
-par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
 plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "", ylim = c(0,170))
 plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "")
+par(oldpar)
 ```
 
-We can observe  that the irrigations points are alternatively closed some days a week when the flow at node "54032" becomes low.
+We can observe that the irrigation points are alternatively closed some days a week when the flow at node "54032" becomes low.
 
 # References

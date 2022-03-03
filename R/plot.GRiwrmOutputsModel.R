@@ -14,19 +14,17 @@
 #' @inherit RunModel.GRiwrmInputsModel return examples
 #'
 plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, ...) {
+
+  ## define outer margins and a title inside it
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
+  par(oma = c(0, 0, 3, 0))
+
   lapply(
     names(x),
     function(id, OutputsModels) {
-      ## the whole list of settable par's
-      opar <- par(no.readonly = TRUE)
-
-      ## define outer margins and a title inside it
-      par(oma = c(0, 0, 3, 0))
       plot(OutputsModels[[id]], Qobs = Qobs[,id], ...)
       title(main = id, outer = TRUE, line = 1.2, cex.main = 1.4)
-
-      ## reset original par
-      par(opar)
     },
     OutputsModels = x
   )
