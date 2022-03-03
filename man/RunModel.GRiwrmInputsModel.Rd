@@ -16,7 +16,7 @@
 \item{...}{Further arguments for compatibility with S3 methods}
 }
 \value{
-A object of class \emph{GRiwrmOutputsModel}. This object is a \link{list} of \emph{OutputsModel} objects produced by \link{RunModel.InputsModel} for each node of the semi-distributed model.
+An object of class \emph{GRiwrmOutputsModel}. This object is a \link{list} of \emph{OutputsModel} objects produced by \link{RunModel.InputsModel} for each node of the semi-distributed model.
 }
 \description{
 RunModel function for \emph{GRiwrmInputsModel} object
