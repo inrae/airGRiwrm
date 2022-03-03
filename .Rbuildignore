@@ -13,3 +13,4 @@
 ^vignettes/seinebasin
 ^man-roxygen
 ^dev
+^CRAN-SUBMISSION$
