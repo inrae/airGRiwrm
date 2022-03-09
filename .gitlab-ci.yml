@@ -39,7 +39,6 @@ website:
   stage: publish
   only:
     refs:
-      - master
       - dev
       - tags
   except:
@@ -107,7 +106,7 @@ github_master_dev:
       - master
       - dev
   script:
-    - git push github HEAD:refs/heads/$CI_COMMIT_BRANCH
+    - git push --force github HEAD:refs/heads/$CI_COMMIT_BRANCH
 
 github_tags:
   extends:
@@ -116,4 +115,4 @@ github_tags:
     refs:
       - tags
   script:
-    - git push --tags github
+    - git push --force --tags github
