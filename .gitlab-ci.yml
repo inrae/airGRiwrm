@@ -1,7 +1,6 @@
 stages:
     - checks
-    - website
-    - github
+    - publish
 
 default:
   tags: [docker]
@@ -27,13 +26,17 @@ test_all:
 
 check:
   stage: checks
+  except:
+    refs:
+      - tags
+      - schedules
   script:
   - tlmgr update --self && tlmgr install ec epstopdf-pkg
   - R -q -e 'remotes::update_packages("rcmdcheck")'
   - R -q -e 'rcmdcheck::rcmdcheck(args = "--as-cran", error_on = "warning")'
 
 website:
-  stage: website
+  stage: publish
   only:
     refs:
       - master
@@ -52,13 +55,11 @@ website:
     - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/home/${OVH_LOGIN}/airgriwrm/
 
 .github:
-  stage: github
+  stage: publish
   image: bitnami/git:latest
-  only:
+  except:
     refs:
-      - master
-      - dev
-      - tags
+      - schedules
   before_script:
     ##
     ## Install ssh-agent if not already installed, it is required by Docker.
