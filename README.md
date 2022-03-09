@@ -1,9 +1,12 @@
 # <img src="man/figures/logo.png" align="right" height="80px"/>airGRiwrm: airGR based Integrated Water Resource Management R package
 
-![CRAN](https://www.r-pkg.org/badges/version-ago/airGRiwrm)
-[![License:
-AGPL-3](https://img.shields.io/badge/license-AGPL--3-orange.svg)](https://cran.r-project.org/web/licenses/AGPL-3)
-![Total downloads](https://cranlogs.r-pkg.org/badges/grand-total/airGRiwrm)
+<!-- badges: start -->
+[![CRAN](https://www.r-pkg.org/badges/version-ago/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
+[![Total downloads](https://cranlogs.r-pkg.org/badges/grand-total/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
+[![License: AGPL-3](https://img.shields.io/badge/license-AGPL--3-orange.svg)](https://cran.r-project.org/web/licenses/AGPL-3)
+[![DOI: 10.15454/3CVD1I](https://img.shields.io/badge/doi-10.15454%2F3CVD1I-purple)](https://doi.org/10.15454/3CVD1I)
+[![Dev check status](https://gitlab.irstea.fr/in-wop/airGRiwrm/badges/dev/pipeline.svg)](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/pipelines)
+<!-- badges: end -->
 
 **airGRiwrm** is an extension of the **airGR** R package for managing semi-distributive hydrological model on an anthropized catchment.
 

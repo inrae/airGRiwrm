@@ -9,7 +9,7 @@ template:
 navbar:
   structure:
     left:  [home, intro, reference, articles, news, galaxy]
-    right: [gitlab]
+    right: [github, gitlab]
   components:
     intro:
       text: Get started
@@ -27,16 +27,13 @@ navbar:
         href: https://hydroGR.github.io/airGRteaching/
       - text: airGRteaching web app
         href: https://sunshine.irstea.fr/app/airGRteaching
-    github: ~
     gitlab:
       icon: fab fa-gitlab fa-lg
       href: https://gitlab.irstea.fr/in-wop/airGRiwrm
 
 repo:
   url:
-    home: https://gitlab.irstea.fr/in-wop/airGRiwrm
-    source: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/tree/dev/
-    issue: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues
+    home: https://github.com/inrae/airGRiwrm
 
 articles:
   - title: Quick start on the Severn River (UK)
