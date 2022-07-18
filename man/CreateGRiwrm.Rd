@@ -3,8 +3,8 @@
 \name{CreateGRiwrm}
 \alias{CreateGRiwrm}
 \alias{GRiwrm}
-\title{Generation of a network description containing all hydraulic nodes and the description
-of their connections}
+\title{Generation of a network description containing all hydraulic nodes and the
+description of their connections}
 \usage{
 CreateGRiwrm(
   db,
@@ -16,31 +16,43 @@ CreateGRiwrm(
 \arguments{
 \item{db}{\link{data.frame} description of the network (See details)}
 
-\item{cols}{\link{list} or \link{vector} columns of \code{db}. By default, mandatory column names are: \code{id}, \code{down}, \code{length}. Other names can be handled with a named list or vector containing items defined as \code{"required name" = "column name in db"}}
+\item{cols}{\link{list} or \link{vector} columns of \code{db}. By default, mandatory column
+names are: \code{id}, \code{down}, \code{length}, \code{area} and \code{model}. Other names can be
+handled with a named list or vector containing items defined as \code{"required name" = "column name in db"} (See details)}
 
-\item{keep_all}{\link{logical} indicating if all columns of \code{db} should be kept or if only columns defined in \code{cols} should be kept}
+\item{keep_all}{\link{logical} indicating if all columns of \code{db} should be kept
+or if only columns defined in \code{cols} should be kept}
 }
 \value{
-\link{data.frame} of class \code{GRiwrm} describing the airGR semi-distributed model network, with each line corresponding to a location on the river network and with the following columns:
+\link{data.frame} of class \code{GRiwrm} describing the airGR semi-distributed
+model network, with each line corresponding to a location on the river
+network and with the following columns:
 \itemize{
 \item \code{id} (\link{character}): node identifier
-\item \code{down} (\link{character}): identifier of the node downstream of the current node (\link{NA} for the most downstream node)
-\item \code{length} (\link{numeric}): hydraulic distance to the downstream node in km (\link{NA} for the most downstream node)
-\item \code{area} (\link{numeric}): total area of the basin starting from the current node location in km2
-\item \code{model} (\link{character}): hydrological model to use if necessary (\link{NA} for using observed flow instead of a runoff model output)
+\item \code{down} (\link{character}): identifier of the node downstream of the current
+node (\link{NA} for the most downstream node)
+\item \code{length} (\link{numeric}): hydraulic distance to the downstream node in km
+(\link{NA} for the most downstream node)
+\item \code{area} (\link{numeric}): total area of the basin starting from the current
+node location in km2
+\item \code{model} (\link{character}): hydrological model to use (\link{NA} for using observed
+flow instead of a runoff model output)
 }
 }
 \description{
-Generation of a network description containing all hydraulic nodes and the description
-of their connections
+Generation of a network description containing all hydraulic nodes and the
+description of their connections
 }
 \details{
 \code{db} is a \link{data.frame} which at least contains in its columns:
 \itemize{
 \item a node identifier (column \code{id}),
-\item the identifier and the hydraulic distance to the downstream node (\link{character} columns \code{down} and \link{numeric} columns \code{length} in km). The last downstream node should have fields \code{down} and \code{length} set to \code{NA},
+\item the identifier and the hydraulic distance to the downstream node
+(\link{character} columns \code{down} and \link{numeric} columns \code{length} in km). The
+last downstream node should have fields \code{down} and \code{length} set to \code{NA},
 \item the area of the basin (\link{numeric} column \code{area} in km2)
-\item the hydrological model to use if necessary (\link{character} column \code{model}) (\link{NA} for using observed flow instead of a runoff model output)
+\item the hydrological model to use or \link{NA} for using observed flow instead of a
+runoff model output (\link{character} column \code{model})
 }
 }
 \examples{

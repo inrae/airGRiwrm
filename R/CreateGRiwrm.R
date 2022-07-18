@@ -1,23 +1,36 @@
-#' Generation of a network description containing all hydraulic nodes and the description
-#' of their connections
+#' Generation of a network description containing all hydraulic nodes and the
+#' description of their connections
 #'
 #' @details `db` is a [data.frame] which at least contains in its columns:
 #'
 #'  * a node identifier (column `id`),
-#'  * the identifier and the hydraulic distance to the downstream node ([character] columns `down` and [numeric] columns `length` in km). The last downstream node should have fields `down` and `length` set to `NA`,
+#'  * the identifier and the hydraulic distance to the downstream node
+#'  ([character] columns `down` and [numeric] columns `length` in km). The
+#'  last downstream node should have fields `down` and `length` set to `NA`,
 #'  * the area of the basin ([numeric] column `area` in km2)
-#'  * the hydrological model to use if necessary ([character] column `model`) ([NA] for using observed flow instead of a runoff model output)
+#'  * the hydrological model to use or [NA] for using observed flow instead of a
+#'  runoff model output ([character] column `model`)
 #'
 #' @param db [data.frame] description of the network (See details)
-#' @param cols [list] or [vector] columns of `db`. By default, mandatory column names are: `id`, `down`, `length`. Other names can be handled with a named list or vector containing items defined as `"required name" = "column name in db"`
-#' @param keep_all [logical] indicating if all columns of `db` should be kept or if only columns defined in `cols` should be kept
+#' @param cols [list] or [vector] columns of `db`. By default, mandatory column
+#' names are: `id`, `down`, `length`, `area` and `model`. Other names can be
+#' handled with a named list or vector containing items defined as `"required
+#' name" = "column name in db"` (See details)
+#' @param keep_all [logical] indicating if all columns of `db` should be kept
+#' or if only columns defined in `cols` should be kept
 #'
-#' @return [data.frame] of class `GRiwrm` describing the airGR semi-distributed model network, with each line corresponding to a location on the river network and with the following columns:
+#' @return [data.frame] of class `GRiwrm` describing the airGR semi-distributed
+#' model network, with each line corresponding to a location on the river
+#' network and with the following columns:
 #'  * `id` ([character]): node identifier
-#'  * `down` ([character]): identifier of the node downstream of the current node ([NA] for the most downstream node)
-#'  * `length` ([numeric]): hydraulic distance to the downstream node in km ([NA] for the most downstream node)
-#'  * `area` ([numeric]): total area of the basin starting from the current node location in km2
-#'  * `model` ([character]): hydrological model to use if necessary ([NA] for using observed flow instead of a runoff model output)
+#'  * `down` ([character]): identifier of the node downstream of the current
+#'  node ([NA] for the most downstream node)
+#'  * `length` ([numeric]): hydraulic distance to the downstream node in km
+#'  ([NA] for the most downstream node)
+#'  * `area` ([numeric]): total area of the basin starting from the current
+#'  node location in km2
+#'  * `model` ([character]): hydrological model to use ([NA] for using observed
+#'  flow instead of a runoff model output)
 #'
 #' @aliases GRiwrm
 #' @export
@@ -61,7 +74,8 @@ CreateGRiwrm <- function(db,
 #' Check of the column types of a [data.frame]
 #'
 #' @param df [data.frame] to check
-#' @param coltypes named [list] with the name of the columns to check as key and the required type as value
+#' @param coltypes named [list] with the name of the columns to check as key and
+#' the required type as value
 #' @param keep_all [logical] if `df` contains extra columns
 #'
 #' @return [NULL] or error message if a wrong type is detected
@@ -100,7 +114,7 @@ getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
-  # Remove nodes without model (direct flow connections treated as upstream flows only)
+  # Remove upstream nodes without model (direct flow connections)
   griwrm <- griwrm[!is.na(griwrm$model),]
   # Rank 1
   rank <- setdiff(griwrm$id, griwrm$down)
@@ -112,6 +126,9 @@ getNodeRanking <- function(griwrm) {
   }
   ranking <- unique(ranking, fromLast = TRUE)
   ranking <- ranking[-length(ranking)]
+  # Remove intermediate nodes without model (direct flow connections)
+  ranking <- ranking[ranking %in% griwrm$id]
+  return(ranking)
 }
 
 checkNetworkConsistency <- function(db) {
