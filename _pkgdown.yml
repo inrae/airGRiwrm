@@ -8,12 +8,9 @@ template:
 
 navbar:
   structure:
-    left:  [home, intro, reference, articles, news, galaxy]
+    left:  [intro, reference, articles, news, galaxy]
     right: [github, gitlab]
   components:
-    intro:
-      text: Get started
-      href: articles/airgriwrm.html
     galaxy:
       text: airGR Galaxy
       menu:
