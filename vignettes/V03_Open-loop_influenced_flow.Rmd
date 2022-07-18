@@ -26,9 +26,21 @@ library(airGRiwrm)
 
 ## Presentation of the study case
 
-The calibration results shown in vignette 'V02_Calibration_SD_model' for the flows simulated on the Avon at Evesham (Gauging station '54002') and on the Severn at Buildwas (Gauging station '54095') are not fully satisfactory, especially regarding low flows. These upper basins are actually heavily influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
+The calibration results shown in vignette 'V02_Calibration_SD_model' for the 
+flows simulated on the Avon at Evesham (Gauging station '54002') and on the 
+Severn at Buildwas (Gauging station '54095') are not fully satisfactory, 
+especially regarding low flows. These upper basins are actually heavily 
+influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
 
-To cope with these influences, in this vignette, we will not try to simulate the basin functioning with an hydrological model but we will rather directly inject in the model the observed flows at these nodes.
+So, to cope with these influences, in this vignette, we use direct injection of 
+observed influenced flows instead of modelling natural flow with an hydrological model. 
+
+We use observation on the Avon at Evesham (Gauging station '54002') and we
+choose to do the same on the Severn at Bewdley (Gauging station '54001') as if
+the observed flow at these locations would be the observed release of a dam. 
+
+Please note that the flow on the Severn at Buildwas (Gauging station '54095') is 
+still simulated but its flows is no longer routed to downstream.
 
 ## Conversion of a gauging station into a release spot
 
@@ -49,7 +61,7 @@ To notify the SD model that the provided flows on a node should be directly used
 ```{r}
 griwrmV03 <- griwrm
 griwrmV03$model[griwrm$id == "54002"] <- NA
-griwrmV03$model[griwrm$id == "54095"] <- NA
+griwrmV03$model[griwrm$id == "54001"] <- NA
 griwrmV03
 ```
 
@@ -82,7 +94,7 @@ Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 This time, we need to provide observed flows as inputs for the nodes '54002' and '54095':
 
 ```{r}
-QobsInputs <- Qobs[, c("54002", "54095")]
+QobsInputs <- Qobs[, c("54001", "54002")]
 ```
 
 Then, the `GRiwrmInputsModel` object can be generated taking into account the new `GRiwrm` object:
@@ -110,7 +122,7 @@ RunOptions <- CreateRunOptions(IM_OL,
 InputsCrit <- CreateInputsCrit(IM_OL,
                                FUN_CRIT = ErrorCrit_KGE2,
                                RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,],
-                               AprioriIds = c("54057" = "54032", "54032" = "54001"),
+                               AprioriIds = c("54057" = "54032", "54032" = "54029"),
                                transfo = "sqrt", k = 0.15
 )
 CalibOptions <- CreateCalibOptions(IM_OL)
