@@ -23,11 +23,15 @@ library(airGRiwrm)
 
 ## Integration of the reservoir connections into the model
 
-The aim of this vignette is to add reservoir connections to the Seine River model previously set up. A complete description of the reservoir system of the Seine River can be found in @dehayEtudeImpactChangement2012
+The aim of this vignette is to add reservoir connections to the Seine River model 
+previously set up. A complete description of the reservoir system of the Seine 
+River can be found in @dehayEtudeImpactChangement2012
 
 ### Add connections to the reservoirs in the gauging station network
 
-Because of the **airGR** SD model structure, the topology of the network will differ between the physical one and the modeled one. In the following, we provide details for each of the 4 lakes, and then we present the complete SD network.
+Because of the **airGR** SD model structure, the topology of the network will 
+differ between the physical one and the modeled one. In the following, we provide 
+details for each of the 4 lakes, and then we present the complete SD network.
 
 First, the physical topology of the Aube lake is represented below:
 
@@ -52,7 +56,9 @@ style AUBE fill:#ccf
 ", width = "100%")
 ```
 
-In the SD model, we do not simulate intermediate flows as well as the reservoir in the catchment. As a result, an equivalent topology compatible with **airGR** will be the one below:
+In the SD model, we do not simulate intermediate flows as well as the reservoir 
+in the catchment. As a result, an equivalent topology compatible with **airGR** 
+will be the one below:
 
 ```{r mmd_aube_model, echo = FALSE}
 mmd("
@@ -65,7 +71,8 @@ style AUBE_R3 fill:#fcc
 ", width = "100%")
 ```
 
-`AUBE_P2` will propagate negative flows downstream (reservoir inflows) while `AUBE_R3` will propagate positive flows downstream (reservoir releases).
+`AUBE_P2` will propagate negative flows downstream (reservoir inflows) while 
+`AUBE_R3` will propagate positive flows downstream (reservoir releases).
 
 The configuration on the lake Seine is similar:
 
@@ -108,20 +115,18 @@ style P fill:#ccf
 ", width = "100%")
 ```
 
-It can be modeled as:
+We can keep the same structure to model it. `PANNEC_R` corresponds to the flow 
+released by the Pannecière lake, it is acting as an upstream node which means 
+that the flow simulated at `CHAUM_07` is no longer routed to downstream.
 
 ```{r mmd_pannec_model, echo = FALSE}
 mmd("
 graph LR
-CHAUM_07 --> |153km| GURGY_02
-PANNEC_P --> |153km| GURGY_02
+CHAUM_07 --> |0km| PANNEC_R
 PANNEC_R --> |153km| GURGY_02
-style PANNEC_P fill:#fcc
 style PANNEC_R fill:#fcc
 ", width = "100%")
 ```
-
-With $Q_{PANNEC\_P} = - Q_{CHAUM\_07}$ as all the upstream flows fill the reservoir.
 
 The Marne lake can be mapped as:
 
@@ -177,13 +182,17 @@ reservoir_connections$model <- NA
 reservoir_connections$area <- NA
 load("_cache/V01.RData")
 griwrm2 <- rbind(griwrm, reservoir_connections[, names(griwrm)])
+# Insert PANNEC_R between CHAUM_07 and GURGY_02
+griwrm2$down[griwrm2$id == "CHAUM_07"] <- "PANNEC_R"
+griwrm2$length[griwrm2$id == "CHAUM_07"] <- 0
 plot(griwrm2)
 ```
 
 
 ## Loading reservoir observation time series
 
-Description of the files, the columns and the type of connection (inlet / outlet) are defined in the list below:
+Description of the files, the columns and the type of connection (inlet / outlet) 
+are defined in the list below:
 
 ```{r lCfgReservoirs}
 lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "seinebasin"))
@@ -197,24 +206,6 @@ library(seinebasin)
 data(QNAT)
 data(Qreservoirs)
 ```
-
-## How to handle an inline reservoir? The Pannecière lake case.
-
-There are two possibilities:
-
-- truncate the system and only simulate the release of the reservoir if we only care about downstream flows
-- add a fictive inlet to the reservoir that will store all upstream discharge into the reservoir
-
-If we know in advance the flows released by the reservoir, upstream flow informations is not useful for the simulation. However, reservoir management simulation would require upstream flow informations for simulating the reservoir state during simulation. The second alternative will therefore be useful for the next phases.
-
-```{r Qnat}
-Qreservoirs <- cbind(
-  Qreservoirs,
-  -Qnat[, "CHAUM_07"] * griwrm2$area[griwrm2$id == "CHAUM_07"] * 1e3
-)
-colnames(Qreservoirs)[ncol(Qreservoirs)] <- "PANNEC_P"
-```
-
 
 ## Create the InputsModel object
 
@@ -236,7 +227,8 @@ load("_cache/V03.RData")
 
 ### How to handle former upstream sub-basins with upstream flows ?
 
-A lag parameter is now mandatory for these sub-basins. As no calibration is possible at that stage an arbitrary one will be used (1 m/s).
+A lag parameter is now mandatory for these sub-basins. As no calibration is 
+possible at that stage an arbitrary one will be used (1 m/s).
 
 ```{r ParamMichel}
 ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
