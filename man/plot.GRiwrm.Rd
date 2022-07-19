@@ -10,6 +10,8 @@
   orientation = "LR",
   width = "100\%",
   height = "100\%",
+  box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermUngauged =
+    "#efe", IntermGauged = "#afa", DirectInjection = "#faa"),
   ...
 )
 }
@@ -23,6 +25,8 @@
 \item{width}{\link{numeric} width of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 
 \item{height}{\link{numeric} height of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
+
+\item{box_colors}{\link{list} containing the color used for the different types of nodes}
 
 \item{...}{Other arguments and parameters you would like to send to JavaScript (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 }

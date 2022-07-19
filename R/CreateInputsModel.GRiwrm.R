@@ -77,7 +77,6 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
   }
 
-
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
 
   # Qobs completion
@@ -146,7 +145,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #' @noRd
 CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
   node <- griwrm[griwrm$id == id,]
-  FUN_MOD <- griwrm$model[griwrm$id == id]
+  FUN_MOD <- getDownstreamModel(id, griwrm)
 
   # Set hydraulic parameters
   UpstreamNodes <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
@@ -193,6 +192,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
 
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
+  InputsModel$IsUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
+  InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
 
   return(InputsModel)
 }
@@ -249,4 +250,47 @@ getInputBV <- function(x, id, unset = NULL) {
     }
   }
   return(x[, id])
+}
+
+
+#' Get the model downstream if current node as no model defined
+#'
+#' @param id [character] Id of the current node
+#' @param griwrm See [CreateGRiwrm])
+#'
+#' @return [character] Id of the first node with a model
+#'
+#' @noRd
+getDownstreamModel <- function(id, griwrm) {
+  if(!is.na(griwrm$model[griwrm$id == id]) & griwrm$model[griwrm$id == id] != "Ungauged") {
+    return(griwrm$model[griwrm$id == id])
+  } else if(!is.na(griwrm$down[griwrm$id == id])){
+    return(getDownstreamModel(griwrm$down[griwrm$id == id], griwrm))
+  } else {
+    stop("The model of the downstream node of a network cannot be `NA` or \"Ungauged\"")
+  }
+}
+
+
+#' Check if current node contains ungauged nodes that shares its parameters
+#'
+#' @param id id [character] Id of the current node
+#' @param griwrm See [CreateGRiwrm])
+#'
+#' @return A [logical], `TRUE` if the node `id` contains ungauged nodes.
+#'
+#' @noRd
+hasUngaugedNodes <- function(id, griwrm) {
+  upIds <- griwrm$id[griwrm$down == id]
+  # No upstream nodes
+  if(length(upIds) == 0) return(FALSE)
+  # At least one upstream node is ungauged
+  if(any(griwrm$model[griwrm$id %in% upIds] == "Ungauged")) return(TRUE)
+  # At least one node's model is NA need to investigate next level
+  if(any(is.na(griwrm$model[griwrm$id %in% upIds]))) {
+    NaIds <- griwrm$id[is.na(griwrm$model[griwrm$id %in% upIds])]
+    out <- sapply(NaIds, hasUngauged, griwrm = griwrm)
+    return(any(out))
+  }
+  return(FALSE)
 }

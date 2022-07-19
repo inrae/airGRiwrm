@@ -52,7 +52,7 @@ id95[54095]
 id01[54001]
 id29[54029]
 
-subgraph 54032
+subgraph Shared parameters from node 54032
 id01 -->| 45 km| 54032
 id95 -->| 42 km| id01
 id29 -->| 32 km| 54032
@@ -118,7 +118,7 @@ Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 Then, the `GRiwrmInputsModel` object can be generated taking into account the new `GRiwrm` object:
 
 ```{r}
-#IM_OL <- CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
+IM_U <- CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
 ```
 
 # References
