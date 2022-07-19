@@ -53,15 +53,14 @@ data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$distance_downstream <- nodes$distance_downstream
 nodes$model <- "RunModel_GR4J"
-griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 ```
 
 To notify the SD model that the provided flows on a node should be directly used instead of an hydrological model, one only needs to declare its model as `NA`:
 
 ```{r}
-griwrmV03 <- griwrm
-griwrmV03$model[griwrm$id == "54002"] <- NA
-griwrmV03$model[griwrm$id == "54001"] <- NA
+nodes$model[nodes$gauge_id == "54002"] <- NA
+nodes$model[nodes$gauge_id == "54001"] <- NA
+griwrmV03 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 griwrmV03
 ```
 
@@ -86,8 +85,8 @@ BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+Precip <- ConvertMeteoSD(griwrmV03, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrmV03, PotEvapTot)
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
 
