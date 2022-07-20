@@ -106,7 +106,7 @@ doSupervision <- function(supervisor) {
 #' @param Param [list] of containing model parameter values of each node of the network
 #' @noRd
 checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
-  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmRunoptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateRunOptions.GRiwrmInputsModel)")
   if(!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
   if(!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
 }
