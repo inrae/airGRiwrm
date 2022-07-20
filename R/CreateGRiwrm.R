@@ -54,22 +54,23 @@ CreateGRiwrm <- function(db,
       area = "area"
     )
   cols <- utils::modifyList(colsDefault, as.list(cols))
-  db <- dplyr::rename(db, unlist(cols))
+  griwrm <- dplyr::rename(db, unlist(cols))
   if (!keep_all) {
-    db <- dplyr::select(db, names(cols))
+    griwrm <- dplyr::select(griwrm, names(cols))
   }
-  CheckColumnTypes(db,
+  CheckColumnTypes(griwrm,
                    list(id = "character",
                         down = "character",
                         length = "double",
                         model = "character",
                         area = "double"),
                    keep_all)
-  checkNetworkConsistency(db)
-
-  class(db) <- c("GRiwrm", class(db))
-  db
+  checkNetworkConsistency(griwrm)
+  griwrm$gauged <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
+  class(griwrm) <- c("GRiwrm", class(griwrm))
+  griwrm
 }
+
 
 #' Check of the column types of a [data.frame]
 #'
@@ -79,7 +80,7 @@ CreateGRiwrm <- function(db,
 #' @param keep_all [logical] if `df` contains extra columns
 #'
 #' @return [NULL] or error message if a wrong type is detected
-
+#'
 #' @examples
 #' CheckColumnTypes(
 #'   data.frame(string = c("A"), numeric = c(1), stringsAsFactors = FALSE),
@@ -103,6 +104,7 @@ CheckColumnTypes <- function(df, coltypes, keep_all) {
   })
   return(NULL)
 }
+
 
 #' Sorting of the nodes from upstream to downstream
 #'
@@ -131,6 +133,7 @@ getNodeRanking <- function(griwrm) {
   return(ranking)
 }
 
+
 checkNetworkConsistency <- function(db) {
   if(sum(is.na(db$down)) != 1 | sum(is.na(db$length)) != 1) {
     stop("One and only one node must have 'NA' in columns 'down' and 'length")
@@ -144,3 +147,23 @@ checkNetworkConsistency <- function(db) {
     }
   })
 }
+
+
+#' Get the Id of the gauged model
+#'
+#' @param id [character] Id of the current node
+#' @param griwrm See [CreateGRiwrm])
+#'
+#' @return [character] Id of the first node with a model
+#'
+#' @noRd
+getGaugedId <- function(id, griwrm) {
+  if(!is.na(griwrm$model[griwrm$id == id]) & griwrm$model[griwrm$id == id] != "Ungauged") {
+    return(id)
+  } else if(!is.na(griwrm$down[griwrm$id == id])){
+    return(getGaugedId(griwrm$down[griwrm$id == id], griwrm))
+  } else {
+    stop("The model of the downstream node of a network cannot be `NA` or \"Ungauged\"")
+  }
+}
+

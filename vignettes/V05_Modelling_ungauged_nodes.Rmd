@@ -90,7 +90,10 @@ data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
 nodes$model[nodes$gauge_id %in% c("54095", "54029", "54001")] <- "Ungauged"
-griwrmV05 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrmV05 <- CreateGRiwrm(
+  nodes,
+  list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
+)
 griwrmV05
 ```
 
