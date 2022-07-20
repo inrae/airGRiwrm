@@ -132,7 +132,7 @@ The **airGR** calibration process is applied on each hydrological node of the `G
 ```{r Calibration}
 OC_OL <- suppressWarnings(
   Calibration(IM_OL, RunOptions, InputsCrit, CalibOptions))
-ParamV03 <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
+ParamV03 <- sapply(griwrmV03$id, function(x) {OC_OL[[x]]$Param})
 ```
 
 ## Run of the model with this newly calibrated parameters
