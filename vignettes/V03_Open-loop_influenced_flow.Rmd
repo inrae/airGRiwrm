@@ -26,20 +26,20 @@ library(airGRiwrm)
 
 ## Presentation of the study case
 
-The calibration results shown in vignette 'V02_Calibration_SD_model' for the 
-flows simulated on the Avon at Evesham (Gauging station '54002') and on the 
-Severn at Buildwas (Gauging station '54095') are not fully satisfactory, 
-especially regarding low flows. These upper basins are actually heavily 
+The calibration results shown in vignette 'V02_Calibration_SD_model' for the
+flows simulated on the Avon at Evesham (Gauging station '54002') and on the
+Severn at Buildwas (Gauging station '54095') are not fully satisfactory,
+especially regarding low flows. These upper basins are actually heavily
 influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
 
-So, to cope with these influences, in this vignette, we use direct injection of 
-observed influenced flows instead of modelling natural flow with an hydrological model. 
+So, to cope with these influences, in this vignette, we use direct injection of
+observed influenced flows instead of modelling natural flow with an hydrological model.
 
 We use observation on the Avon at Evesham (Gauging station '54002') and we
 choose to do the same on the Severn at Bewdley (Gauging station '54001') as if
-the observed flow at these locations would be the observed release of a dam. 
+the observed flow at these locations would be the observed release of a dam.
 
-Please note that the flow on the Severn at Buildwas (Gauging station '54095') is 
+Please note that the flow on the Severn at Buildwas (Gauging station '54095') is
 still simulated but its flows is no longer routed to downstream.
 
 ## Conversion of a gauging station into a release spot
