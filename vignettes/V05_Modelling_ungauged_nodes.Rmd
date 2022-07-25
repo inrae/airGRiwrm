@@ -25,20 +25,21 @@ library(airGRiwrm)
 
 ## Why modelling ungauged station in the semi-distributed model?
 
-This vignette introduces the implementation in airGRiwrm of the model developped by @lobligeoisMieuxConnaitreDistribution2014
-
-2 interests:
+Ungauged nodes in the semi-distributed model can be used to reach two different goals:
 
 - increase spatial resolution of the rain fall to improve streamflow simulation [@lobligeoisWhenDoesHigher2014].
 - simulate streamflows in location of interest for management purpose
 
+This vignette introduces the implementation in airGRiwrm of the method developped by @lobligeoisMieuxConnaitreDistribution2014 for calibrating ungauged nodes in a 
+semi-distributed model.
+
 ## Presentation of the study case
 
-Using the study case of the vignette #1 and #2, we considere this time that nodes `54095`, `54001` and 
+Using the study case of the vignette #1 and #2, we considere this time that nodes `54001` and 
 `54029` are ungauged. We simulate the streamflow at these locations by sharing 
 hydrological parameters of the gauged node `54032`.
 
-```{r, echo = FALSE}
+```{r network, echo = FALSE}
 mmd <- function(x, ...) {
   # For avoiding crash of R CMD build in console mode
   if(Sys.getenv("RSTUDIO") == "1") {
@@ -52,9 +53,10 @@ id95[54095]
 id01[54001]
 id29[54029]
 
+id95 -->| 42 km| id01
+
 subgraph Shared parameters from node 54032
 id01 -->| 45 km| 54032
-id95 -->| 42 km| id01
 id29 -->| 32 km| 54032
 end
 
@@ -67,10 +69,10 @@ classDef IntUng fill:#efe
 classDef IntGau fill:#afa
 classDef DirInj fill:#faa
 
-class id95,id29 UpUng
+class id29 UpUng
 class 54057,54032 IntGau
 class id01 IntUng
-class 54002 UpGau
+class id95,54002 UpGau
 ")
 ```
 
@@ -85,11 +87,11 @@ With $X_4$ the unit hydrogram parameter for the entire basin at `54032` which as
 
 Ungauged stations are specified by using the model "Ungauged" in the `model` column provided in the `CreateGRiwrm` function:
 
-```{r}
+```{r griwrm}
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
-nodes$model[nodes$gauge_id %in% c("54095", "54029", "54001")] <- "Ungauged"
+nodes$model[nodes$gauge_id %in% c("54029", "54001")] <- "Ungauged"
 griwrmV05 <- CreateGRiwrm(
   nodes,
   list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
@@ -99,7 +101,7 @@ griwrmV05
 
 On the following network scheme, the ungauged nodes are cleared than gauged ones with the same color (blue for upstream nodes and green for intermediate and downstream nodes)
 
-```{r}
+```{r plot_network}
 plot(griwrmV05)
 ```
 
@@ -108,7 +110,7 @@ plot(griwrmV05)
 
 The formatting of the input data is described in the vignette "V01_Structure_SD_model". The following code chunk resumes this formatting procedure:
 
-```{r}
+```{r obs}
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
@@ -120,8 +122,73 @@ Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 
 Then, the `GRiwrmInputsModel` object can be generated taking into account the new `GRiwrm` object:
 
-```{r}
+```{r InputsModel}
 IM_U <- CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
 ```
+## Calibration of the model integrating ungauged nodes
+
+Calibration options is detailed in vignette "V02_Calibration_SD_model".
+We also apply a parameter regularization here but only where an upstream simulated catchment is available.
+
+The following code chunk resumes this procedure:
+
+```{r RunOptions}
+IndPeriod_Run <- seq(
+  which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+  length(DatesR) # Until the end of the time series
+)
+IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
+RunOptions <- CreateRunOptions(IM_U,
+                               IndPeriod_WarmUp = IndPeriod_WarmUp,
+                               IndPeriod_Run = IndPeriod_Run)
+InputsCrit <- CreateInputsCrit(IM_U,
+                               FUN_CRIT = ErrorCrit_KGE2,
+                               RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,],
+                               AprioriIds = c("54057" = "54032", "54032" = "54095"),
+                               transfo = "sqrt", k = 0.15
+)
+CalibOptions <- CreateCalibOptions(IM_U)
+```
+
+The **airGR** calibration process is applied on each hydrological node of the `GRiwrm` network from upstream nodes to downstream nodes but this time the calibration of the sub-basin `54032` invokes a semi-distributed model composed of the nodes `54029`, `54001` and `54032`.
+
+```{r Calibration}
+OC_U <- suppressWarnings(
+  Calibration(IM_U, RunOptions, InputsCrit, CalibOptions))
+```
+
+Hydrological parameters for sub-basins 
+
+## Run the model with the optimized model parameters
+
+The hydrologic model uses parameters herited from the calibration of the gauged sub-basin `54032` for the ungauged nodes `54001` and `54029`:
+
+```{r param}
+ParamV05 <- sapply(griwrmV05$id, function(x) {OC_U[[x]]$Param})
+dfParam <- do.call(
+  rbind, 
+  lapply(ParamV05, function(x) 
+    if(length(x)==4) {return(c(NA, x))} else return(x))
+)
+colnames(dfParam) <- c("velocity", paste0("X", 1:4))
+knitr::kable(round(dfParam, 3))
+```
+
+We can run the model with these calibrated parameters:
+
+```{r RunModel}
+OutputsModels <- RunModel(
+  IM_U,
+  RunOptions = RunOptions,
+  Param = ParamV05
+)
+```
+
+and plot the comparison of the modelled and the observed flows including on the so-called "ungauged" stations :
+
+```{r plot, fig.height = 5, fig.width = 8}
+plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,], which = c("Regime", "CumFreq"))
+```
+
 
 # References
