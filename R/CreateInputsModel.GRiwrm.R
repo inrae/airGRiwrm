@@ -194,7 +194,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
 
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
-  InputsModel$IsUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
+  InputsModel$isUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
+  InputsModel$gaugedId <- griwrm$gauged[griwrm$id == id]
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
 
   return(InputsModel)
