@@ -34,6 +34,7 @@ e <- setupRunModel()
 # variables are copied from environment 'e' to the current environment
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
 for(x in ls(e)) assign(x, get(x, e))
+rm(e)
 
 context("CreateInputsCrit.GRiwrmInputsModel")
 
@@ -105,5 +106,23 @@ test_that("Lavenne criterion: wrong sub-catchment order should throw error", {
                      AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029"),
                      transfo = "sqrt"),
     regexp = "is not upstream the node"
+  )
+})
+
+test_that("Ungauged node as Apriori node should throw an error", {
+  nodes$model[nodes$gauge_id == "54001"] <- "Ungauged"
+  griwrm <- CreateGRiwrm(
+    nodes,
+    list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
+  )
+  InputsModel <-
+    suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs))
+  expect_error(
+    CreateInputsCrit(InputsModel = InputsModel,
+                     RunOptions = RunOptions,
+                     Obs = Qobs[IndPeriod_Run,],
+                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029"),
+                     transfo = "sqrt"),
+    regexp = "\"54001\" is an ungauged upstream node of the node \"540032\""
   )
 })
