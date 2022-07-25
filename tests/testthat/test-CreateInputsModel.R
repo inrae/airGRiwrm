@@ -183,23 +183,19 @@ test_that("negative observed flow on catchment should throw error", {
   "GRiwrmInputsModel")
 })
 
+# data set up
+e <- setupRunModel(runInputsModel = FALSE)
+# variables are copied from environment 'e' to the current environment
+# https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
+for(x in ls(e)) assign(x, get(x, e))
+
 test_that("Ungauged node should inherits its FUN_MOD from the downstream gauged node", {
-  data(Severn)
-  nodes <-
-    Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-  nodes$model <- "RunModel_GR4J"
+
   nodes$model[nodes$gauge_id == "54032"] <- "Ungauged"
   griwrmV05 <- CreateGRiwrm(
     nodes,
     list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
   )
-  BasinsObs <- Severn$BasinsObs
-  DatesR <- BasinsObs[[1]]$DatesR
-  PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-  PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-  Precip <- ConvertMeteoSD(griwrmV05, PrecipTot)
-  PotEvap <- ConvertMeteoSD(griwrmV05, PotEvapTot)
-  Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
   IM <- suppressWarnings(
     CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
   )
