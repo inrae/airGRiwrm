@@ -123,6 +123,6 @@ test_that("Ungauged node as Apriori node should throw an error", {
                      Obs = Qobs[IndPeriod_Run,],
                      AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029"),
                      transfo = "sqrt"),
-    regexp = "\"54001\" is an ungauged upstream node of the node \"540032\""
+    regexp = "\"54001\" is an ungauged upstream node of the node \"54032\""
   )
 })
