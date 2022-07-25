@@ -138,7 +138,7 @@ The **airGR** calibration process is applied on each node of the `GRiwrm` networ
 ```{r Calibration}
 OutputsCalib <- suppressWarnings(
   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions))
-ParamMichel <- sapply(OutputsCalib, "[[", "ParamFinalR")
+ParamV02 <- sapply(OutputsCalib, "[[", "ParamFinalR")
 ```
 
 ## Run the model with the optimized model parameters
@@ -147,7 +147,7 @@ ParamMichel <- sapply(OutputsCalib, "[[", "ParamFinalR")
 OutputsModels <- RunModel(
   InputsModel,
   RunOptions = RunOptions,
-  Param = ParamMichel
+  Param = ParamV02
 )
 ```
 
