@@ -36,7 +36,6 @@ setupRunModel <-
     if(is.null(griwrm)) {
       nodes <-
         Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-      nodes$distance_downstream <- nodes$distance_downstream
       nodes$model <- "RunModel_GR4J"
       griwrm <-
         CreateGRiwrm(nodes,

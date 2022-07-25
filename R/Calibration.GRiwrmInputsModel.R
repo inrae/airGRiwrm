@@ -202,18 +202,6 @@ updateParameters4Ungauged <- function(GaugedId,
   return(list(InputsModel = InputsModel, RunOptions = RunOptions))
 }
 
-updateRunOptions4Ungauged <- function(id, RunOptions) {
-  # Remove nodes outside of reduced network
-  RunOptions <- lapply(RunOptions, function(RO) {
-    if(RO$id %in% g$id) {
-      IM
-    } else {
-      NULL
-    }
-  })
-  return(RunOptions)
-}
-
 
 #' RunModel for a sub-network of ungauged nodes
 #'
