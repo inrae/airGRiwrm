@@ -127,10 +127,6 @@ Before using the automatic calibration tool, the user needs to prepare the calib
 CalibOptions <- CreateCalibOptions(InputsModel)
 ```
 
-```{r, echo=FALSE}
-save(RunOptions, InputsCrit, CalibOptions, IndPeriod_Run, file = file.path(tempdir(), "V02.RData"))
-```
-
 ## Calibration
 
 The **airGR** calibration process is applied on each node of the `GRiwrm` network from upstream nodes to downstream nodes.
