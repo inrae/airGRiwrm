@@ -45,7 +45,6 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     }
     hasUngauged <- IM$hasUngauged
     if (hasUngauged) {
-      Sdown <- IM$BasinAreas[length(IM$BasinAreas)]
       l  <- updateParameters4Ungauged(id,
                                       InputsModel,
                                       RunOptions,
@@ -70,18 +69,28 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     )
 
     if (hasUngauged) {
-      # Add OutputsCalib for ungauged nodes
-      g <- attr(InputsModel, "GRiwrm")
-      ungaugedIds <- g$id[g$gauged == id & g$id != id & !is.na(g$model)]
-      for (uId in ungaugedIds) {
+      # Select nodes with model in the sub-network
+      g <- attr(IM, "GRiwrm")
+      Ids <- g$id[g$gauged == id & !is.na(g$model)]
+      # Extract the X4 calibrated for the whole intermediate basin
+      PS <- attr(IM[[id]], "ParamSettings")
+      if(PS$hasX4) {
+        X4 <- OutputsCalib[[id]]$ParamFinalR[PS$iX4] # Global parameter
+        subBasinAreas <- calcSubBasinAreas(IM)
+      }
+      for (uId in Ids) {
+        # Add OutputsCalib for ungauged nodes
         OutputsCalib[[uId]] <- OutputsCalib[[id]]
+        # Copy parameters and transform X4 relatively to the sub-basin area
         PS <- attr(IM[[uId]], "ParamSettings")
-        OutputsCalib[[uId]]$ParamFinalR <- OutputsCalib[[uId]]$ParamFinalR[PS$Indexes]
+        OutputsCalib[[uId]]$ParamFinalR <-
+          OutputsCalib[[uId]]$ParamFinalR[PS$Indexes]
         if(PS$hasX4) {
           OutputsCalib[[uId]]$ParamFinalR[PS$iX4] <-
-            OutputsCalib[[uId]]$ParamFinalR[PS$iX4] * (sum(IM[[uId]]$BasinAreas) / Sdown) ^ 0.3
+            X4 * (subBasinAreas[uId] / sum(subBasinAreas)) ^ 0.3
         }
       }
+      IM <- IM[[id]]
     }
 
     if(useUpstreamQsim) {
@@ -203,6 +212,20 @@ updateParameters4Ungauged <- function(GaugedId,
 }
 
 
+#' Compute the area of downstream sub-basins
+#'
+#' @param IM *GRiwrmInputsModel* object (See [CreateInputsModel.GRiwrm])
+#'
+#' @return [numeric] named [vector] of the area of the downstream sub-basins
+#' @noRd
+calcSubBasinAreas <- function(IM) {
+  unlist(
+    sapply(IM, function(x) {
+      if(is.list(x)) as.numeric(x$BasinAreas[length(x$BasinAreas)])})
+  )
+}
+
+
 #' RunModel for a sub-network of ungauged nodes
 #'
 #' The function simulates a network with one set of parameters
@@ -230,13 +253,13 @@ updateParameters4Ungauged <- function(GaugedId,
 #' @noRd
 RunModel_Ungauged <- function(InputsModel, RunOptions, Param) {
   InputsModel$FUN_MOD <- NULL
-  SBV <- sum(InputsModel[[length(InputsModel)]]$BasinAreas)
+  SBVI <- sum(calcSubBasinAreas(InputsModel))
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
     PS <- attr(IM, "ParamSettings")
     p <- Param[PS$Indexes]
     if(PS$hasX4) {
-      p[PS$iX4] <- Param[PS$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBV) ^ 0.3
+      p[PS$iX4] <- Param[PS$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3
     }
     return(p)
   })
