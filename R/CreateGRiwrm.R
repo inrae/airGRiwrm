@@ -66,7 +66,7 @@ CreateGRiwrm <- function(db,
                         area = "double"),
                    keep_all)
   checkNetworkConsistency(griwrm)
-  griwrm$gauged <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
+  griwrm$donor <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
   class(griwrm) <- c("GRiwrm", class(griwrm))
   griwrm
 }
@@ -149,7 +149,7 @@ checkNetworkConsistency <- function(db) {
 }
 
 
-#' Get the Id of the gauged model
+#' Get the Id of the nearest gauged model at downstream
 #'
 #' @param id [character] Id of the current node
 #' @param griwrm See [CreateGRiwrm])

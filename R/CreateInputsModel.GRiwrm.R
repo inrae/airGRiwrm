@@ -127,7 +127,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
   InputsModel <- list()
   class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
   # Update griwrm in case of manual change in model column
-  griwrm$gauged <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
+  griwrm$donor <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
   attr(InputsModel, "GRiwrm") <- griwrm
   return(InputsModel)
 }
@@ -147,7 +147,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #' @noRd
 CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
   node <- griwrm[griwrm$id == id,]
-  FUN_MOD <- griwrm$model[griwrm$id == griwrm$gauged[griwrm$id == id]]
+  FUN_MOD <- griwrm$model[griwrm$id == griwrm$donor[griwrm$id == id]]
 
   # Set hydraulic parameters
   UpstreamNodes <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
@@ -195,7 +195,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
   InputsModel$isUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
-  InputsModel$gaugedId <- griwrm$gauged[griwrm$id == id]
+  InputsModel$gaugedId <- griwrm$donor[griwrm$id == id]
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
 
   return(InputsModel)

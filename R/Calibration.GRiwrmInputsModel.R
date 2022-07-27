@@ -71,7 +71,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     if (hasUngauged) {
       # Select nodes with model in the sub-network
       g <- attr(IM, "GRiwrm")
-      Ids <- g$id[g$gauged == id & !is.na(g$model)]
+      Ids <- g$id[g$donor == id & !is.na(g$model)]
       # Extract the X4 calibrated for the whole intermediate basin
       PS <- attr(IM[[id]], "ParamSettings")
       if(PS$hasX4) {
@@ -169,7 +169,7 @@ updateParameters4Ungauged <- function(GaugedId,
   ### Set the reduced network of the basin containing ungauged nodes ###
   # Select nodes identified with the current node as gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
-  g <- griwrm[griwrm$gauged == GaugedId, ]
+  g <- griwrm[griwrm$donor == GaugedId, ]
   # Add upstream nodes for routing upstream flows
   upIds <- griwrm$id[griwrm$down %in% g$id & !griwrm$id %in% g$id]
   g <- rbind(griwrm[griwrm$id %in% upIds, ], g)
@@ -183,7 +183,7 @@ updateParameters4Ungauged <- function(GaugedId,
   # Update griwrm
   attr(InputsModel, "GRiwrm") <- g
   # Update Qupstream of reduced network upstream nodes
-  g2 <- griwrm[griwrm$gauged == GaugedId,]
+  g2 <- griwrm[griwrm$donor == GaugedId,]
   upIds2 <- g2$id[!g2$id %in% g2$down]
   for (id in upIds2) {
     if(useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsRunoff)) {
