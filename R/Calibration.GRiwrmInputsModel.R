@@ -148,7 +148,7 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
 reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
   objAttributes <- attributes(obj)
   obj <- lapply(obj, function(o) {
-    if(o$id %in% griwrm$id) {
+    if(o$id %in% griwrm$id && !is.na(griwrm$model[griwrm$id == o$id])) {
       o
     } else {
       NULL
