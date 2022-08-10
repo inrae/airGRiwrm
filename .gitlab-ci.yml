@@ -17,12 +17,12 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
-  - R -e 'devtools::install_deps(dep = T)'
+  - R -e 'remotes::install_deps(dep = T)'
 
 test_all:
   stage: checks
   script:
-  - R -q -e 'devtools::test()'
+  - R -q -e 'testthat::test_local()'
 
 check:
   stage: checks

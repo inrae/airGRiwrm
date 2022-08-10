@@ -26,20 +26,20 @@ library(airGRiwrm)
 
 ## Presentation of the study case
 
-The calibration results shown in vignette 'V02_Calibration_SD_model' for the 
-flows simulated on the Avon at Evesham (Gauging station '54002') and on the 
-Severn at Buildwas (Gauging station '54095') are not fully satisfactory, 
-especially regarding low flows. These upper basins are actually heavily 
+The calibration results shown in vignette 'V02_Calibration_SD_model' for the
+flows simulated on the Avon at Evesham (Gauging station '54002') and on the
+Severn at Buildwas (Gauging station '54095') are not fully satisfactory,
+especially regarding low flows. These upper basins are actually heavily
 influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
 
-So, to cope with these influences, in this vignette, we use direct injection of 
-observed influenced flows instead of modelling natural flow with an hydrological model. 
+So, to cope with these influences, in this vignette, we use direct injection of
+observed influenced flows instead of modelling natural flow with an hydrological model.
 
 We use observation on the Avon at Evesham (Gauging station '54002') and we
 choose to do the same on the Severn at Bewdley (Gauging station '54001') as if
-the observed flow at these locations would be the observed release of a dam. 
+the observed flow at these locations would be the observed release of a dam.
 
-Please note that the flow on the Severn at Buildwas (Gauging station '54095') is 
+Please note that the flow on the Severn at Buildwas (Gauging station '54095') is
 still simulated but its flows is no longer routed to downstream.
 
 ## Conversion of a gauging station into a release spot
@@ -51,17 +51,15 @@ The creation of the `GRiwrm` object is detailed in the vignette "V01_Structure_S
 ```{r}
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream
 nodes$model <- "RunModel_GR4J"
-griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 ```
 
 To notify the SD model that the provided flows on a node should be directly used instead of an hydrological model, one only needs to declare its model as `NA`:
 
 ```{r}
-griwrmV03 <- griwrm
-griwrmV03$model[griwrm$id == "54002"] <- NA
-griwrmV03$model[griwrm$id == "54001"] <- NA
+nodes$model[nodes$gauge_id == "54002"] <- NA
+nodes$model[nodes$gauge_id == "54001"] <- NA
+griwrmV03 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 griwrmV03
 ```
 
@@ -86,8 +84,8 @@ BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+Precip <- ConvertMeteoSD(griwrmV03, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrmV03, PotEvapTot)
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
 
@@ -133,7 +131,7 @@ The **airGR** calibration process is applied on each hydrological node of the `G
 ```{r Calibration}
 OC_OL <- suppressWarnings(
   Calibration(IM_OL, RunOptions, InputsCrit, CalibOptions))
-ParamV03 <- sapply(griwrm$id, function(x) {OC_OL[[x]]$Param})
+ParamV03 <- sapply(griwrmV03$id, function(x) {OC_OL[[x]]$Param})
 ```
 
 ## Run of the model with this newly calibrated parameters

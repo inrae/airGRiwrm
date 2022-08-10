@@ -29,54 +29,71 @@ library(airGRiwrm)
 
 # Presentation of the case study
 
-Starting from the network and the calibration set in the vignette "V03_Open-loop_influenced_flow", we add 2 intake points for irrigation.
+Starting from the network and the calibration set in the vignette
+"V02_Calibration_SD_model", we add 2 intake points for irrigation.
 
-The following code chunk resumes the procedure of the vignette "V03_Open-loop_influenced_flow":
+## Network configuration
+
+The following code chunk resumes the procedure of the vignette
+"V02_Calibration_SD_model":
 
 ```{r load_cache}
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-nodes$distance_downstream <- nodes$distance_downstream
 nodes$model <- "RunModel_GR4J"
-griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
-griwrmV03 <- griwrm
-griwrmV03$model[griwrm$id == "54002"] <- NA
-griwrmV03$model[griwrm$id == "54095"] <- NA
-griwrmV03
 ```
-
-## Network configuration
 
 The intake points are located:
 
 - on the Severn at 35 km upstream Bewdley (Gauging station '54001');
 - on the Severn at 10 km upstream Saxons Lode (Gauging station '54032').
 
-We have to add this 2 nodes in the `GRiwrm` object that describes the network:
+We have to add this 2 nodes in the network:
 
-```{r griwrm}
-griwrmV04 <- rbind(
-  griwrmV03,
+```{r updated_nodes}
+nodes <- rbind(
+  nodes,
   data.frame(
-    id = c("Irrigation1", "Irrigation2"),
-    down = c("54001", "54032"),
-    length = c(35, 10),
+    gauge_id = c("Irrigation1", "Irrigation2"),
+    downstream_id = c("54001", "54032"),
+    distance_downstream = c(35, 10),
     model = NA,
     area = NA
   )
 )
+
+nodes
+
+```
+
+And we create the `GRiwrm` object from this new network:
+
+```{r griwm}
+griwrmV04 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 plot(griwrmV04)
 ```
-Blue-grey nodes figure upstream basins (rainfall-runoff modeling only) and green nodes figure intermediate basins, coupling rainfall-runoff and hydraulic routing modeling.
+
+Blue nodes figure upstream basins (rainfall-runoff modeling only) and green
+nodes figure intermediate basins, coupling rainfall-runoff and hydraulic routing modeling.
 Nodes in red color are direct injection points (positive or negative flow) in the model.
 
-It's important to notice that even if the points "Irrigation1" and "Irrigation2" are physically located on a single branch of the Severn river as well as gauging stations "54095", "54001" and "54032", nodes "Irrigation1" and "Irrigation2" are not represented on the same branch in this conceptual model. Consequently, with this network configuration, it is not possible to know the value of the flow in the Severn river at the "Irrigation1" or "Irrigation2" nodes. These values are only available in nodes "54095", "54001" and "54032" where rainfall-runoff and hydraulic routing are actually modeled.
+It's important to notice that even if the points "Irrigation1" and "Irrigation2"
+are physically located on a single branch of the Severn river as well as gauging
+stations "54095", "54001" and "54032", nodes "Irrigation1" and "Irrigation2" are
+not represented on the same branch in this conceptual model. Consequently, with
+this network configuration, it is not possible to know the value of the flow in
+the Severn river at the "Irrigation1" or "Irrigation2" nodes. These values are
+only available in nodes "54095", "54001" and "54032" where rainfall-runoff and
+hydraulic routing are actually modeled.
 
 ## Irrigation objectives and flow demand at intakes
 
 Irrigation1 covers an area of 15 km² and Irrigation2 covers an area of 30 km².
 
-The objective of these irrigation systems is to cover the rainfall deficit [@burtIrrigationPerformanceMeasures1997] with 80% of success. Below is the calculation of the 8<sup>th</sup> decile of monthly water needed given meteorological data of catchments "54001" and "54032" (unit mm/day) :
+The objective of these irrigation systems is to cover the rainfall deficit
+[@burtIrrigationPerformanceMeasures1997] with 80% of success. Below is the
+calculation of the 8<sup>th</sup> decile of monthly water needed given
+meteorological data of catchments "54001" and "54032" (unit mm/day) :
 
 ```{r monthly_water_need}
 # Formatting climatic data for CreateInputsModel (See vignette V01_Structure_SD_model for details)
@@ -85,8 +102,8 @@ DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
-Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+Precip <- ConvertMeteoSD(griwrmV04, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrmV04, PotEvapTot)
 
 # Calculation of the water need at the sub-basin scale
 dailyWaterNeed <- PotEvap - Precip
@@ -241,7 +258,7 @@ As for the previous model, we need to set up an `GRiwrmInputsModel` object conta
 # A flow is needed for all direct injection nodes in the network
 # even if they may be overwritten after by a controller
 # The Qobs matrix is completed with 2 new columns for the new nodes
-QobsIrrig <- cbind(Qobs[, c("54002", "54095")], Irrigation1 = 0, Irrigation2 = 0)
+QobsIrrig <- cbind(Qobs, Irrigation1 = 0, Irrigation2 = 0)
 
 # Creation of the GRiwrmInputsModel object
 IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QobsIrrig)
@@ -346,7 +363,7 @@ CreateController(sv,
 
 # Running the simulation
 
-First we need to create a `GRiwrmRunOptions` object and load the parameters calibrated in the vignette "V03_Open-loop_influenced_flow":
+First we need to create a `GRiwrmRunOptions` object and load the parameters calibrated in the vignette "V02_Calibration_SD_model":
 
 ```{r}
 IndPeriod_Run <- seq(
@@ -357,23 +374,23 @@ IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
 RunOptions <- CreateRunOptions(IM_Irrig,
                                IndPeriod_WarmUp = IndPeriod_WarmUp,
                                IndPeriod_Run = IndPeriod_Run)
-ParamV03 <- readRDS(system.file("vignettes", "ParamV03.RDS", package = "airGRiwrm"))
+ParamV02 <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
 ```
 
 
 For running a model with a supervision, you only need to substitute `InputsModel` by a `Supervisor` in the `RunModel` function call.
 
 ```{r}
-OM_Irrig <- RunModel(sv, RunOptions = RunOptions, Param = ParamV03)
+OM_Irrig <- RunModel(sv, RunOptions = RunOptions, Param = ParamV02)
 ```
 
-Simulated flows can be extracted and plot as follows:
+Simulated flows during irrigation season can be extracted and plot as follows:
 
 ```{r}
 Qm3s <- attr(OM_Irrig, "Qm3s")
-Qm3s <- Qm3s[Qm3s$DatesR > "2003-05-25" & Qm3s$DatesR < "2003-10-05",]
+Qm3s <- Qm3s[Qm3s$DatesR > "2003-02-25" & Qm3s$DatesR < "2003-10-05",]
 oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
-plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "", ylim = c(0,40))
+plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "")
 plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "", legend.x = "bottomright")
 par(oldpar)
 ```

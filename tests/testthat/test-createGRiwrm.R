@@ -18,3 +18,30 @@ H5920010	602213	2427449	43824.66	La Seine à Paris [Austerlitz après création 
   "GRiwrm")
 
 })
+
+test_that("NA or Ungauged nodes at downstream should throw an error", {
+  data(Severn)
+  nodes <-
+    Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+  nodes$model <- "RunModel_GR4J"
+  nodes$model[nodes$gauge_id == "54057"] <- "Ungauged"
+  expect_error(CreateGRiwrm(
+    nodes,
+    list(
+      id = "gauge_id",
+      down = "downstream_id",
+      length = "distance_downstream"
+    )
+  ),
+  regexp = "downstream node")
+  nodes$model[nodes$gauge_id == "54057"] <- NA
+  expect_error(CreateGRiwrm(
+    nodes,
+    list(
+      id = "gauge_id",
+      down = "downstream_id",
+      length = "distance_downstream"
+    )
+  ),
+  regexp = "downstream node")
+})

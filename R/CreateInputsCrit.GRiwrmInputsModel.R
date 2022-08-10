@@ -56,6 +56,11 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
         stop("'AprioriIds': the node \"", AprioriIds[id],
              "\" is not upstream the node \"", id,"\"")
       }
+      if (InputsModel[[AprioriIds[id]]]$isUngauged &
+          InputsModel[[AprioriIds[id]]]$gaugedId == id) {
+        stop("'AprioriIds': the node \"", AprioriIds[id],
+             "\" is an ungauged upstream node of the node \"", id,"\"")
+      }
     })
   }
 

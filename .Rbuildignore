@@ -12,6 +12,7 @@
 ^docs
 ^vignettes/seinebasin
 ^man-roxygen
+^man-examples
 ^dev
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$

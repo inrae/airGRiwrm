@@ -36,8 +36,10 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   # Copy simulated pure runoff flows (no SD nodes) to Qupstream in downstream SD nodes
   for(id in getNoSD_Ids(x$InputsModel)) {
     downId <- x$InputsModel[[id]]$down
-    x$InputsModel[[downId]]$Qupstream[RunOptions[[downId]]$IndPeriod_Run, id] <-
-      x$OutputsModel[[id]]$Qsim_m3
+    if(!is.null(x$InputsModel[[downId]])) {
+      x$InputsModel[[downId]]$Qupstream[RunOptions[[downId]]$IndPeriod_Run, id] <-
+        x$OutputsModel[[id]]$Qsim_m3
+    }
   }
 
   # Save Qsim for step by step simulation
