@@ -7,9 +7,21 @@
 #'  * the identifier and the hydraulic distance to the downstream node
 #'  ([character] columns `down` and [numeric] columns `length` in km). The
 #'  last downstream node should have fields `down` and `length` set to `NA`,
-#'  * the area of the basin ([numeric] column `area` in km2)
-#'  * the hydrological model to use or [NA] for using observed flow instead of a
-#'  runoff model output ([character] column `model`)
+#'  * the total area of the basin at the node location ([numeric] column `area` in km2).
+#'  Direct injection node can have a null area defined by `NA`
+#'  * the model to use ([character] column `model`), see section below for details
+#'
+#' ## Available models in airGRiwrm
+#'
+#' The "model" column should be filled by one of the following:
+#'
+#' * One of the hydrological models available in the *airGR* package defined by its
+#' `RunModel` function (i.e.: `RunModel_GR4J`, `RunModel_GR5HCemaneige`...)
+#' * `NA` for injecting (or abstracting) a flow time series at the location of the node
+#' (direct flow injection)
+#' * `Ungauged` for an ungauged node. The sub-basin inherits hydrological model and
+#' parameters from a "donor" sub-basin. By default the donor is the first gauged
+#' node at downstream
 #'
 #' @param db [data.frame] description of the network (See details)
 #' @param cols [list] or [vector] columns of `db`. By default, mandatory column
@@ -31,6 +43,8 @@
 #'  node location in km2
 #'  * `model` ([character]): hydrological model to use ([NA] for using observed
 #'  flow instead of a runoff model output)
+#'  * `donor` ([character]): node used as "donor" for the the model and the
+#'  calibration parameters.
 #'
 #' @aliases GRiwrm
 #' @export

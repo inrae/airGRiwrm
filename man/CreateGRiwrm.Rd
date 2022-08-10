@@ -37,6 +37,8 @@ node (\link{NA} for the most downstream node)
 node location in km2
 \item \code{model} (\link{character}): hydrological model to use (\link{NA} for using observed
 flow instead of a runoff model output)
+\item \code{donor} (\link{character}): node used as "donor" for the the model and the
+calibration parameters.
 }
 }
 \description{
@@ -50,9 +52,22 @@ description of their connections
 \item the identifier and the hydraulic distance to the downstream node
 (\link{character} columns \code{down} and \link{numeric} columns \code{length} in km). The
 last downstream node should have fields \code{down} and \code{length} set to \code{NA},
-\item the area of the basin (\link{numeric} column \code{area} in km2)
-\item the hydrological model to use or \link{NA} for using observed flow instead of a
-runoff model output (\link{character} column \code{model})
+\item the total area of the basin at the node location (\link{numeric} column \code{area} in km2).
+Direct injection node can have a null area defined by \code{NA}
+\item the model to use (\link{character} column \code{model}), see section below for details
+}
+\subsection{Available models in airGRiwrm}{
+
+The "model" column should be filled by one of the following:
+\itemize{
+\item One of the hydrological models available in the \emph{airGR} package defined by its
+\code{RunModel} function (i.e.: \code{RunModel_GR4J}, \code{RunModel_GR5HCemaneige}...)
+\item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
+(direct flow injection)
+\item \code{Ungauged} for an ungauged node. The sub-basin inherits hydrological model and
+parameters from a "donor" sub-basin. By default the donor is the first gauged
+node at downstream
+}
 }
 }
 \examples{
@@ -66,7 +81,7 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  model = c(NA, "RunModel_GR4J"),
                  stringsAsFactors = FALSE)
 griwrm_basic <- CreateGRiwrm(db)
-str(griwrm_basic)
+griwrm_basic
 # Network diagram with direct flow node in red, intermediate sub-basin in green
 plot(griwrm_basic)
 
@@ -80,7 +95,7 @@ rename_columns <- list(id = "gauge_id",
                        down = "downstream_id",
                        length = "distance_downstream")
 griwrm_severn <- CreateGRiwrm(nodes, rename_columns)
-str(griwrm_severn)
+griwrm_severn
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
 plot(griwrm_severn)
 

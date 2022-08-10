@@ -51,7 +51,7 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  model = c(NA, "RunModel_GR4J"),
                  stringsAsFactors = FALSE)
 griwrm_basic <- CreateGRiwrm(db)
-str(griwrm_basic)
+griwrm_basic
 # Network diagram with direct flow node in red, intermediate sub-basin in green
 plot(griwrm_basic)
 
@@ -65,7 +65,7 @@ rename_columns <- list(id = "gauge_id",
                        down = "downstream_id",
                        length = "distance_downstream")
 griwrm_severn <- CreateGRiwrm(nodes, rename_columns)
-str(griwrm_severn)
+griwrm_severn
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
 plot(griwrm_severn)
 
