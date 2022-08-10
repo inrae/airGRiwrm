@@ -229,7 +229,7 @@ calcSubBasinAreas <- function(IM) {
 #' RunModel for a sub-network of ungauged nodes
 #'
 #' The function simulates a network with one set of parameters
-#' shared with ungauded nodes inside the basin.
+#' shared with ungauged nodes inside the basin.
 #'
 #' @details
 #' The network should contains only one gauged station at downstream and other
@@ -239,7 +239,7 @@ calcSubBasinAreas <- function(IM) {
 #' `InputsModel` is a *GRiwrmInputsModel* containing the network of ungauged nodes
 #' and direct injection in the basin.
 #'
-#' `Param` is adjusted for each sub-basin using the method developped by
+#' `Param` is adjusted for each sub-basin using the method developed by
 #' Lobligeois (2014) for GR models.
 #'
 #' @references Lobligeois, Florent. Mieux connaître la distribution spatiale des

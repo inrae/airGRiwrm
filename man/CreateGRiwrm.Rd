@@ -56,87 +56,41 @@ runoff model output (\link{character} column \code{model})
 }
 }
 \examples{
-###################################################################
-# Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
-# Simulation of a reservoir with a purpose of low-flow mitigation #
-###################################################################
-
-## ---- preparation of the InputsModel object
-
-## loading package and catchment data
-library(airGRiwrm)
-data(L0123001)
-
-## ---- specifications of the reservoir
-
-## the reservoir withdraws 1 m3/s when it's possible considering the flow observed in the basin
-Qupstream <- matrix(-sapply(BasinObs$Qls / 1000 - 1, function(x) {
-  min(1, max(0, x, na.rm = TRUE))
-}), ncol = 1)
-
-## except between July and September when the reservoir releases 3 m3/s for low-flow mitigation
-month <- as.numeric(format(BasinObs$DatesR, "\%m"))
-Qupstream[month >= 7 & month <= 9] <- 3
-Qupstream <- Qupstream * 86400 ## Conversion in m3/day
-
-## the reservoir is not an upstream subcachment: its areas is NA
-BasinAreas <- c(NA, BasinInfo$BasinArea)
-
-## delay time between the reservoir and the catchment outlet is 2 days and the distance is 150 km
-LengthHydro <- 150
-## with a delay of 2 days for 150 km, the flow velocity is 75 km per day
-Velocity <- (LengthHydro * 1e3 / 2) / (24 * 60 * 60) ## Conversion km/day -> m/s
-
-# This example is a network of 2 nodes which can be describe like this:
+# Network of 2 nodes distant of 150 km:
+# - an upstream reservoir modelled as a direct flow injection (no model)
+# - a gauging station downstream a catchment of 360 km² modelled with GR4J
 db <- data.frame(id = c("Reservoir", "GaugingDown"),
-                 length = c(LengthHydro, NA),
+                 length = c(150, NA),
                  down = c("GaugingDown", NA),
-                 area = c(NA, BasinInfo$BasinArea),
+                 area = c(NA, 360),
                  model = c(NA, "RunModel_GR4J"),
                  stringsAsFactors = FALSE)
+griwrm_basic <- CreateGRiwrm(db)
+str(griwrm_basic)
+# Network diagram with direct flow node in red, intermediate sub-basin in green
+plot(griwrm_basic)
 
-# Create GRiwrm object from the data.frame
-griwrm <- CreateGRiwrm(db)
-str(griwrm)
+# GR4J semi-distributed model of the Severn River
+data(Severn)
+nodes <- Severn$BasinsInfo
+nodes$model <- "RunModel_GR4J"
+str(nodes)
+# Mismatch column names are renamed to stick with GRiwrm requirements
+rename_columns <- list(id = "gauge_id",
+                       down = "downstream_id",
+                       length = "distance_downstream")
+griwrm_severn <- CreateGRiwrm(nodes, rename_columns)
+str(griwrm_severn)
+# Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
+plot(griwrm_severn)
 
-# Formatting observations for the hydrological models
-# Each input data should be a matrix or a data.frame with the good id in the name of the column
-Precip <- matrix(BasinObs$P, ncol = 1)
-colnames(Precip) <- "GaugingDown"
-PotEvap <- matrix(BasinObs$E, ncol = 1)
-colnames(PotEvap) <- "GaugingDown"
-
-# Observed flows contain flows that are directly injected in the model
-Qobs = matrix(Qupstream, ncol = 1)
-colnames(Qobs) <- "Reservoir"
-
-# Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)
-InputsModels <- CreateInputsModel(griwrm,
-                            DatesR = BasinObs$DatesR,
-                            Precip = Precip,
-                            PotEvap = PotEvap,
-                            Qobs = Qobs)
-str(InputsModels)
-
-## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
-
-# Creation of the GriwmRunOptions object
-RunOptions <- CreateRunOptions(InputsModels,
-                                IndPeriod_Run = Ind_Run)
-str(RunOptions)
-
-# Parameters of the SD models should be encapsulated in a named list
-ParamGR4J <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
-Param <- list(`GaugingDown` = c(Velocity, ParamGR4J))
-
-# RunModel for the whole network
-OutputsModels <- RunModel(InputsModels,
-                          RunOptions = RunOptions,
-                          Param = Param)
-str(OutputsModels)
-
-# Compare Simulation with reservoir and observation of natural flow
-plot(OutputsModels, data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]))
+# Same model with an ungauged station at nodes 54029 and 54001
+# By default the first gauged node at downstream is used for parameter calibration (54032)
+nodes_ungauged <- nodes
+nodes_ungauged$model[nodes_ungauged$gauge_id \%in\% c("54029", "54001")] <- "Ungauged"
+griwrm_ungauged <- CreateGRiwrm(nodes_ungauged, rename_columns)
+# The `donor` column define which node is used for parameter calibration
+griwrm_ungauged
+# Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
+plot(griwrm_ungauged)
 }

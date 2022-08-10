@@ -34,7 +34,7 @@
 #'
 #' @aliases GRiwrm
 #' @export
-#' @inherit RunModel.GRiwrmInputsModel return examples
+#' @example man-examples/CreateGRiwrm.R
 #'
 CreateGRiwrm <- function(db,
                    cols = list(

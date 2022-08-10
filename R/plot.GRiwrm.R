@@ -15,13 +15,7 @@
 #'
 #' @export
 #'
-#' @examples
-#' \dontrun{
-#' # Display diagram
-#' plot.GRiwrm(griwrm)
-#' # Is the same as
-#' DiagrammeR::mermaid(plot.GRiwrm(griwrm, display = FALSE), width = "100%", height = "100%")
-#' }
+#' @example man-examples/CreateGRiwrm.R
 #'
 plot.GRiwrm <- function(x,
                         display = TRUE,
