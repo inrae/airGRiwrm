@@ -40,6 +40,7 @@ articles:
       - V02_Calibration_SD_model
       - V03_Open-loop_influenced_flow
       - V04_Closed-loop_regulated_withdrawal
+      - V05_Modelling_ungauged_nodes.Rmd
   - title: Example of a large network on the Seine River (France)
     navbar: Example of a large network on the Seine River (France)
     contents:
