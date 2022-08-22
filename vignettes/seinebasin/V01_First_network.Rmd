@@ -94,7 +94,7 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 
 ```{r save}
 dir.create("_cache", showWarnings = FALSE)
-save(griwrm, InputsModel, file = "_cache/V01.RData")
+save(seine_nodes, griwrm, InputsModel, file = "_cache/V01.RData")
 ```
 
 # References
