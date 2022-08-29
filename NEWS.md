@@ -1,5 +1,25 @@
 # airGRiwrm (development version)
 
+New features:
+-------------
+
+* Handle simple in-line reservoir inside the model (#51)
+* Use of non gauged stations in the network (#42)
+
+Bug fixes:
+----------
+
+* Wrong file name for the "Get started" vignette (#79)
+* CreateInputsCrit: wrong id in error message (#85)
+* ConvertMeteoSD: crash with upstream nodes with no area (#89)
+* Regularisation: check if current node and a priori node use the same model (#93)
+* Regularisation: taking into account X4 transformation (#88)
+
+Internal changes:
+-----------------
+
+* Check failed on release version (#78)
+
 airGRiwrm 0.6.1
 ===============
 
