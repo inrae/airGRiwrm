@@ -31,6 +31,8 @@ navbar:
 repo:
   url:
     home: https://github.com/inrae/airGRiwrm
+    source: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master
+    issue: https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues
 
 articles:
   - title: Quick start on the Severn River (UK)
