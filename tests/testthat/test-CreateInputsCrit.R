@@ -109,6 +109,18 @@ test_that("Lavenne criterion: wrong sub-catchment order should throw error", {
   )
 })
 
+test_that("Lavenne criterion: current node and a priori node must use the same model", {
+  InputsModel[["54032"]]$FUN_MOD <- RunModel_GR6J
+  expect_error(
+    CreateInputsCrit(InputsModel = InputsModel,
+                     RunOptions = RunOptions,
+                     Obs = Qobs[IndPeriod_Run,],
+                     AprioriIds = AprioriIds,
+                     transfo = "sqrt"),
+    regexp = "must use the same hydrological model"
+  )
+})
+
 test_that("Ungauged node as Apriori node should throw an error", {
   nodes$model[nodes$gauge_id == "54001"] <- "Ungauged"
   griwrm <- CreateGRiwrm(

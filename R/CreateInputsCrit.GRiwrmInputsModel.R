@@ -61,6 +61,10 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
         stop("'AprioriIds': the node \"", AprioriIds[id],
              "\" is an ungauged upstream node of the node \"", id,"\"")
       }
+      if (!identical(InputsModel[[id]]$FUN_MOD, InputsModel[[AprioriIds[id]]]$FUN_MOD)) {
+        stop("'AprioriIds': the node \"", AprioriIds[id],
+             "\" must use the same hydrological model as the node \"", id,"\"")
+      }
     })
   }
 
