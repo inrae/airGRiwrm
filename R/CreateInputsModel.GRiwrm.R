@@ -194,10 +194,13 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
 
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
+  featModel <- .GetFeatModel(InputsModel)
   InputsModel$isUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
   InputsModel$gaugedId <- griwrm$donor[griwrm$id == id]
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
-
+  InputsModel$model <- list(indexParamUngauged = ifelse(inherits(InputsModel, "SD"), 0, 1) + seq.int(featModel$NbParam),
+                            hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
+                            iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4))
   return(InputsModel)
 }
 
@@ -281,4 +284,25 @@ hasUngaugedNodes <- function(id, griwrm) {
     return(any(out))
   }
   return(FALSE)
+}
+
+
+#' function to extract model features partially copied from airGR:::.GetFeatModel
+#' @noRd
+.GetFeatModel <- function(InputsModel) {
+  path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
+  FeatMod <- read.table(path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
+  NameFunMod <- ifelse(test = FeatMod$Pkg %in% "airGR",
+                       yes  = paste("RunModel", FeatMod$NameMod, sep = "_"),
+                       no   = FeatMod$NameMod)
+  IdMod <- which(sapply(NameFunMod, FUN = function(x) identical(InputsModel$FUN_MOD, x)))
+  if (length(IdMod) < 1) {
+    stop("'FUN_MOD' must be one of ", paste(NameFunMod, collapse = ", "))
+  }
+  FeatMod <- as.list(FeatMod[IdMod, ])
+  FeatMod$IsSD <- inherits(InputsModel, "SD")
+  if (FeatMod$IsSD) {
+    FeatMod$NbParam <- FeatMod$NbParam + 1
+  }
+  return(FeatMod)
 }
