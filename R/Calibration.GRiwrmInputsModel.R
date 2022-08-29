@@ -54,7 +54,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
     } else {
-      if(useUpstreamQsim && any(IM$UpstreamIsRunoff)) {
+      if (useUpstreamQsim && any(IM$UpstreamIsRunoff)) {
         # Update InputsModel$Qupstream with simulated upstream flows
         IM <- UpdateQsimUpstream(IM, RunOptions[[id]], OutputsModel)
       }
@@ -73,20 +73,18 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       g <- attr(IM, "GRiwrm")
       Ids <- g$id[g$donor == id & !is.na(g$model)]
       # Extract the X4 calibrated for the whole intermediate basin
-      PS <- attr(IM[[id]], "ParamSettings")
-      if(PS$hasX4) {
-        X4 <- OutputsCalib[[id]]$ParamFinalR[PS$iX4] # Global parameter
+      if(IM[[id]]$model$hasX4) {
+        X4 <- OutputsCalib[[id]]$ParamFinalR[IM[[id]]$model$iX4] # Global parameter
         subBasinAreas <- calcSubBasinAreas(IM)
       }
       for (uId in Ids) {
         # Add OutputsCalib for ungauged nodes
         OutputsCalib[[uId]] <- OutputsCalib[[id]]
         # Copy parameters and transform X4 relatively to the sub-basin area
-        PS <- attr(IM[[uId]], "ParamSettings")
         OutputsCalib[[uId]]$ParamFinalR <-
-          OutputsCalib[[uId]]$ParamFinalR[PS$Indexes]
-        if(PS$hasX4) {
-          OutputsCalib[[uId]]$ParamFinalR[PS$iX4] <-
+          OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
+        if(IM[[id]]$model$hasX4) {
+          OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <-
             X4 * (subBasinAreas[uId] / sum(subBasinAreas)) ^ 0.3
         }
       }
@@ -132,6 +130,10 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
   if(!inherits(OutputsModel[[AprioriId]], "SD")) {
     # Add default velocity parameter for a priori upstream catchment
     AprParamR <- c(AprCelerity, AprParamR)
+  }
+  if (attr(InputsCrit[[id]], "model")$hasX4) {
+    featMod <- attr(InputsCrit[[id]], "model")
+    AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
   }
   AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
   return(Lavenne_FUN(AprParamR, AprCrit))
@@ -195,14 +197,7 @@ updateParameters4Ungauged <- function(GaugedId,
         rep(FALSE, length(InputsModel[[id]]$UpstreamIsRunoff))
     }
   }
-  # Add extra info for Param processing
-  nbParam <- RunOptions[[GaugedId]]$FeatFUN_MOD$NbParam
-  for (id in names(InputsModel)) {
-    attr(InputsModel[[id]], "ParamSettings") <-
-      list(Indexes = ifelse(inherits(InputsModel[[id]], "SD"), 1, 2):nbParam,
-           hasX4 = grepl("RunModel_GR[456][HJ]", InputsModel[[id]]$FUN_MOD),
-           iX4 = ifelse(inherits(InputsModel[[id]], "SD"), 5, 4))
-  }
+
   # Add class InputsModel for airGR::Calibration checks
   class(InputsModel) <- c("InputsModel", class(InputsModel))
 
@@ -256,10 +251,9 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param) {
   SBVI <- sum(calcSubBasinAreas(InputsModel))
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
-    PS <- attr(IM, "ParamSettings")
-    p <- Param[PS$Indexes]
-    if(PS$hasX4) {
-      p[PS$iX4] <- Param[PS$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3
+    p <- Param[IM$model$indexParamUngauged]
+    if(IM$model$hasX4) {
+      p[IM$model$iX4] <- Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3
     }
     return(p)
   })

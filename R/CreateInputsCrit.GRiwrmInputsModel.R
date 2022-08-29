@@ -61,6 +61,10 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
         stop("'AprioriIds': the node \"", AprioriIds[id],
              "\" is an ungauged upstream node of the node \"", id,"\"")
       }
+      if (!identical(InputsModel[[id]]$FUN_MOD, InputsModel[[AprioriIds[id]]]$FUN_MOD)) {
+        stop("'AprioriIds': the node \"", AprioriIds[id],
+             "\" must use the same hydrological model as the node \"", id,"\"")
+      }
     })
   }
 
@@ -88,6 +92,11 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
         )
       attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
       attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
+      attr(InputsCrit[[IM$id]], "model") <- IM$model
+      if (IM$model$hasX4) {
+        attr(InputsCrit[[IM$id]], "model")$X4Ratio <-
+          (tail(IM$BasinAreas, 1) / tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3
+      }
       class(InputsCrit[[IM$id]]) <- c("InputsCritLavenneFunction", class(InputsCrit[[IM$id]]))
     }
   }
