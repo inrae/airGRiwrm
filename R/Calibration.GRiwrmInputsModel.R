@@ -131,6 +131,10 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
     # Add default velocity parameter for a priori upstream catchment
     AprParamR <- c(AprCelerity, AprParamR)
   }
+  if (attr(InputsCrit[[id]], "model")$hasX4) {
+    featMod <- attr(InputsCrit[[id]], "model")
+    AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
+  }
   AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
   return(Lavenne_FUN(AprParamR, AprCrit))
 }
