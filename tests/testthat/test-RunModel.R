@@ -144,3 +144,26 @@ test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
   Qm3s <- attr(OutputsModel, "Qm3s")
   expect_equal(Qm3s[,4], rowSums(Qm3s[,2:3]))
 })
+
+test_that("RunModel.Supervisor with NA values in Qupstream", {
+  # Create Supervisor
+  InputsModel$`54057`$Qupstream[, c("R1", "R2")] <- NA
+  sv <- CreateSupervisor(InputsModel)
+  # Function to withdraw half of the measured flow
+  fWithdrawal <- function(y) { -y/2 }
+  # Function to release half of the the measured flow
+  fRelease <- function(y) { y/2 }
+  # Controller that withdraw half of the flow measured at node "54002" at location "R1"
+  CreateController(sv, "Withdrawal", Y = c("54002"), U = c("R1"), FUN = fWithdrawal)
+  # Controller that release half of the flow measured at node "54002" at location "R2"
+  CreateController(sv, "Release", Y = c("54002"), U = c("R2"), FUN = fRelease)
+
+  OM_Supervisor <- RunModel(
+    sv,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  )
+  expect_equal(OM_Supervisor[["54057"]]$Qsim[1:3], rep(as.double(NA),3))
+  expect_equal(OM_Supervisor[["54057"]]$Qsim[4:length(IndPeriod_Run)],
+               OM_GriwrmInputs[["54057"]]$Qsim[4:length(IndPeriod_Run)])
+})
