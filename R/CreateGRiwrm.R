@@ -17,11 +17,16 @@
 #'
 #' * One of the hydrological models available in the *airGR* package defined by its
 #' `RunModel` function (i.e.: `RunModel_GR4J`, `RunModel_GR5HCemaneige`...)
-#' * `NA` for injecting (or abstracting) a flow time series at the location of the node
-#' (direct flow injection)
 #' * `Ungauged` for an ungauged node. The sub-basin inherits hydrological model and
 #' parameters from a "donor" sub-basin. By default the donor is the first gauged
 #' node at downstream
+#' * `NA` for injecting (or abstracting) a flow time series at the location of the node
+#' (direct flow injection)
+#' * `Diversion` for abstracting a flow time series from an existing node transfer it
+#' to another node. As a `Diversion` is attached to an existing node, this node is
+#' then described with 2 lines: one for the hydrological model and another one for the
+#' diversion
+#'
 #'
 #' @param db [data.frame] description of the network (See details)
 #' @param cols [list] or [vector] columns of `db`. By default, mandatory column
@@ -131,7 +136,7 @@ getNodeRanking <- function(griwrm) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
   # Remove upstream nodes without model (direct flow connections)
-  griwrm <- griwrm[!is.na(griwrm$model),]
+  griwrm <- griwrm[!is.na(griwrm$model), ]
   # Rank 1
   rank <- setdiff(griwrm$id, griwrm$down)
   ranking <- rank
@@ -149,19 +154,61 @@ getNodeRanking <- function(griwrm) {
 
 
 checkNetworkConsistency <- function(db) {
-  if(sum(is.na(db$down)) != 1 | sum(is.na(db$length)) != 1) {
-    stop("One and only one node must have 'NA' in columns 'down' and 'length")
+  db2 <- db[db$model != "Diversion",]
+  if (any(duplicated(db2$id))) {
+    stop("Duplicated nodes detected: ",
+         paste(db2$id[duplicated(db2$id)], collapse = "\n"),
+         "\nNodes `id` must be unique (except for `Diversion` nodes)")
   }
-  if(which(is.na(db$down)) != which(is.na(db$length))) {
-    stop("The node with 'down = NA' must be the same as the one with 'length = NA'")
+  if (sum(is.na(db$down)) == 0) {
+    stop("At least one node must be a network downstream node",
+      " specified by 'down = NA'")
+  }
+  if (which(is.na(db$down)) != which(is.na(db$length))) {
+    stop("Nodes with 'down = NA' must have 'length = NA'")
   }
   sapply(db$down[!is.na(db$down)], function(x) {
-    if(!(x %in% db$id)) {
+    if (!(x %in% db$id)) {
       stop("The 'down' id ", x, " is not found in the 'id' column")
     }
   })
+  db3 <- db2[!is.na(db2$model), ]
+  sapply(db$id[db$model == "Diversion"], function(x) {
+    if (length(which(db3$id == x)) != 1) {
+      i <- which(db$id == x & db$model == "Diversion")[1]
+      nodeError(db[i, ],
+                "A Diversion node must have the same `id` of one (and only one) node with a model")
+    }
+  })
+  apply(db, 1, checkNode, simplify = FALSE)
 }
 
+checkNode <- function(node) {
+  node <- as.list(node)
+  if (!is.na(node$model)) {
+    if (node$model == "Diversion") {
+      if (!is.na(node$area)) {
+        nodeError(node, "A Diversion node must have its area equal to `NA`")
+      }
+    } else if (length(grep("RunModel_GR", node$model)) > 0 & is.na(node$area)) {
+      # TODO This test should be extended to airGRplus models
+      nodeError(node, "A node using an hydrological model must have a numeric area")
+    }
+  }
+}
+
+displayNodeDetails <- function(node) {
+  s <- sapply(names(node), function(x) {
+    sprintf("%s: %s", x, node[x])
+  })
+  paste("Error on the node:",
+        paste(s, collapse = "\n"),
+        sep = "\n")
+}
+
+nodeError <- function(node, s) {
+  stop(displayNodeDetails(node), "\n", s)
+}
 
 #' Get the Id of the nearest gauged model at downstream
 #'
@@ -172,12 +219,15 @@ checkNetworkConsistency <- function(db) {
 #'
 #' @noRd
 getGaugedId <- function(id, griwrm) {
-  if(!is.na(griwrm$model[griwrm$id == id]) & griwrm$model[griwrm$id == id] != "Ungauged") {
+  griwrm <- griwrm[griwrm$model != "Diversion",]
+  if (!is.na(griwrm$model[griwrm$id == id]) &
+    griwrm$model[griwrm$id == id] != "Ungauged") {
     return(id)
-  } else if(!is.na(griwrm$down[griwrm$id == id])){
+  } else if (!is.na(griwrm$down[griwrm$id == id])) {
     return(getGaugedId(griwrm$down[griwrm$id == id], griwrm))
   } else {
-    stop("The model of the downstream node of a network cannot be `NA` or \"Ungauged\"")
+    stop("The model of the downstream node of a network",
+      " cannot be `NA` or \"Ungauged\"")
   }
 }
 

@@ -62,11 +62,15 @@ The "model" column should be filled by one of the following:
 \itemize{
 \item One of the hydrological models available in the \emph{airGR} package defined by its
 \code{RunModel} function (i.e.: \code{RunModel_GR4J}, \code{RunModel_GR5HCemaneige}...)
-\item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
-(direct flow injection)
 \item \code{Ungauged} for an ungauged node. The sub-basin inherits hydrological model and
 parameters from a "donor" sub-basin. By default the donor is the first gauged
 node at downstream
+\item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
+(direct flow injection)
+\item \code{Diversion} for abstracting a flow time series from an existing node transfer it
+to another node. As a \code{Diversion} is attached to an existing node, this node is
+then described with 2 lines: one for the hydrological model and another one for the
+diversion
 }
 }
 }
