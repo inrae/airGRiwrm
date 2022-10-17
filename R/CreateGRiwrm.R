@@ -154,7 +154,7 @@ getNodeRanking <- function(griwrm) {
 
 
 checkNetworkConsistency <- function(db) {
-  db2 <- db[db$model != "Diversion",]
+  db2 <- db[getDiversionRows(db, TRUE), ]
   if (any(duplicated(db2$id))) {
     stop("Duplicated nodes detected: ",
          paste(db2$id[duplicated(db2$id)], collapse = "\n"),
@@ -173,7 +173,7 @@ checkNetworkConsistency <- function(db) {
     }
   })
   db3 <- db2[!is.na(db2$model), ]
-  sapply(db$id[db$model == "Diversion"], function(x) {
+  sapply(db$id[getDiversionRows(db)], function(x) {
     if (length(which(db3$id == x)) != 1) {
       i <- which(db$id == x & db$model == "Diversion")[1]
       nodeError(db[i, ],
@@ -219,7 +219,7 @@ nodeError <- function(node, s) {
 #'
 #' @noRd
 getGaugedId <- function(id, griwrm) {
-  griwrm <- griwrm[griwrm$model != "Diversion",]
+  griwrm <- griwrm[getDiversionRows(griwrm, TRUE), ]
   if (!is.na(griwrm$model[griwrm$id == id]) &
     griwrm$model[griwrm$id == id] != "Ungauged") {
     return(id)
@@ -231,3 +231,15 @@ getGaugedId <- function(id, griwrm) {
   }
 }
 
+getDiversionRows <- function(griwrm, inverse = FALSE) {
+
+  rows <- which(!is.na(griwrm$model) & griwrm$model == "Diversion")
+  if (inverse) {
+    if(length(rows) == 0) {
+      rows <- seq.int(nrow(griwrm))
+    } else {
+      rows <- setdiff(seq.int(nrow(griwrm)), rows)
+    }
+  }
+  return(rows)
+}

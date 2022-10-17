@@ -103,7 +103,7 @@ griwrm_severn
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
 plot(griwrm_severn)
 
-# Same model with an ungauged station at nodes 54029 and 54001
+# Severn network with an ungauged station at nodes 54029 and 54001
 # By default the first gauged node at downstream is used for parameter calibration (54032)
 nodes_ungauged <- nodes
 nodes_ungauged$model[nodes_ungauged$gauge_id \%in\% c("54029", "54001")] <- "Ungauged"
