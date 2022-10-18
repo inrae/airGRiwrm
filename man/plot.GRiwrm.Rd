@@ -10,8 +10,8 @@
   orientation = "LR",
   width = "100\%",
   height = "100\%",
-  box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermUngauged =
-    "#efe", IntermGauged = "#afa", DirectInjection = "#faa"),
+  box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermediateUngauged
+    = "#efe", IntermediateGauged = "#afa", DirectInjection = "#faa"),
   ...
 )
 }
@@ -78,7 +78,6 @@ griwrm_ungauged <- CreateGRiwrm(nodes_ungauged, rename_columns)
 griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
 plot(griwrm_ungauged)
-
 # Severn network with a Diversion on the node "54029" which transfer flows to the
 # node "54002"
 nodes_div <- nodes[, c("gauge_id", "downstream_id", "distance_downstream", "model", "area")]

@@ -243,3 +243,20 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
   }
   return(rows)
 }
+
+getNodeProperties <- function(id, griwrm) {
+  upstreamIds <- griwrm$id[!griwrm$id %in% griwrm$down]
+  gaugedIds <- griwrm$id[!is.na(griwrm$model) & griwrm$model != "Ungauged"]
+  divertedIds <- griwrm$id[!is.na(griwrm$model) & griwrm$model == "Diversion"]
+  p <- c(
+    position = ifelse(id %in% upstreamIds, "Upstream", "Intermediate"),
+    hydrology = ifelse(id %in% gaugedIds, "Gauged",
+                       ifelse(is.na(griwrm$model[griwrm$id == id]),
+                              "DirectInjection",
+                              "Ungauged"))
+  )
+  if (length(divertedIds) > 0) {
+    if (id %in% divertedIds) p["diverted"] <- "Diversion"
+  }
+  return(p)
+}

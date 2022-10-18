@@ -24,8 +24,8 @@ plot.GRiwrm <- function(x,
                         height = "100%",
                         box_colors = c(UpstreamUngauged = "#eef",
                                        UpstreamGauged = "#aaf",
-                                       IntermUngauged = "#efe",
-                                       IntermGauged = "#afa",
+                                       IntermediateUngauged = "#efe",
+                                       IntermediateGauged = "#afa",
                                        DirectInjection = "#faa"),
                         ...) {
 
@@ -40,7 +40,7 @@ plot.GRiwrm <- function(x,
             length(height) == 1,
             is.character(box_colors),
             length(setdiff(names(box_colors), c("UpstreamUngauged", "UpstreamGauged",
-                                                "IntermUngauged",   "IntermGauged",
+                                                "IntermediateUngauged",   "IntermediateGauged",
                                                 "DirectInjection"))) == 0)
   g2 <- x[!is.na(x$down),]
   nodes <- paste(
@@ -50,21 +50,41 @@ plot.GRiwrm <- function(x,
     "km|",
     sprintf("id_%1$s[%1$s]", g2$down)
   )
-  node_class <- list(
-    UpstreamUngauged = x$id[!x$id %in% x$down & x$model == "Ungauged"],
-    UpstreamGauged = x$id[!x$id %in% x$down & x$model != "Ungauged" & !is.na(x$model)],
-    IntermUngauged = x$id[x$id %in% x$down & x$model == "Ungauged"],
-    IntermGauged = x$id[x$id %in% x$down & x$model != "Ungauged" & !is.na(x$model)],
-    DirectInjection = x$id[is.na(x$model)]
-  )
-  node_class <- lapply(node_class, function(x) if(length(x) > 0) paste0("id_", x))
-  node_class[sapply(node_class, is.null)] <- NULL
+  x$nodeclass <- sapply(x$id, getNodeClass, griwrm = x)
+  node_class <- lapply(unique(x$nodeclass), function(nc) {
+    x$id[x$nodeclass == nc]
+  })
+  names(node_class) <- unique(x$nodeclass)
+  node_class <- lapply(node_class, function(id) if(length(id) > 0) paste0("id_", id))
   node_class <- paste("class", sapply(node_class, paste, collapse = ","), names(node_class))
-  css <- paste("classDef", names(box_colors), paste0("fill:", box_colors))
+  css <- c(
+    paste("classDef", names(box_colors), paste0("fill:", box_colors)),
+    paste("classDef",
+          paste0(names(box_colors), "Diversion"),
+          sprintf("fill:%s, stroke:%s, stroke-width:3px", box_colors, box_colors["DirectInjection"]))
+  )
+  if (length(getDiversionRows(x)) > 0) {
+    css <- c(css,
+             paste("linkStyle",
+                   getDiversionRows(g2) - 1,
+                   sprintf("stroke:%s, stroke-width:2px,stroke-dasharray: 5 5;",
+                           box_colors["DirectInjection"])))
+  }
   diagram <- paste(c(paste("graph", orientation), nodes, node_class, css), collapse = "\n\n")
   if (display) {
     DiagrammeR::mermaid(diagram = diagram, width, height, ...)
   } else {
     return(diagram)
   }
+}
+
+getNodeClass <- function(id, griwrm) {
+  props <- getNodeProperties(id, griwrm)
+  if (props["hydrology"] == "DirectInjection") {
+    nc <- props["hydrology"]
+  }  else {
+    nc <- paste0(props["position"], props["hydrology"])
+  }
+  if("diverted" %in% names(props)) nc <- paste0(nc, "Diversion")
+  return(nc)
 }
