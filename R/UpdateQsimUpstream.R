@@ -11,7 +11,7 @@
 #' @noRd
 #'
 UpdateQsimUpstream <- function(InputsModel, Runoptions, OutputsModel) {
-  iQ <- which(InputsModel$UpstreamIsRunoff)
+  iQ <- which(InputsModel$UpstreamIsModeled)
   for(i in iQ) {
       InputsModel$Qupstream[Runoptions$IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$Qsim_m3
       if (!is.null(OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions$WarmUpQsim_m3)) {

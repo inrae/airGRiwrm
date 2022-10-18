@@ -34,16 +34,9 @@ setupRunModel <-
 
     # Set network
     if(is.null(griwrm)) {
-      nodes <-
-        Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-      nodes$model <- "RunModel_GR4J"
+      nodes <- loadSevernNodes()
       griwrm <-
-        CreateGRiwrm(nodes,
-                     list(
-                       id = "gauge_id",
-                       down = "downstream_id",
-                       length = "distance_downstream"
-                     ))
+        CreateGRiwrm(nodes)
     }
 
     # Convert meteo data to SD (remove upstream areas)
@@ -125,4 +118,20 @@ setupRunOptions <- function(InputsModel) {
   )
 
   return(environment())
+}
+
+#' Load Severn example and format BasinsInfo for use in CreateGRiwrm
+#'
+#' @return [data.frame] with columns "id", "down", "length", "area"
+#' @noRd
+#'
+#' @examples
+#' nodes <- loadNodes
+loadSevernNodes <- function() {
+  data(Severn)
+  nodes <-
+    Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+  names(nodes) <- c("id", "down", "length", "area")
+  nodes$model <- "RunModel_GR4J"
+  return(nodes)
 }

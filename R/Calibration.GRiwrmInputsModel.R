@@ -54,7 +54,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
     } else {
-      if (useUpstreamQsim && any(IM$UpstreamIsRunoff)) {
+      if (useUpstreamQsim && any(IM$UpstreamIsModeled)) {
         # Update InputsModel$Qupstream with simulated upstream flows
         IM <- UpdateQsimUpstream(IM, RunOptions[[id]], OutputsModel)
       }
@@ -188,13 +188,13 @@ updateParameters4Ungauged <- function(GaugedId,
   g2 <- griwrm[griwrm$donor == GaugedId,]
   upIds2 <- g2$id[!g2$id %in% g2$down]
   for (id in upIds2) {
-    if(useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsRunoff)) {
+    if(useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {
       # Update InputsModel$Qupstream with simulated upstream flows
       InputsModel[[id]] <- UpdateQsimUpstream(InputsModel[[id]],
                                               RunOptions[[id]],
                                               OutputsModel)
-      InputsModel[[id]]$UpstreamIsRunoff <-
-        rep(FALSE, length(InputsModel[[id]]$UpstreamIsRunoff))
+      InputsModel[[id]]$UpstreamIsModeled <-
+        rep(FALSE, length(InputsModel[[id]]$UpstreamIsModeled))
     }
   }
 

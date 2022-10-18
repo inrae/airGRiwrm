@@ -122,11 +122,8 @@ test_that("Lavenne criterion: current node and a priori node must use the same m
 })
 
 test_that("Ungauged node as Apriori node should throw an error", {
-  nodes$model[nodes$gauge_id == "54001"] <- "Ungauged"
-  griwrm <- CreateGRiwrm(
-    nodes,
-    list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
-  )
+  nodes$model[nodes$id == "54001"] <- "Ungauged"
+  griwrm <- CreateGRiwrm(nodes)
   InputsModel <-
     suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs))
   expect_error(

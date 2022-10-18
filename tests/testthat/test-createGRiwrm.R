@@ -20,11 +20,7 @@ H5920010	602213	2427449	43824.66	La Seine à Paris [Austerlitz après création 
 })
 
 # Setup a simple data.frame for GRiwrm
-data(Severn)
-nodes <-
-  Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-names(nodes) <- c("id", "down", "length", "area")
-nodes$model <- "RunModel_GR4J"
+nodes <- loadSevernNodes()
 
 test_that("Hydrological model nodes must have numeric area", {
   nodes$area[nodes$id == "54057"] <- NA
@@ -55,7 +51,12 @@ test_that("Diversion node", {
   n99$area[n99$model == "Diversion"] <- 99
   expect_error(CreateGRiwrm(n99),
                regexp = "Diversion node must have its area")
-  nodes$id[nodes$model == "Diversion"] <- "54999"
-  expect_error(CreateGRiwrm(nodes),
+  n_orphan <- nodes
+  n_orphan$id[n_orphan$model == "Diversion"] <- "54999"
+  expect_error(CreateGRiwrm(n_orphan),
                regexp = "Diversion node must have the same `id` of")
+  n_samedown <- nodes
+  n_samedown$down[n_samedown$model == "Diversion"] <- "54032"
+  expect_error(CreateGRiwrm(n_samedown),
+               regexp = "downstream node of a Diversion node must be different")
 })

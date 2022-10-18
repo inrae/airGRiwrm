@@ -191,13 +191,27 @@ for(x in ls(e)) assign(x, get(x, e))
 
 test_that("Ungauged node should inherits its FUN_MOD from the downstream gauged node", {
 
-  nodes$model[nodes$gauge_id == "54032"] <- "Ungauged"
-  griwrmV05 <- CreateGRiwrm(
-    nodes,
-    list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
-  )
+  nodes$model[nodes$id == "54032"] <- "Ungauged"
+  griwrmV05 <- CreateGRiwrm(nodes)
   IM <- suppressWarnings(
     CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
   )
   expect_equal(IM[["54032"]]$FUN_MOD, "RunModel_GR4J")
+})
+
+test_that("Network with Diversion works", {
+  n_div <- rbind(nodes, data.frame(id = "54029",
+                                   down = "54002",
+                                   length = 20,
+                                   model = "Diversion",
+                                   area = NA))
+  g <- CreateGRiwrm(n_div)
+  IM <- suppressWarnings(
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
+  )
+  expect_equal(IM[["54032"]]$UpstreamNodes, c("54001", "54029"))
+  expect_equal(IM[["54032"]]$UpstreamIsDiverted , c(FALSE, FALSE))
+  expect_equal(IM[["54002"]]$UpstreamNodes, "54029")
+  expect_equal(IM[["54002"]]$UpstreamIsModeled  , TRUE)
+  expect_equal(IM[["54002"]]$UpstreamIsDiverted , TRUE)
 })

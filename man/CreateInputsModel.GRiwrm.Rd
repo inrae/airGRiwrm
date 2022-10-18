@@ -25,38 +25,63 @@
 
 \item{DatesR}{\link{POSIXt} vector of dates}
 
-\item{Precip}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing precipitation in [mm per time step]. Column names correspond to node IDs}
+\item{Precip}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing
+precipitation in [mm per time step]. Column names correspond to node IDs}
 
-\item{PotEvap}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing potential evaporation [mm per time step]. Column names correspond to node IDs}
+\item{PotEvap}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing
+potential evaporation [mm per time step]. Column names correspond to node IDs}
 
-\item{Qobs}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing observed flows in [mm per time step]. Column names correspond to node IDs}
+\item{Qobs}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing
+observed flows in [mm per time step]. Column names correspond to node IDs}
 
-\item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default \code{TRUE} (the mean of the precipitation is kept to the original value)}
+\item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the
+mean of the precipitation interpolated on the elevation layers must be
+kept or not, required to create CemaNeige module inputs, default \code{TRUE}
+(the mean of the precipitation is kept to the original value)}
 
-\item{TempMean}{(optional) \link{matrix} or \link{data.frame} of time series of mean air temperature [°C], required to create the CemaNeige module inputs}
+\item{TempMean}{(optional) \link{matrix} or \link{data.frame} of time series of mean
+air temperature [°C], required to create the CemaNeige module inputs}
 
-\item{TempMin}{(optional) \link{matrix} or \link{data.frame} of time series of minimum air temperature [°C], possibly used to create the CemaNeige module inputs}
+\item{TempMin}{(optional) \link{matrix} or \link{data.frame} of time series of minimum
+air temperature [°C], possibly used to create the CemaNeige module inputs}
 
-\item{TempMax}{(optional) \link{matrix} or \link{data.frame} of time series of maximum air temperature [°C], possibly used to create the CemaNeige module inputs}
+\item{TempMax}{(optional) \link{matrix} or \link{data.frame} of time series of maximum
+air temperature [°C], possibly used to create the CemaNeige module inputs}
 
-\item{ZInputs}{(optional) named \link{vector} of \link{numeric} giving the mean elevation of the Precip and Temp series (before extrapolation) [m], possibly used to create the CemaNeige module input}
+\item{ZInputs}{(optional) named \link{vector} of \link{numeric} giving the mean
+elevation of the Precip and Temp series (before extrapolation) [m],
+possibly used to create the CemaNeige module input}
 
-\item{HypsoData}{(optional) \link{matrix} or \link{data.frame} containing 101 \link{numeric} rows: min, q01 to q99 and max of catchment elevation distribution [m], if not defined a single elevation is used for CemaNeige}
+\item{HypsoData}{(optional) \link{matrix} or \link{data.frame} containing 101 \link{numeric}
+rows: min, q01 to q99 and max of catchment elevation distribution [m],
+if not defined a single elevation is used for CemaNeige}
 
-\item{NLayers}{(optional) named \link{vector} of \link{numeric} integer giving the number of elevation layers requested \link{-}, required to create CemaNeige module inputs, default=5}
+\item{NLayers}{(optional) named \link{vector} of \link{numeric} integer giving the number
+of elevation layers requested \link{-}, required to create CemaNeige module
+inputs, default=5}
 
 \item{...}{used for compatibility with S3 methods}
 }
 \value{
-A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modeled sub-catchment.
+A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
+objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modeled sub-catchment.
 }
 \description{
 Creation of an InputsModel object for a \strong{airGRiwrm} network
 }
 \details{
-Meteorological data are needed for the nodes of the network that represent a catchment simulated by a rainfall-runoff model. Instead of \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} that has \link{numeric} \link{vector} as time series inputs, this function uses \link{matrix} or \link{data.frame} with the id of the sub-catchment as column names. For single values (\code{ZInputs} or \code{NLayers}), the function requires named \link{vector} with the id of the sub-catchment as name item. If an argument is optional, only the column or the named item has to be provided.
+Meteorological data are needed for the nodes of the network that
+represent a catchment simulated by a rainfall-runoff model. Instead of
+\link[airGR:CreateInputsModel]{airGR::CreateInputsModel} that has \link{numeric} \link{vector} as time series inputs,
+this function uses \link{matrix} or \link{data.frame} with the id of the sub-catchment
+as column names. For single values (\code{ZInputs} or \code{NLayers}), the function
+requires named \link{vector} with the id of the sub-catchment as name item. If an
+argument is optional, only the column or the named item has to be provided.
 
 See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} documentation for details concerning each input.
+
+\code{Qobs} must be provided for nodes of type "Direct injection" and "Diversion".
+See \link{CreateGRiwrm} for details about these node types.
 }
 \examples{
 ###################################################################

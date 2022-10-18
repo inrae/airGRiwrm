@@ -174,10 +174,15 @@ checkNetworkConsistency <- function(db) {
   })
   db3 <- db2[!is.na(db2$model), ]
   sapply(db$id[getDiversionRows(db)], function(x) {
+    i <- which(db$id == x & db$model == "Diversion")[1]
     if (length(which(db3$id == x)) != 1) {
-      i <- which(db$id == x & db$model == "Diversion")[1]
       nodeError(db[i, ],
                 "A Diversion node must have the same `id` of one (and only one) node with a model")
+    }
+    if (length(unique(db$down[db$id == x])) != 2) {
+      nodeError(db[i, ], paste(
+        "The downstream node of a Diversion node must be different",
+        "than the downstream node of the node is attached to"))
     }
   })
   apply(db, 1, checkNode, simplify = FALSE)

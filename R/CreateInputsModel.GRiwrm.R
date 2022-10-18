@@ -2,23 +2,48 @@
 #'
 #' @param x \[GRiwrm object\] diagram of the semi-distributed model (See [CreateGRiwrm])
 #' @param DatesR [POSIXt] vector of dates
-#' @param Precip (optional) [matrix] or [data.frame] frame of numeric containing precipitation in \[mm per time step\]. Column names correspond to node IDs
-#' @param PotEvap (optional) [matrix] or [data.frame] frame of numeric containing potential evaporation \[mm per time step\]. Column names correspond to node IDs
-#' @param Qobs (optional) [matrix] or [data.frame] frame of numeric containing observed flows in \[mm per time step\]. Column names correspond to node IDs
-#' @param PrecipScale (optional) named [vector] of [logical] indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default `TRUE` (the mean of the precipitation is kept to the original value)
-#' @param TempMean (optional) [matrix] or [data.frame] of time series of mean air temperature \[°C\], required to create the CemaNeige module inputs
-#' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum air temperature \[°C\], possibly used to create the CemaNeige module inputs
-#' @param TempMax (optional) [matrix] or [data.frame] of time series of maximum air temperature \[°C\], possibly used to create the CemaNeige module inputs
-#' @param ZInputs  (optional) named [vector] of [numeric] giving the mean elevation of the Precip and Temp series (before extrapolation) \[m\], possibly used to create the CemaNeige module input
-#' @param HypsoData	(optional) [matrix] or [data.frame] containing 101 [numeric] rows: min, q01 to q99 and max of catchment elevation distribution \[m\], if not defined a single elevation is used for CemaNeige
-#' @param NLayers (optional) named [vector] of [numeric] integer giving the number of elevation layers requested [-], required to create CemaNeige module inputs, default=5
+#' @param Precip (optional) [matrix] or [data.frame] frame of numeric containing
+#'        precipitation in \[mm per time step\]. Column names correspond to node IDs
+#' @param PotEvap (optional) [matrix] or [data.frame] frame of numeric containing
+#'        potential evaporation \[mm per time step\]. Column names correspond to node IDs
+#' @param Qobs (optional) [matrix] or [data.frame] frame of numeric containing
+#'        observed flows in \[mm per time step\]. Column names correspond to node IDs
+#' @param PrecipScale (optional) named [vector] of [logical] indicating if the
+#'        mean of the precipitation interpolated on the elevation layers must be
+#'        kept or not, required to create CemaNeige module inputs, default `TRUE`
+#'        (the mean of the precipitation is kept to the original value)
+#' @param TempMean (optional) [matrix] or [data.frame] of time series of mean
+#'        air temperature \[°C\], required to create the CemaNeige module inputs
+#' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum
+#'        air temperature \[°C\], possibly used to create the CemaNeige module inputs
+#' @param TempMax (optional) [matrix] or [data.frame] of time series of maximum
+#'        air temperature \[°C\], possibly used to create the CemaNeige module inputs
+#' @param ZInputs  (optional) named [vector] of [numeric] giving the mean
+#'        elevation of the Precip and Temp series (before extrapolation) \[m\],
+#'        possibly used to create the CemaNeige module input
+#' @param HypsoData	(optional) [matrix] or [data.frame] containing 101 [numeric]
+#'        rows: min, q01 to q99 and max of catchment elevation distribution \[m\],
+#'        if not defined a single elevation is used for CemaNeige
+#' @param NLayers (optional) named [vector] of [numeric] integer giving the number
+#'        of elevation layers requested [-], required to create CemaNeige module
+#'        inputs, default=5
 #' @param ... used for compatibility with S3 methods
 #'
-#' @details Meteorological data are needed for the nodes of the network that represent a catchment simulated by a rainfall-runoff model. Instead of [airGR::CreateInputsModel] that has [numeric] [vector] as time series inputs, this function uses [matrix] or [data.frame] with the id of the sub-catchment as column names. For single values (`ZInputs` or `NLayers`), the function requires named [vector] with the id of the sub-catchment as name item. If an argument is optional, only the column or the named item has to be provided.
+#' @details Meteorological data are needed for the nodes of the network that
+#' represent a catchment simulated by a rainfall-runoff model. Instead of
+#' [airGR::CreateInputsModel] that has [numeric] [vector] as time series inputs,
+#' this function uses [matrix] or [data.frame] with the id of the sub-catchment
+#' as column names. For single values (`ZInputs` or `NLayers`), the function
+#' requires named [vector] with the id of the sub-catchment as name item. If an
+#' argument is optional, only the column or the named item has to be provided.
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
+#' `Qobs` must be provided for nodes of type "Direct injection" and "Diversion".
+#' See [CreateGRiwrm] for details about these node types.
+#'
+#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
+#' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
 #' @export
 #' @inherit RunModel.GRiwrmInputsModel return examples
 #'
@@ -146,23 +171,30 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #' @return \emph{InputsModel} object for one.
 #' @noRd
 CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
+  hasDiversion <- "Diversion" %in% getNodeProperties(id, griwrm)
+  if (hasDiversion) {
+    rowDiv <- which(griwrm$id == id & griwrm$model == "Diversion")
+    hasDiversion <- TRUE
+    diversionOutlet <- griwrm$down[rowDiv]
+    griwrm <- griwrm[-rowDiv, ]
+  }
   node <- griwrm[griwrm$id == id,]
   FUN_MOD <- griwrm$model[griwrm$id == griwrm$donor[griwrm$id == id]]
 
   # Set hydraulic parameters
-  UpstreamNodes <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
+  UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
   Qupstream <- NULL
   LengthHydro <- NULL
   BasinAreas <- NULL
 
-  if(length(UpstreamNodes) > 0) {
+  if(length(UpstreamNodeRows) > 0) {
     # Sub-basin with hydraulic routing
-    Qupstream <- as.matrix(Qobs[ , UpstreamNodes, drop=FALSE])
-    LengthHydro <- griwrm$length[griwrm$id %in% UpstreamNodes]
-    names(LengthHydro) <- UpstreamNodes
+    Qupstream <- as.matrix(Qobs[ , griwrm$id[UpstreamNodeRows], drop=FALSE])
+    LengthHydro <- griwrm$length[UpstreamNodeRows]
+    names(LengthHydro) <- griwrm$id[UpstreamNodeRows]
     BasinAreas <- c(
-        griwrm$area[griwrm$id %in% UpstreamNodes],
-        node$area - sum(griwrm$area[griwrm$id %in% UpstreamNodes], na.rm = TRUE)
+        griwrm$area[UpstreamNodeRows],
+        node$area - sum(griwrm$area[UpstreamNodeRows], na.rm = TRUE)
     )
     if (BasinAreas[length(BasinAreas)] < 0) {
       stop(sprintf(
@@ -170,7 +202,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
         id
       ))
     }
-    names(BasinAreas) <- c(UpstreamNodes, id)
+    names(BasinAreas) <- c(griwrm$id[UpstreamNodeRows], id)
   }
 
   # Set model inputs with the **airGR** function
@@ -185,9 +217,11 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
   # Add Identifiers of connected nodes in order to be able to update them with simulated flows
   InputsModel$id <- id
   InputsModel$down <- node$down
-  if(length(UpstreamNodes) > 0) {
-    InputsModel$UpstreamNodes <- UpstreamNodes
-    InputsModel$UpstreamIsRunoff <- !is.na(griwrm$model[match(UpstreamNodes, griwrm$id)])
+  if(length(UpstreamNodeRows) > 0) {
+    InputsModel$UpstreamNodes <- griwrm$id[UpstreamNodeRows]
+    InputsModel$UpstreamIsModeled <- !is.na(griwrm$model[UpstreamNodeRows])
+    InputsModel$UpstreamIsDiverted <- !is.na(griwrm$model[UpstreamNodeRows]) &
+                                      griwrm$model[UpstreamNodeRows] == "Diversion"
   } else {
     InputsModel$BasinAreas <- node$area
   }
@@ -201,6 +235,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
   InputsModel$model <- list(indexParamUngauged = ifelse(inherits(InputsModel, "SD"), 0, 1) + seq.int(featModel$NbParam),
                             hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
                             iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4))
+  InputsModel$hasDiversion <- hasDiversion
+  if (hasDiversion) InputsModel$diversionOutlet <- diversionOutlet
   return(InputsModel)
 }
 

@@ -51,16 +51,13 @@ test_that("RunModel.Supervisor with no regulation should returns same results as
 # Add 2 nodes to the network
 nodes2 <- rbind(nodes,
                 data.frame(
-                  gauge_id = c("R1", "R2"),
-                  downstream_id = "54057",
-                  distance_downstream = 100,
+                  id = c("R1", "R2"),
+                  down = "54057",
+                  length = 100,
                   area = NA,
                   model = NA
                 ))
-griwrm2 <- CreateGRiwrm(nodes2,
-                        list(id = "gauge_id",
-                             down = "downstream_id",
-                             length = "distance_downstream"))
+griwrm2 <- CreateGRiwrm(nodes2)
 
 # Add Qobs for the 2 new nodes and create InputsModel
 Qobs2 <- cbind(Qobs, matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2))
