@@ -60,3 +60,9 @@ test_that("Diversion node", {
   expect_error(CreateGRiwrm(n_samedown),
                regexp = "downstream node of a Diversion node must be different")
 })
+
+test_that("Allow several downstream ends", {
+  nodes <- rbind(nodes,
+                 data.frame(id = "54029", down = NA, length = NA, area = NA, model = "Diversion"))
+  expect_s3_class(CreateGRiwrm(nodes), "GRiwrm")
+})

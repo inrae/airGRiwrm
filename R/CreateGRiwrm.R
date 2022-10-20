@@ -164,9 +164,6 @@ checkNetworkConsistency <- function(db) {
     stop("At least one node must be a network downstream node",
       " specified by 'down = NA'")
   }
-  if (which(is.na(db$down)) != which(is.na(db$length))) {
-    stop("Nodes with 'down = NA' must have 'length = NA'")
-  }
   sapply(db$down[!is.na(db$down)], function(x) {
     if (!(x %in% db$id)) {
       stop("The 'down' id ", x, " is not found in the 'id' column")
@@ -199,6 +196,12 @@ checkNode <- function(node) {
       # TODO This test should be extended to airGRplus models
       nodeError(node, "A node using an hydrological model must have a numeric area")
     }
+  }
+  if (is.na(node$down) & !is.na(node$length)) {
+    nodeError(node, "A downstream end node defined by `down=NA` must have `length=NA`")
+  }
+  if (is.na(node$length) & !is.na(node$down)) {
+    nodeError(node, "A node with a defined downstream node must have a numeric `length`")
   }
 }
 

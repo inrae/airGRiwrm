@@ -42,13 +42,14 @@ plot.GRiwrm <- function(x,
             length(setdiff(names(box_colors), c("UpstreamUngauged", "UpstreamGauged",
                                                 "IntermediateUngauged",   "IntermediateGauged",
                                                 "DirectInjection"))) == 0)
+  nodes <- sprintf("id_%1$s[%1$s]", x$id)
   g2 <- x[!is.na(x$down),]
-  nodes <- paste(
-    sprintf("id_%1$s[%1$s]", g2$id),
+  links <- paste(
+    sprintf("id_%1$s", g2$id),
     "-->|",
     round(g2$length, digits = 0),
     "km|",
-    sprintf("id_%1$s[%1$s]", g2$down)
+    sprintf("id_%1$s", g2$down)
   )
   x$nodeclass <- sapply(x$id, getNodeClass, griwrm = x)
   node_class <- lapply(unique(x$nodeclass), function(nc) {
@@ -63,14 +64,15 @@ plot.GRiwrm <- function(x,
           paste0(names(box_colors), "Diversion"),
           sprintf("fill:%s, stroke:%s, stroke-width:3px", box_colors, box_colors["DirectInjection"]))
   )
-  if (length(getDiversionRows(x)) > 0) {
+  if (length(getDiversionRows(g2)) > 0) {
     css <- c(css,
              paste("linkStyle",
                    getDiversionRows(g2) - 1,
                    sprintf("stroke:%s, stroke-width:2px,stroke-dasharray: 5 5;",
                            box_colors["DirectInjection"])))
   }
-  diagram <- paste(c(paste("graph", orientation), nodes, node_class, css), collapse = "\n\n")
+  diagram <- paste(c(paste("graph", orientation), nodes, links, node_class, css),
+                   collapse = "\n\n")
   if (display) {
     DiagrammeR::mermaid(diagram = diagram, width, height, ...)
   } else {
