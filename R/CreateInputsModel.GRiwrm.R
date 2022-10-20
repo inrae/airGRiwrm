@@ -2,12 +2,19 @@
 #'
 #' @param x \[GRiwrm object\] diagram of the semi-distributed model (See [CreateGRiwrm])
 #' @param DatesR [POSIXt] vector of dates
-#' @param Precip (optional) [matrix] or [data.frame] frame of numeric containing
+#' @param Precip (optional) [matrix] or [data.frame] of [numeric] containing
 #'        precipitation in \[mm per time step\]. Column names correspond to node IDs
-#' @param PotEvap (optional) [matrix] or [data.frame] frame of numeric containing
+#' @param PotEvap (optional) [matrix] or [data.frame] of [numeric] containing
 #'        potential evaporation \[mm per time step\]. Column names correspond to node IDs
-#' @param Qobs (optional) [matrix] or [data.frame] frame of numeric containing
-#'        observed flows in \[mm per time step\]. Column names correspond to node IDs
+#' @param Qobs (optional) [matrix] or [data.frame] of [numeric] containing
+#'        observed flows. It must be provided for nodes of type "Direct
+#'        injection" and "Diversion". See [CreateGRiwrm] for
+#'        details about these node types. Unit is \[mm per time step\] for nodes
+#'        with an area, and \[m3 per time step\] for nodes with `area=NA`.
+#'        Column names correspond to node IDs
+#' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
+#'        minimum flows to let downstream of a node with a Diversion \[m3 per
+#'        time step\]. Default is zero. Column names correspond to node IDs
 #' @param PrecipScale (optional) named [vector] of [logical] indicating if the
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
@@ -39,8 +46,9 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' `Qobs` must be provided for nodes of type "Direct injection" and "Diversion".
-#' See [CreateGRiwrm] for details about these node types.
+#' Number of rows of `Precip`, `PotEvap`, `Qobs`, `Qmin`, `TempMean`, `TempMin`,
+#' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
+#' a time step defined in `DatesR`).
 #'
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
 #' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
@@ -51,13 +59,14 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      Precip = NULL,
                                      PotEvap = NULL,
                                      Qobs = NULL,
+                                     Qmin = NULL,
                                      PrecipScale = TRUE,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
                                      HypsoData = NULL, NLayers = 5, ...) {
 
   # Check and format inputs
-  varNames <- c("Precip", "PotEvap", "TempMean", "Qobs",
+  varNames <- c("Precip", "PotEvap", "TempMean", "Qobs", "Qmin",
                 "TempMin", "TempMax", "ZInputs", "HypsoData", "NLayers")
   names(varNames) <- varNames
   lapply(varNames, function(varName) {
@@ -76,10 +85,25 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
           ))
         }
         if (!varName %in% c("ZInputs", "NLayers", "HypsoData") && nrow(v) != length(DatesR)) {
-          stop("'%s' number of rows and the length of 'DatesR' must be equal",
-               varName)
+          stop(sprintf(
+            "'%s' number of rows and the length of 'DatesR' must be equal",
+             varName
+          ))
         }
-
+        if (varName %in% c("Precip", "PotEvap", "Qmin")) {
+          if (any(is.na(v))) {
+            stop(sprintf(
+              "`NA` values detected in '%s'. Missing values are not allowed in InputsModel",
+              varName
+            ))
+          }
+          if (any(v < 0)) {
+            stop(sprintf(
+              "'%s' values must be positive or nul. Missing values are not allowed in InputsModel",
+              varName
+            ))
+          }
+        }
       } else if (!varName %in% c("ZInputs", "NLayers")) {
         stop(sprintf("'%s' must be a matrix or a data.frame", varName))
       }
@@ -94,13 +118,54 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     } else {
       Qobs <- as.matrix(Qobs)
       if (is.null(colnames(Qobs))) {
-      err <- TRUE
+        err <- TRUE
       } else if (!all(directFlowIds %in% colnames(Qobs))) {
-      err <- TRUE
+        err <- TRUE
       }
     }
     if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
   }
+  diversionRows <- getDiversionRows(x)
+  if (length(diversionRows) > 0) {
+    warn <- FALSE
+    if (is.null(Qmin)) {
+      warn <- TRUE
+    } else {
+      Qmin <- as.matrix(Qmin)
+      if (!all(colnames(Qmin) %in% x$id[diversionRows])) {
+        stop(paste(
+          "'Qmin' contains columns that does not match with IDs of Diversion nodes:\n",
+          setdiff(colnames(Qmin), x$id[diversionRows])
+        ))
+      }
+      if (is.null(colnames(Qmin))) {
+        warn <- TRUE
+      } else if (!all(x$id[diversionRows] %in% colnames(Qmin))) {
+        warn <- TRUE
+      }
+      if (any(is.na(Qmin))) {
+        stop("`NA` values are note allowed in 'Qmin'")
+      }
+    }
+    if (warn) {
+      warning(
+        sprintf(
+          "'Qmin' would include the following columns %s.\n Zero values are applied by default.",
+          paste(directFlowIds, collapse = ", ")
+        )
+      )
+    }
+    # Qmin completion
+    Qmin0 <- matrix(0, nrow = length(DatesR), ncol = length(diversionRows))
+    colnames(Qmin0) <- x$id[diversionRows]
+    if (is.null(Qmin)) {
+      Qmin <- Qmin0
+    } else {
+      Qmin0[, colnames(Qmin)] <- Qmin
+      Qmin <- Qmin0
+    }
+  }
+
 
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
 
@@ -114,9 +179,10 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     Qobs <- Qobs0
   }
 
+
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
-    if (x$area[x$id == id] > 0 && any(Qobs[, id] < 0, na.rm = TRUE)) {
+    if (x$area[x$id == id & x$model != "Diversion"] > 0 && any(Qobs[, id] < 0, na.rm = TRUE)) {
       stop(sprintf("Negative flow found in 'Qobs[, \"%s\"]'. ", id),
            "Catchment flow can't be negative, use `NA` for flow data gaps.")
     }
@@ -134,7 +200,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  ZInputs = getInputBV(ZInputs, id),
                                  HypsoData = getInputBV(HypsoData, id),
                                  NLayers = getInputBV(NLayers, id, 5),
-                                 Qobs = Qobs
+                                 Qobs = Qobs,
+                                 Qmin = getInputBV(Qmin, id)
                                  )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
@@ -170,7 +237,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   hasDiversion <- "Diversion" %in% getNodeProperties(id, griwrm)
   if (hasDiversion) {
     rowDiv <- which(griwrm$id == id & griwrm$model == "Diversion")
@@ -236,7 +303,10 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs) {
                             hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
                             iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4))
   InputsModel$hasDiversion <- hasDiversion
-  if (hasDiversion) InputsModel$diversionOutlet <- diversionOutlet
+  if (hasDiversion) {
+    InputsModel$diversionOutlet <- diversionOutlet
+    InputsModel$Qmin <- Qmin
+  }
   return(InputsModel)
 }
 

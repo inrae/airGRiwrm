@@ -214,4 +214,26 @@ test_that("Network with Diversion works", {
   expect_equal(IM[["54002"]]$UpstreamNodes, "54029")
   expect_equal(IM[["54002"]]$UpstreamIsModeled  , TRUE)
   expect_equal(IM[["54002"]]$UpstreamIsDiverted , TRUE)
+  expect_equivalent(IM$`54029`$Qmin, matrix(0, nrow = length(DatesR), ncol = 1))
+})
+
+test_that("Diversion node: checks about 'Qmin'", {
+  n_div <- rbind(nodes,
+                 data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
+  g <- CreateGRiwrm(n_div)
+  expect_warning(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs),
+                 regexp = "Zero values")
+  Qmin = matrix(1, nrow = length(DatesR), ncol = 1)
+  colnames(Qmin) = "54029"
+  IM <- suppressWarnings(
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qmin = Qmin)
+  )
+  expect_equivalent(IM$`54029`$Qmin, Qmin)
+  Qmin[1] <- NA
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qmin = Qmin),
+               regexp = "NA")
+  colnames(Qmin) = "54002"
+  Qmin[1] <- 0
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qmin = Qmin),
+               regexp = "columns that does not match with IDs of Diversion nodes")
 })
