@@ -47,7 +47,7 @@ setupRunModel <-
     if (!runInputsModel)
       return(environment())
     InputsModel <-
-      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs))
+      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap))
 
     # RunOptions
     if (!runRunOptions)

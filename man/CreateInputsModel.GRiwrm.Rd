@@ -33,7 +33,7 @@ precipitation in [mm per time step]. Column names correspond to node IDs}
 potential evaporation [mm per time step]. Column names correspond to node IDs}
 
 \item{Qobs}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
-observed flows. It must be provided for nodes of type "Direct
+observed flows. It must be provided only for nodes of type "Direct
 injection" and "Diversion". See \link{CreateGRiwrm} for
 details about these node types. Unit is [mm per time step] for nodes
 with an area, and [m3 per time step] for nodes with \code{area=NA}.

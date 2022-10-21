@@ -7,7 +7,7 @@
 #' @param PotEvap (optional) [matrix] or [data.frame] of [numeric] containing
 #'        potential evaporation \[mm per time step\]. Column names correspond to node IDs
 #' @param Qobs (optional) [matrix] or [data.frame] of [numeric] containing
-#'        observed flows. It must be provided for nodes of type "Direct
+#'        observed flows. It must be provided only for nodes of type "Direct
 #'        injection" and "Diversion". See [CreateGRiwrm] for
 #'        details about these node types. Unit is \[mm per time step\] for nodes
 #'        with an area, and \[m3 per time step\] for nodes with `area=NA`.
@@ -125,6 +125,12 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
     if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
   }
+  if (!all(colnames(Qobs) %in% directFlowIds)) {
+    stop("The following columns in 'Qobs' don't match with ",
+         "Direction Injection or Diversion nodes: ",
+         paste(setdiff(colnames(Qobs), directFlowIds), collapse = ", "))
+    Qobs <- Qobs[directFlowIds, ]
+  }
   diversionRows <- getDiversionRows(x)
   if (length(diversionRows) > 0) {
     warn <- FALSE
@@ -155,7 +161,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
         )
       )
     }
-    # Qmin completion
+    # Qmin completion for Diversion nodes with default zero values
     Qmin0 <- matrix(0, nrow = length(DatesR), ncol = length(diversionRows))
     colnames(Qmin0) <- x$id[diversionRows]
     if (is.null(Qmin)) {
@@ -166,10 +172,9 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   }
 
-
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
 
-  # Qobs completion
+  # Qobs completion for at least filling Qupstream of all nodes by zeros
   Qobs0 <- matrix(0, nrow = length(DatesR), ncol = nrow(x))
   colnames(Qobs0) <- x$id
   if (is.null(Qobs)) {
@@ -179,13 +184,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     Qobs <- Qobs0
   }
 
-
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
-    if (x$area[x$id == id & x$model != "Diversion"] > 0 && any(Qobs[, id] < 0, na.rm = TRUE)) {
-      stop(sprintf("Negative flow found in 'Qobs[, \"%s\"]'. ", id),
-           "Catchment flow can't be negative, use `NA` for flow data gaps.")
-    }
 
     InputsModel[[id]] <-
       CreateOneGRiwrmInputsModel(id = id,
