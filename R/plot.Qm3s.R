@@ -14,6 +14,8 @@
 #'
 #' @return Screen plot window.
 #'
+#' @example man-examples/plot.Qm3s.R
+#'
 #' @importFrom grDevices rainbow
 #' @importFrom graphics matplot
 #' @export

@@ -183,5 +183,14 @@ test_that("RunModel_Diversion with zero diversion equals no diversion", {
     expect_equal(OM[[!!id]]$RunOptions$WarmUpQsim, OM_GriwrmInputs[[!!id]]$RunOptions$WarmUpQsim)
     expect_equal(OM[[!!id]]$RunOptions$WarmUpQsim_m3, OM_GriwrmInputs[[!!id]]$RunOptions$WarmUpQsim_m3)
   })
+})
 
+test_that("Huge diversion would result in Qsim_m3 == Qmin", {
+  Qobs[, ] <- -1E12
+  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  OM <- RunModel(IM, RunOptions = RO_div, Param = P_div)
+  expect_equal(OM[["54029"]]$Qsim_m3, Qmin[RunOptions[[1]]$IndPeriod_Run])
+  expect_equal(OM[["54029"]]$Qsim,
+               Qmin[RunOptions[[1]]$IndPeriod_Run] /
+                 g_div$area[g_div$id == "54029" & g_div$model != "Diversion"] / 1E3)
 })
