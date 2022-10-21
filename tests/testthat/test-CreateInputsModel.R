@@ -225,15 +225,17 @@ test_that("Diversion node: checks about 'Qmin'", {
                  regexp = "Zero values")
   Qmin = matrix(1, nrow = length(DatesR), ncol = 1)
   colnames(Qmin) = "54029"
+  Qobs <- Qmin
   IM <- suppressWarnings(
-    CreateInputsModel(g, DatesR, Precip, PotEvap, Qmin = Qmin)
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
   )
   expect_equivalent(IM$`54029`$Qmin, Qmin)
-  Qmin[1] <- NA
-  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qmin = Qmin),
+  QminNA <- Qmin
+  QminNA[1] <- NA
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminNA),
                regexp = "NA")
-  colnames(Qmin) = "54002"
-  Qmin[1] <- 0
-  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qmin = Qmin),
+  QminBadCol <- Qmin
+  colnames(QminBadCol) = "54002"
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminBadCol),
                regexp = "columns that does not match with IDs of Diversion nodes")
 })

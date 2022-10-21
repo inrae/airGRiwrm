@@ -110,7 +110,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
-  directFlowIds <- x$id[is.na(x$model)]
+  directFlowIds <- x$id[is.na(x$model) | x$model == "Diversion"]
   if (length(directFlowIds) > 0) {
     err <- FALSE
     if (is.null(Qobs)) {
