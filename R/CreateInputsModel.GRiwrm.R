@@ -287,8 +287,10 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   if(length(UpstreamNodeRows) > 0) {
     InputsModel$UpstreamNodes <- griwrm$id[UpstreamNodeRows]
     InputsModel$UpstreamIsModeled <- !is.na(griwrm$model[UpstreamNodeRows])
-    InputsModel$UpstreamIsDiverted <- !is.na(griwrm$model[UpstreamNodeRows]) &
-                                      griwrm$model[UpstreamNodeRows] == "Diversion"
+    InputsModel$UpstreamVarQ <- ifelse(!is.na(griwrm$model[UpstreamNodeRows]) &
+                                    griwrm$model[UpstreamNodeRows] == "Diversion",
+                                    "Qdiv_m3",
+                                    "Qsim_m3")
   } else {
     InputsModel$BasinAreas <- node$area
   }
@@ -305,6 +307,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   InputsModel$hasDiversion <- hasDiversion
   if (hasDiversion) {
     InputsModel$diversionOutlet <- diversionOutlet
+    InputsModel$Qdiv <- -Qobs[, id]
     InputsModel$Qmin <- Qmin
   }
   return(InputsModel)

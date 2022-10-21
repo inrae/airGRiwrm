@@ -13,10 +13,11 @@
 UpdateQsimUpstream <- function(InputsModel, Runoptions, OutputsModel) {
   iQ <- which(InputsModel$UpstreamIsModeled)
   for(i in iQ) {
-      InputsModel$Qupstream[Runoptions$IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$Qsim_m3
-      if (!is.null(OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions$WarmUpQsim_m3)) {
-        InputsModel$Qupstream[Runoptions$IndPeriod_WarmUp, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions$WarmUpQsim_m3
-      }
+    InputsModel$Qupstream[Runoptions$IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]][[InputsModel$UpstreamVarQ[i]]]
+    varWarmupQ_m3 <- paste0("WarmUp", InputsModel$UpstreamVarQ[i])
+    if (!is.null(OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions[[varWarmupQ_m3]])) {
+      InputsModel$Qupstream[Runoptions$IndPeriod_WarmUp, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions[[varWarmupQ_m3]]
+    }
   }
   return(InputsModel)
 }

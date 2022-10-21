@@ -4,8 +4,6 @@ e <- setupRunModel()
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
 for(x in ls(e)) assign(x, get(x, e))
 
-context("RunModel.GRiwrmInputsModel")
-
 test_that("RunModel.GRiwrmInputsModel should return same result with separated warm-up", {
   RO_WarmUp <- CreateRunOptions(
     InputsModel,
@@ -34,8 +32,6 @@ test_that("RunModel.GRiwrmInputsModel should return same result with separated w
   })
 })
 
-context("RunModel.Supervisor")
-
 test_that("RunModel.Supervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel)
   OM_Supervisor <- RunModel(
@@ -60,10 +56,10 @@ nodes2 <- rbind(nodes,
 griwrm2 <- CreateGRiwrm(nodes2)
 
 # Add Qobs for the 2 new nodes and create InputsModel
-Qobs2 <- cbind(Qobs, matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2))
-colnames(Qobs2) <- c(colnames(Qobs2)[1:6], "R1", "R2")
+Qobs <- matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2)
+colnames(Qobs) <- c("R1", "R2")
 InputsModel <- suppressWarnings(
-  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs2)
+  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs)
 )
 
 test_that("RunModel.Supervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
@@ -115,8 +111,7 @@ test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
       PotEvap = l$PotEvap,
       TempMean = l$TempMean,
       ZInputs = l$ZInputs,
-      HypsoData = l$HypsoData,
-      Qobs = l$Qobs
+      HypsoData = l$HypsoData
     )
   )
   ## run period selection
@@ -163,4 +158,30 @@ test_that("RunModel.Supervisor with NA values in Qupstream", {
   expect_equal(OM_Supervisor[["54057"]]$Qsim[1:3], rep(as.double(NA),3))
   expect_equal(OM_Supervisor[["54057"]]$Qsim[4:length(IndPeriod_Run)],
                OM_GriwrmInputs[["54057"]]$Qsim[4:length(IndPeriod_Run)])
+})
+
+
+n_div <- rbind(nodes,
+               data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
+g_div <- CreateGRiwrm(n_div)
+Qmin = matrix(1E5, nrow = length(DatesR), ncol = 1)
+colnames(Qmin) = "54029"
+Qobs <- -Qmin
+IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+RO_div <- setupRunOptions(IM_div)$RunOptions
+P_div <- ParamMichel
+P_div$`54002` <- c(1, ParamMichel$`54002`)
+
+test_that("RunModel_Diversion with zero diversion equals no diversion", {
+  Qobs[, ] <- 0
+  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  OM <- RunModel(IM, RunOptions = RO_div, Param = P_div)
+  expect_s3_class(OM, "GRiwrmOutputsModel")
+  lapply(names(OM), function(id) {
+    expect_equal(OM[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
+    expect_equal(OM[[!!id]]$Qsim_m3, OM_GriwrmInputs[[!!id]]$Qsim_m3)
+    expect_equal(OM[[!!id]]$RunOptions$WarmUpQsim, OM_GriwrmInputs[[!!id]]$RunOptions$WarmUpQsim)
+    expect_equal(OM[[!!id]]$RunOptions$WarmUpQsim_m3, OM_GriwrmInputs[[!!id]]$RunOptions$WarmUpQsim_m3)
+  })
+
 })
