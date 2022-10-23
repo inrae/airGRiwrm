@@ -155,8 +155,8 @@ PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 # Precipitation and Potential Evaporation are related to the whole catchment
 # at each gauging station. We need to compute them for intermediate catchments
 # for use in a semi-distributed model
-Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+Precip <- ConvertMeteoSD(g_severn, PrecipTot)
+PotEvap <- ConvertMeteoSD(g_severn, PotEvapTot)
 
 # CreateInputsModel object
 IM_severn <- CreateInputsModel(g_severn, DatesR, Precip, PotEvap)
