@@ -23,10 +23,9 @@
 #' DatesR <- BasinsObs[[1]]$DatesR
 #' PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 #' PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-#' Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 #' Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 #' PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-#' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+#' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 #' sv <- CreateSupervisor(InputsModel)
 CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   if(!inherits(InputsModel, "GRiwrmInputsModel")) {
