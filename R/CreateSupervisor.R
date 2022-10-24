@@ -47,6 +47,10 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$DatesR <- InputsModel[[1]]$DatesR
   e$InputsModel <- InputsModel
   e$griwrm <- attr(InputsModel, "GRiwrm")
+  e$nodeProperties <- lapply(e$griwrm$id[getDiversionRows(e$griwrm, TRUE)],
+                             getNodeProperties,
+                             griwrm = e$griwrm)
+  names(e$nodeProperties) <- e$griwrm$id[getDiversionRows(e$griwrm, TRUE)]
   e$OutputsModel <- list()
   e$.TimeStep <- TimeStep
 
