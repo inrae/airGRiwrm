@@ -11,7 +11,8 @@
 #'        injection" and "Diversion". See [CreateGRiwrm] for
 #'        details about these node types. Unit is \[mm per time step\] for nodes
 #'        with an area, and \[m3 per time step\] for nodes with `area=NA`.
-#'        Column names correspond to node IDs
+#'        Column names correspond to node IDs. Negative flows are abstracted from
+#'        the model and positive flows are injected to the model
 #' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
 #'        minimum flows to let downstream of a node with a Diversion \[m3 per
 #'        time step\]. Default is zero. Column names correspond to node IDs
@@ -49,6 +50,12 @@
 #' Number of rows of `Precip`, `PotEvap`, `Qobs`, `Qmin`, `TempMean`, `TempMin`,
 #' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
 #' a time step defined in `DatesR`).
+#'
+#' For example of use of Direct Injection nodes, see vignettes
+#' "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".
+#'
+#' For example of use of Diversion nodes, see example below and vignette
+#' "V06_Modelling_regulated_diversion".
 #'
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
 #' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
