@@ -7,6 +7,8 @@
 #'
 #' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model
 #' @export
+#'
+#' @example man-examples/RunModel.Supervisor.R
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   # Save InputsModel for restoration at the end (Supervisor is an environment...)
@@ -82,7 +84,6 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     if(iTS[1] > ts.start) {
       doSupervision(x)
     }
-
     # Loop over sub-basin using SD model
     for(id in getSD_Ids(x$InputsModel)) {
       # Run the SD model for the sub-basin and one time step

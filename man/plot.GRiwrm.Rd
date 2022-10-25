@@ -87,11 +87,11 @@ plot(griwrm_ungauged)
 
 #######################################################
 # Severn network with a Diversion on the node "54029" #
-# which transfer flows to the node "54002"            #
+# which transfer flows to the node "54001"            #
 #######################################################
 nodes_div <- nodes[, c("gauge_id", "downstream_id", "distance_downstream", "model", "area")]
 nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54029",
-                                         downstream_id = "54002",
+                                         downstream_id = "54001",
                                          distance_downstream = 20,
                                          model = "Diversion",
                                          area = NA))

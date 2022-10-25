@@ -26,28 +26,7 @@
 #' - `FUN` [function]: controller logic which calculates `U` from `Y`
 #' @export
 #'
-#' @examples
-#' # First create a Supervisor from a model
-#' data(Severn)
-#' nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-#' nodes$model <- "RunModel_GR4J"
-#' griwrm <- CreateGRiwrm(nodes,
-#'                  list(id = "gauge_id",
-#'                       down = "downstream_id",
-#'                       length = "distance_downstream"))
-#' BasinsObs <- Severn$BasinsObs
-#' DatesR <- BasinsObs[[1]]$DatesR
-#' PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-#' PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-#' Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-#' PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-#' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
-#' sv <- CreateSupervisor(InputsModel)
-#'
-#' # A controller which usually releases 0.1 m3/s and provides
-#' # extra release if the downstream flow is below 0.5 m3/s
-#' logicDamRelease <- function(Y) max(0.5 - Y[1], 0.1)
-#' CreateController(sv, "DamRelease", Y = c("54001"), U = c("54095"), FUN = logicDamRelease)
+#' @example man-examples/RunModel.Supervisor.R
 CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 
   if(!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
