@@ -118,3 +118,12 @@ test_that("Huge diversion would result in Qsim_m3 == Qmin", {
                Qmin[RunOptions[[1]]$IndPeriod_Run] /
                  g_div$area[g_div$id == "54029" & g_div$model != "Diversion"] / 1E3)
 })
+
+test_that("Huge minimum remaining flow results in Qdiv = 0", {
+  Qobs[, ] <- -1000
+  Qmin[, ] <- 1E12
+  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  OM <- RunModel(IM, RunOptions = RO_div, Param = P_div)
+  expect_equal(OM[["54029"]]$Qsim, OM[["54029"]]$Qnat)
+  expect_equal(OM[["54029"]]$Qdiv_m3, rep(0, length(IndPeriod_Run)))
+})

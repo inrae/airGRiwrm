@@ -75,6 +75,10 @@ RunModel_Diversion <- function(InputsModel, RunOptions, OutputsModel) {
 #' @noRd
 calc_Qdiv<- function(Qnat, Qdiv, Qmin) {
   Qsim <- Qnat - Qdiv
-  Qsim[Qsim < Qmin & Qdiv > 0] <- Qmin[Qsim < Qmin & Qdiv > 0]
+  indexQmin <- which(Qsim < Qmin & Qdiv > 0)
+  if (any(indexQmin)) {
+    #Qsim[indexQmin] <- sapply(indexQmin, function(i) min(Qnat[i], Qmin[i]))
+    Qsim[indexQmin] <- pmin(Qnat[indexQmin], Qmin[indexQmin])
+  }
   return(list(Qsim = Qsim, Qdiv = Qnat - Qsim))
 }
