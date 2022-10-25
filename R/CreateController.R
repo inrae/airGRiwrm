@@ -29,15 +29,17 @@
 #' @example man-examples/RunModel.Supervisor.R
 CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 
-  if(!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
+  if (!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
+  if (length(ctrl.id) != 1) stop("Parameter `ctrl.id` should be of length 1")
+  stopifnot(is.Supervisor(supervisor))
 
   FUN <- match.fun(FUN)
 
   ctrlr <- list(
     id = ctrl.id,
-    U = CreateControl(U),
+    U = CreateControl(U, supervisor, TRUE),
     Unames = U,
-    Y = CreateControl(Y),
+    Y = CreateControl(Y, supervisor, FALSE),
     Ynames = Y,
     FUN = FUN
   )
@@ -65,9 +67,19 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 #' @examples
 #' # For pointing the discharge at the oulet of basins "54095" and "54002"
 #' CreateControl(c("54095", "54002"))
-CreateControl <- function(locations) {
-  if(!is.character(locations)) {
-    stop("Parameter `locations` should be character")
+CreateControl <- function(locations, sv, isU) {
+  if (!is.character(locations)) {
+    stop("Parameters `Y` and `U` should be character")
+  }
+  if (isU) {
+    if (!all(locations %in% sv$griwrm4U$id)) {
+      stop("Ids defined in `U` must be chosen from DirectInjection and Diversion nodes: ",
+           paste(sv$griwrm4U$id, collapse = ", "))
+    }
+  } else {
+    if (!all(locations %in% sv$griwrm$id)) {
+      stop("Ids defined in `Y` must be chosen from available Ids in the GRiwrm object")
+    }
   }
   m <- matrix(NA, ncol = length(locations), nrow = 0)
   return(m)

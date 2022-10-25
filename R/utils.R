@@ -67,7 +67,7 @@ getDataFromLocation <- function(loc, sv) {
 #' @noRd
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unames)), function(i) {
-    node <- sv$griwrm$down[sv$griwrm$id == ctrlr$Unames[i]]
+    node <- sv$griwrm4U$down[sv$griwrm4U$id == ctrlr$Unames[i]]
     # limit U size to the number of simulation time steps of the current supervision time step
     U <- ctrlr$U[seq.int(length(sv$ts.index)),i]
     # ! Qupstream contains warm up period and run period => the index is shifted
@@ -96,6 +96,21 @@ doSupervision <- function(supervisor) {
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
     if(is.vector(supervisor$controllers[[id]]$U)) {
       supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
+    }
+    # Check U output
+    if (!all(
+      dim(supervisor$controllers[[id]]$U) ==
+        c(supervisor$.TimeStep, length(supervisor$controllers[[id]]$Unames))
+      )) {
+      stop("The logic function of the controller ",
+           supervisor$controllers[[id]]$name,
+          " should return a matrix of dimension ",
+          supervisor$.TimeStep, ", ", length(supervisor$controllers[[id]]$Unames))
+    }
+    # For the last supervisor time step which can be truncated
+    if (length(supervisor$ts.index) < supervisor$.TimeStep) {
+      supervisor$controllers[[id]]$U <-
+        supervisor$controllers[[id]]$U[seq(length(supervisor$ts.index)), ]
     }
     # Write U to locations in the model
     setDataToLocation(supervisor$controllers[[id]], sv = supervisor)

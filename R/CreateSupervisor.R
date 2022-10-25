@@ -16,7 +16,8 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   if(!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
   }
-  if(!is.integer(TimeStep)) stop("`TimeStep` parameter must be an integer")
+  if (!is.integer(TimeStep)) stop("`TimeStep` parameter must be an integer")
+  if (TimeStep < 1) stop("`TimeStep` parameter must be strictly positive")
 
   # Create Supervisor environment from the parent of GlobalEnv
   e <- new.env(parent = parent.env(globalenv()))
@@ -32,6 +33,8 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$DatesR <- InputsModel[[1]]$DatesR
   e$InputsModel <- InputsModel
   e$griwrm <- attr(InputsModel, "GRiwrm")
+  # Commands U are only applied on DirectInjection and Diversion
+  e$griwrm4U <- e$griwrm[is.na(e$griwrm$model) | e$griwrm$model == "Diversion", ]
   e$nodeProperties <- lapply(e$griwrm$id[getDiversionRows(e$griwrm, TRUE)],
                              getNodeProperties,
                              griwrm = e$griwrm)
@@ -61,4 +64,9 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$controller.id <- NULL
 
   return(e)
+}
+
+
+is.Supervisor <- function(x) {
+  return(inherits(x, "Supervisor") && x$.isSupervisor == "3FJKmDcJ4snDbVBg")
 }

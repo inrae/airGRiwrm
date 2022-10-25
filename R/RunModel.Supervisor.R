@@ -11,6 +11,9 @@
 #' @example man-examples/RunModel.Supervisor.R
 RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
+  stopifnot(is.Supervisor(x),
+            inherits(RunOptions, "GRiwrmRunOptions"))
+
   # Save InputsModel for restoration at the end (Supervisor is an environment...)
   InputsModelBackup <- x$InputsModel
 
