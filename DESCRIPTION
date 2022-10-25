@@ -19,7 +19,7 @@ URL: https://airgriwrm.g-eau.fr/,
 BugReports: https://github.com/inrae/airGRiwrm/issues
 Depends:
     airGR (>= 1.7.0),
-    R (>= 2.10)
+    R (>= 3.5)
 Imports:
     DiagrammeR,
     dplyr,

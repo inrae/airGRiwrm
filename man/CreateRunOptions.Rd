@@ -125,9 +125,13 @@ OutputsModels <- RunModel(InputsModels,
                           Param = Param)
 str(OutputsModels)
 
-# Compare Simulation with reservoir and observation of natural flow
-plot(OutputsModels, data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]))
+# Compare regimes of the simulation with reservoir and observation of natural flow
+plot(OutputsModels,
+     data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]),
+     which = "Regime")
 
+# Plot together simulated flows (m3/s) of the reservoir and the gauging station
+plot(attr(OutputsModels, "Qm3s"))
 
 ###################################################################
 # Run the Severn example provided with this package               #
@@ -162,8 +166,9 @@ PotEvap <- ConvertMeteoSD(g_severn, PotEvapTot)
 IM_severn <- CreateInputsModel(g_severn, DatesR, Precip, PotEvap)
 
 # GRiwrmRunOptions object
+# Run period is set aside the one-year warm-up period
 IndPeriod_Run <- seq(
-  which(IM_severn[[1]]$DatesR == (IM_severn[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+  which(IM_severn[[1]]$DatesR == (IM_severn[[1]]$DatesR[1] + 365*24*60*60)),
   length(IM_severn[[1]]$DatesR) # Until the end of the time series
 )
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)

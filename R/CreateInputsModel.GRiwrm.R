@@ -397,6 +397,7 @@ hasUngaugedNodes <- function(id, griwrm) {
 
 
 #' function to extract model features partially copied from airGR:::.GetFeatModel
+#' @importFrom utils tail
 #' @noRd
 .GetFeatModel <- function(InputsModel) {
   path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
