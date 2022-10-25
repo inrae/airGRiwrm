@@ -98,10 +98,10 @@ doSupervision <- function(supervisor) {
       supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
     }
     # Check U output
-    if (!all(
-      dim(supervisor$controllers[[id]]$U) ==
-        c(supervisor$.TimeStep, length(supervisor$controllers[[id]]$Unames))
-      )) {
+    if (
+      ncol(supervisor$controllers[[id]]$U) != length(supervisor$controllers[[id]]$Unames) |
+      (!nrow(supervisor$controllers[[id]]$U) %in% c(supervisor$.TimeStep, length(supervisor$ts.index)))
+      ) {
       stop("The logic function of the controller ",
            supervisor$controllers[[id]]$name,
           " should return a matrix of dimension ",
