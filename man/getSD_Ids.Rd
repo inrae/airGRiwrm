@@ -4,10 +4,12 @@
 \alias{getSD_Ids}
 \title{Function to obtain the ID of sub-basins using SD model}
 \usage{
-getSD_Ids(InputsModel)
+getSD_Ids(InputsModel, add_diversion = FALSE)
 }
 \arguments{
 \item{InputsModel}{[\code{GRiwrmInputsModel} object]}
+
+\item{add_diversion}{\link{logical} for adding upstream nodes with diversion}
 }
 \value{
 \link{character} IDs of the sub-basins using SD model

@@ -82,11 +82,11 @@ plot.GRiwrm <- function(x,
 
 getNodeClass <- function(id, griwrm) {
   props <- getNodeProperties(id, griwrm)
-  if (props["hydrology"] == "DirectInjection") {
-    nc <- props["hydrology"]
+  if (props$DirectInjection) {
+    nc <- "DirectInjection"
   }  else {
     nc <- paste0(props["position"], props["hydrology"])
   }
-  if("diverted" %in% names(props)) nc <- paste0(nc, "Diversion")
+  if (props$Diversion) nc <- paste0(nc, "Diversion")
   return(nc)
 }

@@ -37,21 +37,30 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
 #' On a Diversion node, this function is called after `airGR::RunModel` to
 #' divert a part of the flow to another node than the original downstream one.
 #'
-#' @param InputsModel \[object of class \emph{InputsModel}\] see [airGR::CreateInputsModel] for details
+#' @param InputsModel \[object of class \emph{InputsModel}\] see
+#'        [airGR::CreateInputsModel] for details
+#' @param RunOptions Same parameter as in [RunModel.GRiwrmInputsModel]
 #' @param OutputsModel Output of [airGR::RunModel]
+#' @param updateQsim [logical] for updating Qsim after diversion in the output
 #'
-#' @return Updated OutputsModel object with diversion:
-#' Qsim
+#' @return Updated `OutputsModel` object after diversion
 #' @noRd
 #'
-RunModel_Diversion <- function(InputsModel, RunOptions, OutputsModel) {
+RunModel_Diversion <- function(InputsModel,
+                               RunOptions,
+                               OutputsModel,
+                               updateQsim = TRUE) {
   OutputsModel$Qnat <- OutputsModel$Qsim
   lQ <- calc_Qdiv(OutputsModel$Qsim_m3,
                   InputsModel$Qdiv[RunOptions$IndPeriod_Run],
                   InputsModel$Qmin[RunOptions$IndPeriod_Run])
+  #message(paste(InputsModel$Qdiv[RunOptions$IndPeriod_Run], lQ$Qdiv, lQ$Qsim, InputsModel$Qmin[RunOptions$IndPeriod_Run], sep = ", "))
   OutputsModel$Qdiv_m3 <- lQ$Qdiv
   OutputsModel$Qsim_m3 <- lQ$Qsim
-  OutputsModel$Qsim <- OutputsModel$Qsim_m3 / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+  if (updateQsim) {
+    OutputsModel$Qsim <-
+      OutputsModel$Qsim_m3 / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+  }
   if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
     lQ <- calc_Qdiv(OutputsModel$RunOptions$WarmUpQsim_m3,
                     InputsModel$Qdiv[RunOptions$IndPeriod_WarmUp],

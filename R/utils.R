@@ -1,15 +1,16 @@
 #' Function to obtain the ID of sub-basins using SD model
 #'
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
+#' @param add_diversion [logical] for adding upstream nodes with diversion
 #'
 #' @return [character] IDs of the sub-basins using SD model
 #' @export
-getSD_Ids <- function(InputsModel) {
+getSD_Ids <- function(InputsModel, add_diversion = FALSE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
   bSDs <- sapply(InputsModel, function (IM) {
-    inherits(IM, "SD")
+    inherits(IM, "SD") | IM$hasDiversion
   })
   names(InputsModel)[bSDs]
 }
@@ -17,15 +18,16 @@ getSD_Ids <- function(InputsModel) {
 #' Function to obtain the ID of sub-basins not using SD model
 #'
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
+#' @param include_diversion [logical] for including diversion nodes
 #'
 #' @return [character] IDs of the sub-basins not using the SD model
 #' @export
-getNoSD_Ids <- function(InputsModel) {
+getNoSD_Ids <- function(InputsModel, include_diversion = TRUE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
   bSDs <- sapply(InputsModel, function (IM) {
-    !inherits(IM, "SD")
+    !inherits(IM, "SD") & (include_diversion | !IM$hasDiversion)
   })
   names(InputsModel)[bSDs]
 }
@@ -45,7 +47,7 @@ getDataFromLocation <- function(loc, sv) {
     stop("Reaching output of other controller is not implemented yet")
   } else {
     if(sv$nodeProperties[[loc]]["hydrology"] != "DirectInjection") {
-      if (sv$nodeProperties[[loc]]["position"] == "Upstream") {
+      if (sv$nodeProperties[[loc]]$Upstream) {
         sv$OutputsModel[[loc]]$Qsim_m3[sv$ts.previous]
       } else {
         sv$OutputsModel[[loc]]$Qsim_m3
@@ -67,13 +69,22 @@ getDataFromLocation <- function(loc, sv) {
 #' @noRd
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unames)), function(i) {
-    node <- sv$griwrm4U$down[sv$griwrm4U$id == ctrlr$Unames[i]]
     # limit U size to the number of simulation time steps of the current supervision time step
     U <- ctrlr$U[seq.int(length(sv$ts.index)),i]
-    # ! Qupstream contains warm up period and run period => the index is shifted
-    if(!is.null(sv$InputsModel[[node]])) {
-      sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index,
-                                       ctrlr$Unames[i]] <- U
+
+    locU <- ctrlr$Unames[i]
+    if (sv$nodeProperties[[locU]]$DirectInjection) {
+      # Direct injection node => update Qusptream of downstream node
+      node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
+      # ! Qupstream contains warm up period and run period => the index is shifted
+      if(!is.null(sv$InputsModel[[node]])) {
+        sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, locU] <- U
+      }
+    } else if (sv$nodeProperties[[locU]]$Diversion){
+      # Diversion node => update Qdiv with -U
+      sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
+    } else {
+      stop("Node ", locU, " must be a Direct Injection or a Diversion node")
     }
   })
 }

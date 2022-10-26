@@ -4,10 +4,12 @@
 \alias{getNoSD_Ids}
 \title{Function to obtain the ID of sub-basins not using SD model}
 \usage{
-getNoSD_Ids(InputsModel)
+getNoSD_Ids(InputsModel, include_diversion = TRUE)
 }
 \arguments{
 \item{InputsModel}{[\code{GRiwrmInputsModel} object]}
+
+\item{include_diversion}{\link{logical} for including diversion nodes}
 }
 \value{
 \link{character} IDs of the sub-basins not using the SD model

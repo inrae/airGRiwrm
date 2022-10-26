@@ -245,10 +245,9 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #' @return \emph{InputsModel} object for one.
 #' @noRd
 CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
-  hasDiversion <- "Diversion" %in% getNodeProperties(id, griwrm)
+  hasDiversion <- getNodeProperties(id, griwrm)$Diversion
   if (hasDiversion) {
     rowDiv <- which(griwrm$id == id & griwrm$model == "Diversion")
-    hasDiversion <- TRUE
     diversionOutlet <- griwrm$down[rowDiv]
     griwrm <- griwrm[-rowDiv, ]
   }

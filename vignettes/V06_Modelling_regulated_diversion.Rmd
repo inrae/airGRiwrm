@@ -1,0 +1,205 @@
+---
+title: "Severn_06: Modelling of a regulated diversion"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Severn_06: Modelling of a regulated diversion}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6,
+  fig.asp = 0.68,
+  out.width = "70%",
+  fig.align = "center"
+)
+```
+
+```{r setup}
+library(airGRiwrm)
+data(Severn)
+```
+
+## The study case
+
+In this vignette, we are still using the study case of the vignette #1 and #2, and 
+we are going to simulate a diversion at the node "54029" to provide flow to the node 
+"54001" in order to support low flows in the Severn river.
+
+This objective is to maintain a minimum flow equals to the 3th decile of the flow 
+at station "54001" without remaining less than the first decile of the flow downstream 
+the station "54029".
+
+Let's compute the flow quantiles at each station in m3/s:
+
+```{r}
+Qobs <- cbind(sapply(Severn$BasinsObs, function(x) {x$discharge_spec}))
+Qobs <- Qobs[, Severn$BasinsInfo$gauge_id]
+Qobs_m3s <- t(apply(Qobs, 1, function(r) r * Severn$BasinsInfo$area * 1E3 / 86400))
+apply(Qobs_m3s[, c("54029", "54001")], 2, quantile, probs = seq(0,1,0.1), na.rm = TRUE)
+```
+
+The rule to apply is expressed as follow:
+
+> The diversion from "54029" is computed to maintain a minimum flow of 20 m3/s at
+the gauging station "54001". The diversion is allowed as far as the flow at the 
+gauging station "54029" is above 2.6 m3/s.
+
+## Network
+
+```{r}
+
+nodes_div <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes_div$model <- "RunModel_GR4J"
+nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54029",
+                                         downstream_id = "54001",
+                                         distance_downstream = 25,
+                                         model = "Diversion",
+                                         area = NA))
+renameCols <- list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
+griwrmV06 <- CreateGRiwrm(nodes_div, renameCols)
+plot(griwrmV06)
+```
+
+## GRiwrmInputsModel object
+
+We produce below the same operations as in the vignette "V02_Calibration_SD_model" to prepare the input data:
+
+```{r}
+data(Severn)
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$model <- "RunModel_GR4J"
+griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+```
+
+The main difference here is that we need to provide a diverted flow and a minimum
+remaining flow at station "54029". As, the diverted flow will be calculated during 
+simulation, we provide a initial diverted flow equals to zero for all the time steps.
+
+```{r}
+Qdiv <- matrix(rep(0, length(DatesR)), ncol = 1)
+colnames(Qdiv) <- "54029"
+Qmin <- matrix(rep(2.6 * 86400, length(DatesR)), ncol = 1)
+colnames(Qmin) <- "54029"
+IM_div <- CreateInputsModel(griwrmV06, DatesR, Precip, PotEvap, Qobs = Qdiv, Qmin = Qmin)
+```
+
+## Implementation of the regulation controller
+
+### The supervisor
+
+The simulation is piloted through a `Supervisor` that can contain one or more 
+`Controller`. The supervision time step will be here the same as the simulation 
+time step:  1 day. Each day, the decision is taken for the current day from the 
+measurement simulated the previous time step.
+
+```{r}
+sv <- CreateSupervisor(IM_div, TimeStep = 1L)
+```
+
+### The control logic function
+
+On a Diversion node, the minimum remaining flow is provided with the inputs and 
+is automatically taken into account by the model. So the control logic function
+has only to take care about how much water to divert to the gauging station 
+"54002".
+
+We need to enclose the logic function in a function factory providing the 
+Supervisor in the environment of the function:
+
+```{r}
+#' @param sv the Supervisor environment
+logicFunFactory <- function(sv) {
+  #' @param Y Flow measured at "54002" the previous time step
+  function(Y) {
+    Qnat <- Y
+    #  We need to remove the diverted flow to compute the natural flow at "54002"
+    lastU <- sv$controllers[[sv$controller.id]]$U
+    if (length(lastU) > 0) {
+      Qnat <- Y - lastU
+    }
+    return(-max(15 * 86400 - Qnat, 0))
+  }
+}
+```
+
+### The controller
+
+We declare the controller which defines where is the measurement `Y` , where to 
+apply the decision `U` with which logic function:
+
+```{r}
+CreateController(sv,
+                 ctrl.id = "Low flow support",
+                 Y = "54001",
+                 U = "54029",
+                 FUN = logicFunFactory(sv))
+```
+
+
+## Running the simulation
+
+First we need to create a `GRiwrmRunOptions` object and load the parameters calibrated in the vignette "V02_Calibration_SD_model":
+
+```{r}
+# Running simulation between 2002 and 2005
+IndPeriod_Run <- seq(
+  which(DatesR == as.POSIXct("2002-01-01")),
+  which(DatesR == as.POSIXct("2005-01-01"))
+)
+IndPeriod_WarmUp = seq(IndPeriod_Run[1] - 366,IndPeriod_Run[1] - 1)
+RunOptions <- CreateRunOptions(IM_div,
+                               IndPeriod_WarmUp = IndPeriod_WarmUp,
+                               IndPeriod_Run = IndPeriod_Run)
+ParamV02 <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
+```
+
+And we run the supervised model:
+
+```{r}
+OM_div <- RunModel(sv, RunOptions = RunOptions, Param = ParamV02)
+```
+
+To compare results with diversion and without diversion, we run the model without
+the supervision (remember that we have set the diverted flow at zero in the inputs):
+
+```{r}
+OM_nat <- RunModel(IM_div, RunOptions = RunOptions, Param = ParamV02)
+```
+
+
+## Exploring results
+
+Let's plot the diverted flow, and compare the flow at stations 54029 and 54001, 
+with and without low-flow support at station 54001:
+
+```{r, fig.asp=1}
+dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR,
+                     Diverted_flow = OM_div$`54029`$Qdiv_m3 / 86400)
+
+oldpar <- par(mfrow=c(3,1), mar = c(2.5,4,1,1))
+plot.Qm3s(dfQdiv)
+
+# Plot natural and influenced flow at station "54001" and "54029"
+thresholds <- c("54029" = 2.6, "54001" = 15)
+lapply(c("54029", "54001"), function(id) {
+  df <- cbind(attr(OM_div, "Qm3s")[, c("DatesR", id)],
+                   attr(OM_nat, "Qm3s")[, id])
+  names(df) <- c("DatesR", 
+                      paste(id, "with irrigation"), 
+                      paste(id, "natural flow"))
+  plot.Qm3s(df, ylim = c(0,50))
+  abline(h = thresholds[id], col = "green")
+})
+par(oldpar)
+```
+

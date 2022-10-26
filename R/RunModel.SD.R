@@ -8,5 +8,9 @@
 #' @export
 #'
 RunModel.SD <- function(x, RunOptions, Param, QcontribDown, ...) {
-  airGR::RunModel_Lag(x, RunOptions = RunOptions, Param = Param[1], QcontribDown = QcontribDown)
+  OutputsModel <- airGR::RunModel_Lag(x,
+                                      RunOptions = RunOptions,
+                                      Param = Param[1],
+                                      QcontribDown = QcontribDown)
+  return(OutputsModel)
 }
