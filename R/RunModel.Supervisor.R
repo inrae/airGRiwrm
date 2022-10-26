@@ -57,7 +57,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   )
   if (length(getDiversionRows(x$griwrm)) > 0) {
     # Outputs of Diversion nodes
-    Qdiv_m3 <- Qsim_m3[, sv$griwrm$id[getDiversionRows(x$griwrm)], drop = FALSE] * NA
+    Qdiv_m3 <- Qsim_m3[, x$griwrm$id[getDiversionRows(x$griwrm)], drop = FALSE] * NA
     Qnat <- Qdiv_m3
   }
 

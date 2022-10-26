@@ -152,9 +152,8 @@ First we need to create a `GRiwrmRunOptions` object and load the parameters cali
 
 ```{r}
 # Running simulation between 2002 and 2005
-IndPeriod_Run <- seq(
-  which(DatesR == as.POSIXct("2002-01-01")),
-  which(DatesR == as.POSIXct("2005-01-01"))
+IndPeriod_Run <- which(
+  DatesR >= as.POSIXct("2002-01-01") & DatesR <= as.POSIXct("2005-01-01")
 )
 IndPeriod_WarmUp = seq(IndPeriod_Run[1] - 366,IndPeriod_Run[1] - 1)
 RunOptions <- CreateRunOptions(IM_div,
