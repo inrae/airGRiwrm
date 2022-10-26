@@ -192,8 +192,8 @@ Qdiv_m3s <- OM_div$`54001`$Qdiv_m3 / 86400
 
 # Plot the diverted flow for the year 2003
 Ind_Plot <- which(
-  OM_div[[1]]$DatesR >= as.POSIXct("2003-01-01") &
-  OM_div[[1]]$DatesR <= as.POSIXct("2003-12-31")
+  OM_div[[1]]$DatesR >= as.POSIXct("2003-01-01", tz = "UTC") &
+  OM_div[[1]]$DatesR <= as.POSIXct("2003-12-31", tz = "UTC")
 )
 dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR[Ind_Plot],
                      Diverted_flow = Qdiv_m3s[Ind_Plot])

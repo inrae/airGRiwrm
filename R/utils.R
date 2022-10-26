@@ -177,7 +177,7 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
     }
   )
   names(lQsim) <- griwrm$id[QsimRows]
-  dfQsim <- cbind(data.frame(DatesR = as.POSIXct(InputsModel[[1]]$DatesR[IndPeriod_Run])),
+  dfQsim <- cbind(data.frame(DatesR = InputsModel[[1]]$DatesR[IndPeriod_Run]),
                   do.call(cbind,lQsim) / attr(InputsModel, "TimeStep"))
   class(dfQsim) <- c("Qm3s", class(dfQsim)) # For S3 methods
   return(dfQsim)
