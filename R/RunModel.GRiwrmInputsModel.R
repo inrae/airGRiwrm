@@ -16,7 +16,7 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
   class(OutputsModel) <- c("GRiwrmOutputsModel", class(OutputsModel))
 
   for(id in names(x)) {
-    message("RunModel.GRiwrmInputsModel: Treating sub-basin ", x[[id]]$id, "...")
+    message("RunModel.GRiwrmInputsModel: Processing sub-basin ", x[[id]]$id, "...")
 
     # Update x[[id]]$Qupstream with simulated upstream flows
     if(any(x[[id]]$UpstreamIsModeled)) {

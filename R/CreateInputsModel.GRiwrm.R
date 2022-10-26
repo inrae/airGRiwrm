@@ -192,7 +192,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
   }
 
   for(id in getNodeRanking(x)) {
-    message("CreateInputsModel.GRiwrm: Treating sub-basin ", id, "...")
+    message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
 
     InputsModel[[id]] <-
       CreateOneGRiwrmInputsModel(id = id,

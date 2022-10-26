@@ -36,7 +36,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 
   for(id in gaugedIds) {
     IM <- InputsModel[[id]]
-    message("Calibration.GRiwrmInputsModel: Treating sub-basin ", id, "...")
+    message("Calibration.GRiwrmInputsModel: Processing sub-basin ", id, "...")
 
     if (inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
       IC <- getInputsCrit_Lavenne(id, OutputsModel, InputsCrit)

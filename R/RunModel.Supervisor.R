@@ -78,8 +78,16 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     x$OutputsModel[[id]]$StateEnd <- serializeIniStates(OM_WarmUp[[id]]$StateEnd)
   }
 
+  message("Processing: 0%", appendLF = FALSE)
+  iProgressSteps <- round(length(lSuperTS) * seq(0.1, 0.9, 0.1))
+
   # Loop over time steps with a step equal to the supervision time step
-  for(iTS in lSuperTS) {
+  for(i in seq_along(lSuperTS)) {
+    iProgressMessage <- which(i == iProgressSteps)
+    if (length(iProgressMessage) == 1) {
+      message(" ", 10 * iProgressMessage, "%", appendLF = FALSE)
+    }
+    iTS <- lSuperTS[[i]]
     # Run regulation on the whole basin for the current time step
     x$ts.index <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
@@ -108,6 +116,9 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     }
     x$ts.previous <- x$ts.index
   }
+
+  message(" 100%")
+
   for(id in getSD_Ids(x$InputsModel)) {
     x$OutputsModel[[id]]$Qsim_m3 <- Qsim_m3[, id]
     x$OutputsModel[[id]]$Qsim <-
