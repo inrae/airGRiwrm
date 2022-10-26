@@ -8,7 +8,7 @@
   x,
   type = "l",
   xlab = "Date",
-  ylab = expression("Flow (m"^"3" * "/s)"),
+  ylab = expression("Flow rate (m"^"3" * "/s)"),
   main = "Simulated flows",
   col = rainbow(ncol(x) - 1),
   legend = colnames(x)[-1],
@@ -20,7 +20,8 @@
 )
 }
 \arguments{
-\item{x}{\link{data.frame} with a first column with \link{POSIXt} dates and followings columns with flows at each node of the network}
+\item{x}{\link{data.frame} with a first column with \link{POSIXt} dates and followings
+columns with flows at each node of the network}
 
 \item{type}{\link{character} plot type (See \link{plot.default}), default "l"}
 
@@ -32,7 +33,8 @@
 
 \item{col}{\link{character} plotting color (See \link{par}), default to rainbow colors}
 
-\item{legend}{\link{character} see parameter \code{legend} of \link{legend}. Set to \link{NULL} if display of the legend is not wanted}
+\item{legend}{\link{character} see parameter \code{legend} of \link{legend}. Set it to \link{NULL}
+to hide the legend}
 
 \item{legend.cex}{\link{character} \code{cex} parameter for the text of the legend (See \link{par})}
 
@@ -46,7 +48,9 @@
 Screen plot window.
 }
 \description{
-Plot of a \code{Qm3s} object (time series of simulated flows)
+This function plot time series of flow rate in m3/s. It's a method for object
+of class "Qm3s" which can be directly called by \code{plot}. It can also be called
+as a function \code{plot.Qm3s} if the first parameter has the good format.
 }
 \examples{
 ###################################################################
@@ -248,16 +252,15 @@ Ind_Plot <- which(
 )
 dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR[Ind_Plot],
                      Diverted_flow = Qdiv_m3s[Ind_Plot])
-class(dfQdiv) <- c("Qm3s", class(dfQdiv))
+
 oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
-plot(dfQdiv)
+plot.Qm3s(dfQdiv)
 
 # Plot natural and influenced flow at station "54001"
 df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
                  attr(OM_severn, "Qm3s")[Ind_Plot, "54001"])
 names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
-class(df54001) <- c("Qm3s", class(df54001))
-plot(df54001, ylim = c(0,70))
+plot.Qm3s(df54001, ylim = c(0,70))
 abline(h = 12, col = "green")
 par(oldpar)
 }

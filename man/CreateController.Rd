@@ -165,7 +165,6 @@ plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
      ylim = c(0, 200))
 Vres <- data.frame(DatesR = attr(OM_dam, "Qm3s")$DatesR,
                    V_reservoir = sv$Vres)
-class(Vres) <- c("Qm3s", class(Vres))
-plot(Vres)
+plot.Qm3s(Vres)
 par(oldpar)
 }
