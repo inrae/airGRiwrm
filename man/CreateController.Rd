@@ -90,7 +90,7 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 Qobs <- data.frame(
   Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
 )
-Qobs[,] <- Qobs[which(DatesR == "2002-10-01"), 1]
+Qobs[,] <- Qobs[which(DatesR == as.POSIXct("2002-10-01")), 1]
 
 # InputsModel object
 IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
@@ -141,7 +141,7 @@ CreateController(sv, "DamRelease", Y = c("54095", "54057"), U = c("Dam"), FUN = 
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
 IndPeriod_Run <- seq.int(
-  which(IM_severn[[1]]$DatesR == "2002-10-15"),
+  which(IM_severn[[1]]$DatesR == as.POSIXct("2002-10-15")),
   length.out = 365
 )
 IndPeriod_WarmUp <- seq.int(IndPeriod_Run[1] - 366, IndPeriod_Run[1] - 1)
