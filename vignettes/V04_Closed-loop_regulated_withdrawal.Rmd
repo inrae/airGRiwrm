@@ -255,10 +255,10 @@ for (x in 1:ncol(m))
 As for the previous model, we need to set up an `GRiwrmInputsModel` object containing all the model inputs:
 
 ```{r}
-# A flow is needed for all direct injection nodes in the network
+# Flow time series are needed for all direct injection nodes in the network
 # even if they may be overwritten after by a controller
-# The Qobs matrix is completed with 2 new columns for the new nodes
-QobsIrrig <- cbind(Qobs, Irrigation1 = 0, Irrigation2 = 0)
+QobsIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)), 
+                        Irrigation2 = rep(0, length(DatesR)))
 
 # Creation of the GRiwrmInputsModel object
 IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QobsIrrig)

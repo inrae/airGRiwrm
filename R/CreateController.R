@@ -26,40 +26,20 @@
 #' - `FUN` [function]: controller logic which calculates `U` from `Y`
 #' @export
 #'
-#' @examples
-#' # First create a Supervisor from a model
-#' data(Severn)
-#' nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
-#' nodes$model <- "RunModel_GR4J"
-#' griwrm <- CreateGRiwrm(nodes,
-#'                  list(id = "gauge_id",
-#'                       down = "downstream_id",
-#'                       length = "distance_downstream"))
-#' BasinsObs <- Severn$BasinsObs
-#' DatesR <- BasinsObs[[1]]$DatesR
-#' PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-#' PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-#' Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
-#' Precip <- ConvertMeteoSD(griwrm, PrecipTot)
-#' PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
-#' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
-#' sv <- CreateSupervisor(InputsModel)
-#'
-#' # A controller which usually releases 0.1 m3/s and provides
-#' # extra release if the downstream flow is below 0.5 m3/s
-#' logicDamRelease <- function(Y) max(0.5 - Y[1], 0.1)
-#' CreateController(sv, "DamRelease", Y = c("54001"), U = c("54095"), FUN = logicDamRelease)
+#' @example man-examples/RunModel.Supervisor.R
 CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 
-  if(!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
+  if (!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")
+  if (length(ctrl.id) != 1) stop("Parameter `ctrl.id` should be of length 1")
+  stopifnot(is.Supervisor(supervisor))
 
   FUN <- match.fun(FUN)
 
   ctrlr <- list(
     id = ctrl.id,
-    U = CreateControl(U),
+    U = CreateControl(U, supervisor, TRUE),
     Unames = U,
-    Y = CreateControl(Y),
+    Y = CreateControl(Y, supervisor, FALSE),
     Ynames = Y,
     FUN = FUN
   )
@@ -87,9 +67,19 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 #' @examples
 #' # For pointing the discharge at the oulet of basins "54095" and "54002"
 #' CreateControl(c("54095", "54002"))
-CreateControl <- function(locations) {
-  if(!is.character(locations)) {
-    stop("Parameter `locations` should be character")
+CreateControl <- function(locations, sv, isU) {
+  if (!is.character(locations)) {
+    stop("Parameters `Y` and `U` should be character")
+  }
+  if (isU) {
+    if (!all(locations %in% sv$griwrm4U$id)) {
+      stop("Ids defined in `U` must be chosen from DirectInjection and Diversion nodes: ",
+           paste(sv$griwrm4U$id, collapse = ", "))
+    }
+  } else {
+    if (!all(locations %in% sv$griwrm$id)) {
+      stop("Ids defined in `Y` must be chosen from available Ids in the GRiwrm object")
+    }
   }
   m <- matrix(NA, ncol = length(locations), nrow = 0)
   return(m)

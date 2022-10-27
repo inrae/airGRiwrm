@@ -117,13 +117,12 @@ PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
 PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
 Precip <- ConvertMeteoSD(griwrmV05, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrmV05, PotEvapTot)
-Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 ```
 
 Then, the `GRiwrmInputsModel` object can be generated taking into account the new `GRiwrm` object:
 
 ```{r InputsModel}
-IM_U <- CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
+IM_U <- CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap)
 ```
 ## Calibration of the model integrating ungauged nodes
 
@@ -141,6 +140,7 @@ IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
 RunOptions <- CreateRunOptions(IM_U,
                                IndPeriod_WarmUp = IndPeriod_WarmUp,
                                IndPeriod_Run = IndPeriod_Run)
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
 InputsCrit <- CreateInputsCrit(IM_U,
                                FUN_CRIT = ErrorCrit_KGE2,
                                RunOptions = RunOptions, Obs = Qobs[IndPeriod_Run,],

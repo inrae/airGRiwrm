@@ -127,7 +127,7 @@ test_that("throws error when missing CemaNeige data", {
                regexp = "'TempMean' is missing")
 })
 
-test_that("throws error when missing Qobs on node not related to an hydrological model", {
+test_that("throws error when missing Qobs on node Direct Injection node", {
   l$griwrm$model[1] <- NA
   expect_error(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
@@ -159,14 +159,16 @@ test_that("must works with node not related to an hydrological model", {
   expect_equal(colnames(IM[[2]]$Qupstream), c("Up1", "Up2"))
 })
 
-test_that("negative observed flow on catchment should throw error", {
-  l$Qobs[100, 1] <- -99
+test_that("Qobs on hydrological nodes should throw en error", {
   expect_error(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
                                  Precip = l$Precip,
                                  PotEvap = l$PotEvap,
-                                 Qobs = l$Qobs),
-               regexp = "Negative flow found")
+                                 Qobs = l$Qobs,
+                                 TempMean = l$TempMean,
+                                 ZInputs = l$ZInputs,
+                                 HypsoData = l$HypsoData),
+               regexp = "columns in 'Qobs' don't match with")
   l$griwrm$model[1] <- NA
   expect_s3_class(suppressWarnings(
     CreateInputsModel(
@@ -174,7 +176,7 @@ test_that("negative observed flow on catchment should throw error", {
       DatesR = l$DatesR,
       Precip = l$Precip,
       PotEvap = l$PotEvap,
-      Qobs = l$Qobs,
+      Qobs = l$Qobs[,1, drop = F],
       TempMean = l$TempMean,
       ZInputs = l$ZInputs,
       HypsoData = l$HypsoData
@@ -191,13 +193,51 @@ for(x in ls(e)) assign(x, get(x, e))
 
 test_that("Ungauged node should inherits its FUN_MOD from the downstream gauged node", {
 
-  nodes$model[nodes$gauge_id == "54032"] <- "Ungauged"
-  griwrmV05 <- CreateGRiwrm(
-    nodes,
-    list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
-  )
+  nodes$model[nodes$id == "54032"] <- "Ungauged"
+  griwrmV05 <- CreateGRiwrm(nodes)
   IM <- suppressWarnings(
-    CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap, Qobs)
+    CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap)
   )
   expect_equal(IM[["54032"]]$FUN_MOD, "RunModel_GR4J")
+})
+
+test_that("Network with Diversion works", {
+  n_div <- rbind(nodes, data.frame(id = "54029",
+                                   down = "54002",
+                                   length = 20,
+                                   model = "Diversion",
+                                   area = NA))
+  g <- CreateGRiwrm(n_div)
+  Qobs = matrix(-1, nrow = length(DatesR), ncol = 1)
+  colnames(Qobs) = "54029"
+  IM <- suppressWarnings(
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
+  )
+  expect_equal(IM[["54032"]]$UpstreamNodes, c("54001", "54029"))
+  expect_equal(IM[["54032"]]$UpstreamVarQ , c("Qsim_m3", "Qsim_m3"))
+  expect_equal(IM[["54002"]]$UpstreamNodes, "54029")
+  expect_equal(IM[["54002"]]$UpstreamIsModeled  , TRUE)
+  expect_equal(IM[["54002"]]$UpstreamVarQ , "Qdiv_m3")
+  expect_equivalent(IM$`54029`$Qmin, matrix(0, nrow = length(DatesR), ncol = 1))
+})
+
+test_that("Diversion node: checks about 'Qmin'", {
+  n_div <- rbind(nodes,
+                 data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
+  g <- CreateGRiwrm(n_div)
+  Qobs = matrix(-1, nrow = length(DatesR), ncol = 1)
+  colnames(Qobs) = "54029"
+  expect_warning(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs),
+                 regexp = "Zero values")
+  Qmin <- -Qobs
+  IM <- CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  expect_equivalent(IM$`54029`$Qmin, Qmin)
+  QminNA <- Qmin
+  QminNA[1] <- NA
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminNA),
+               regexp = "NA")
+  QminBadCol <- Qmin
+  colnames(QminBadCol) = "54002"
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminBadCol),
+               regexp = "columns that does not match with IDs of Diversion nodes")
 })

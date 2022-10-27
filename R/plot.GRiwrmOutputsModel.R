@@ -11,7 +11,7 @@
 #' @importFrom graphics plot par title
 #' @export
 #'
-#' @inherit RunModel.GRiwrmInputsModel return examples
+#' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
 plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, ...) {
 

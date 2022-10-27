@@ -62,16 +62,22 @@ The "model" column should be filled by one of the following:
 \itemize{
 \item One of the hydrological models available in the \emph{airGR} package defined by its
 \code{RunModel} function (i.e.: \code{RunModel_GR4J}, \code{RunModel_GR5HCemaneige}...)
-\item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
-(direct flow injection)
 \item \code{Ungauged} for an ungauged node. The sub-basin inherits hydrological model and
 parameters from a "donor" sub-basin. By default the donor is the first gauged
 node at downstream
+\item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
+(direct flow injection)
+\item \code{Diversion} for abstracting a flow time series from an existing node transfer it
+to another node. As a \code{Diversion} is attached to an existing node, this node is
+then described with 2 lines: one for the hydrological model and another one for the
+diversion
 }
 }
 }
 \examples{
-# Network of 2 nodes distant of 150 km:
+#########################################
+# Network of 2 nodes distant of 150 km: #
+#########################################
 # - an upstream reservoir modelled as a direct flow injection (no model)
 # - a gauging station downstream a catchment of 360 km² modelled with GR4J
 db <- data.frame(id = c("Reservoir", "GaugingDown"),
@@ -85,7 +91,9 @@ griwrm_basic
 # Network diagram with direct flow node in red, intermediate sub-basin in green
 plot(griwrm_basic)
 
-# GR4J semi-distributed model of the Severn River
+###################################################
+# GR4J semi-distributed model of the Severn River #
+###################################################
 data(Severn)
 nodes <- Severn$BasinsInfo
 nodes$model <- "RunModel_GR4J"
@@ -99,7 +107,9 @@ griwrm_severn
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
 plot(griwrm_severn)
 
-# Same model with an ungauged station at nodes 54029 and 54001
+####################################################################
+# Severn network with an ungauged station at nodes 54029 and 54001 #
+####################################################################
 # By default the first gauged node at downstream is used for parameter calibration (54032)
 nodes_ungauged <- nodes
 nodes_ungauged$model[nodes_ungauged$gauge_id \%in\% c("54029", "54001")] <- "Ungauged"
@@ -108,4 +118,18 @@ griwrm_ungauged <- CreateGRiwrm(nodes_ungauged, rename_columns)
 griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
 plot(griwrm_ungauged)
+
+#######################################################
+# Severn network with a Diversion on the node "54029" #
+# which transfer flows to the node "54001"            #
+#######################################################
+nodes_div <- nodes[, c("gauge_id", "downstream_id", "distance_downstream", "model", "area")]
+nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54029",
+                                         downstream_id = "54001",
+                                         distance_downstream = 20,
+                                         model = "Diversion",
+                                         area = NA))
+griwrm_div <- CreateGRiwrm(nodes_div, rename_columns)
+# Network diagram figures Diversion node by a red frame and a red arrow
+plot(griwrm_div)
 }

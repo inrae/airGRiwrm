@@ -1,15 +1,16 @@
 #' Function to obtain the ID of sub-basins using SD model
 #'
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
+#' @param add_diversion [logical] for adding upstream nodes with diversion
 #'
 #' @return [character] IDs of the sub-basins using SD model
 #' @export
-getSD_Ids <- function(InputsModel) {
+getSD_Ids <- function(InputsModel, add_diversion = FALSE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
   bSDs <- sapply(InputsModel, function (IM) {
-    inherits(IM, "SD")
+    inherits(IM, "SD") | IM$hasDiversion
   })
   names(InputsModel)[bSDs]
 }
@@ -17,15 +18,16 @@ getSD_Ids <- function(InputsModel) {
 #' Function to obtain the ID of sub-basins not using SD model
 #'
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
+#' @param include_diversion [logical] for including diversion nodes
 #'
 #' @return [character] IDs of the sub-basins not using the SD model
 #' @export
-getNoSD_Ids <- function(InputsModel) {
+getNoSD_Ids <- function(InputsModel, include_diversion = TRUE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
   bSDs <- sapply(InputsModel, function (IM) {
-    !inherits(IM, "SD")
+    !inherits(IM, "SD") & (include_diversion | !IM$hasDiversion)
   })
   names(InputsModel)[bSDs]
 }
@@ -44,11 +46,14 @@ getDataFromLocation <- function(loc, sv) {
   if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
     stop("Reaching output of other controller is not implemented yet")
   } else {
-    node <- sv$griwrm$down[sv$griwrm$id == loc]
-    if(is.na(node)) {
-      # Downstream node: simulated flow at last supervision time step (bug #40)
-      sv$OutputsModel[[loc]]$Qsim_m3
+    if(sv$nodeProperties[[loc]]["hydrology"] != "DirectInjection") {
+      if (sv$nodeProperties[[loc]]$Upstream) {
+        sv$OutputsModel[[loc]]$Qsim_m3[sv$ts.previous]
+      } else {
+        sv$OutputsModel[[loc]]$Qsim_m3
+      }
     } else {
+      node <- sv$griwrm$down[sv$griwrm$id == loc]
       sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.previous, loc]
     }
   }
@@ -64,13 +69,22 @@ getDataFromLocation <- function(loc, sv) {
 #' @noRd
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unames)), function(i) {
-    node <- sv$griwrm$down[sv$griwrm$id == ctrlr$Unames[i]]
     # limit U size to the number of simulation time steps of the current supervision time step
     U <- ctrlr$U[seq.int(length(sv$ts.index)),i]
-    # ! Qupstream contains warm up period and run period => the index is shifted
-    if(!is.null(sv$InputsModel[[node]])) {
-      sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index,
-                                       ctrlr$Unames[i]] <- U
+
+    locU <- ctrlr$Unames[i]
+    if (sv$nodeProperties[[locU]]$DirectInjection) {
+      # Direct injection node => update Qusptream of downstream node
+      node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
+      # ! Qupstream contains warm up period and run period => the index is shifted
+      if(!is.null(sv$InputsModel[[node]])) {
+        sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, locU] <- U
+      }
+    } else if (sv$nodeProperties[[locU]]$Diversion){
+      # Diversion node => update Qdiv with -U
+      sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
+    } else {
+      stop("Node ", locU, " must be a Direct Injection or a Diversion node")
     }
   })
 }
@@ -93,6 +107,21 @@ doSupervision <- function(supervisor) {
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
     if(is.vector(supervisor$controllers[[id]]$U)) {
       supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
+    }
+    # Check U output
+    if (
+      ncol(supervisor$controllers[[id]]$U) != length(supervisor$controllers[[id]]$Unames) |
+      (!nrow(supervisor$controllers[[id]]$U) %in% c(supervisor$.TimeStep, length(supervisor$ts.index)))
+      ) {
+      stop("The logic function of the controller ",
+           supervisor$controllers[[id]]$name,
+          " should return a matrix of dimension ",
+          supervisor$.TimeStep, ", ", length(supervisor$controllers[[id]]$Unames))
+    }
+    # For the last supervisor time step which can be truncated
+    if (length(supervisor$ts.index) < supervisor$.TimeStep) {
+      supervisor$controllers[[id]]$U <-
+        supervisor$controllers[[id]]$U[seq(length(supervisor$ts.index)), ]
     }
     # Write U to locations in the model
     setDataToLocation(supervisor$controllers[[id]], sv = supervisor)
@@ -133,23 +162,22 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
 OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   griwrm <- attr(InputsModel, "GRiwrm")
   # Get simulated flow for each node
-  # Flow for each node is available in InputsModel$Qupstream except for the downstream node
-  upperNodes <- griwrm$id[!is.na(griwrm$down)]
+  # Flow for each node is available in OutputsModel except for Direct Injection
+  # nodes where it is stored in InputsModel$Qupstream of the downstream node
+  QsimRows <- getDiversionRows(griwrm, TRUE)
   lQsim <- lapply(
-    upperNodes,
-    function(x, griwrm, IndPeriod_Run) {
-      node <- griwrm$down[griwrm$id == x]
-      InputsModel[[node]]$Qupstream[IndPeriod_Run, x]
-    },
-    griwrm = griwrm, IndPeriod_Run = IndPeriod_Run
+    QsimRows,
+    function(i) {
+      x <- griwrm[i, ]
+      if (is.na(x$model)) {
+        InputsModel[[x$down]]$Qupstream[IndPeriod_Run, x$id]
+      } else {
+        OutputsModel[[x$id]]$Qsim_m3
+      }
+    }
   )
-  names(lQsim) <- upperNodes
-  # Flow of the downstream node is only available in OutputsModel[[node]]$Qsim
-  downNode <- names(InputsModel)[length(InputsModel)]
-  lQsim[[downNode]] <- OutputsModel[[downNode]]$Qsim_m3
-
-  names(lQsim) <- c(upperNodes, downNode)
-  dfQsim <- cbind(data.frame(DatesR = as.POSIXct(InputsModel[[1]]$DatesR[IndPeriod_Run])),
+  names(lQsim) <- griwrm$id[QsimRows]
+  dfQsim <- cbind(data.frame(DatesR = InputsModel[[1]]$DatesR[IndPeriod_Run]),
                   do.call(cbind,lQsim) / attr(InputsModel, "TimeStep"))
   class(dfQsim) <- c("Qm3s", class(dfQsim)) # For S3 methods
   return(dfQsim)

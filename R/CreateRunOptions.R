@@ -17,7 +17,7 @@
 #'
 #' @rdname CreateRunOptions
 #' @export
-#' @inherit RunModel.GRiwrmInputsModel return examples
+#' @example man-examples/RunModel.GRiwrmInputsModel.R
 CreateRunOptions <- function(x, ...) {
   UseMethod("CreateRunOptions", x)
 }

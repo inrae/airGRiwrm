@@ -21,7 +21,7 @@ read_CAMELS_ts <- function(file, cut) {
   df <- read.csv(file)
   iCut <- which(df$date == cut)
   df <- df[iCut:nrow(df),]
-  df$DatesR <- as.POSIXct(df$date)
+  df$DatesR <- as.POSIXct(df$date, tz = "UTC")
 
   return(df[,c("DatesR", "precipitation", "peti", "discharge_spec")])
 }

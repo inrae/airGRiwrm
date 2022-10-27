@@ -1,5 +1,6 @@
 #' @rdname CreateInputsCrit
 #' @import airGR
+#' @importFrom utils tail read.table
 #' @export
 CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
                                                FUN_CRIT = ErrorCrit_NSE,

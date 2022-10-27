@@ -21,3 +21,129 @@
 \description{
 RunModel function for a GRiwrmInputsModel object
 }
+\examples{
+###############################################################################
+# An example of reservoir management on an hypothetical dam at station "54095"
+# on the Severn river build to support low-flows at "54057"
+###############################################################################
+# A minimum flow of 20 m3/s is maintained at the dam location and an extra-release
+# is provided when the flow at the downstream station "54057" cross a minimum
+# threshold of 45 m3/s. The dam has a storage capacity of 60 millions m3
+###############################################################################
+library(airGRiwrm)
+
+# Load Severn network information
+data(Severn)
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes$model <- "RunModel_GR4J"
+
+# Insert a dam downstream the location the gauging station 54095
+# The dam is a direct injection node
+nodes$downstream_id[nodes$gauge_id == "54095"] <- "Dam"
+nodes$distance_downstream[nodes$gauge_id == "54095"] <- 0
+nodes <- rbind(nodes,
+               data.frame(gauge_id = "Dam",
+                          downstream_id = "54001",
+                          distance_downstream = 42,
+                          area = NA,
+                          model = NA))
+
+griwrm <- CreateGRiwrm(nodes,
+                 list(id = "gauge_id",
+                      down = "downstream_id",
+                      length = "distance_downstream"))
+plot(griwrm)
+
+# Format meteorological inputs for CreateInputs
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+
+# Create a release flow time series for the dam
+# This release will be modified by the Supervisor
+# We initiate it with the natural flow for having a good initialisation of the
+# model at the first time step of the running period
+Qobs <- data.frame(
+  Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
+)
+Qobs[,] <- Qobs[which(DatesR == as.POSIXct("2002-10-01", tz = "UTC")), 1]
+
+# InputsModel object
+IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
+
+# Initialisation of the Supervisor
+sv <- CreateSupervisor(IM_severn)
+
+# States of the reservoir are stored in the Supervisor variable
+# The Supervisor variable is an environment which can be available in
+# the controller function for storing and exchange data during the simulation
+sv$Vres <- 0 # Reservoir storage time series
+
+# Dam management is modeled by a controller
+# This controller usually releases Qmin and provides
+# extra release if flow mesured somewhere is below Qthreshold
+# Flow is expressed in m3 / time step
+# Y[1] = runoff flow at gauging station 54095 filling the reservoir
+# Y[2] = flow at gauging station 54057, location of the low-flow objective
+# The returned value is the release calculated at the reservoir
+# We need to enclose the Supervisor variable and other parameters in
+# the environment of the function with a function returning the logic function
+factoryDamLogic <- function(sv, Vmin, Vmax, Qmin, Qthreshold) {
+  function(Y) {
+    # Filling of the reservoir
+    sv$Vres <- c(sv$Vres, tail(sv$Vres, 1) + Y[1])
+    # The release is the max between: overflow, low-flow support and minimum flow
+    U <- U <- max(tail(sv$Vres, 1) - Vmax, Qthreshold - Y[2], Qmin)
+    sv$Vres[length(sv$Vres)] <- tail(sv$Vres, 1) - U
+    if (tail(sv$Vres, 1) < Vmin) {
+      # Reservoir is empty
+      U <- U - (Vmin - tail(sv$Vres, 1))
+      sv$Vres[length(sv$Vres)] <- Vmin
+    }
+    return(U)
+  }
+}
+
+# And define a final function enclosing logic and parameters together
+funDamLogic <- factoryDamLogic(
+  sv = sv, # The Supervisor which store the states of reservoir storage
+  Vmin = 0, # Minimum volume in the reservoir (m3)
+  Vmax = 60 * 1E6, # Maximum volume in the reservoir (m3)
+  Qmin = 20 * 86400, # Min flow to maintain downstream the reservoir (m3/day)
+  Qthreshold = 45 * 86400 # Min flow threshold to support at station 54057 (m3/day)
+)
+
+CreateController(sv, "DamRelease", Y = c("54095", "54057"), U = c("Dam"), FUN = funDamLogic)
+
+# GRiwrmRunOptions object simulation of the hydrological year 2002-2003
+IndPeriod_Run <- which(
+  DatesR >= as.POSIXct("2002-10-15", tz = "UTC") &
+  DatesR <= as.POSIXct("2003-10-15", tz = "UTC")
+)
+IndPeriod_WarmUp <- seq.int(IndPeriod_Run[1] - 366, IndPeriod_Run[1] - 1)
+RO_severn <- CreateRunOptions(
+  IM_severn,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
+  IndPeriod_Run = IndPeriod_Run
+)
+
+# Load parameters of the model from Calibration in vignette V02
+P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
+
+# The Supervisor is used instead of InputsModel for running the model
+OM_dam <- RunModel(sv,
+                      RunOptions = RO_severn,
+                      Param = P_severn)
+
+# Plotting the time series of flows and reservoir storage
+oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
+     ylim = c(0, 200))
+Vres <- data.frame(DatesR = attr(OM_dam, "Qm3s")$DatesR,
+                   V_reservoir = sv$Vres)
+plot.Qm3s(Vres)
+par(oldpar)
+}

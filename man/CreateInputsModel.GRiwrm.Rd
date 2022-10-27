@@ -10,6 +10,7 @@
   Precip = NULL,
   PotEvap = NULL,
   Qobs = NULL,
+  Qmin = NULL,
   PrecipScale = TRUE,
   TempMean = NULL,
   TempMin = NULL,
@@ -25,38 +26,79 @@
 
 \item{DatesR}{\link{POSIXt} vector of dates}
 
-\item{Precip}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing precipitation in [mm per time step]. Column names correspond to node IDs}
+\item{Precip}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
+precipitation in [mm per time step]. Column names correspond to node IDs}
 
-\item{PotEvap}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing potential evaporation [mm per time step]. Column names correspond to node IDs}
+\item{PotEvap}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
+potential evaporation [mm per time step]. Column names correspond to node IDs}
 
-\item{Qobs}{(optional) \link{matrix} or \link{data.frame} frame of numeric containing observed flows in [mm per time step]. Column names correspond to node IDs}
+\item{Qobs}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
+observed flows. It must be provided only for nodes of type "Direct
+injection" and "Diversion". See \link{CreateGRiwrm} for
+details about these node types. Unit is [mm per time step] for nodes
+with an area, and [m3 per time step] for nodes with \code{area=NA}.
+Column names correspond to node IDs. Negative flows are abstracted from
+the model and positive flows are injected to the model}
 
-\item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the mean of the precipitation interpolated on the elevation layers must be kept or not, required to create CemaNeige module inputs, default \code{TRUE} (the mean of the precipitation is kept to the original value)}
+\item{Qmin}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
+minimum flows to let downstream of a node with a Diversion [m3 per
+time step]. Default is zero. Column names correspond to node IDs}
 
-\item{TempMean}{(optional) \link{matrix} or \link{data.frame} of time series of mean air temperature [°C], required to create the CemaNeige module inputs}
+\item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the
+mean of the precipitation interpolated on the elevation layers must be
+kept or not, required to create CemaNeige module inputs, default \code{TRUE}
+(the mean of the precipitation is kept to the original value)}
 
-\item{TempMin}{(optional) \link{matrix} or \link{data.frame} of time series of minimum air temperature [°C], possibly used to create the CemaNeige module inputs}
+\item{TempMean}{(optional) \link{matrix} or \link{data.frame} of time series of mean
+air temperature [°C], required to create the CemaNeige module inputs}
 
-\item{TempMax}{(optional) \link{matrix} or \link{data.frame} of time series of maximum air temperature [°C], possibly used to create the CemaNeige module inputs}
+\item{TempMin}{(optional) \link{matrix} or \link{data.frame} of time series of minimum
+air temperature [°C], possibly used to create the CemaNeige module inputs}
 
-\item{ZInputs}{(optional) named \link{vector} of \link{numeric} giving the mean elevation of the Precip and Temp series (before extrapolation) [m], possibly used to create the CemaNeige module input}
+\item{TempMax}{(optional) \link{matrix} or \link{data.frame} of time series of maximum
+air temperature [°C], possibly used to create the CemaNeige module inputs}
 
-\item{HypsoData}{(optional) \link{matrix} or \link{data.frame} containing 101 \link{numeric} rows: min, q01 to q99 and max of catchment elevation distribution [m], if not defined a single elevation is used for CemaNeige}
+\item{ZInputs}{(optional) named \link{vector} of \link{numeric} giving the mean
+elevation of the Precip and Temp series (before extrapolation) [m],
+possibly used to create the CemaNeige module input}
 
-\item{NLayers}{(optional) named \link{vector} of \link{numeric} integer giving the number of elevation layers requested \link{-}, required to create CemaNeige module inputs, default=5}
+\item{HypsoData}{(optional) \link{matrix} or \link{data.frame} containing 101 \link{numeric}
+rows: min, q01 to q99 and max of catchment elevation distribution [m],
+if not defined a single elevation is used for CemaNeige}
+
+\item{NLayers}{(optional) named \link{vector} of \link{numeric} integer giving the number
+of elevation layers requested \link{-}, required to create CemaNeige module
+inputs, default=5}
 
 \item{...}{used for compatibility with S3 methods}
 }
 \value{
-A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel} objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modeled sub-catchment.
+A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
+objects created by \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} with one item per modeled sub-catchment.
 }
 \description{
 Creation of an InputsModel object for a \strong{airGRiwrm} network
 }
 \details{
-Meteorological data are needed for the nodes of the network that represent a catchment simulated by a rainfall-runoff model. Instead of \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} that has \link{numeric} \link{vector} as time series inputs, this function uses \link{matrix} or \link{data.frame} with the id of the sub-catchment as column names. For single values (\code{ZInputs} or \code{NLayers}), the function requires named \link{vector} with the id of the sub-catchment as name item. If an argument is optional, only the column or the named item has to be provided.
+Meteorological data are needed for the nodes of the network that
+represent a catchment simulated by a rainfall-runoff model. Instead of
+\link[airGR:CreateInputsModel]{airGR::CreateInputsModel} that has \link{numeric} \link{vector} as time series inputs,
+this function uses \link{matrix} or \link{data.frame} with the id of the sub-catchment
+as column names. For single values (\code{ZInputs} or \code{NLayers}), the function
+requires named \link{vector} with the id of the sub-catchment as name item. If an
+argument is optional, only the column or the named item has to be provided.
 
 See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} documentation for details concerning each input.
+
+Number of rows of \code{Precip}, \code{PotEvap}, \code{Qobs}, \code{Qmin}, \code{TempMean}, \code{TempMin},
+\code{TempMax} must be the same of the length of \code{DatesR} (each row corresponds to
+a time step defined in \code{DatesR}).
+
+For example of use of Direct Injection nodes, see vignettes
+"V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".
+
+For example of use of Diversion nodes, see example below and vignette
+"V06_Modelling_regulated_diversion".
 }
 \examples{
 ###################################################################
@@ -125,7 +167,7 @@ str(InputsModels)
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
                which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
 
-# Creation of the GriwmRunOptions object
+# Creation of the GRiwmRunOptions object
 RunOptions <- CreateRunOptions(InputsModels,
                                 IndPeriod_Run = Ind_Run)
 str(RunOptions)
@@ -140,6 +182,133 @@ OutputsModels <- RunModel(InputsModels,
                           Param = Param)
 str(OutputsModels)
 
-# Compare Simulation with reservoir and observation of natural flow
-plot(OutputsModels, data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]))
+# Compare regimes of the simulation with reservoir and observation of natural flow
+plot(OutputsModels,
+     data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]),
+     which = "Regime")
+
+# Plot together simulated flows (m3/s) of the reservoir and the gauging station
+plot(attr(OutputsModels, "Qm3s"))
+
+
+########################################################
+# Run the Severn example provided with this package    #
+# A natural catchment composed with 6 gauging stations #
+########################################################
+
+data(Severn)
+nodes <- Severn$BasinsInfo
+nodes$model <- "RunModel_GR4J"
+# Mismatch column names are renamed to stick with GRiwrm requirements
+rename_columns <- list(id = "gauge_id",
+                       down = "downstream_id",
+                       length = "distance_downstream")
+g_severn <- CreateGRiwrm(nodes, rename_columns)
+
+# Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
+plot(g_severn)
+
+# Format CAMEL-GB meteorological dataset for airGRiwrm inputs
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+
+# Precipitation and Potential Evaporation are related to the whole catchment
+# at each gauging station. We need to compute them for intermediate catchments
+# for use in a semi-distributed model
+Precip <- ConvertMeteoSD(g_severn, PrecipTot)
+PotEvap <- ConvertMeteoSD(g_severn, PotEvapTot)
+
+# CreateInputsModel object
+IM_severn <- CreateInputsModel(g_severn, DatesR, Precip, PotEvap)
+
+# GRiwrmRunOptions object
+# Run period is set aside the one-year warm-up period
+IndPeriod_Run <- seq(
+  which(IM_severn[[1]]$DatesR == (IM_severn[[1]]$DatesR[1] + 365*24*60*60)),
+  length(IM_severn[[1]]$DatesR) # Until the end of the time series
+)
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
+
+RO_severn <- CreateRunOptions(
+  IM_severn,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
+  IndPeriod_Run = IndPeriod_Run
+)
+
+# Load parameters of the model from Calibration in vignette V02
+P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
+
+# Run the simulation
+OM_severn <- RunModel(IM_severn,
+                          RunOptions = RO_severn,
+                          Param = P_severn)
+
+# Plot results of simulated flows in m3/s
+Qm3s <- attr(OM_severn, "Qm3s")
+plot(Qm3s[1:150, ])
+
+
+##################################################################
+# An example of water withdrawal for irrigation with restriction #
+# modeled with a Diversion node on the Severn river              #
+##################################################################
+
+# A diversion is added at gauging station "54001"
+nodes_div <- nodes[,  c("gauge_id", "downstream_id", "distance_downstream", "area", "model")]
+names(nodes_div) <- c("id", "down", "length", "area", "model")
+nodes_div <- rbind(nodes_div,
+                   data.frame(id = "54001", # location of the diversion
+                              down = NA,    # the abstracted flow goes outside
+                              length = NA,  # down=NA, so length=NA
+                              area = NA,    # no area, diverted flow is in m3/day
+                              model = "Diversion"))
+
+g_div <- CreateGRiwrm(nodes_div)
+# The node "54001" is surrounded in red to show the diverted node
+plot(g_div)
+
+# Computation of the irrigation withdraw objective
+irrigMonthlyPlanning <- c(0.0, 0.0, 1.2, 2.4, 3.2, 3.6, 3.6, 2.8, 1.8, 0.0, 0.0, 0.0)
+names(irrigMonthlyPlanning) <- month.abb
+irrigMonthlyPlanning
+DatesR_month <- as.numeric(format(DatesR, "\%m"))
+# Withdrawn flow calculated for each day is negative
+Qirrig <- matrix(-irrigMonthlyPlanning[DatesR_month] * 86400, ncol = 1)
+colnames(Qirrig) <- "54001"
+
+# Minimum flow to remain downstream the diversion is 12 m3/s
+Qmin <- matrix(12 * 86400, nrow = length(DatesR), ncol = 1)
+colnames(Qmin) = "54001"
+
+# Creation of GRimwrInputsModel object
+IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qirrig, Qmin = Qmin)
+
+# RunOptions and parameters are unchanged, we can directly run the simulation
+OM_div <- RunModel(IM_div,
+                   RunOptions = RO_severn,
+                   Param = P_severn)
+
+# Retrieve diverted flow at "54001" and convert it from m3/day to m3/s
+Qdiv_m3s <- OM_div$`54001`$Qdiv_m3 / 86400
+
+# Plot the diverted flow for the year 2003
+Ind_Plot <- which(
+  OM_div[[1]]$DatesR >= as.POSIXct("2003-01-01", tz = "UTC") &
+  OM_div[[1]]$DatesR <= as.POSIXct("2003-12-31", tz = "UTC")
+)
+dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR[Ind_Plot],
+                     Diverted_flow = Qdiv_m3s[Ind_Plot])
+
+oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+plot.Qm3s(dfQdiv)
+
+# Plot natural and influenced flow at station "54001"
+df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
+                 attr(OM_severn, "Qm3s")[Ind_Plot, "54001"])
+names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
+plot.Qm3s(df54001, ylim = c(0,70))
+abline(h = 12, col = "green")
+par(oldpar)
 }
