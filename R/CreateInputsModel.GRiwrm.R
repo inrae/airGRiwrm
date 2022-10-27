@@ -263,6 +263,15 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   if(length(UpstreamNodeRows) > 0) {
     # Sub-basin with hydraulic routing
     Qupstream <- as.matrix(Qobs[ , griwrm$id[UpstreamNodeRows], drop=FALSE])
+    upstreamDiversion <- which(
+      sapply(griwrm$id[UpstreamNodeRows],
+             function(id) {
+               getNodeProperties(id, griwrm)$Diversion
+             })
+    )
+    if (length(upstreamDiversion) > 0) {
+      Qupstream[, upstreamDiversion] <- - Qupstream[, upstreamDiversion]
+    }
     LengthHydro <- griwrm$length[UpstreamNodeRows]
     names(LengthHydro) <- griwrm$id[UpstreamNodeRows]
     BasinAreas <- c(
