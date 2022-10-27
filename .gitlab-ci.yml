@@ -46,6 +46,7 @@ website:
       - schedules
   script:
     - R -e 'install.packages("pkgdown")'
+    - Rscript dev/update_mermaid.R
     - sed -i 's/`function`/function/g' man/CreateRunOptions.Rd
     - sed -i 's/`function`/function/g' man/CreateCalibOptions.Rd
     - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
