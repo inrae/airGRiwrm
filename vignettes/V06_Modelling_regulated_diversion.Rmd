@@ -1,8 +1,8 @@
 ---
-title: "Severn_06: Modelling of a regulated diversion"
+title: "Severn_06: Modelling a regulated diversion"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Severn_06: Modelling of a regulated diversion}
+  %\VignetteIndexEntry{Severn_06: Modelling a regulated diversion}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -127,7 +127,6 @@ logicFunFactory <- function(sv) {
     if (length(lastU) > 0) {
       Qnat <- max(0, Y + lastU)
     }
-    message(paste(round(c(Y, lastU, Qnat, -max(5.3 * 86400 - Qnat, 0))), collapse = ", "))
     return(-max(5.3 * 86400 - Qnat, 0))
   }
 }
