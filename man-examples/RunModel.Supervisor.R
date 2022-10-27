@@ -95,9 +95,9 @@ funDamLogic <- factoryDamLogic(
 CreateController(sv, "DamRelease", Y = c("54095", "54057"), U = c("Dam"), FUN = funDamLogic)
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
-IndPeriod_Run <- seq.int(
-  which(IM_severn[[1]]$DatesR == as.POSIXct("2002-10-15", tz = "UTC")),
-  length.out = 365
+IndPeriod_Run <- which(
+  DatesR >= as.POSIXct("2002-10-15", tz = "UTC") &
+  DatesR <= as.POSIXct("2003-10-15", tz = "UTC")
 )
 IndPeriod_WarmUp <- seq.int(IndPeriod_Run[1] - 366, IndPeriod_Run[1] - 1)
 RO_severn <- CreateRunOptions(
