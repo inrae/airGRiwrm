@@ -98,3 +98,29 @@ test_that("Calibration with regularization is OK", {
     )
   })
 })
+
+test_that("Calibration with Diversion works", {
+  n_div <- rbind(nodes,
+                 data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
+  g_div <- CreateGRiwrm(n_div)
+  Qmin = matrix(1E5, nrow = length(DatesR), ncol = 1)
+  colnames(Qmin) = "54029"
+  Qdiv <- -Qmin
+  IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qdiv, Qmin = Qmin)
+  RO_div <- setupRunOptions(IM_div)$RunOptions
+  P_div <- ParamMichel
+  P_div$`54002` <- c(1, ParamMichel$`54002`)
+  IC_div <- CreateInputsCrit(
+    InputsModel = IM_div,
+    RunOptions = RO_div,
+    Obs = Qobs[IndPeriod_Run,],
+  )
+  CO_div <- CreateCalibOptions(IM_div)
+  OC <- Calibration(
+    InputsModel = IM_div,
+    RunOptions = RO_div,
+    InputsCrit = IC_div,
+    CalibOptions = CO_div
+  )
+  expect_length(OC$`54002`$ParamFinalR, 5)
+})
