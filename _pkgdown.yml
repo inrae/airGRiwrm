@@ -43,6 +43,7 @@ articles:
       - V03_Open-loop_influenced_flow
       - V04_Closed-loop_regulated_withdrawal
       - V05_Modelling_ungauged_nodes
+      - V06_Modelling_regulated_diversion
   - title: Example of a large network on the Seine River (France)
     navbar: Example of a large network on the Seine River (France)
     contents:
