@@ -29,9 +29,9 @@ Creation of a Supervisor for handling regulation in a model
 # An example of reservoir management on an hypothetical dam at station "54095"
 # on the Severn river build to support low-flows at "54057"
 ###############################################################################
-# A minimum flow of 20 m3/s is maintained at the dam location and an extra-release
+# A minimum flow of 50 m3/s is maintained at the dam location and an extra-release
 # is provided when the flow at the downstream station "54057" cross a minimum
-# threshold of 45 m3/s. The dam has a storage capacity of 60 millions m3
+# threshold of 65 m3/s. The dam has a storage capacity of 650 millions m3
 ###############################################################################
 library(airGRiwrm)
 
@@ -84,6 +84,8 @@ sv <- CreateSupervisor(IM_severn)
 # The Supervisor variable is an environment which can be available in
 # the controller function for storing and exchange data during the simulation
 sv$Vres <- 0 # Reservoir storage time series
+# Record of the last decision to estimate the natural flow
+sv$lastU <- 0
 
 # Dam management is modeled by a controller
 # This controller usually releases Qmin and provides
@@ -97,15 +99,20 @@ sv$Vres <- 0 # Reservoir storage time series
 factoryDamLogic <- function(sv, Vmin, Vmax, Qmin, Qthreshold) {
   function(Y) {
     # Filling of the reservoir
-    sv$Vres <- c(sv$Vres, tail(sv$Vres, 1) + Y[1])
+    V <- sv$Vres[length(sv$Vres)] + Y[1]
+    # Estimate natural flow at low-flow support location
+    Qnat <- Y[2] - sv$lastU
     # The release is the max between: overflow, low-flow support and minimum flow
-    U <- U <- max(tail(sv$Vres, 1) - Vmax, Qthreshold - Y[2], Qmin)
-    sv$Vres[length(sv$Vres)] <- tail(sv$Vres, 1) - U
-    if (tail(sv$Vres, 1) < Vmin) {
+    U <- max(V - Vmax, Qthreshold - Qnat, Qmin)
+    V <- V - U
+    if (V < Vmin) {
       # Reservoir is empty
-      U <- U - (Vmin - tail(sv$Vres, 1))
-      sv$Vres[length(sv$Vres)] <- Vmin
+      U <- U - (Vmin - V)
+      V <- Vmin
     }
+    # Record state of the reservoir and release
+    sv$Vres[length(sv$Vres) + 1] <- V
+    sv$lastU <- U
     return(U)
   }
 }
@@ -114,17 +121,17 @@ factoryDamLogic <- function(sv, Vmin, Vmax, Qmin, Qthreshold) {
 funDamLogic <- factoryDamLogic(
   sv = sv, # The Supervisor which store the states of reservoir storage
   Vmin = 0, # Minimum volume in the reservoir (m3)
-  Vmax = 60 * 1E6, # Maximum volume in the reservoir (m3)
-  Qmin = 20 * 86400, # Min flow to maintain downstream the reservoir (m3/day)
-  Qthreshold = 45 * 86400 # Min flow threshold to support at station 54057 (m3/day)
+  Vmax = 650 * 1E6, # Maximum volume in the reservoir (m3)
+  Qmin = 50 * 86400, # Min flow to maintain downstream the reservoir (m3/day)
+  Qthreshold = 65 * 86400 # Min flow threshold to support at station 54057 (m3/day)
 )
 
 CreateController(sv, "DamRelease", Y = c("54095", "54057"), U = c("Dam"), FUN = funDamLogic)
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
 IndPeriod_Run <- which(
-  DatesR >= as.POSIXct("2002-10-15", tz = "UTC") &
-  DatesR <= as.POSIXct("2003-10-15", tz = "UTC")
+  DatesR >= as.POSIXct("2002-11-01", tz = "UTC") &
+  DatesR <= as.POSIXct("2003-11-01", tz = "UTC")
 )
 IndPeriod_WarmUp <- seq.int(IndPeriod_Run[1] - 366, IndPeriod_Run[1] - 1)
 RO_severn <- CreateRunOptions(
@@ -138,15 +145,17 @@ P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwr
 
 # The Supervisor is used instead of InputsModel for running the model
 OM_dam <- RunModel(sv,
-                      RunOptions = RO_severn,
-                      Param = P_severn)
+                   RunOptions = RO_severn,
+                   Param = P_severn)
 
 # Plotting the time series of flows and reservoir storage
 oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
 plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
      ylim = c(0, 200))
 Vres <- data.frame(DatesR = attr(OM_dam, "Qm3s")$DatesR,
-                   V_reservoir = sv$Vres)
-plot.Qm3s(Vres)
+                   V_reservoir = sv$Vres / 1E6)
+plot.Qm3s(Vres,
+          main = "Simulated reservoir storage",
+          ylab = expression("Storage (Mm"^"3" * ")"))
 par(oldpar)
 }

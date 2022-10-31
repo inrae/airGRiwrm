@@ -75,6 +75,8 @@ diversion
 }
 }
 \examples{
+library(airGRiwrm)
+
 #########################################
 # Network of 2 nodes distant of 150 km: #
 #########################################

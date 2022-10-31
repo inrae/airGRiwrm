@@ -151,7 +151,7 @@ CreateController(sv,
 First we need to create a `GRiwrmRunOptions` object and load the parameters calibrated in the vignette "V02_Calibration_SD_model":
 
 ```{r}
-# Running simulation between 2002 and 2005
+# Running simulation on year 2003
 IndPeriod_Run <- which(
   DatesR >= as.POSIXct("2003-03-01", tz = "UTC") & 
     DatesR <= as.POSIXct("2004-01-01", tz = "UTC")
@@ -163,8 +163,8 @@ RunOptions <- CreateRunOptions(IM_div,
 ParamV02 <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
 ```
 
-The node "54029" was initially an upstream node. As it receive water from "54001"
-it is no longer an upstream node and need a parameter for routing its upstream 
+The node "54029" was initially an upstream node. As it receives water from "54001"
+it is no longer an upstream node and needs a parameter for routing its upstream 
 flows. We arbitrary say that the velocity in the channel between "54001" and 
 "54029" is 1 m/s.
 

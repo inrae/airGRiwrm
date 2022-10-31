@@ -41,6 +41,8 @@ This function only works inside RStudio because the HTMLwidget produced by Diagr
 is not handled on some platforms
 }
 \examples{
+library(airGRiwrm)
+
 #########################################
 # Network of 2 nodes distant of 150 km: #
 #########################################
