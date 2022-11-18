@@ -14,7 +14,8 @@ setupRunModel <-
   function(runInputsModel = TRUE,
            runRunOptions = TRUE,
            runRunModel = TRUE,
-           griwrm = NULL) {
+           griwrm = NULL,
+           Qobs2 = NULL) {
 
     data(Severn)
 
@@ -47,7 +48,7 @@ setupRunModel <-
     if (!runInputsModel)
       return(environment())
     InputsModel <-
-      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap))
+      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs = Qobs2))
 
     # RunOptions
     if (!runRunOptions)

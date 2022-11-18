@@ -46,7 +46,7 @@ getDataFromLocation <- function(loc, sv) {
   if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
     stop("Reaching output of other controller is not implemented yet")
   } else {
-    if(sv$nodeProperties[[loc]]["hydrology"] != "DirectInjection") {
+    if (!sv$nodeProperties[[loc]]$DirectInjection) {
       if (sv$nodeProperties[[loc]]$Upstream) {
         sv$OutputsModel[[loc]]$Qsim_m3[sv$ts.previous]
       } else {
@@ -70,9 +70,10 @@ getDataFromLocation <- function(loc, sv) {
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unames)), function(i) {
     # limit U size to the number of simulation time steps of the current supervision time step
-    U <- ctrlr$U[seq.int(length(sv$ts.index)),i]
+    U <- ctrlr$U[seq.int(length(sv$ts.index)), i]
 
     locU <- ctrlr$Unames[i]
+
     if (sv$nodeProperties[[locU]]$DirectInjection) {
       # Direct injection node => update Qusptream of downstream node
       node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
