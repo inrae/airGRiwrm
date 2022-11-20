@@ -16,7 +16,7 @@ nodes2 <- rbind(nodes,
 griwrm2 <- CreateGRiwrm(nodes2)
 
 # Add Qobs for the 2 new nodes and create InputsModel
-Qobs <- matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2)
+Qobs <- matrix(data = rep(0, 2*length(DatesR)), ncol = 2)
 colnames(Qobs) <- c("R1", "R2")
 InputsModel <-
   CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs)
@@ -80,3 +80,45 @@ test_that("RunModel.Supervisor with NA values in Qupstream", {
                OM_GriwrmInputs[["54057"]]$Qsim[4:length(IndPeriod_Run)])
 })
 
+test_that("RunModel.Supervisor with diversion node should not produce NAs", {
+  nodes_div <- nodes
+  nodes_div <- rbind(nodes_div, data.frame(id = "54001",
+                                           down = "54029",
+                                           length = 25,
+                                           model = "Diversion",
+                                           area = NA))
+  g_div <- CreateGRiwrm(nodes_div)
+  Qobs2 <- matrix(data = rep(0, length(DatesR)), ncol = 1)
+  colnames(Qobs2) <- "54001"
+  e <- setupRunModel(griwrm = g_div, runRunModel = FALSE, Qobs2 = Qobs2)
+  for(x in ls(e)) assign(x, get(x, e))
+  sv <- CreateSupervisor(InputsModel, TimeStep = 1L)
+  logicFunFactory <- function(sv) {
+    #' @param Y Flow measured at "54002" the previous time step
+    function(Y) {
+      Qnat <- Y
+      #  We need to remove the diverted flow to compute the natural flow at "54002"
+      lastU <- sv$controllers[[sv$controller.id]]$U
+      if (length(lastU) > 0) {
+        Qnat <- max(0, Y + lastU)
+      }
+      return(-max(5.3 * 86400 - Qnat, 0))
+    }
+  }
+  CreateController(sv,
+                   ctrl.id = "Low flow support",
+                   Y = "54029",
+                   U = "54001",
+                   FUN = logicFunFactory(sv))
+  ParamMichel$`54029` <- c(1, ParamMichel$`54029`)
+  OM_Supervisor <- RunModel(
+    sv,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  )
+  expect_true(all(OM_Supervisor$`54001`$Qdiv_m3 >= 0))
+  lapply(OM_Supervisor, function(OM) {
+    expect_false(any(is.na(OM$Qsim)))
+    expect_false(any(is.na(OM$Qsim_m3)))
+  })
+})
