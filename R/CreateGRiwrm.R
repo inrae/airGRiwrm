@@ -251,22 +251,3 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
   }
   return(rows)
 }
-
-getNodeProperties <- function(id, griwrm) {
-  g_div <- griwrm[getDiversionRows(griwrm), , drop = FALSE]
-  g2 <- griwrm[getDiversionRows(griwrm, TRUE), , drop = FALSE]
-  upstreamIds <- g2$id[!g2$id %in% g2$down]
-  gaugedIds <- g2$id[!is.na(g2$model) & g2$model != "Ungauged"]
-  divertedIds <- g_div$id
-  p <- list(
-    position = ifelse(id %in% upstreamIds, "Upstream", "Intermediate"),
-    hydrology = ifelse(id %in% gaugedIds, "Gauged",
-                       ifelse(is.na(g2$model[g2$id == id]),
-                              "DirectInjection",
-                              "Ungauged"))
-  )
-  p$Upstream <- p$position == "Upstream"
-  p$DirectInjection = p$hydrology == "DirectInjection"
-  p$Diversion = id %in% divertedIds
-  return(p)
-}
