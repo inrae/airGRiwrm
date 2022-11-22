@@ -278,11 +278,13 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
         griwrm$area[UpstreamNodeRows],
         node$area - sum(griwrm$area[UpstreamNodeRows], na.rm = TRUE)
     )
-    if (BasinAreas[length(BasinAreas)] < 0) {
-      stop(sprintf(
-        "Area of the catchment %s must be greater than the sum of the areas of its upstream catchments",
-        id
-      ))
+    if (!is.na(node$area)) {
+      if (BasinAreas[length(BasinAreas)] < 0) {
+        stop(sprintf(
+          "Area of the catchment %s must be greater than the sum of the areas of its upstream catchments",
+          id
+        ))
+      }
     }
     names(BasinAreas) <- c(griwrm$id[UpstreamNodeRows], id)
   }
