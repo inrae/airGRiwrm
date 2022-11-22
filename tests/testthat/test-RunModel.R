@@ -127,3 +127,18 @@ test_that("Huge minimum remaining flow results in Qdiv = 0", {
   expect_equal(OM[["54029"]]$Qsim, OM[["54029"]]$Qnat)
   expect_equal(OM[["54029"]]$Qdiv_m3, rep(0, length(IndPeriod_Run)))
 })
+
+test_that("RunModel_Lag should work", {
+  # This example is a network of 2 nodes which can be describe like this:
+  db <- data.frame(id = c("54095", "DownLag"),
+                   length = c(1, NA),
+                   down = c("DownLag", NA),
+                   area = as.double(c(3722.68, NA)),
+                   model = c("RunModel_GR4J", "RunModel_Lag"),
+                   stringsAsFactors = FALSE)
+  g <- CreateGRiwrm(db)
+  IM <- CreateInputsModel(g,
+                          DatesR = DatesR,
+                          Precip = Precip[, "54095", drop = FALSE],
+                          PotEvap = PotEvap[, "54095", drop = FALSE])
+})
