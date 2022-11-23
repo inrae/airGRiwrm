@@ -15,9 +15,9 @@ CreateRunOptions(x, ...)
 
 \method{CreateRunOptions}{InputsModel}(x, ...)
 
-\method{CreateRunOptions}{character}(x, ...)
+\method{CreateRunOptions}{character}(x, InputsModel, ...)
 
-\method{CreateRunOptions}{`function`}(x, ...)
+\method{CreateRunOptions}{`function`}(x, InputsModel, ...)
 }
 \arguments{
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
@@ -25,9 +25,15 @@ CreateRunOptions(x, ...)
 \item{IniStates}{(optional) \link{numeric} object or \link{list} of \link{numeric} object of class \emph{IniStates}, see \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
 
 \item{...}{arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}, see details}
+
+\item{InputsModel}{object of class \emph{InputsModel} (only used to be consistent
+with the original \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} which has \code{FUN_MOD} as first
+parameter)
+see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for details}
 }
 \value{
-Depending on the class of \code{InputsModel} argument (respectively \emph{InputsModel} and \emph{GRiwrmInputsModel} object), the returned value is respectively:
+Depending on the class of \code{InputsModel} argument (respectively
+\emph{InputsModel} and \emph{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
 \item a \code{RunOptions} object (See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions})
 \item a \code{GRiwrmRunOptions} object which is a \link{list} of \code{RunOptions} objects with one item per modeled sub-catchment
@@ -39,9 +45,11 @@ This function can be used either for a catchment (with an \emph{InputsModel} obj
 \details{
 See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} documentation for a complete list of arguments.
 
-If \code{InputsModel} argument is a \emph{GRiwrmInputsModel} object, \code{IniStates} must be a list of \link{numeric} object of class \emph{IniStates} with one item per modeled sub-catchment.
+If \code{x} argument is a \emph{GRiwrmInputsModel} object, \code{IniStates} must be a
+list of \link{numeric} object of class \emph{IniStates} with one item per modeled sub-catchment.
 
-With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+With a \emph{GRiwrmInputsModel} object, all arguments are applied on each
+sub-catchments of the network.
 }
 \examples{
 ###################################################################

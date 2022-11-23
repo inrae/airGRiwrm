@@ -32,25 +32,24 @@ CreateRunOptions <- function(x, ...) {
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.InputsModel <- function(x, ...) {
-  hasFUN_MOD <- "FUN_MOD" %in% names(list(...))
-  if (!hasFUN_MOD && !is.null(x$FUN_MOD)) {
-    CreateRunOptions(x,
-                     FUN_MOD = x$FUN_MOD,
-                     ...)
-  } else if (hasFUN_MOD){
-    # Temporary fix waiting for resolution of HYCAR-Hydro/airgr#167
-    if (identical(match.fun(x$FUN_MOD), RunModel_Lag)) {
-      dots <- list(...)
-      dots$InputsModel <- x
-      dots$IniStates <- CreateIniStates(RunModel_Lag, x)
-      do.call(airGR::CreateRunOptions, dots)
+  dots <- list(...)
+  dots$InputsModel <- x
+
+  # Add FUN_MOD in parameters if carried by InputsModel
+  if (!"FUN_MOD" %in% names(dots)) {
+    if(!is.null(x$FUN_MOD)) {
+      dots$FUN_MOD <- x$FUN_MOD
     } else {
-      # End of temporary fix HYCAR-Hydro/airgr#167
-      airGR::CreateRunOptions(InputsModel = x, ...)
+      stop(" The parameter `FUN_MOD` must be defined")
     }
-  } else {
-    stop(" The parameter `FUN_MOD` must be defined")
   }
+
+  # Temporary fix waiting for resolution of HYCAR-Hydro/airgr#167
+  if (identical(match.fun(dots$FUN_MOD), RunModel_Lag)) {
+    dots$IniStates <- CreateIniStates(RunModel_Lag, x)
+  }
+  # End of temporary fix HYCAR-Hydro/airgr#167
+  do.call(airGR::CreateRunOptions, dots)
 }
 
 #' @rdname CreateRunOptions
