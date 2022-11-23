@@ -141,4 +141,7 @@ test_that("RunModel_Lag should work", {
                           DatesR = DatesR,
                           Precip = Precip[, "54095", drop = FALSE],
                           PotEvap = PotEvap[, "54095", drop = FALSE])
+  RO <- CreateRunOptions(IM,
+                         IndPeriod_Run = IndPeriod_Run,
+                         IndPeriod_WarmUp = IndPeriod_WarmUp)
 })
