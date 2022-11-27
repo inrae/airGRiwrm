@@ -15,6 +15,7 @@
 #'
 #' @example man-examples/getNodeProperties.R
 getNodeProperties <- function(id, griwrm) {
+  stopifnot(inherits(griwrm, "GRiwrm"))
   g_div <- griwrm[getDiversionRows(griwrm), , drop = FALSE]
   g2 <- griwrm[getDiversionRows(griwrm, TRUE), , drop = FALSE]
   upstreamIds <- griwrm$id[!griwrm$id %in% griwrm$down]
@@ -24,12 +25,12 @@ getNodeProperties <- function(id, griwrm) {
     position = ifelse(id %in% upstreamIds, "Upstream", "Intermediate"),
     hydrology = ifelse(id %in% gaugedIds, "Gauged",
                        ifelse(is.na(g2$model[g2$id == id]),
-                              "DirectInjection",
+                              "NA",
                               "Ungauged"))
   )
   p$Upstream <- p$position == "Upstream"
-  p$DirectInjection = p$hydrology == "DirectInjection"
-  p$Diversion = id %in% divertedIds
+  p$DirectInjection <- is.na(g2$model[g2$id == id])
+  p$Diversion <- id %in% divertedIds
   return(p)
 }
 
@@ -44,6 +45,7 @@ getNodeProperties <- function(id, griwrm) {
 #'
 #' @example man-examples/getNodeProperties.R
 getAllNodesProperties <- function(griwrm) {
+  stopifnot(inherits(griwrm, "GRiwrm"))
   uids <- griwrm$id[getDiversionRows(griwrm, TRUE)]
   nodeProperties <- lapply(uids,
                            getNodeProperties,
