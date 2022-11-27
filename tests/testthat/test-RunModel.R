@@ -144,4 +144,9 @@ test_that("RunModel_Lag should work", {
   RO <- CreateRunOptions(IM,
                          IndPeriod_Run = IndPeriod_Run,
                          IndPeriod_WarmUp = IndPeriod_WarmUp)
+  P <- ParamMichel["54095"]
+  P$DownLag <- 1
+  OM <- RunModel(IM, RO, P)
+  expect_s3_class(OM, "GRiwrmOutputsModel")
+  expect_true(all(!is.na(attr(OM, "Qm3s"))))
 })

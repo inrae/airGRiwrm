@@ -15,7 +15,14 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
   if(is.null(FUN_MOD)) {
     FUN_MOD <- x$FUN_MOD
   }
-  OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
+  FUN_MOD <- match.fun(FUN_MOD)
+  if (identical(FUN_MOD, RunModel_Lag)) {
+    QcontribDown <- rep(0, length(RunOptions$IndPeriod_Run))
+    x$BasinAreas[length(x$BasinAreas)] <- 0
+    OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
+  } else {
+    OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
+  }
   if (is.null(OutputsModel$Qsim_m3)) {
     # Add Qsim_m3 in m3/timestep
     OutputsModel$Qsim_m3 <-
