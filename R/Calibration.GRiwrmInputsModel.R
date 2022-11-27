@@ -171,10 +171,10 @@ updateParameters4Ungauged <- function(GaugedId,
   ### Set the reduced network of the basin containing ungauged nodes ###
   # Select nodes identified with the current node as gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
-  g <- griwrm[griwrm$donor == GaugedId, ]
+  gDonor <- griwrm[griwrm$donor == GaugedId, ]
   # Add upstream nodes for routing upstream flows
-  upIds <- griwrm$id[griwrm$down %in% g$id & !griwrm$id %in% g$id]
-  g <- rbind(griwrm[griwrm$id %in% upIds, ], g)
+  upIds <- griwrm$id[griwrm$down %in% gDonor$id & !griwrm$id %in% gDonor$id]
+  g <- rbind(griwrm[griwrm$id %in% upIds, ], gDonor)
   g$model[g$id %in% upIds] <- NA
   # Set downstream node
   g$down[!g$down %in% g$id] <- NA
@@ -184,17 +184,21 @@ updateParameters4Ungauged <- function(GaugedId,
   InputsModel <- reduceGRiwrmObj4Ungauged(g, InputsModel)
   # Update griwrm
   attr(InputsModel, "GRiwrm") <- g
-  # Update Qupstream of reduced network upstream nodes
-  g2 <- griwrm[griwrm$donor == GaugedId,]
-  upIds2 <- g2$id[!g2$id %in% g2$down]
-  for (id in upIds2) {
+  # Update Qupstream already modelled in the reduced network upstream nodes
+  idIM <- unique(g$down[g$id %in% upIds])
+  for (id in idIM) {
     if(useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {
+      # Temporarily switch off upstream nodes belonging to the donor basin
+      UpIsModeledBackUp <- InputsModel[[idIM]]$UpstreamIsModeled
+      ImUpIds <- InputsModel[[idIM]]$UpstreamNodes
+      InputsModel[[idIM]]$UpstreamIsModeled[!ImUpIds %in% upIds] <- FALSE
       # Update InputsModel$Qupstream with simulated upstream flows
-      InputsModel[[id]] <- UpdateQsimUpstream(InputsModel[[id]],
-                                              RunOptions[[id]],
+      InputsModel[[idIM]] <- UpdateQsimUpstream(InputsModel[[idIM]],
+                                              RunOptions[[idIM]],
                                               OutputsModel)
-      InputsModel[[id]]$UpstreamIsModeled <-
-        rep(FALSE, length(InputsModel[[id]]$UpstreamIsModeled))
+      # Restore initial UpstreamIsModeled and switch off already modelled nodes
+      InputsModel[[idIM]]$UpstreamIsModeled <- UpIsModeledBackUp
+      InputsModel[[idIM]]$UpstreamIsModeled[ImUpIds %in% upIds] <- FALSE
     }
   }
 

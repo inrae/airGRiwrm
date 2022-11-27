@@ -214,10 +214,10 @@ test_that("Network with Diversion works", {
     CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
   )
   expect_equal(IM[["54032"]]$UpstreamNodes, c("54001", "54029"))
-  expect_equal(IM[["54032"]]$UpstreamVarQ , c("Qsim_m3", "Qsim_m3"))
+  expect_equal(IM[["54032"]]$UpstreamVarQ , c("54001" = "Qsim_m3", "54029" = "Qsim_m3"))
   expect_equal(IM[["54002"]]$UpstreamNodes, "54029")
-  expect_equal(IM[["54002"]]$UpstreamIsModeled  , TRUE)
-  expect_equal(IM[["54002"]]$UpstreamVarQ , "Qdiv_m3")
+  expect_equal(IM[["54002"]]$UpstreamIsModeled  , c("54029" = TRUE))
+  expect_equal(IM[["54002"]]$UpstreamVarQ , c("54029" = "Qdiv_m3"))
   expect_equivalent(IM$`54029`$Qmin, matrix(0, nrow = length(DatesR), ncol = 1))
 })
 
