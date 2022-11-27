@@ -16,9 +16,15 @@ ConvertMeteoSD <- function(x, ...) {
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
   meteo <- as.matrix(meteo)
-  output <- lapply(colnames(meteo), ConvertMeteoSD , griwrm = x, meteo = meteo)
+  np <- getAllNodesProperties(x)
+  id_modelled <- np$id[np$hydrology != "NA"]
+  if (any(!id_modelled %in% colnames(meteo))) {
+    stop("`meteo` column names should contain at least: ",
+         paste(id_modelled, collapse = ", "))
+  }
+  output <- lapply(id_modelled, ConvertMeteoSD , griwrm = x, meteo = meteo)
   meteoOut <- do.call(cbind,output)
-  dimnames(meteoOut)[[2]] <- colnames(meteo)
+  dimnames(meteoOut)[[2]] <- id_modelled
   return(meteoOut)
 }
 

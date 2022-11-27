@@ -18,10 +18,10 @@ test_that("Ungauged station has 'hydrology:Ungauged' property", {
   expect_equal(getNodeProperties("54029", CreateGRiwrm(nodes))$hydrology, "Ungauged")
 })
 
-test_that("Direct injection node has 'hydrology:DirectInjection' property", {
+test_that("Direct injection node has 'hydrology:NA' property", {
   nodes$model[nodes$id == "54002"] <- NA
   np <- getNodeProperties("54002", CreateGRiwrm(nodes))
-  expect_equal(np$hydrology, "DirectInjection")
+  expect_equal(np$hydrology, "NA")
   expect_equal(np$DirectInjection, TRUE)
 })
 

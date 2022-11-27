@@ -304,10 +304,12 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   if(length(UpstreamNodeRows) > 0) {
     InputsModel$UpstreamNodes <- griwrm$id[UpstreamNodeRows]
     InputsModel$UpstreamIsModeled <- !is.na(griwrm$model[UpstreamNodeRows])
+    names(InputsModel$UpstreamIsModeled) <- InputsModel$UpstreamNodes
     InputsModel$UpstreamVarQ <- ifelse(!is.na(griwrm$model[UpstreamNodeRows]) &
                                     griwrm$model[UpstreamNodeRows] == "Diversion",
                                     "Qdiv_m3",
                                     "Qsim_m3")
+    names(InputsModel$UpstreamVarQ) <- InputsModel$UpstreamNodes
   } else {
     InputsModel$BasinAreas <- node$area
   }

@@ -60,14 +60,16 @@ test_that("Downstream data should return 0", {
   )
 })
 
-griwrm <-
+nodes <-
   data.frame(
     id = c("Up", "Down"),
     down = c("Down", NA),
     area = c(1, 2),
+    length = c(0, NA),
+    model = "RunModel_GR4J",
     stringsAsFactors = FALSE
   )
-class(griwrm) <- c("GRiwrm", class(griwrm))
+griwrm <- CreateGRiwrm(nodes)
 
 test_that("Downstream data should return 2", {
   resultMatrix[,] <- 2

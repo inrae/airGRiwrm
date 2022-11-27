@@ -72,7 +72,10 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
   InputsCrit <- list()
   class(InputsCrit) <- append("GRiwrmInputsCrit", class(InputsCrit))
 
-  for(IM in InputsModel) {
+  np <- getAllNodesProperties(attr(InputsModel, "GRiwrm"))
+  gaugedIds <- np$id[np$hydrology == "Gauged"]
+  for(id in gaugedIds) {
+    IM <- InputsModel[[id]]
     InputsCrit[[IM$id]] <- CreateInputsCrit.InputsModel(
       InputsModel = IM,
       FUN_CRIT = FUN_CRIT,
