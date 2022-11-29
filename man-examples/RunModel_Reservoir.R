@@ -1,0 +1,63 @@
+#######################################################
+# Daily time step simulation of a reservoir filled by #
+# one catchment supplying a constant released flow    #
+#######################################################
+
+library(airGRiwrm)
+data(L0123001)
+
+# Inflows comes from a catchment of 360 km² modelled with GR4J
+# The reservoir receives directly the inflows
+db <- data.frame(id = c(BasinInfo$BasinCode, "Reservoir"),
+                 length = c(0, NA),
+                 down = c("Reservoir", NA),
+                 area = c(BasinInfo$BasinArea, NA),
+                 model = c("RunModel_GR4J", "RunModel_Reservoir"),
+                 stringsAsFactors = FALSE)
+griwrm <- CreateGRiwrm(db)
+plot(griwrm)
+
+# Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one
+# column by sub-basin and node IDs as column names)
+Precip <- matrix(BasinObs$P, ncol = 1)
+colnames(Precip) <- BasinInfo$BasinCode
+PotEvap <- matrix(BasinObs$E, ncol = 1)
+colnames(PotEvap) <- BasinInfo$BasinCode
+
+# We propose to compute the constant released flow from
+# the median of the natural flow
+# The value is in m3 by time step (day)
+Qrelease <- median(BasinObs$Qls, na.rm = TRUE) / 1000 * 86400
+
+# Formatting of reservoir released flow inputs for airGRiwrm (matrix or data.frame
+# with one column by node and node IDs as column names)
+Qobs <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
+
+InputsModel <- CreateInputsModel(griwrm, DatesR = BasinObs$DatesR,
+                                 Precip = Precip,
+                                 PotEvap = PotEvap,
+                                 Qobs = Qobs)
+
+## run period selection
+Ind_Run <- seq(which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1990-01-01"),
+               which(format(BasinObs$DatesR, format = "%Y-%m-%d")=="1999-12-31"))
+
+# Creation of the GRiwmRunOptions object
+RunOptions <- CreateRunOptions(
+  InputsModel,
+  IndPeriod_Run = Ind_Run,
+  IndPeriod_WarmUp = seq.int(Ind_Run[1] - 365, length.out = 365)
+)
+
+# Model parameters
+# RunModel_Reservoir has 2 parameters:
+# - Vmax: the maximum reservoir storage capacity
+# - celerity: the celerity of the inflows used by RunModel_Lag
+Param <- list(
+  "L0123001" = c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208),
+  "Reservoir" = c(Vmax = 15E6, celerity = 0.5)
+)
+
+# Running simulation
+OutputsModel <- RunModel(InputsModel, RunOptions, Param)
+

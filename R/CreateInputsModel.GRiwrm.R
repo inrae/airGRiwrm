@@ -117,7 +117,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
-  directFlowIds <- x$id[is.na(x$model) | x$model == "Diversion"]
+  directFlowIds <- x$id[is.na(x$model) | x$model == "Diversion" | x$model == "RunModel_Reservoir"]
   if (length(directFlowIds) > 0) {
     err <- FALSE
     if (is.null(Qobs)) {
@@ -289,6 +289,12 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
     names(BasinAreas) <- c(griwrm$id[UpstreamNodeRows], id)
   }
 
+  if (identical(match.fun(FUN_MOD), RunModel_Reservoir)) {
+    isReservoir <- TRUE
+    FUN_MOD <- "RunModel_Lag"
+  } else {
+    isReservoir <- FALSE
+  }
   # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
     FUN_MOD,
@@ -320,14 +326,23 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   InputsModel$isUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
   InputsModel$gaugedId <- griwrm$donor[griwrm$id == id]
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
-  InputsModel$model <- list(indexParamUngauged = ifelse(inherits(InputsModel, "SD"), 0, 1) + seq.int(featModel$NbParam),
-                            hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
-                            iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4))
+  InputsModel$model <-
+    list(
+      indexParamUngauged = ifelse(inherits(InputsModel, "SD"), 0, 1) +
+        seq.int(featModel$NbParam),
+      hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
+      iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4)
+    )
   InputsModel$hasDiversion <- hasDiversion
+  InputsModel$isReservoir <- isReservoir
+
+  # Add specific properties for Diversion and Reservoir nodes
   if (hasDiversion) {
     InputsModel$diversionOutlet <- diversionOutlet
     InputsModel$Qdiv <- -Qobs[, id]
     InputsModel$Qmin <- Qmin
+  } else if(isReservoir) {
+    InputsModel$Qrelease <- Qobs[, id]
   }
   return(InputsModel)
 }
@@ -343,14 +358,18 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
 #' @noRd
 getModelTimeStep <- function(InputsModel) {
   TS <- sapply(InputsModel, function(x) {
-    if (inherits(x, "hourly")) {
-      TimeStep <- 60 * 60
-    } else if (inherits(x, "daily")) {
-      TimeStep <- 60 * 60 * 24
-    } else {
-      stop("All models should be at hourly or daily time step")
+    if (inherits(x, "GR")) {
+      if (inherits(x, "hourly")) {
+        return(60 * 60)
+      } else if (inherits(x, "daily")) {
+        return(60 * 60 * 24)
+      } else {
+        stop("All models should be at hourly or daily time step")
+      }
     }
+    return(NA)
   })
+  TS <- TS[!is.na(TS)]
   if(length(unique(TS)) != 1) {
     stop("Time steps of the model of all nodes should be identical")
   }
