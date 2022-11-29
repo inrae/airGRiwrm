@@ -17,8 +17,14 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
   }
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
-    QcontribDown <- rep(0, length(RunOptions$IndPeriod_Run))
-    x$BasinAreas[length(x$BasinAreas)] <- 0
+    QcontribDown <- list(
+      RunOptions = list(
+        WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp))
+      ),
+      Qsim = rep(0, length(RunOptions$IndPeriod_Run))
+    )
+    class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
+    x$BasinAreas[length(x$BasinAreas)] <- 1
     OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
   } else {
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
