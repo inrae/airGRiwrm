@@ -40,7 +40,7 @@ is equal to the half of the maximum reservoir capacity.
 library(airGRiwrm)
 data(L0123001)
 
-# Inflows comes from a catchment of 360 km² modelled with GR4J
+# Inflows comes from a catchment of 360 km² modeled with GR4J
 # The reservoir receives directly the inflows
 db <- data.frame(id = c(BasinInfo$BasinCode, "Reservoir"),
                  length = c(0, NA),
@@ -96,7 +96,11 @@ Param <- list(
 OutputsModel <- RunModel(InputsModel, RunOptions, Param)
 
 # Plot the simulated flows and volumes on all nodes
-plot(OutputsModel)
+Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qobs[Ind_Run, ])
+colnames(Qobs) <- griwrm$id
+plot(OutputsModel, Qobs = Qobs)
+# N.B. "Observed releases" should be considered as "Target releases" here
 
-# The plot for the reservoir only can be plotted with plot(OutputsModel$Reservoir)...
+# The plot for the reservoir can also be plotted alone
+plot(OutputsModel$Reservoir)
 }

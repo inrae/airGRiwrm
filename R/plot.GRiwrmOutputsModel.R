@@ -23,7 +23,15 @@ plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, ...) {
   lapply(
     names(x),
     function(id, OutputsModels) {
-      plot(OutputsModels[[id]], Qobs = Qobs[,id], ...)
+      if (!is.null(Qobs)) {
+        if (id %in% colnames(Qobs)) {
+          Qobs_id <- Qobs[,id]
+        } else {
+          warning("Column \"", id, "\" not found in Qobs")
+          Qobs_id <- NULL
+        }
+      }
+      plot(OutputsModels[[id]], Qobs = Qobs_id, ...)
       title(main = id, outer = TRUE, line = 1.2, cex.main = 1.4)
     },
     OutputsModels = x
