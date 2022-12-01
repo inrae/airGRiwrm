@@ -11,7 +11,8 @@
   width = "100\%",
   height = "100\%",
   box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermediateUngauged
-    = "#efe", IntermediateGauged = "#afa", DirectInjection = "#faa"),
+    = "#efe", IntermediateGauged = "#afa", DirectInjection = "#faa", Reservoir = "#9de"),
+  defaultClassDef = "stroke:#333",
   ...
 )
 }
@@ -27,6 +28,8 @@
 \item{height}{\link{numeric} height of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 
 \item{box_colors}{\link{list} containing the color used for the different types of nodes}
+
+\item{defaultClassDef}{\link{character} default style apply to all boxes}
 
 \item{...}{Other arguments and parameters you would like to send to JavaScript (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 }

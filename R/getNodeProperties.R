@@ -19,18 +19,17 @@ getNodeProperties <- function(id, griwrm) {
   g_div <- griwrm[getDiversionRows(griwrm), , drop = FALSE]
   g2 <- griwrm[getDiversionRows(griwrm, TRUE), , drop = FALSE]
   upstreamIds <- griwrm$id[!griwrm$id %in% griwrm$down]
-  gaugedIds <- g2$id[!is.na(g2$model) & g2$model != "Ungauged"]
+  gaugedIds <- g2$id[!is.na(g2$model) & !g2$model %in% c("Ungauged")]
   divertedIds <- g_div$id
   p <- list(
     position = ifelse(id %in% upstreamIds, "Upstream", "Intermediate"),
     hydrology = ifelse(id %in% gaugedIds, "Gauged",
-                       ifelse(is.na(g2$model[g2$id == id]),
-                              "NA",
-                              "Ungauged"))
+                       ifelse(is.na(g2$model[g2$id == id]), "NA", "Ungauged")),
+    DirectInjection = is.na(g2$model[g2$id == id]),
+    Diversion = id %in% divertedIds,
+    Reservoir = !is.na(g2$model[g2$id == id]) && g2$model[g2$id == id] == "RunModel_Reservoir"
   )
   p$Upstream <- p$position == "Upstream"
-  p$DirectInjection <- is.na(g2$model[g2$id == id])
-  p$Diversion <- id %in% divertedIds
   return(p)
 }
 
