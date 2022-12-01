@@ -182,6 +182,13 @@ checkNetworkConsistency <- function(db) {
         "than the downstream node of the node is attached to"))
     }
   })
+  id_reservoirs <- db3$id[db3$model == "RunModel_Reservoir"]
+  sapply(id_reservoirs, function(id) {
+    if(length(db$id[!is.na(db$down) & db$down == id]) == 0) {
+      stop("The reservoir ", id,
+           " must have at least one upstream node as inflows.")
+    }
+  })
   apply(db, 1, checkNode, simplify = FALSE)
 }
 
