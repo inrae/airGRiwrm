@@ -70,5 +70,6 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   iRun <- length(RunOptions$IndPeriod_WarmUp) + seq(length(RunOptions$IndPeriod_Run))
   OutputsModel$Qsim_m3 <- Qsim_m3[iRun]
   OutputsModel$Vsim <- Vsim[iRun]
+  class(OutputsModel) <- c("OutputsModelReservoir", class(OutputsModel))
   return(OutputsModel)
 }

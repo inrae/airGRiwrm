@@ -89,10 +89,14 @@ RunOptions <- CreateRunOptions(
 # - celerity: the celerity of the inflows used by RunModel_Lag
 Param <- list(
   "L0123001" = c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208),
-  "Reservoir" = c(Vmax = 15E6, celerity = 0.5)
+  "Reservoir" = c(Vmax = 30E6, celerity = 0.5)
 )
 
 # Running simulation
 OutputsModel <- RunModel(InputsModel, RunOptions, Param)
 
+# Plot the simulated flows and volumes on all nodes
+plot(OutputsModel)
+
+# The plot for the reservoir only can be plotted with plot(OutputsModel$Reservoir)...
 }

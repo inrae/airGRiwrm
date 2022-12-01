@@ -26,9 +26,11 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
     class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
     x$BasinAreas[length(x$BasinAreas)] <- 1
     OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
+    OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
   } else {
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
   }
+  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   if (is.null(OutputsModel$Qsim_m3)) {
     # Add Qsim_m3 in m3/timestep
     OutputsModel$Qsim_m3 <-
