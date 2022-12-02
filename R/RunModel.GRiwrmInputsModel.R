@@ -23,19 +23,11 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
       x[[id]] <- UpdateQsimUpstream(x[[id]], RunOptions[[id]], OutputsModel)
     }
     # Run the model for the sub-basin
-    if (x[[id]]$isReservoir) {
-      OutputsModel[[id]] <- RunModel_Reservoir(
-        x[[id]],
-        RunOptions = RunOptions[[id]],
-        Param = Param[[id]]
-      )
-    } else {
-      OutputsModel[[id]] <- RunModel.InputsModel(
-        x[[id]],
-        RunOptions = RunOptions[[id]],
-        Param = Param[[id]]
-      )
-    }
+    OutputsModel[[id]] <- RunModel.InputsModel(
+      x[[id]],
+      RunOptions = RunOptions[[id]],
+      Param = Param[[id]]
+    )
   }
   attr(OutputsModel, "Qm3s") <- OutputsModelQsim(x, OutputsModel, RunOptions[[1]]$IndPeriod_Run)
   return(OutputsModel)

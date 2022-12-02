@@ -40,13 +40,14 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
                    OutputsModel$Qinflows_m3)
 
   # Reservoir initial conditions
-  V0 <- RunOptions$IniStates["ReservoirCapacity"]
+  V0 <- RunOptions$IniStates["Reservoir.V"]
   if (is.na(V0)) {
     V0 <- Vmax / 2
   }
 
   # Initiation of output variables
-  IndPerTot   <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
+  IndPerWarmUp <- RunOptions$IndPeriod_WarmUp[RunOptions$IndPeriod_WarmUp > 0]
+  IndPerTot   <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
   iPerTot <- seq(length(IndPerTot))
   Vsim <- rep(0, length(IndPerTot))
   Qsim_m3 <- Vsim
@@ -64,12 +65,15 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   }
 
   # Format OutputsModel
-  iWarmUp <- seq(length(RunOptions$IndPeriod_WarmUp))
-  OutputsModel$RunOptions$WarmUpQsim_m3 <- Qsim_m3[iWarmUp]
-  OutputsModel$RunOptions$WarmUpVsim <- Vsim[iWarmUp]
-  iRun <- length(RunOptions$IndPeriod_WarmUp) + seq(length(RunOptions$IndPeriod_Run))
+  if(length(IndPerWarmUp) > 0) {
+    iWarmUp <- seq(length(RunOptions$IndPeriod_WarmUp))
+    OutputsModel$RunOptions$WarmUpQsim_m3 <- Qsim_m3[iWarmUp]
+    OutputsModel$RunOptions$WarmUpVsim <- Vsim[iWarmUp]
+  }
+  iRun <- length(IndPerWarmUp) + seq(length(RunOptions$IndPeriod_Run))
   OutputsModel$Qsim_m3 <- Qsim_m3[iRun]
   OutputsModel$Vsim <- Vsim[iRun]
+  OutputsModel$StateEnd$Reservoir <- list(V = Vsim[length(Vsim)])
   class(OutputsModel) <- c("OutputsModelReservoir", class(OutputsModel))
   return(OutputsModel)
 }

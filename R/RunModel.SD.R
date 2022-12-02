@@ -8,9 +8,16 @@
 #' @export
 #'
 RunModel.SD <- function(x, RunOptions, Param, QcontribDown, ...) {
-  OutputsModel <- airGR::RunModel_Lag(x,
-                                      RunOptions = RunOptions,
-                                      Param = Param[1],
-                                      QcontribDown = QcontribDown)
+  if (x$isReservoir) {
+    OutputsModel <- RunModel_Reservoir(x,
+                                       RunOptions = RunOptions,
+                                       Param = Param[1:2])
+  } else {
+    OutputsModel <- airGR::RunModel_Lag(x,
+                                        RunOptions = RunOptions,
+                                        Param = Param[1],
+                                        QcontribDown = QcontribDown)
+  }
+  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   return(OutputsModel)
 }
