@@ -49,6 +49,8 @@ setDataToLocation <- function(ctrlr, sv) {
     } else if (sv$nodeProperties[[locU]]$Diversion){
       # Diversion node => update Qdiv with -U
       sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
+    } else if (sv$nodeProperties[[locU]]$Reservoir) {
+      sv$InputsModel[[locU]]$Qsim_m3[sv$ts.index0 + sv$ts.index] <- U
     } else {
       stop("Node ", locU, " must be a Direct Injection or a Diversion node")
     }

@@ -73,7 +73,7 @@ CreateControl <- function(locations, sv, isU) {
   }
   if (isU) {
     if (!all(locations %in% sv$griwrm4U$id)) {
-      stop("Ids defined in `U` must be chosen from DirectInjection and Diversion nodes: ",
+      stop("Ids defined in `U` must be chosen from DirectInjection, Diversion or Reservoir nodes: ",
            paste(sv$griwrm4U$id, collapse = ", "))
     }
   } else {
