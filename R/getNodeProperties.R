@@ -30,6 +30,7 @@ getNodeProperties <- function(id, griwrm) {
     Reservoir = !is.na(g2$model[g2$id == id]) && g2$model[g2$id == id] == "RunModel_Reservoir"
   )
   p$Upstream <- p$position == "Upstream"
+  p$RunOff <- p$hydrology != "NA" & !p$Reservoir
   return(p)
 }
 
