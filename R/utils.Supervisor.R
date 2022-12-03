@@ -50,7 +50,7 @@ setDataToLocation <- function(ctrlr, sv) {
       # Diversion node => update Qdiv with -U
       sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
     } else if (sv$nodeProperties[[locU]]$Reservoir) {
-      sv$InputsModel[[locU]]$Qsim_m3[sv$ts.index0 + sv$ts.index] <- U
+      sv$InputsModel[[locU]]$Qrelease[sv$ts.index0 + sv$ts.index] <- U
     } else {
       stop("Node ", locU, " must be a Direct Injection or a Diversion node")
     }
@@ -94,4 +94,33 @@ doSupervision <- function(supervisor) {
     # Write U to locations in the model
     setDataToLocation(supervisor$controllers[[id]], sv = supervisor)
   }
+}
+
+
+initStoredOutputs <- function(x) {
+  np <- getAllNodesProperties(x$griwrm)
+  so <- list()
+  so$QcontribDown <- do.call(
+    cbind,
+    lapply(x$OutputsModel, "[[", "Qsim")
+  )
+  so$Qsim_m3 <- do.call(
+    cbind,
+    lapply(x$OutputsModel, "[[", "Qsim_m3")
+  )
+  if (sum(np$Diversion) > 0) {
+    # Outputs of Diversion nodes
+    so$Qdiv_m3 <- so$Qsim_m3[, np$id[np$Diversion], drop = FALSE] * NA
+    so$Qnat <- so$Qdiv_m3
+  }
+  if (sum(np$Reservoir) > 0) {
+    # Specific Outputs of RunModel_Reservoir
+    so$Vsim <- matrix(rep(NA, sum(np$Reservoir) * nrow(so$Qsim_m3)),
+                      nrow = nrow(so$Qsim_m3))
+    colnames(so$Vsim) <- np$id[np$Reservoir]
+    so$Qinflows_m3 <- so$Vsim
+    # Add columns Qsim_m3 at reservoir (out of the scope of GR models calculated above)
+    so$Qsim_m3 <- cbind(so$Qsim_m3, so$Vsim)
+  }
+  return(so)
 }

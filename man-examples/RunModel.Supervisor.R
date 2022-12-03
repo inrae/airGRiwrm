@@ -45,20 +45,12 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 Qobs <- data.frame(
   Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
 )
-Qobs[,] <- Qobs[which(DatesR == as.POSIXct("2002-10-01", tz = "UTC")), 1]
 
 # InputsModel object
 IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 
 # Initialization of the Supervisor
 sv <- CreateSupervisor(IM_severn)
-
-# States of the reservoir are stored in the Supervisor variable
-# The Supervisor variable is an environment which can be available in
-# the controller function for storing and exchange data during the simulation
-sv$Vres <- 0 # Reservoir storage time series
-# Record of the last decision to estimate the natural flow
-sv$lastU <- 0
 
 # Dam management is modeled by a controller
 # This controller releases a minimum flow Qmin and provides
@@ -72,11 +64,9 @@ sv$lastU <- 0
 factoryDamLogic <- function(sv, Qmin, Qthreshold) {
   function(Y) {
     # Estimate natural flow at low-flow support location
-    Qnat <- Y - sv$lastU
+    Qnat <- Y[1] - Y[2]
     # The release is the max between: low-flow support and minimum flow
     U <- max(Qthreshold - Qnat, Qmin)
-    # Record release for estimating natural flow the next decision time step
-    sv$lastU <- U
     return(U)
   }
 }
@@ -88,7 +78,7 @@ funDamLogic <- factoryDamLogic(
   Qthreshold = 65 * 86400 # Min flow threshold to support at station 54057 (m3/day)
 )
 
-CreateController(sv, "DamRelease", Y = "54057", U = "Dam", FUN = funDamLogic)
+CreateController(sv, "DamRelease", Y = c("54057", "Dam"), U = "Dam", FUN = funDamLogic)
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
 IndPeriod_Run <- which(
@@ -116,11 +106,13 @@ OM_dam <- RunModel(sv,
                    Param = P_severn)
 
 # Plotting the time series of flows and reservoir storage
-oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+oldpar <- par(mfrow=c(2,1),
+              mar = c(2,3.3,1.2,0.5),
+              mgp = c(2,1,0))
 plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
      ylim = c(0, 200))
-Vres <- data.frame(DatesR = attr(OM_dam, "Qm3s")$DatesR,
-                   V_reservoir = sv$Vres / 1E6)
+Vres <- data.frame(DatesR = OM_dam$Dam$DatesR,
+                   "Simulated volume" = OM_dam$Dam$Vsim / 1E6)
 plot.Qm3s(Vres,
           main = "Simulated reservoir storage",
           ylab = expression("Storage (Mm"^"3" * ")"))

@@ -46,7 +46,7 @@ nodes <- rbind(nodes,
                           downstream_id = "54001",
                           distance_downstream = 42,
                           area = NA,
-                          model = NA))
+                          model = "RunModel_Reservoir"))
 
 griwrm <- CreateGRiwrm(nodes,
                  list(id = "gauge_id",
@@ -64,66 +64,45 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 
 # Create a release flow time series for the dam
 # This release will be modified by the Supervisor
-# We initiate it with the natural flow for having a good initialisation of the
+# We initiate it with the natural flow for having a good initialization of the
 # model at the first time step of the running period
 Qobs <- data.frame(
   Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
 )
-Qobs[,] <- Qobs[which(DatesR == as.POSIXct("2002-10-01", tz = "UTC")), 1]
 
 # InputsModel object
 IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs)
 
-# Initialisation of the Supervisor
+# Initialization of the Supervisor
 sv <- CreateSupervisor(IM_severn)
 
-# States of the reservoir are stored in the Supervisor variable
-# The Supervisor variable is an environment which can be available in
-# the controller function for storing and exchange data during the simulation
-sv$Vres <- 0 # Reservoir storage time series
-# Record of the last decision to estimate the natural flow
-sv$lastU <- 0
-
 # Dam management is modeled by a controller
-# This controller usually releases Qmin and provides
-# extra release if flow mesured somewhere is below Qthreshold
+# This controller releases a minimum flow Qmin and provides
+# extra release if flow measured somewhere is below Qthreshold
 # Flow is expressed in m3 / time step
 # Y[1] = runoff flow at gauging station 54095 filling the reservoir
 # Y[2] = flow at gauging station 54057, location of the low-flow objective
 # The returned value is the release calculated at the reservoir
 # We need to enclose the Supervisor variable and other parameters in
 # the environment of the function with a function returning the logic function
-factoryDamLogic <- function(sv, Vmin, Vmax, Qmin, Qthreshold) {
+factoryDamLogic <- function(sv, Qmin, Qthreshold) {
   function(Y) {
-    # Filling of the reservoir
-    V <- sv$Vres[length(sv$Vres)] + Y[1]
     # Estimate natural flow at low-flow support location
-    Qnat <- Y[2] - sv$lastU
-    # The release is the max between: overflow, low-flow support and minimum flow
-    U <- max(V - Vmax, Qthreshold - Qnat, Qmin)
-    V <- V - U
-    if (V < Vmin) {
-      # Reservoir is empty
-      U <- U - (Vmin - V)
-      V <- Vmin
-    }
-    # Record state of the reservoir and release
-    sv$Vres[length(sv$Vres) + 1] <- V
-    sv$lastU <- U
+    Qnat <- Y[1] - Y[2]
+    # The release is the max between: low-flow support and minimum flow
+    U <- max(Qthreshold - Qnat, Qmin)
     return(U)
   }
 }
 
 # And define a final function enclosing logic and parameters together
 funDamLogic <- factoryDamLogic(
-  sv = sv, # The Supervisor which store the states of reservoir storage
-  Vmin = 0, # Minimum volume in the reservoir (m3)
-  Vmax = 650 * 1E6, # Maximum volume in the reservoir (m3)
+  sv = sv, # The Supervisor which store the released flow
   Qmin = 50 * 86400, # Min flow to maintain downstream the reservoir (m3/day)
   Qthreshold = 65 * 86400 # Min flow threshold to support at station 54057 (m3/day)
 )
 
-CreateController(sv, "DamRelease", Y = c("54095", "54057"), U = c("Dam"), FUN = funDamLogic)
+CreateController(sv, "DamRelease", Y = c("54057", "Dam"), U = "Dam", FUN = funDamLogic)
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
 IndPeriod_Run <- which(
@@ -140,17 +119,24 @@ RO_severn <- CreateRunOptions(
 # Load parameters of the model from Calibration in vignette V02
 P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
 
+# Set the reservoir parameters: maximum storage capacity and celerity of inflows
+# As the distance between the upstream node "54095" and the dam is 0 km, the celerity
+# doesn't have any effect. However it must be positive.
+P_severn$Dam <- c(Vmax = 650E6, celerity = 1)
+
 # The Supervisor is used instead of InputsModel for running the model
 OM_dam <- RunModel(sv,
                    RunOptions = RO_severn,
                    Param = P_severn)
 
 # Plotting the time series of flows and reservoir storage
-oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+oldpar <- par(mfrow=c(2,1),
+              mar = c(2,3.3,1.2,0.5),
+              mgp = c(2,1,0))
 plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
      ylim = c(0, 200))
-Vres <- data.frame(DatesR = attr(OM_dam, "Qm3s")$DatesR,
-                   V_reservoir = sv$Vres / 1E6)
+Vres <- data.frame(DatesR = OM_dam$Dam$DatesR,
+                   "Simulated volume" = OM_dam$Dam$Vsim / 1E6)
 plot.Qm3s(Vres,
           main = "Simulated reservoir storage",
           ylab = expression("Storage (Mm"^"3" * ")"))
