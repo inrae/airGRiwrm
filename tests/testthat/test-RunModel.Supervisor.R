@@ -1,3 +1,5 @@
+skip_on_cran()
+
 # data set up
 e <- setupRunModel()
 # variables are copied from environment 'e' to the current environment

@@ -16,7 +16,7 @@
   ...
 )
 
-\method{Calibration}{InputsModel}(InputsModel, ...)
+\method{Calibration}{InputsModel}(InputsModel, CalibOptions, ...)
 
 Calibration(InputsModel, ...)
 }

@@ -75,36 +75,40 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
   np <- getAllNodesProperties(attr(InputsModel, "GRiwrm"))
   gaugedIds <- np$id[np$hydrology == "Gauged"]
   for(id in gaugedIds) {
-    IM <- InputsModel[[id]]
-    InputsCrit[[IM$id]] <- CreateInputsCrit.InputsModel(
-      InputsModel = IM,
-      FUN_CRIT = FUN_CRIT,
-      RunOptions = RunOptions[[IM$id]],
-      Obs = Obs[, IM$id],
-      ...
-    )
-    if (!is.null(AprioriIds) && IM$id %in% names(AprioriIds)) {
-      # De Lavenne regularization for this sub-catchment
-      attr(InputsCrit[[IM$id]], "Lavenne_FUN") <-
-        CreateLavenneFunction(
-          InputsModel = IM,
-          FUN_CRIT = FUN_CRIT,
-          RunOptions = RunOptions[[IM$id]],
-          Obs = Obs[, IM$id],
-          k = k,
-          ...
-        )
-      attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
-      attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
-      attr(InputsCrit[[IM$id]], "model") <- IM$model
-      if (IM$model$hasX4) {
-        attr(InputsCrit[[IM$id]], "model")$X4Ratio <-
-          (tail(IM$BasinAreas, 1) / tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3
+    if (id %in% colnames(Obs)) {
+      IM <- InputsModel[[id]]
+      InputsCrit[[IM$id]] <- CreateInputsCrit.InputsModel(
+        InputsModel = IM,
+        FUN_CRIT = FUN_CRIT,
+        RunOptions = RunOptions[[IM$id]],
+        Obs = Obs[, IM$id],
+        ...
+      )
+      if (!is.null(AprioriIds) && IM$id %in% names(AprioriIds)) {
+        # De Lavenne regularization for this sub-catchment
+        attr(InputsCrit[[IM$id]], "Lavenne_FUN") <-
+          CreateLavenneFunction(
+            InputsModel = IM,
+            FUN_CRIT = FUN_CRIT,
+            RunOptions = RunOptions[[IM$id]],
+            Obs = Obs[, IM$id],
+            k = k,
+            ...
+          )
+        attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
+        attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
+        attr(InputsCrit[[IM$id]], "model") <- IM$model
+        if (IM$model$hasX4) {
+          attr(InputsCrit[[IM$id]], "model")$X4Ratio <-
+            (tail(IM$BasinAreas, 1) / tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3
+        }
+        class(InputsCrit[[IM$id]]) <- c("InputsCritLavenneFunction", class(InputsCrit[[IM$id]]))
       }
-      class(InputsCrit[[IM$id]]) <- c("InputsCritLavenneFunction", class(InputsCrit[[IM$id]]))
+    } else {
+      message("No observations found for node \"", id, "\"\n",
+              "You must fix the parameters of this node in CreateCalibOptions")
     }
   }
-
   return(InputsCrit)
 }
 

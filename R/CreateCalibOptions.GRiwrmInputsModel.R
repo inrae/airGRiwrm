@@ -14,5 +14,12 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, ...) {
       ...
     )
   }
+
+  if (any(np$Reservoir)) {
+    message("The following nodes modelled with `RunModel_Reservoir` must have their parameters fixed: ",
+            paste(paste0("\"",np$id[np$Reservoir], "\""), collapse = ", "), "\n",
+            "Fix these parameters by using the command:\n",
+            "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
+  }
   return(CalibOptions)
 }
