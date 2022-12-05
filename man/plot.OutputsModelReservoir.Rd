@@ -53,12 +53,12 @@ Qrelease <- median(BasinObs$Qls, na.rm = TRUE) / 1000 * 86400
 
 # Formatting of reservoir released flow inputs for airGRiwrm (matrix or data.frame
 # with one column by node and node IDs as column names)
-Qobs <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
+Qrelease <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
 
 InputsModel <- CreateInputsModel(griwrm, DatesR = BasinObs$DatesR,
                                  Precip = Precip,
                                  PotEvap = PotEvap,
-                                 Qobs = Qobs)
+                                 Qobs = Qrelease)
 
 ## run period selection
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
@@ -71,20 +71,38 @@ RunOptions <- CreateRunOptions(
   IndPeriod_WarmUp = seq.int(Ind_Run[1] - 365, length.out = 365)
 )
 
-# Model parameters
-# RunModel_Reservoir has 2 parameters:
-# - Vmax: the maximum reservoir storage capacity
-# - celerity: the celerity of the inflows used by RunModel_Lag
-Param <- list(
-  "L0123001" = c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208),
-  "Reservoir" = c(Vmax = 30E6, celerity = 0.5)
+# Initial states of the reservoir can be provided by the user
+# For example for starting with an empty reservoir...
+RunOptions[["Reservoir"]]$IniStates <- c("Reservoir.V" = 0)
+
+# calibration criterion: preparation of the InputsCrit object
+Qobs <- data.frame("L0123001" = BasinObs$Qmm[Ind_Run])
+InputsCrit <- CreateInputsCrit(InputsModel,
+                               ErrorCrit_KGE2,
+                               RunOptions = RunOptions,
+                               Obs = Qobs)
+
+# preparation of CalibOptions object
+CalibOptions <- CreateCalibOptions(InputsModel)
+
+# Parameters of RunModel_Reservoir must be fixed
+CalibOptions[["Reservoir"]]$FixedParam <- c(Vmax = 300E6, celerity = 0.5)
+
+OC <- Calibration(
+  InputsModel = InputsModel,
+  RunOptions = RunOptions,
+  InputsCrit = InputsCrit,
+  CalibOptions = CalibOptions
 )
+
+# Model parameters
+Param <- lapply(OC, "[[", "ParamFinalR")
 
 # Running simulation
 OutputsModel <- RunModel(InputsModel, RunOptions, Param)
 
 # Plot the simulated flows and volumes on all nodes
-Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qobs[Ind_Run, ])
+Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qrelease[Ind_Run, ])
 colnames(Qobs) <- griwrm$id
 plot(OutputsModel, Qobs = Qobs)
 # N.B. "Observed releases" should be considered as "Target releases" here

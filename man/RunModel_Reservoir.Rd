@@ -11,8 +11,8 @@ RunModel_Reservoir(InputsModel, RunOptions, Param)
 
 \item{RunOptions}{[object of class \emph{RunOptions}] see \code{\link[airGR]{CreateRunOptions}} for details}
 
-\item{Param}{\link{numeric} vector of length 2 containing (1) the capacity of the
-reservoir and (2) the celerity in m/s of the upstream inflows.}
+\item{Param}{\link{numeric} vector of length 2 containing (1) the maximum capacity
+of the reservoir and (2) the celerity in m/s of the upstream inflows.}
 }
 \value{
 An OutputsModel object like the one return by \link[airGR:RunModel]{airGR::RunModel} but
@@ -30,6 +30,23 @@ excess).
 
 By default, the initial reservoir volume at the beginning of the warm-up period
 is equal to the half of the maximum reservoir capacity.
+
+The parameters of the model can't be calibrated and must be fixed during the
+calibration process by using this instruction after the call to
+\link{CreateCalibOptions}:
+
+\code{CalibOptions[[id_of_the_reservoir]]$FixedParam <- c(Vmax, celerity)}
+
+Initial states of the model consists in the initial volume storage in the
+reservoir and can be defined with the following instruction after the call to
+\link{CreateRunOptions.GRiwrmInputsModel}:
+
+\code{RunOptions[[id_of_the_reservoir]]$IniStates <- c("Reservoir.V" = initial_volume_m3)}
+
+The final state of the reservoir is stored in \code{OutputsModel$StateEnd} and
+can be reused for starting a new simulation with the following instruction:
+
+\code{RunOptions[[id_of_the_reservoir]]$IniStates <- unlist(OutputsModel[[id_of_the_reservoir]]$StateEnd)}
 }
 \examples{
 #######################################################
@@ -65,12 +82,12 @@ Qrelease <- median(BasinObs$Qls, na.rm = TRUE) / 1000 * 86400
 
 # Formatting of reservoir released flow inputs for airGRiwrm (matrix or data.frame
 # with one column by node and node IDs as column names)
-Qobs <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
+Qrelease <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
 
 InputsModel <- CreateInputsModel(griwrm, DatesR = BasinObs$DatesR,
                                  Precip = Precip,
                                  PotEvap = PotEvap,
-                                 Qobs = Qobs)
+                                 Qobs = Qrelease)
 
 ## run period selection
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
@@ -83,20 +100,38 @@ RunOptions <- CreateRunOptions(
   IndPeriod_WarmUp = seq.int(Ind_Run[1] - 365, length.out = 365)
 )
 
-# Model parameters
-# RunModel_Reservoir has 2 parameters:
-# - Vmax: the maximum reservoir storage capacity
-# - celerity: the celerity of the inflows used by RunModel_Lag
-Param <- list(
-  "L0123001" = c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208),
-  "Reservoir" = c(Vmax = 30E6, celerity = 0.5)
+# Initial states of the reservoir can be provided by the user
+# For example for starting with an empty reservoir...
+RunOptions[["Reservoir"]]$IniStates <- c("Reservoir.V" = 0)
+
+# calibration criterion: preparation of the InputsCrit object
+Qobs <- data.frame("L0123001" = BasinObs$Qmm[Ind_Run])
+InputsCrit <- CreateInputsCrit(InputsModel,
+                               ErrorCrit_KGE2,
+                               RunOptions = RunOptions,
+                               Obs = Qobs)
+
+# preparation of CalibOptions object
+CalibOptions <- CreateCalibOptions(InputsModel)
+
+# Parameters of RunModel_Reservoir must be fixed
+CalibOptions[["Reservoir"]]$FixedParam <- c(Vmax = 300E6, celerity = 0.5)
+
+OC <- Calibration(
+  InputsModel = InputsModel,
+  RunOptions = RunOptions,
+  InputsCrit = InputsCrit,
+  CalibOptions = CalibOptions
 )
+
+# Model parameters
+Param <- lapply(OC, "[[", "ParamFinalR")
 
 # Running simulation
 OutputsModel <- RunModel(InputsModel, RunOptions, Param)
 
 # Plot the simulated flows and volumes on all nodes
-Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qobs[Ind_Run, ])
+Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qrelease[Ind_Run, ])
 colnames(Qobs) <- griwrm$id
 plot(OutputsModel, Qobs = Qobs)
 # N.B. "Observed releases" should be considered as "Target releases" here

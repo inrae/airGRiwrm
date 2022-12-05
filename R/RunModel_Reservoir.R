@@ -12,9 +12,26 @@
 #' By default, the initial reservoir volume at the beginning of the warm-up period
 #' is equal to the half of the maximum reservoir capacity.
 #'
+#' The parameters of the model can't be calibrated and must be fixed during the
+#' calibration process by using this instruction after the call to
+#' [CreateCalibOptions]:
+#'
+#' `CalibOptions[[id_of_the_reservoir]]$FixedParam <- c(Vmax, celerity)`
+#'
+#' Initial states of the model consists in the initial volume storage in the
+#' reservoir and can be defined with the following instruction after the call to
+#' [CreateRunOptions.GRiwrmInputsModel]:
+#'
+#' `RunOptions[[id_of_the_reservoir]]$IniStates <- c("Reservoir.V" = initial_volume_m3)`
+#'
+#' The final state of the reservoir is stored in `OutputsModel$StateEnd` and
+#' can be reused for starting a new simulation with the following instruction:
+#'
+#' `RunOptions[[id_of_the_reservoir]]$IniStates <- unlist(OutputsModel[[id_of_the_reservoir]]$StateEnd)`
+#'
 #' @inheritParams airGR::RunModel
-#' @param Param [numeric] vector of length 2 containing (1) the capacity of the
-#' reservoir and (2) the celerity in m/s of the upstream inflows.
+#' @param Param [numeric] vector of length 2 containing (1) the maximum capacity
+#' of the reservoir and (2) the celerity in m/s of the upstream inflows.
 #'
 #' @return An OutputsModel object like the one return by [airGR::RunModel] but
 #' completed with an item `Vsim` representing the water volume time series in m3.
