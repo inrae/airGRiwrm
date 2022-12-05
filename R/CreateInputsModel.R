@@ -17,6 +17,5 @@ CreateInputsModel <- function(x, ...) {
 #' @export
 CreateInputsModel.default <- function(x,
                                       ...) {
-
-  airGR::CreateInputsModel(FUN_MOD = x, ...)
+    airGR::CreateInputsModel(FUN_MOD = x, ...)
 }

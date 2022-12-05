@@ -26,7 +26,7 @@ CreateCalibOptions.InputsModel <- function(x,
   if (!exists("FUN_MOD") && !is.null(x$FUN_MOD)) {
     airGR::CreateCalibOptions(
       FUN_MOD = x$FUN_MOD,
-      IsSD = !is.null(x$Qupstream),
+      IsSD = !is.null(x$Qupstream) & x$FUN_MOD != "RunModel_Lag",
       ...
     )
   } else {

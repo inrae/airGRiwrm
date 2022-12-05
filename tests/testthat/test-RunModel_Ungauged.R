@@ -1,8 +1,7 @@
-
+skip_on_cran()
 test_that("RunModel_Ungauged works for intermediate basin with ungauged station", {
   # data set up
-  e <- setupRunModel(runInputsModel = FALSE)
-  for(x in ls(e)) assign(x, get(x, e))
+  nodes <- loadSevernNodes()
 
   nodes <- nodes[!nodes$id %in% c("54002", "54057", "54095"), ]
   nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)

@@ -41,7 +41,7 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   dfNP <- do.call(rbind, lapply(e$nodeProperties, dplyr::bind_cols))
 
   e$griwrm4U <-
-    e$griwrm[dfNP$Diversion | dfNP$DirectInjection, ]
+    e$griwrm[dfNP$Diversion | dfNP$DirectInjection | dfNP$Reservoir, ]
   e$OutputsModel <- list()
   e$.TimeStep <- TimeStep
 

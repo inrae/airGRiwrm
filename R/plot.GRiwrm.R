@@ -6,6 +6,7 @@
 #' @param width [numeric] width of the resulting graphic in pixels (See [DiagrammeR::mermaid])
 #' @param height [numeric] height of the resulting graphic in pixels (See [DiagrammeR::mermaid])
 #' @param box_colors [list] containing the color used for the different types of nodes
+#' @param defaultClassDef [character] default style apply to all boxes
 #' @param ... Other arguments and parameters you would like to send to JavaScript (See [DiagrammeR::mermaid])
 #'
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
@@ -26,7 +27,9 @@ plot.GRiwrm <- function(x,
                                        UpstreamGauged = "#aaf",
                                        IntermediateUngauged = "#efe",
                                        IntermediateGauged = "#afa",
-                                       DirectInjection = "#faa"),
+                                       DirectInjection = "#faa",
+                                       Reservoir = "#9de"),
+                        defaultClassDef = "stroke:#333",
                         ...) {
 
   stopifnot(inherits(x, "GRiwrm"),
@@ -41,7 +44,7 @@ plot.GRiwrm <- function(x,
             is.character(box_colors),
             length(setdiff(names(box_colors), c("UpstreamUngauged", "UpstreamGauged",
                                                 "IntermediateUngauged",   "IntermediateGauged",
-                                                "DirectInjection"))) == 0)
+                                                "DirectInjection", "Reservoir"))) == 0)
   nodes <- sprintf("id_%1$s[%1$s]", x$id)
   g2 <- x[!is.na(x$down),]
   links <- paste(
@@ -59,10 +62,11 @@ plot.GRiwrm <- function(x,
   node_class <- lapply(node_class, function(id) if(length(id) > 0) paste0("id_", id))
   node_class <- paste("class", sapply(node_class, paste, collapse = ","), names(node_class))
   css <- c(
+    paste("classDef default", defaultClassDef),
     paste("classDef", names(box_colors), paste0("fill:", box_colors)),
     paste("classDef",
-          paste0(names(box_colors), "Diversion"),
-          sprintf("fill:%s, stroke:%s, stroke-width:3px", box_colors, box_colors["DirectInjection"]))
+          paste0(names(box_colors[1:4]), "Diversion"),
+          sprintf("fill:%s, stroke:%s, stroke-width:3px", box_colors[1:4], box_colors["DirectInjection"]))
   )
   if (length(getDiversionRows(g2)) > 0) {
     css <- c(css,
@@ -84,6 +88,8 @@ getNodeClass <- function(id, griwrm) {
   props <- getNodeProperties(id, griwrm)
   if (props$DirectInjection) {
     nc <- "DirectInjection"
+  }  else if (props$Reservoir) {
+    nc <- "Reservoir"
   }  else {
     nc <- paste0(props["position"], props["hydrology"])
   }

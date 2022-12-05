@@ -33,11 +33,13 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   # Run runoff model for each sub-basin
   x$OutputsModel <- lapply(X = x$InputsModel, FUN = function(IM) {
-    OM_GR <- RunModel.GR(IM,
-                         RunOptions = RunOptions[[IM$id]],
-                         Param = Param[[IM$id]])
-    if (IM$hasDiversion) OM_GR$Qnat <- OM_GR$Qsim
-    return(OM_GR)
+    if(inherits(IM, "GR")) {
+      OM_GR <- RunModel.GR(IM,
+                           RunOptions = RunOptions[[IM$id]],
+                           Param = Param[[IM$id]])
+      if (IM$hasDiversion) OM_GR$Qnat <- OM_GR$Qsim
+      return(OM_GR)
+    }
   })
   class(x$OutputsModel) <- c("GRiwrmOutputsModel", class(x$OutputsModel))
 
@@ -46,20 +48,8 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     updateQupstream.Supervisor(x, id, IndPeriod_Run)
   }
 
-  # Save OutputsModel for step by step simulation
-  QcontribDown <- do.call(
-    cbind,
-    lapply(x$OutputsModel, "[[", "Qsim")
-  )
-  Qsim_m3 <- do.call(
-    cbind,
-    lapply(x$OutputsModel, "[[", "Qsim_m3")
-  )
-  if (length(getDiversionRows(x$griwrm)) > 0) {
-    # Outputs of Diversion nodes
-    Qdiv_m3 <- Qsim_m3[, x$griwrm$id[getDiversionRows(x$griwrm)], drop = FALSE] * NA
-    Qnat <- Qdiv_m3
-  }
+  # Store OutputsModel for step by step simulation
+  x$storedOutputs <- initStoredOutputs(x)
 
   # Initialization of model states by running the model with no supervision on warm-up period
   RunOptionsWarmUp <- RunOptions
@@ -75,11 +65,24 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   )
 
   # Adapt RunOptions to step by step simulation and copy states
-  for(id in getSD_Ids(x$InputsModel)) {
+  SD_Ids <- getSD_Ids(x$InputsModel)
+  names(SD_Ids) <- SD_Ids
+  for(id in SD_Ids) {
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
     RunOptions[[id]]$Outputs_Sim <- c("Qsim_m3", "StateEnd")
     x$OutputsModel[[id]]$StateEnd <- serializeIniStates(OM_WarmUp[[id]]$StateEnd)
   }
+
+  # Set Outputs to archive for final restitution
+  outputVars <- lapply(SD_Ids, function(id) {
+    ov <- "Qsim_m3"
+    if (x$InputsModel[[id]]$hasDiversion) {
+      ov <- c(ov, "Qdiv_m3", "Qnat")
+    } else if (x$InputsModel[[id]]$isReservoir) {
+      ov <- c(ov, "Qinflows_m3", "Vsim")
+    }
+    return(ov)
+  })
 
   message("Processing: 0%", appendLF = FALSE)
   iProgressSteps <- round(length(lSuperTS) * seq(0.1, 0.9, 0.1))
@@ -109,10 +112,10 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
           x$InputsModel[[id]],
           RunOptions = RunOptions[[id]],
           Param = Param[[id]],
-          QcontribDown = QcontribDown[x$ts.index, id]
+          QcontribDown = x$storedOutputs$QcontribDown[x$ts.index, id]
         )
       } else {
-        x$OutputsModel[[id]]$Qsim_m3 <- Qsim_m3[x$ts.index, id]
+        x$OutputsModel[[id]]$Qsim_m3 <- x$storedOutputs$Qsim_m3[x$ts.index, id]
       }
       if (x$InputsModel[[id]]$hasDiversion) {
         # Compute diverted and simulated flows on Diversion nodes
@@ -122,9 +125,8 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
                              OutputsModel = x$OutputsModel[[id]])
       }
       # Storing Qsim_m3 and Qdiv_m3 data.frames
-      Qsim_m3[x$ts.index, id] <- x$OutputsModel[[id]]$Qsim_m3
-      if (x$InputsModel[[id]]$hasDiversion) {
-        Qdiv_m3[x$ts.index, id] <- x$OutputsModel[[id]]$Qdiv_m3
+      for (outputVar in outputVars[[id]]) {
+        x$storedOutputs[[outputVar]][x$ts.index, id] <- x$OutputsModel[[id]][[outputVar]]
       }
       # Routing Qsim_m3 and Qdiv_m3 to Qupstream of downstream nodes
       updateQupstream.Supervisor(x, id, iTS)
@@ -135,12 +137,12 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   message(" 100%")
 
   for(id in getSD_Ids(x$InputsModel)) {
-    x$OutputsModel[[id]]$Qsim_m3 <- Qsim_m3[, id]
-    x$OutputsModel[[id]]$Qsim <-
-      Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
-    if (x$InputsModel[[id]]$hasDiversion) {
-      x$OutputsModel[[id]]$Qdiv_m3 <- Qdiv_m3[, id]
+    x$OutputsModel[[id]]$DatesR <- x$DatesR[IndPeriod_Run]
+    for (outputVar in outputVars[[id]]) {
+      x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]
     }
+    x$OutputsModel[[id]]$Qsim <-
+      x$storedOutputs$Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
   }
   attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel, IndPeriod_Run)
 

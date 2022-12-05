@@ -1,9 +1,23 @@
 #' @rdname Calibration
 #' @export
-Calibration.InputsModel <- function(InputsModel, ...) {
+Calibration.InputsModel <- function(InputsModel,
+                                    CalibOptions,
+                                    ...) {
   if (!exists("FUN_MOD") && !is.null(InputsModel$FUN_MOD)) {
-    airGR::Calibration(InputsModel, FUN_MOD = InputsModel$FUN_MOD, ...)
+    if (!any(is.na(CalibOptions$FixedParam))) {
+      message("Parameters already fixed - no need for calibration")
+      message("\t     Param = ", paste(sprintf("%8.3f", CalibOptions$FixedParam), collapse = ", "))
+      OC <- list(ParamFinalR = CalibOptions$FixedParam)
+      class(OC) <- c("OutputsCalib", class(OC))
+      return(OC)
+    } else {
+    airGR::Calibration(InputsModel,
+                       CalibOptions = CalibOptions,
+                       FUN_MOD = InputsModel$FUN_MOD, ...)
+    }
   } else {
-    airGR::Calibration(InputsModel, ...)
+    airGR::Calibration(InputsModel,
+                       CalibOptions = CalibOptions,
+                       ...)
   }
 }

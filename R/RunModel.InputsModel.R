@@ -13,16 +13,32 @@
 #' @export
 RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
   if(is.null(FUN_MOD)) {
-    FUN_MOD <- x$FUN_MOD
+    if (x$isReservoir) {
+      FUN_MOD <- "RunModel_Reservoir"
+    } else {
+      FUN_MOD <- x$FUN_MOD
+    }
   }
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
-    QcontribDown <- rep(0, length(RunOptions$IndPeriod_Run))
-    x$BasinAreas[length(x$BasinAreas)] <- 0
+    QcontribDown <- list(
+      RunOptions = list(
+        WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp))
+      ),
+      Qsim = rep(0, length(RunOptions$IndPeriod_Run))
+    )
+    class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
+    x$BasinAreas[length(x$BasinAreas)] <- 1
     OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
+    OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
+  } else if((inherits(x, "GR") & !inherits(x, "SD")) | identical(FUN_MOD, RunModel_Reservoir)) {
+    # Upstream basins and Reservoir are launch directly
+    OutputsModel <- FUN_MOD(x, RunOptions, Param)
   } else {
+    # Intermediate basins (other than reservoir) are launch with SD capabilities
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
   }
+  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   if (is.null(OutputsModel$Qsim_m3)) {
     # Add Qsim_m3 in m3/timestep
     OutputsModel$Qsim_m3 <-
