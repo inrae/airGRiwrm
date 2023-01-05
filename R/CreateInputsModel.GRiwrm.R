@@ -133,10 +133,14 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
   }
   if (!all(colnames(Qobs) %in% directFlowIds)) {
-    stop("The following columns in 'Qobs' don't match with ",
-         "Direction Injection or Diversion nodes: ",
-         paste(setdiff(colnames(Qobs), directFlowIds), collapse = ", "))
-    Qobs <- Qobs[directFlowIds, ]
+    warning(
+      "The following columns in 'Qobs' are ignored since they don't match with ",
+      "Direction Injection (model=`NA`), ",
+      "Reservoir (model=\"RunModelReservoir\"), ",
+      "or Diversion nodes (model=\"Diversion\"): ",
+      paste(setdiff(colnames(Qobs), directFlowIds), collapse = ", ")
+    )
+    Qobs <- Qobs[, directFlowIds]
   }
   diversionRows <- getDiversionRows(x)
   if (length(diversionRows) > 0) {
