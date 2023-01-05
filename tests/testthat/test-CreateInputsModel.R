@@ -159,8 +159,8 @@ test_that("must works with node not related to an hydrological model", {
   expect_equal(colnames(IM[[2]]$Qupstream), c("Up1", "Up2"))
 })
 
-test_that("Qobs on hydrological nodes should throw en error", {
-  expect_error(CreateInputsModel(l$griwrm,
+test_that("Qobs on hydrological nodes should throw a warning", {
+  expect_warning(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
                                  Precip = l$Precip,
                                  PotEvap = l$PotEvap,
@@ -168,7 +168,7 @@ test_that("Qobs on hydrological nodes should throw en error", {
                                  TempMean = l$TempMean,
                                  ZInputs = l$ZInputs,
                                  HypsoData = l$HypsoData),
-               regexp = "columns in 'Qobs' don't match with")
+               regexp = "columns in 'Qobs' are ignored since they don't match with")
   l$griwrm$model[1] <- NA
   expect_s3_class(suppressWarnings(
     CreateInputsModel(

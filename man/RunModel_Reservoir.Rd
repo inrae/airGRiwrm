@@ -115,7 +115,7 @@ InputsCrit <- CreateInputsCrit(InputsModel,
 CalibOptions <- CreateCalibOptions(InputsModel)
 
 # Parameters of RunModel_Reservoir must be fixed
-CalibOptions[["Reservoir"]]$FixedParam <- c(Vmax = 300E6, celerity = 0.5)
+CalibOptions[["Reservoir"]]$FixedParam <- c(Vmax = 30E6, celerity = 0.5)
 
 OC <- Calibration(
   InputsModel = InputsModel,
