@@ -79,4 +79,22 @@ test_that("Calibration with ungauged node and reservoir in the middle works", {
 
   expect_equal(g$donor[g$id == "54095"], "54001")
 
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
+  for(x in ls(e)) assign(x, get(x, e))
+
+  InputsCrit <- CreateInputsCrit(InputsModel,
+                                 ErrorCrit_KGE2,
+                                 RunOptions = RunOptions,
+                                 Obs = Qobs[IndPeriod_Run, ])
+  CalibOptions <- CreateCalibOptions(InputsModel)
+  CalibOptions[["Dam"]]$FixedParam <- c(650E6, 1)
+  OC <- Calibration(
+    InputsModel = InputsModel,
+    RunOptions = RunOptions,
+    InputsCrit = InputsCrit,
+    CalibOptions = CalibOptions
+  )
+  # X1, X2, X3 are identical
+  expect_equal(OC$`54001`$ParamFinalR[2:4], OC$`54095`$ParamFinalR[1:3])
+  expect_equal(OC$Dam$ParamFinalR, CalibOptions[["Dam"]]$FixedParam)
 })
