@@ -6,7 +6,7 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, ...) {
   class(CalibOptions) <- c("GRiwrmCalibOptions", class(CalibOptions))
 
   np <- getAllNodesProperties(attr(x, "GRiwrm"))
-  gaugedIds <- np$id[np$hydrology == "Gauged"]
+  gaugedIds <- np$id[np$calibration == "Gauged"]
   for(id in gaugedIds) {
     IM <- x[[id]]
     CalibOptions[[IM$id]] <- CreateCalibOptions(

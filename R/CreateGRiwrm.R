@@ -85,8 +85,8 @@ CreateGRiwrm <- function(db,
                         area = "double"),
                    keep_all)
   checkNetworkConsistency(griwrm)
-  griwrm$donor <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
   class(griwrm) <- c("GRiwrm", class(griwrm))
+  griwrm$donor <- setDonor(griwrm)
   griwrm
 }
 
@@ -225,19 +225,24 @@ nodeError <- function(node, s) {
 #' @param id [character] Id of the current node
 #' @param griwrm See [CreateGRiwrm])
 #'
-#' @return [character] Id of the first node with a model
+#' @return [character] Id of the first node with a model of `FALSE` if not found
 #'
 #' @noRd
 getGaugedId <- function(id, griwrm) {
-  griwrm <- griwrm[getDiversionRows(griwrm, TRUE), ]
-  if (!is.na(griwrm$model[griwrm$id == id]) &
-    griwrm$model[griwrm$id == id] != "Ungauged") {
+  np <- getNodeProperties(id, griwrm)
+  if (np$RunOff && np$calibration == "Gauged") {
+    # Match with au gauged station!
     return(id)
-  } else if (!is.na(griwrm$down[griwrm$id == id])) {
-    return(getGaugedId(griwrm$down[griwrm$id == id], griwrm))
   } else {
-    stop("The model of the downstream node of a network",
-      " cannot be `NA` or \"Ungauged\"")
+    # Otherwise we need to search downstream on the natural network
+    g2 <- griwrm[getDiversionRows(griwrm, TRUE), ]
+    id_down <- g2$down[g2$id == id]
+    if (!is.na(id_down)) {
+      return(getGaugedId(id_down, griwrm))
+    } else {
+      #If we already are at the downstream end, we have a problem...
+      return(FALSE)
+    }
   }
 }
 
@@ -252,4 +257,23 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
     }
   }
   return(rows)
+}
+
+setDonor <- function(griwrm) {
+  sapply(seq(nrow(griwrm)), function(i) {
+    id <- griwrm$id[i]
+    model <- griwrm$model[i]
+    if (is.na(model) || model == "Diversion") {
+      # Diversion and Direct injection are "Non Applicable"
+      return(NA)
+    } else if(model == "RunModel_Reservoir"){
+      # RunModel_Reservoir needs to be its own "donor"
+      return(id)
+    }
+    gaugedId <- getGaugedId(id, griwrm = griwrm)
+    if (gaugedId == FALSE) {
+      stop("No Gauged node found downstream the node '", id, "'")
+    }
+    return(gaugedId)
+  })
 }

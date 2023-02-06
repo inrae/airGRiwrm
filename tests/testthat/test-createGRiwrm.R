@@ -34,13 +34,10 @@ test_that("Duplicated nodes",  {
                regexp = "Duplicated nodes detected")
 })
 
-test_that("NA or Ungauged nodes at downstream should throw an error", {
+test_that("Ungauged nodes without gauged node at downstream should throw an error", {
   nodes$model[nodes$id == "54057"] <- "Ungauged"
   expect_error(CreateGRiwrm(nodes),
-               regexp = "downstream node")
-  nodes$model[nodes$gauge_id == "54057"] <- NA
-  expect_error(CreateGRiwrm(nodes),
-               regexp = "downstream node")
+               regexp = "downstream the node")
 })
 
 test_that("Diversion node", {

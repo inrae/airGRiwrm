@@ -230,7 +230,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
   InputsModel <- list()
   class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
   # Update griwrm in case of manual change in model column
-  griwrm$donor <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
+  griwrm$donor <- setDonor(griwrm)
   attr(InputsModel, "GRiwrm") <- griwrm
   return(InputsModel)
 }

@@ -73,7 +73,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
   class(InputsCrit) <- append("GRiwrmInputsCrit", class(InputsCrit))
 
   np <- getAllNodesProperties(attr(InputsModel, "GRiwrm"))
-  gaugedIds <- np$id[np$hydrology == "Gauged"]
+  gaugedIds <- np$id[np$calibration == "Gauged"]
   for(id in gaugedIds) {
     if (id %in% colnames(Obs)) {
       IM <- InputsModel[[id]]
