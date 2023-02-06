@@ -15,8 +15,8 @@ getNodeProperties(id, griwrm)
 A \link{list} with the following items:
 \itemize{
 \item "position" (\link{character}): Position of the node in the network ("Upstream" or "Intermediate")
-\item "hydrology" (\link{character}): describe if the node is a "Gauged" or an "Ungauged" station
-modelled with an hydrological model, or a "DirectionInjection" node
+\item "calibration" (\link{character}): describe if the node is a "Gauged", or an "Ungauged" station,
+modelled with an hydrological model, or "NA" otherwise
 \item "Upstream" (\link{logical}): is the node an upstream node?
 \item "DirectInjection" (\link{logical}): is the node a Direct Injection node?
 \item "Diversion" (\link{logical}): is the node a Diversion node?

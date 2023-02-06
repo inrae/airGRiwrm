@@ -266,8 +266,10 @@ setDonor <- function(griwrm) {
     if (is.na(model) || model == "Diversion") {
       # Diversion and Direct injection are "Non Applicable"
       return(NA)
-    } else if(model == "RunModel_Reservoir"){
-      # RunModel_Reservoir needs to be its own "donor"
+    } else if(model == "RunModel_Reservoir" && is.na(griwrm$down[i])){
+      # RunModel_Reservoir needs to be its own "donor" only if at downstream
+      # Otherwise we search the first gauged station downstream to allow
+      # calibration with ungauged upstream nodes
       return(id)
     }
     gaugedId <- getGaugedId(id, griwrm = griwrm)
