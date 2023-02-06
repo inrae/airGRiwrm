@@ -176,11 +176,6 @@ checkNetworkConsistency <- function(db) {
       nodeError(db[i, ],
                 "A Diversion node must have the same `id` of one (and only one) node with a model")
     }
-    if (length(unique(db$down[db$id == x])) != 2) {
-      nodeError(db[i, ], paste(
-        "The downstream node of a Diversion node must be different",
-        "than the downstream node of the node is attached to"))
-    }
   })
   id_reservoirs <- db3$id[db3$model == "RunModel_Reservoir"]
   sapply(id_reservoirs, function(id) {
