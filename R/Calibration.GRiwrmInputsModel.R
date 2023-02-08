@@ -179,6 +179,19 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
   return(obj)
 }
 
+
+#' Set a reduced GRiwrm network for calibration of a sub-network with ungauged
+#' hydrological nodes
+#'
+#' @inheritParams Calibration
+#' @param GaugedId [character] Id of the gauged node
+#' @param OutputsModel *GRiwrmOutputsModel* of the complete network
+#'
+#' @return A [list] containing the following items:
+#' - `InputsModel`: a *GRiwrmInputsModel* of the reduced network
+#' - `RunOptions`: a *GRiwrmRunOptions* of the reduced network
+#' @noRd
+#'
 updateParameters4Ungauged <- function(GaugedId,
                                       InputsModel,
                                       RunOptions,
@@ -187,9 +200,9 @@ updateParameters4Ungauged <- function(GaugedId,
                                       useUpstreamQsim) {
 
   ### Set the reduced network of the basin containing ungauged nodes ###
-  # Select nodes identified with the current node as gauged node
+  # Select nodes identified with the current node as donor gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
-  gDonor <- griwrm[griwrm$donor == GaugedId, ]
+  gDonor <- griwrm[!is.na(griwrm$donor) & griwrm$donor == GaugedId, ]
   # Add upstream nodes for routing upstream flows
   upIds <- griwrm$id[griwrm$down %in% gDonor$id & !griwrm$id %in% gDonor$id]
   g <- rbind(griwrm[griwrm$id %in% upIds, ], gDonor)

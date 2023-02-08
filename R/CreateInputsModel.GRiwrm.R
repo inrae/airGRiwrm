@@ -258,7 +258,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
   }
   node <- griwrm[griwrm$id == id,]
 
-  FUN_MOD <- griwrm$model[griwrm$id == griwrm$donor[griwrm$id == id]]
+  g2 <- griwrm[getDiversionRows(griwrm, TRUE), ]
+  FUN_MOD <- g2$model[g2$id == g2$donor[g2$id == id]]
 
   # Set hydraulic parameters
   UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
