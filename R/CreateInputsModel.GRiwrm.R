@@ -230,7 +230,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
   InputsModel <- list()
   class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
   # Update griwrm in case of manual change in model column
-  griwrm$donor <- sapply(griwrm$id, getGaugedId, griwrm = griwrm)
+  griwrm$donor <- setDonor(griwrm)
   attr(InputsModel, "GRiwrm") <- griwrm
   return(InputsModel)
 }
@@ -249,14 +249,17 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #' @return \emph{InputsModel} object for one.
 #' @noRd
 CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
-  hasDiversion <- getNodeProperties(id, griwrm)$Diversion
-  if (hasDiversion) {
+  np <- getNodeProperties(id, griwrm)
+
+  if (np$Diversion) {
     rowDiv <- which(griwrm$id == id & griwrm$model == "Diversion")
     diversionOutlet <- griwrm$down[rowDiv]
     griwrm <- griwrm[-rowDiv, ]
   }
   node <- griwrm[griwrm$id == id,]
-  FUN_MOD <- griwrm$model[griwrm$id == griwrm$donor[griwrm$id == id]]
+
+  g2 <- griwrm[getDiversionRows(griwrm, TRUE), ]
+  FUN_MOD <- g2$model[g2$id == g2$donor[g2$id == id]]
 
   # Set hydraulic parameters
   UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
@@ -293,11 +296,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
     names(BasinAreas) <- c(griwrm$id[UpstreamNodeRows], id)
   }
 
-  if (identical(match.fun(FUN_MOD), RunModel_Reservoir)) {
-    isReservoir <- TRUE
+  if (np$Reservoir) {
     FUN_MOD <- "RunModel_Lag"
-  } else {
-    isReservoir <- FALSE
   }
   # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
@@ -337,15 +337,17 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
       hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
       iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4)
     )
-  InputsModel$hasDiversion <- hasDiversion
-  InputsModel$isReservoir <- isReservoir
+  InputsModel$hasDiversion <- np$Diversion
+  InputsModel$isReservoir <- np$Reservoir
 
   # Add specific properties for Diversion and Reservoir nodes
-  if (hasDiversion) {
+  if (np$Diversion) {
     InputsModel$diversionOutlet <- diversionOutlet
     InputsModel$Qdiv <- -Qobs[, id]
     InputsModel$Qmin <- Qmin
-  } else if(isReservoir) {
+  } else if(np$Reservoir) {
+    # If an upstream node is ungauged then we are in an ungauged reduced network
+    InputsModel$isUngauged <- any(griwrm$model[UpstreamNodeRows] == "Ungauged")
     InputsModel$Qrelease <- Qobs[, id]
   }
   return(InputsModel)
@@ -419,6 +421,7 @@ getInputBV <- function(x, id, unset = NULL) {
 #'
 #' @noRd
 hasUngaugedNodes <- function(id, griwrm) {
+  nps <- getAllNodesProperties(griwrm)
   upIds <- griwrm$id[griwrm$down == id]
   upIds <- upIds[!is.na(upIds)]
   # No upstream nodes
@@ -427,11 +430,13 @@ hasUngaugedNodes <- function(id, griwrm) {
   UngNodes <- griwrm$model[griwrm$id %in% upIds] == "Ungauged"
   UngNodes <- UngNodes[!is.na(UngNodes)]
   if(length(UngNodes) > 0 && any(UngNodes)) return(TRUE)
-  # At least one node's model is NA need to investigate next level
-  if(any(is.na(griwrm$model[griwrm$id %in% upIds]))) {
-    g <- griwrm[griwrm$id %in% upIds, ]
-    NaIds <- g$id[is.na(g$model)]
-    out <- sapply(NaIds, hasUngaugedNodes, griwrm = griwrm)
+
+  upNps <- nps[nps$id %in% upIds, ]
+  if(any(upNps$DirectInjection) || any(upNps$Reservoir)) {
+    # At least one node's model is NA or Reservoir, we need to investigate next level
+    out <- sapply(upNps$id[upNps$DirectInjection | upNps$Reservoir],
+                  hasUngaugedNodes,
+                  griwrm = griwrm)
     return(any(out))
   }
   return(FALSE)

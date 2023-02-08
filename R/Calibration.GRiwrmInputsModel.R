@@ -48,6 +48,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       l  <- updateParameters4Ungauged(id,
                                       InputsModel,
                                       RunOptions,
+                                      CalibOptions,
                                       OutputsModel,
                                       useUpstreamQsim)
       IM <- l$InputsModel
@@ -84,14 +85,24 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         subBasinAreas <- calcSubBasinAreas(IM)
       }
       for (uId in Ids) {
-        # Add OutputsCalib for ungauged nodes
-        OutputsCalib[[uId]] <- OutputsCalib[[id]]
-        # Copy parameters and transform X4 relatively to the sub-basin area
-        OutputsCalib[[uId]]$ParamFinalR <-
-          OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
-        if(IM[[id]]$model$hasX4) {
-          OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <-
-            X4 * (subBasinAreas[uId] / sum(subBasinAreas)) ^ 0.3
+        if(!IM[[uId]]$isReservoir) {
+          # Add OutputsCalib for ungauged nodes
+          OutputsCalib[[uId]] <- OutputsCalib[[id]]
+          # Copy parameters and transform X4 relatively to the sub-basin area
+          OutputsCalib[[uId]]$ParamFinalR <-
+            OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
+          if(IM[[id]]$model$hasX4) {
+            OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <-
+              X4 * (subBasinAreas[uId] / sum(subBasinAreas, na.rm = TRUE)) ^ 0.3
+          }
+        } else {
+          OutputsCalib[[uId]] <- Calibration(
+            InputsModel = IM[[uId]],
+            RunOptions = RunOptions[[uId]],
+            InputsCrit = IC,
+            CalibOptions = CalibOptions[[uId]],
+            ...
+          )
         }
       }
       IM <- IM[[id]]
@@ -168,16 +179,30 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
   return(obj)
 }
 
+
+#' Set a reduced GRiwrm network for calibration of a sub-network with ungauged
+#' hydrological nodes
+#'
+#' @inheritParams Calibration
+#' @param GaugedId [character] Id of the gauged node
+#' @param OutputsModel *GRiwrmOutputsModel* of the complete network
+#'
+#' @return A [list] containing the following items:
+#' - `InputsModel`: a *GRiwrmInputsModel* of the reduced network
+#' - `RunOptions`: a *GRiwrmRunOptions* of the reduced network
+#' @noRd
+#'
 updateParameters4Ungauged <- function(GaugedId,
                                       InputsModel,
                                       RunOptions,
+                                      CalibOptions,
                                       OutputsModel,
                                       useUpstreamQsim) {
 
   ### Set the reduced network of the basin containing ungauged nodes ###
-  # Select nodes identified with the current node as gauged node
+  # Select nodes identified with the current node as donor gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
-  gDonor <- griwrm[griwrm$donor == GaugedId, ]
+  gDonor <- griwrm[!is.na(griwrm$donor) & griwrm$donor == GaugedId, ]
   # Add upstream nodes for routing upstream flows
   upIds <- griwrm$id[griwrm$down %in% gDonor$id & !griwrm$id %in% gDonor$id]
   g <- rbind(griwrm[griwrm$id %in% upIds, ], gDonor)
@@ -188,9 +213,15 @@ updateParameters4Ungauged <- function(GaugedId,
   ### Modify InputsModel for the reduced network ###
   # Remove nodes outside of reduced network
   InputsModel <- reduceGRiwrmObj4Ungauged(g, InputsModel)
+  # Copy fixed parameters for Reservoirs
+  for (id in names(InputsModel)) {
+    if (InputsModel[[id]]$isReservoir) {
+      InputsModel[[id]]$FixedParam <- CalibOptions[[id]]$FixedParam
+    }
+  }
   # Update griwrm
   attr(InputsModel, "GRiwrm") <- g
-  # Update Qupstream already modelled in the reduced network upstream nodes
+  # Update Qupstream already modeled in the reduced network upstream nodes
   idIM <- unique(g$down[g$id %in% upIds])
   for (id in idIM) {
     if(useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {
@@ -258,9 +289,12 @@ calcSubBasinAreas <- function(IM) {
 #' @noRd
 RunModel_Ungauged <- function(InputsModel, RunOptions, Param) {
   InputsModel$FUN_MOD <- NULL
-  SBVI <- sum(calcSubBasinAreas(InputsModel))
+  SBVI <- sum(calcSubBasinAreas(InputsModel), na.rm = TRUE)
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
+    if (IM$isReservoir) {
+      return(IM$FixedParam)
+    }
     p <- Param[IM$model$indexParamUngauged]
     if(IM$model$hasX4) {
       p[IM$model$iX4] <- Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3

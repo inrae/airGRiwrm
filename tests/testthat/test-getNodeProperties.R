@@ -8,20 +8,20 @@ test_that("All nodes should have property: Diversion and DirectInjection == FALS
                                 function(id) getNodeProperties(id, griwrm)[[p]])
     expect_equal(all(prop_value), FALSE)
   })
-  prop_hydrology <- sapply(griwrm$id,
-                           function(id) getNodeProperties(id, griwrm)$hydrology)
-  expect_equal(as.character(prop_hydrology), rep("Gauged", nrow(griwrm)))
+  prop_calibration <- sapply(griwrm$id,
+                           function(id) getNodeProperties(id, griwrm)$calibration)
+  expect_equal(as.character(prop_calibration), rep("Gauged", nrow(griwrm)))
 })
 
-test_that("Ungauged station has 'hydrology:Ungauged' property", {
+test_that("Ungauged station has 'calibration:Ungauged' property", {
   nodes$model[nodes$id == "54029"] <- "Ungauged"
-  expect_equal(getNodeProperties("54029", CreateGRiwrm(nodes))$hydrology, "Ungauged")
+  expect_equal(getNodeProperties("54029", CreateGRiwrm(nodes))$calibration, "Ungauged")
 })
 
-test_that("Direct injection node has 'hydrology:NA' property", {
+test_that("Direct injection node has 'calibration:NA' property", {
   nodes$model[nodes$id == "54002"] <- NA
   np <- getNodeProperties("54002", CreateGRiwrm(nodes))
-  expect_equal(np$hydrology, "NA")
+  expect_equal(np$calibration, "NA")
   expect_equal(np$DirectInjection, TRUE)
 })
 
