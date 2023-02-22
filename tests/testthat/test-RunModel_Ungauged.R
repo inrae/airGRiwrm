@@ -130,7 +130,7 @@ test_that("Ungauged node with diversion outside the sub-network shoudl work", {
   )
 
   CO <- CreateCalibOptions(InputsModel)
-  OC <- Calibration(InputsModel, RunOptions, IC, CO)
+  OC2 <- Calibration(InputsModel, RunOptions, IC, CO)
   Param <- sapply(OC, "[[", "ParamFinalR")
   OM <- RunModel(
     InputsModel,
@@ -141,5 +141,5 @@ test_that("Ungauged node with diversion outside the sub-network shoudl work", {
     InputsCrit = IC$`54032`,
     OutputsModel = OM$`54032`
   )$CritValue
-
+  expect_equal(OC2$`54032`$CritFinal, CritValue)
 })
