@@ -105,10 +105,15 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
           )
         }
       }
+      if(useUpstreamQsim) {
+        OM_subnet <- RunModel_Ungauged(IM,
+                                       RunOptions[[id]],
+                                       OutputsCalib[[id]]$ParamFinalR,
+                                       output.all = TRUE)
+        OutputsModel <- c(OutputsModel, OM_subnet)
+      }
       IM <- IM[[id]]
-    }
-
-    if(useUpstreamQsim) {
+    } else if(useUpstreamQsim) {
       # Run the model for the sub-basin
       OutputsModel[[id]] <- RunModel(
         x = IM,
@@ -116,7 +121,6 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         Param = OutputsCalib[[id]]$ParamFinalR
       )
     }
-
   }
 
   return(OutputsCalib)
@@ -285,10 +289,12 @@ calcSubBasinAreas <- function(IM) {
 #' <https://pastel.archives-ouvertes.fr/tel-01134990/document>
 #'
 #' @inheritParams airGR::RunModel
+#' @param ouput.all [logical] if `TRUE` returns the output of [RunModel.GRiwrm],
+#' returns the `OutputsModel` of the downstream node otherwise
 #'
 #' @inherit RunModel.GRiwrmInputsModel return return
 #' @noRd
-RunModel_Ungauged <- function(InputsModel, RunOptions, Param) {
+RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE) {
   InputsModel$FUN_MOD <- NULL
   SBVI <- sum(calcSubBasinAreas(InputsModel), na.rm = TRUE)
   # Compute Param for each sub-basin
@@ -305,5 +311,9 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param) {
   OM <- suppressMessages(
     RunModel.GRiwrmInputsModel(InputsModel, attr(RunOptions, "GRiwrmRunOptions"), P)
   )
-  return(OM[[length(OM)]])
+  if (output.all) {
+    return(OM)
+  } else {
+    return(OM[[length(OM)]])
+  }
 }
