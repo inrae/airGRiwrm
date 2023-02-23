@@ -304,7 +304,10 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
     }
     p <- Param[IM$model$indexParamUngauged]
     if(IM$model$hasX4) {
-      p[IM$model$iX4] <- Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3
+      p[IM$model$iX4] <- max(
+        Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3,
+        0.5
+      )
     }
     return(p)
   })
