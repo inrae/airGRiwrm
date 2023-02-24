@@ -422,8 +422,8 @@ getInputBV <- function(x, id, unset = NULL) {
 #' @noRd
 hasUngaugedNodes <- function(id, griwrm) {
   nps <- getAllNodesProperties(griwrm)
-  upIds <- griwrm$id[griwrm$down == id]
-  upIds <- upIds[!is.na(upIds)]
+  upNodes <- griwrm[!is.na(griwrm$down) & griwrm$down == id, ]
+  upIds <- upNodes$id[upNodes$model != "Diversion"]
   # No upstream nodes
   if(length(upIds) == 0) return(FALSE)
   # At least one upstream node is ungauged
