@@ -54,11 +54,6 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM <- l$InputsModel
       IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
-      if(IM[[id]]$model$hasX4) {
-        subBasinAreas <- calcSubBasinAreas(IM)
-        donorArea <- subBasinAreas[id]
-        attr(RunOptions[[id]], "donorArea") <- donorArea
-      }
     } else {
       if (useUpstreamQsim && any(IM$UpstreamIsModeled)) {
         # Update InputsModel$Qupstream with simulated upstream flows
@@ -96,8 +91,9 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
           OutputsCalib[[uId]]$ParamFinalR <-
             OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
           if(IM[[id]]$model$hasX4) {
+            subBasinAreas <- calcSubBasinAreas(IM)
             OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <- max(
-              X4 * (subBasinAreas[uId] / donorArea) ^ 0.3,
+              X4 * (subBasinAreas[uId] / subBasinAreas[id]) ^ 0.3,
               0.5
             )
           }
@@ -302,7 +298,8 @@ calcSubBasinAreas <- function(IM) {
 #' @noRd
 RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE) {
   InputsModel$FUN_MOD <- NULL
-  donorArea <- attr(RunOptions, "donorArea")
+  donor <- RunOptions$id
+  donorArea <- InputsModel[[donor]]$BasinAreas[length(InputsModel[[donor]]$BasinAreas)]
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
     if (IM$isReservoir) {
@@ -311,7 +308,8 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
     p <- Param[IM$model$indexParamUngauged]
     if(IM$model$hasX4) {
       p[IM$model$iX4] <- max(
-        Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / donorArea) ^ 0.3,
+        Param[InputsModel[[donor]]$model$iX4] *
+          (IM$BasinAreas[length(IM$BasinAreas)] / donorArea) ^ 0.3,
         0.5
       )
     }

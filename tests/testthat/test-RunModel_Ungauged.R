@@ -1,6 +1,35 @@
 skip_on_cran()
 
 # data set up
+test_that("RunModel_Ungauged should act as RunModel", {
+  nodes <- loadSevernNodes()
+  nodes <- nodes[nodes$id %in% c("54001", "54095"), ]
+  nodes[nodes$id == "54001", c("down", "length")] <- c(NA, NA)
+  nodes$model[nodes$id == "54095"] <- "Ungauged"
+  g <- CreateGRiwrm(nodes)
+  e <- setupRunModel(runRunModel = FALSE, griwrm = g)
+  for(x in ls(e)) assign(x, get(x, e))
+
+  Param <- ParamMichel["54001"]
+  Param[["54095"]] <-
+    ParamMichel[["54001"]][InputsModel[["54095"]]$model$indexParamUngauged]
+  donorArea <- tail(InputsModel[["54001"]]$BasinAreas, 1)
+  X4 <- Param[["54001"]][InputsModel[["54001"]]$model$iX4]
+  Param[["54095"]][InputsModel[["54095"]]$model$iX4] <-
+    max(
+      X4 * (tail(InputsModel[["54095"]]$BasinAreas, 1) / donorArea) ^ 0.3,
+      0.5
+    )
+  OM <- RunModel(InputsModel, RunOptions = RunOptions, Param = Param)
+  attr(RunOptions[["54001"]], "GRiwrmRunOptions") <- RunOptions
+  OMU <- RunModel_Ungauged(InputsModel,
+                           RunOptions = RunOptions[["54001"]],
+                           Param = Param[["54001"]],
+                           output.all = TRUE)
+  expect_equal(OMU, OM)
+})
+
+# data set up
 nodes <- loadSevernNodes()
 
 nodes <- nodes[nodes$id %in% c("54001", "54029", "54032"), ]
@@ -38,9 +67,9 @@ CritValue <- ErrorCrit_KGE2(
   OutputsModel = OM$`54032`
 )$CritValue
 
-# test_that("Ungauged node with gauged upstream node should works", {
-#   expect_equal(OC$`54032`$CritFinal, CritValue)
-# })
+test_that("Ungauged node with gauged upstream node should works", {
+  expect_equal(OC$`54032`$CritFinal, CritValue)
+})
 
 test_that("RunModel_Ungauged works with a diversion as donor (#110)", {
   nodes <- rbind(nodes,
@@ -151,11 +180,13 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
     RunOptions = RunOptions,
     Param = Param1
   )
-  CritValue <- ErrorCrit_KGE2(
-    InputsCrit = IC$`54032`,
-    OutputsModel = OM$`54032`
-  )$CritValue
-  # expect_equal(OC1$`54032`$CritFinal, CritValue)
+  sapply(c("54001", "54032"), function(id) {
+    CritValue <- ErrorCrit_KGE2(
+      InputsCrit = IC[[id]],
+      OutputsModel = OM[[id]]
+    )$CritValue
+    expect_equal(OC1[[id]]$CritFinal, CritValue)
+  })
 
   # Second with Diversion with zero flow diverted for comparison
   nodes <- rbind(nodes,
@@ -186,9 +217,11 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
     RunOptions = RunOptions,
     Param = Param2
   )
-  CritValue <- ErrorCrit_KGE2(
-    InputsCrit = IC$`54032`,
-    OutputsModel = OM$`54032`
-  )$CritValue
-  # expect_equal(OC2$`54032`$CritFinal, CritValue)
+  sapply(c("54001", "54032"), function(id) {
+    CritValue <- ErrorCrit_KGE2(
+      InputsCrit = IC[[id]],
+      OutputsModel = OM[[id]]
+    )$CritValue
+    expect_equal(OC1[[id]]$CritFinal, CritValue)
+  })
 })
