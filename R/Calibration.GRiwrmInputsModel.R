@@ -54,6 +54,11 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM <- l$InputsModel
       IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
+      if(IM[[id]]$model$hasX4) {
+        subBasinAreas <- calcSubBasinAreas(IM)
+        donorArea <- subBasinAreas[id]
+        attr(RunOptions[[id]], "donorArea") <- donorArea
+      }
     } else {
       if (useUpstreamQsim && any(IM$UpstreamIsModeled)) {
         # Update InputsModel$Qupstream with simulated upstream flows
@@ -79,10 +84,9 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       # Select nodes with model in the sub-network
       g <- attr(IM, "GRiwrm")
       Ids <- g$id[!is.na(g$donor) & g$donor == id]
-      # Extract the X4 calibrated for the whole intermediate basin
       if(IM[[id]]$model$hasX4) {
+        # Extract the X4 calibrated for the whole intermediate basin
         X4 <- OutputsCalib[[id]]$ParamFinalR[IM[[id]]$model$iX4] # Global parameter
-        subBasinAreas <- calcSubBasinAreas(IM)
       }
       for (uId in Ids) {
         if(!IM[[uId]]$isReservoir) {
@@ -92,8 +96,10 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
           OutputsCalib[[uId]]$ParamFinalR <-
             OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
           if(IM[[id]]$model$hasX4) {
-            OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <-
-              X4 * (subBasinAreas[uId] / sum(subBasinAreas, na.rm = TRUE)) ^ 0.3
+            OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <- max(
+              X4 * (subBasinAreas[uId] / donorArea) ^ 0.3,
+              0.5
+            )
           }
         } else {
           OutputsCalib[[uId]] <- Calibration(
@@ -296,7 +302,7 @@ calcSubBasinAreas <- function(IM) {
 #' @noRd
 RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE) {
   InputsModel$FUN_MOD <- NULL
-  SBVI <- sum(calcSubBasinAreas(InputsModel), na.rm = TRUE)
+  donorArea <- attr(RunOptions, "donorArea")
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
     if (IM$isReservoir) {
@@ -305,7 +311,7 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
     p <- Param[IM$model$indexParamUngauged]
     if(IM$model$hasX4) {
       p[IM$model$iX4] <- max(
-        Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / SBVI) ^ 0.3,
+        Param[IM$model$iX4] * (IM$BasinAreas[length(IM$BasinAreas)] / donorArea) ^ 0.3,
         0.5
       )
     }
