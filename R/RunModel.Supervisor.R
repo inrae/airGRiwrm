@@ -65,7 +65,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   )
 
   # Adapt RunOptions to step by step simulation and copy states
-  SD_Ids <- getSD_Ids(x$InputsModel)
+  SD_Ids <- getSD_Ids(x$InputsModel, add_diversions = TRUE)
   names(SD_Ids) <- SD_Ids
   for(id in SD_Ids) {
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
@@ -102,7 +102,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
       doSupervision(x)
     }
     # Loop over sub-basin using SD model
-    for(id in getSD_Ids(x$InputsModel, add_diversion = TRUE)) {
+    for(id in SD_Ids) {
       # Run model for the sub-basin and one time step
       RunOptions[[id]]$IniStates <- serializeIniStates(x$OutputsModel[[id]]$StateEnd)
       RunOptions[[id]]$IndPeriod_Run <- iTS
@@ -136,7 +136,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   message(" 100%")
 
-  for(id in getSD_Ids(x$InputsModel)) {
+  for(id in SD_Ids) {
     x$OutputsModel[[id]]$DatesR <- x$DatesR[IndPeriod_Run]
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]

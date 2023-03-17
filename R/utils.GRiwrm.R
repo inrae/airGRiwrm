@@ -1,16 +1,16 @@
 #' Function to obtain the ID of sub-basins using SD model
 #'
 #' @param InputsModel \[`GRiwrmInputsModel` object\]
-#' @param add_diversion [logical] for adding upstream nodes with diversion
+#' @param add_diversions [logical] for adding upstream nodes with diversion
 #'
 #' @return [character] IDs of the sub-basins using SD model
 #' @export
-getSD_Ids <- function(InputsModel, add_diversion = FALSE) {
+getSD_Ids <- function(InputsModel, add_diversions = FALSE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
   bSDs <- sapply(InputsModel, function (IM) {
-    inherits(IM, "SD") | IM$hasDiversion
+    inherits(IM, "SD") || (add_diversions & IM$hasDiversion)
   })
   names(InputsModel)[bSDs]
 }
