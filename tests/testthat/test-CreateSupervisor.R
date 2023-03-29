@@ -43,3 +43,22 @@ test_that("Checks in CreateController",  {
   expect_s3_class(sv$controllers$toto, "Controller")
 })
 
+test_that("CreateSupervisor using reservoir and diversion", {
+  nodes <- loadSevernNodes()
+  nodes <- rbind(nodes, data.frame(
+    id     = c("54029"     , "Reservoir"         ),
+    down   = c("Reservoir" , "54032"             ),
+    length = c(20          , 15                  ),
+    area   = c(NA, NA                 ),
+    model  = c("Diversion" , "RunModel_Reservoir")
+  ))
+  g <- CreateGRiwrm(nodes)
+  # Add Qobs for the 2 new nodes and create InputsModel
+  Qobs <- matrix(data = rep(0, 2*length(DatesR)), ncol = 2)
+  colnames(Qobs) <- c("54029", "Reservoir")
+  InputsModel <- suppressWarnings(
+      CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
+  )
+  sv <- CreateSupervisor(InputsModel)
+  expect_equal(sv$griwrm4U$id, c("54029", "Reservoir"))
+})
