@@ -1,0 +1,22 @@
+year    <- sub("-.*", "", meta$Date)
+version <- meta$Version
+note    <- sprintf("R package version %s", version)
+
+citHeader("To cite airGRiwrm in publications use:")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "airGRiwrm: Modeling of Integrated Water Resources Management based on airGR",
+  author   = c(as.person("D. Dorchies"), as.person("O. Delaigue"), as.person("G. Thirel")),
+  year     = year,
+  note   = note,
+  doi      = "10.15454/3CVD1I",
+  url      = "https://cran.r-project.org/package=airGRiwrm",
+  textVersion = paste0("Dorchies, D., Delaigue, O. and Thirel, G. (",
+                       year,
+                       "). airGRiwrm: Modeling of Integrated Water Resources Management based on airGR. ",
+                       note, ", ",
+                       "doi: 10.57745/XKN6NC, ",
+                       "URL: https://cran.r-project.org/package=airGRiwrm"
+                       )
+)
