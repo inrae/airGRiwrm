@@ -11,9 +11,15 @@ Calibration.InputsModel <- function(InputsModel,
       class(OC) <- c("OutputsCalib", class(OC))
       return(OC)
     } else {
-    airGR::Calibration(InputsModel,
-                       CalibOptions = CalibOptions,
-                       FUN_MOD = InputsModel$FUN_MOD, ...)
+      if (!is.null(InputsModel$hasDiversion) && InputsModel$hasDiversion) {
+        class(InputsModel) <- setdiff(class(InputsModel), "SD")
+        FUN_MOD = RunModel.InputsModel
+      } else {
+        FUN_MOD = InputsModel$FUN_MOD
+      }
+      airGR::Calibration(InputsModel,
+                         CalibOptions = CalibOptions,
+                         FUN_MOD = FUN_MOD, ...)
     }
   } else {
     airGR::Calibration(InputsModel,
