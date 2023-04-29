@@ -150,3 +150,76 @@ test_that("RunModel_Lag should work", {
   expect_s3_class(OM, "GRiwrmOutputsModel")
   expect_true(all(!is.na(attr(OM, "Qm3s"))))
 })
+
+test_that("Upstream node - equal Diversion should return same results", {
+  n_2ol <- nodes[nodes$id %in% c("54095", "54001"), ]
+  n_2ol[n_2ol$id %in% c("54095", "54001"), c("down", "length")] <- c(NA, NA)
+  meteoIds <- n_2ol$id
+  n_2ol$area[n_2ol$id == "54001"] <-
+    n_2ol$area[n_2ol$id == "54001"] - n_2ol$area[n_2ol$id == "54095"]
+  n_2ol <- rbind(n_2ol,
+                 data.frame(id = "54095", down = "54001", length = 42, area = NA, model = "Diversion"),
+                 data.frame(id = "upstream", down = "54095", length = 0, area = NA, model = NA))
+  g_2ol <- CreateGRiwrm(n_2ol)
+
+  # Add upstream flow on 54095 that is removed by the Diversion
+  # and derive previously simulated flow in order to get the same Qsim as before
+  Qinf = matrix(0, nrow = length(DatesR), ncol = 2)
+  Qinf[IndPeriod_Run, 1] <- OM_GriwrmInputs[["54095"]]$Qsim_m3
+  Qinf[IndPeriod_Run, 2] <- - OM_GriwrmInputs[["54095"]]$Qsim_m3
+  Qinf[IndPeriod_WarmUp, 1] <- OM_GriwrmInputs[["54095"]]$RunOptions$WarmUpQsim_m3
+  Qinf[IndPeriod_WarmUp, 2] <- - OM_GriwrmInputs[["54095"]]$RunOptions$WarmUpQsim_m3
+
+  colnames(Qinf) <- c("upstream", "54095")
+
+  Qmin = matrix(0, nrow = length(DatesR), ncol = 1)
+  colnames(Qmin) <- "54095"
+
+  IM_2ol <- CreateInputsModel(g_2ol,
+                              DatesR,
+                              Precip[, meteoIds],
+                              PotEvap[, meteoIds],
+                              Qobs = Qinf,
+                              Qmin = Qmin)
+
+  RO_2ol <- setupRunOptions(IM_2ol)$RunOptions
+  P_2ol <- ParamMichel[names(IM_2ol)]
+  P_2ol[["54095"]] <- c(1, P_2ol[["54095"]])
+  OM_2ol <- RunModel(IM_2ol, RO_2ol, P_2ol)
+
+  # Is the diversion correctly taken into account?
+  expect_equal(
+    OM_2ol[["54095"]]$Qdiv_m3,
+    OM_GriwrmInputs[["54095"]]$Qsim_m3
+  )
+
+  # Is 54001 InputsModel correctly updated?
+  IM_54001_div <- UpdateQsimUpstream(IM_2ol[["54001"]],
+                            RO_2ol[["54001"]],
+                            OM_2ol)
+  IM_54001 <- UpdateQsimUpstream(InputsModel[["54001"]],
+                                 RunOptions[["54001"]],
+                                 OM_GriwrmInputs)
+  expect_equal(
+    IM_54001_div$Qupstream,
+    IM_54001$Qupstream
+  )
+
+  # All simulated flows with or without div must be equal
+  sapply(names(IM_2ol), function(id) {
+    expect_equal(OM_2ol[[!!id]]$Qsimdown, OM_GriwrmInputs[[!!id]]$Qsimdown)
+    expect_equal(OM_2ol[[!!id]]$Qsim_m3, OM_GriwrmInputs[[!!id]]$Qsim_m3)
+  })
+
+  id <- "54095"
+  IM_54095_div <- IM_2ol[[id]]
+  class(IM_54095_div) <- setdiff(class(IM_54095_div), "SD")
+
+  OM_airGR <- airGR::RunModel(IM_54095_div,
+                              RunOptions = RO_2ol[[id]],
+                              Param = P_2ol[[id]],
+                              FUN_MOD = RunModel.InputsModel)
+
+  expect_equal(OM_airGR$Qsimdown, OM_GriwrmInputs[[!!id]]$Qsimdown)
+  expect_equal(OM_airGR$Qsim_m3, OM_GriwrmInputs[[!!id]]$Qsim_m3)
+})

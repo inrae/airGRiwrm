@@ -4,7 +4,7 @@
 \alias{RunModel.InputsModel}
 \title{Wrapper for \link[airGR:RunModel]{airGR::RunModel} for one sub-basin}
 \usage{
-\method{RunModel}{InputsModel}(x, RunOptions, Param, FUN_MOD = NULL, ...)
+\method{RunModel}{InputsModel}(x = NULL, RunOptions, Param, FUN_MOD = NULL, InputsModel = NULL, ...)
 }
 \arguments{
 \item{x}{[object of class \emph{InputsModel}] see \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} for details}
@@ -14,6 +14,8 @@
 \item{Param}{[numeric] vector of model parameters (See details for SD lag model)}
 
 \item{FUN_MOD}{[function] hydrological model function (e.g. \code{\link[airGR]{RunModel_GR4J}}, \code{\link[airGR]{RunModel_CemaNeigeGR4J}})}
+
+\item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link[airGR]{CreateInputsModel}} for details}
 
 \item{...}{Further arguments for compatibility with S3 methods}
 }

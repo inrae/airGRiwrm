@@ -11,7 +11,24 @@
 #' @inherit airGR::RunModel return return
 #'
 #' @export
-RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
+RunModel.InputsModel <- function(x = NULL,
+                                 RunOptions,
+                                 Param,
+                                 FUN_MOD = NULL,
+                                 InputsModel = NULL,
+                                 ...) {
+  if (is.null(x)) {
+    if (!is.null(InputsModel)) {
+      x <- InputsModel
+    } else {
+      stop("`x` or `InputsModel` must be defined")
+    }
+  } else {
+    if (!is.null(InputsModel)) {
+      stop("`x` and `InputsModel` can't be defined at the same time")
+    }
+  }
+
   if(is.null(FUN_MOD)) {
     if (x$isReservoir) {
       FUN_MOD <- "RunModel_Reservoir"
@@ -19,6 +36,7 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
       FUN_MOD <- x$FUN_MOD
     }
   }
+
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
     QcontribDown <- list(
@@ -31,11 +49,15 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
     x$BasinAreas[length(x$BasinAreas)] <- 1
     OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
     OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
-  } else if((inherits(x, "GR") & !inherits(x, "SD")) | identical(FUN_MOD, RunModel_Reservoir)) {
+  } else if((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)
   } else {
     # Intermediate basins (other than reservoir) are launch with SD capabilities
+    if (!is.null(x$UpstreamNodes) & !inherits(x, "SD")) {
+      # For calibration of node with diversion
+      class(x) <- c(class(x), "SD")
+    }
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
   }
   OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
@@ -53,7 +75,6 @@ RunModel.InputsModel <- function(x, RunOptions, Param, FUN_MOD = NULL, ...) {
   }
   return(OutputsModel)
 }
-
 
 #' Model the diversion of a flow from an existing modeled node
 #'
