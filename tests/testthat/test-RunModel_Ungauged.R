@@ -225,3 +225,35 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
     expect_equal(OC1[[id]]$CritFinal, CritValue)
   })
 })
+
+test_that("Ungauged node with upstream node with diversion  should work", {
+  nodes <- loadSevernNodes()
+  nodes <- nodes[nodes$id %in% c("54095", "54001", "54032"), ]
+  nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
+  nodes$model[nodes$id == "54001"] <- "Ungauged"
+  nodes$down[nodes$id == "54095"] <- "P"
+  nodes <- rbind(nodes,
+                 data.frame(id = "P", down = "54001", length = 0, area = NA, model = "RunModel_Lag"),
+                 data.frame(id = c("54095", "P", "54001"),
+                            down = NA,
+                            length = NA,
+                            area = NA,
+                            model = "Diversion"))
+  g <- CreateGRiwrm(nodes)
+  Qobs2 <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
+  colnames(Qobs2) <- g$id[g$model == "Diversion"]
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
+  for(x in ls(e)) assign(x, get(x, e))
+  np <- getAllNodesProperties(g)
+
+  IC <- CreateInputsCrit(
+    InputsModel,
+    FUN_CRIT = ErrorCrit_KGE2,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run, np$id[np$RunOff & np$calibration == "Gauged"], drop = FALSE],
+  )
+
+  CO <- CreateCalibOptions(InputsModel)
+  CO[["P"]]$FixedParam = 1
+  OC <- Calibration(InputsModel, RunOptions, IC, CO)
+})
