@@ -255,5 +255,33 @@ test_that("Ungauged node with upstream node with diversion  should work", {
 
   CO <- CreateCalibOptions(InputsModel)
   CO[["P"]]$FixedParam = 1
-  OC <- Calibration(InputsModel, RunOptions, IC, CO)
+  OC_Lag <- Calibration(InputsModel, RunOptions, IC, CO)
+})
+
+test_that("Donor node with diversion should work", {
+  nodes <- rbind(nodes,
+                 data.frame(id = "54032",
+                            down = NA,
+                            length = NA,
+                            area = NA,
+                            model = "Diversion"))
+  g <- CreateGRiwrm(nodes)
+  Qobs2 <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
+  colnames(Qobs2) <- g$id[g$model == "Diversion"]
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
+  for(x in ls(e)) assign(x, get(x, e))
+  np <- getAllNodesProperties(g)
+
+  IC <- CreateInputsCrit(
+    InputsModel,
+    FUN_CRIT = ErrorCrit_KGE2,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run, np$id[np$RunOff & np$calibration == "Gauged"], drop = FALSE],
+  )
+
+  CO <- CreateCalibOptions(InputsModel)
+  OC_Div <- Calibration(InputsModel, RunOptions, IC, CO)
+  Param_Div <- sapply(OC_Div, "[[", "ParamFinalR")
+  expect_equal(Param_Div, Param)
+  expect_equal(OC$`54032`$CritFinal, OC_Div$`54032`$CritFinal)
 })
