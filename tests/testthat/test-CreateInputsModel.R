@@ -241,3 +241,31 @@ test_that("Diversion node: checks about 'Qmin'", {
   expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminBadCol),
                regexp = "columns that does not match with IDs of Diversion nodes")
 })
+
+test_that("Node with upstream nodes having area = NA should return correct BasinsAreas", {
+  nodes <- loadSevernNodes()
+  # Reduce the network
+  nodes <- nodes[nodes$id %in% c("54095", "54001"), ]
+  nodes$down[nodes$id == "54001"] <- NA
+  nodes$length[nodes$id == "54001"] <- NA
+  # Insert a dam downstream the location the gauging station 54095
+  # The dam is a direct injection node
+  nodes$down[nodes$id == "54095"] <- "Dam"
+  nodes$length[nodes$id == "54095"] <- 0
+  nodes <- rbind(nodes,
+                 data.frame(id = "Dam",
+                            down = "54001",
+                            length = 42,
+                            area = NA,
+                            model = "RunModel_Reservoir"))
+  g <- CreateGRiwrm(nodes)
+  Qobs2 <- data.frame(
+    Dam = rep(0,11536)
+  )
+  e <- setupRunModel(griwrm = g, runInputsModel = FALSE, Qobs2 = Qobs2)
+  for(x in ls(e)) assign(x, get(x, e))
+  InputsModel <-
+    suppressWarnings(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs2))
+  expect_equal(sum(InputsModel$`54001`$BasinAreas),
+               g$area[g$id == "54001"])
+})
