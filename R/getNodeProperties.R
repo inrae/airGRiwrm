@@ -6,11 +6,22 @@
 #'
 #' @return A [list] with the following items:
 #' - "position" ([character]): Position of the node in the network ("Upstream" or "Intermediate")
-#' - "calibration" ([character]): describe if the node is a "Gauged", or an "Ungauged" station,
-#'   modelled with an hydrological model, or "NA" otherwise
-#' - "Upstream" ([logical]): is the node an upstream node?
 #' - "DirectInjection" ([logical]): is the node a Direct Injection node?
 #' - "Diversion" ([logical]): is the node a Diversion node?
+#' - "Reservoir" ([logical]): is the node a Reservoir?
+#' - "airGR" ([logical]): is the node contains an airGR model?
+#' - "calibration" ([character]): describe if the node is a "Gauged", or an "Ungauged" station,
+#'   (see details), or "NA" otherwise
+#' - "Upstream" ([logical]): is the node an upstream node?
+#' - "RunOff" ([logical]): is the node contains an hydrological model?
+#'
+#' @details
+#' A "Gauged" node is either a node containing a model that is already
+#' calibrated (parameters are already fixed) or a node containing a model where
+#' observations are available for calibration.
+#'
+#' A "Ungauged" node is a node containing a model which derives its parameters from
+#' another "donor" node.
 #'
 #' @export
 #'

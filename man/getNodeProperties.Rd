@@ -15,15 +15,26 @@ getNodeProperties(id, griwrm)
 A \link{list} with the following items:
 \itemize{
 \item "position" (\link{character}): Position of the node in the network ("Upstream" or "Intermediate")
-\item "calibration" (\link{character}): describe if the node is a "Gauged", or an "Ungauged" station,
-modelled with an hydrological model, or "NA" otherwise
-\item "Upstream" (\link{logical}): is the node an upstream node?
 \item "DirectInjection" (\link{logical}): is the node a Direct Injection node?
 \item "Diversion" (\link{logical}): is the node a Diversion node?
+\item "Reservoir" (\link{logical}): is the node a Reservoir?
+\item "airGR" (\link{logical}): is the node contains an airGR model?
+\item "calibration" (\link{character}): describe if the node is a "Gauged", or an "Ungauged" station,
+(see details), or "NA" otherwise
+\item "Upstream" (\link{logical}): is the node an upstream node?
+\item "RunOff" (\link{logical}): is the node contains an hydrological model?
 }
 }
 \description{
 Get list of properties of a GRiwrm network node
+}
+\details{
+A "Gauged" node is either a node containing a model that is already
+calibrated (parameters are already fixed) or a node containing a model where
+observations are available for calibration.
+
+A "Ungauged" node is a node containing a model which derives its parameters from
+another "donor" node.
 }
 \examples{
 ###############################################################################
