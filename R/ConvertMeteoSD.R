@@ -32,14 +32,14 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
 #' @export
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
-  upperBasins <- !is.na(griwrm$down) & griwrm$down == x & !is.na(griwrm$area)
-  if(all(!upperBasins)) {
+  griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
+  upperIDs <- getUpstreamRunOffIds(x, griwrm)
+  if(length(upperIDs) == 1) {
     return(meteo[,x])
   }
-  upperIDs <- griwrm$id[upperBasins]
-  areas <- griwrm$area[match(c(x, upperIDs), griwrm$id)]
+  areas <- griwrm$area[match(upperIDs, griwrm$id)]
   output <- ConvertMeteoSD(
-    meteo[,c(x, upperIDs), drop = FALSE],
+    meteo[, upperIDs, drop = FALSE],
     areas = areas
   )
   return(output)
@@ -79,3 +79,22 @@ ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {
   return(as.matrix(meteoDown, ncol = 1))
 }
 
+getUpstreamRunOffIds <- function(id, griwrm) {
+  griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
+  upstreamNodeIds <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
+  upstreamRunOffIds <- griwrm$id[griwrm$id %in% upstreamNodeIds & !is.na(griwrm$area)]
+  upstreamNaAreaIds <- upstreamNodeIds[!upstreamNodeIds %in% upstreamRunOffIds]
+  if(length(upstreamNaAreaIds) > 0) {
+    upstreamRunOffIds <-  c(
+      upstreamRunOffIds,
+      unlist(sapply(upstreamNaAreaIds, getUpstreamRunOffIds, griwrm = griwrm))
+    )
+    upstreamRunOffIds <- upstreamRunOffIds[!is.na(griwrm$area[griwrm$id %in% upstreamRunOffIds])]
+  }
+
+  if (is.na(griwrm$area[griwrm$id == id])) {
+    return(upstreamRunOffIds)
+  }
+
+  return(c(id, upstreamRunOffIds))
+}

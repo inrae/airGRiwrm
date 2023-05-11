@@ -71,8 +71,26 @@ nodes <-
   )
 griwrm <- CreateGRiwrm(nodes)
 
+test_that("getUpstreamRunoffIds works", {
+  expect_equal(getUpstreamRunOffIds("Up", griwrm), "Up")
+  expect_equal(getUpstreamRunOffIds("Down", griwrm), c("Down", "Up"))
+
+  nodes <-
+    data.frame(
+      id = c("Up1", "Up2", "Inter", "Up3", "Down"),
+      down = c("Inter", "Inter", "Down", "Down", NA),
+      area = c(1.1, 1.2, NA, 2.1, 5),
+      length = c(0, 0, 0, 0, NA),
+      model = "RunModel_GR4J",
+      stringsAsFactors = FALSE
+    )
+  nodes$model[3] <- NA
+  griwrm <- CreateGRiwrm(nodes)
+
+  expect_equal(sort(getUpstreamRunOffIds("Down", griwrm)), sort(nodes$id[nodes$id != "Inter"]))
+})
+
 test_that("Downstream data should return 2", {
-  resultMatrix[,] <- 2
   meteo <- matrix(rep(c(1, 1.5), dataNumRows), ncol = 2, byrow = TRUE)
   colnames(meteo) <- c("Up", "Down")
   expect_equivalent(
