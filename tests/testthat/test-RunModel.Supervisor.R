@@ -89,6 +89,7 @@ test_that("RunModel.Supervisor with diversion node should not produce NAs", {
                                            length = 25,
                                            model = "Diversion",
                                            area = NA))
+  nodes_div <- nodes_div[order(nodes_div$model), ]
   g_div <- CreateGRiwrm(nodes_div)
   Qobs2 <- matrix(data = rep(0, length(DatesR)), ncol = 1)
   colnames(Qobs2) <- "54001"
