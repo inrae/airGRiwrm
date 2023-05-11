@@ -281,9 +281,10 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
     }
     LengthHydro <- griwrm$length[UpstreamNodeRows]
     names(LengthHydro) <- griwrm$id[UpstreamNodeRows]
+    upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     BasinAreas <- c(
-        griwrm$area[UpstreamNodeRows],
-        node$area - sum(griwrm$area[UpstreamNodeRows], na.rm = TRUE)
+        upstreamAreas,
+        node$area - sum(upstreamAreas, na.rm = TRUE)
     )
     if (!is.na(node$area)) {
       if (BasinAreas[length(BasinAreas)] < 0) {
@@ -462,4 +463,32 @@ hasUngaugedNodes <- function(id, griwrm) {
     FeatMod$NbParam <- FeatMod$NbParam + 1
   }
   return(FeatMod)
+}
+
+
+#' Return the basin area of a node
+#'
+#' If the current node doesn't have an area (for example, for a Reservoir,
+#' a Direct Injection, or a [airGR::RunModel_Lag]), this function return the sum
+#' of the basin areas of the upstream nodes.
+#'
+#' @param i [integer] row number in the GRiwrm network
+#' @param griwrm A GRiwrm
+#'
+#' @return The basin area of the node
+#' @noRd
+#'
+getNodeBasinArea <- function(i, griwrm) {
+  area <- griwrm$area[i]
+  if (!is.na(area)) return(area)
+
+  griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
+  UpstreamNodeRows <- which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down))
+  if(length(UpstreamNodeRows) > 0) {
+    upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
+    return(sum(upstreamAreas, na.rm = TRUE))
+  } else {
+    return(NA)
+  }
+
 }
