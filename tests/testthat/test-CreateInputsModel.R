@@ -202,11 +202,14 @@ test_that("Ungauged node should inherits its FUN_MOD from the downstream gauged 
 })
 
 test_that("Network with Diversion works", {
-  n_div <- rbind(nodes, data.frame(id = "54029",
-                                   down = "54002",
-                                   length = 20,
-                                   model = "Diversion",
-                                   area = NA))
+  n_div <- rbind(
+    data.frame(id = "54029",
+               down = "54002",
+               length = 20,
+               model = "Diversion",
+               area = NA),
+    nodes
+  )
   g <- CreateGRiwrm(n_div)
   Qobs = matrix(-1, nrow = length(DatesR), ncol = 1)
   colnames(Qobs) = "54029"

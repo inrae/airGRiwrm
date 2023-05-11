@@ -481,9 +481,10 @@ hasUngaugedNodes <- function(id, griwrm) {
 getNodeBasinArea <- function(i, griwrm) {
   area <- griwrm$area[i]
   if (!is.na(area)) return(area)
-
-  griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
-  UpstreamNodeRows <- which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down))
+  Diversions <- !is.na(griwrm$model) & griwrm$model == "Diversion"
+  if (i %in% which(Diversions)) return(NA)
+  UpstreamNodeRows <-
+    which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down) & !Diversions)
   if(length(UpstreamNodeRows) > 0) {
     upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     return(sum(upstreamAreas, na.rm = TRUE))
