@@ -11,8 +11,8 @@ getDataFromLocation <- function(loc, sv) {
   if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
     stop("Reaching output of other controller is not implemented yet")
   } else {
-    if (!sv$nodeProperties[[loc]]$DirectInjection) {
-      if (sv$nodeProperties[[loc]]$Upstream) {
+    if (!sv$nodeProperties[loc, "DirectInjection"]) {
+      if (sv$nodeProperties[loc, "Upstream"]) {
         sv$OutputsModel[[loc]]$Qsim_m3[sv$ts.previous]
       } else {
         sv$OutputsModel[[loc]]$Qsim_m3
@@ -39,17 +39,17 @@ setDataToLocation <- function(ctrlr, sv) {
 
     locU <- ctrlr$Unames[i]
 
-    if (sv$nodeProperties[[locU]]$DirectInjection) {
+    if (sv$nodeProperties[locU, "DirectInjection"]) {
       # Direct injection node => update Qusptream of downstream node
       node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
       # ! Qupstream contains warm up period and run period => the index is shifted
       if(!is.null(sv$InputsModel[[node]])) {
         sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, locU] <- U
       }
-    } else if (sv$nodeProperties[[locU]]$Diversion){
+    } else if (sv$nodeProperties[locU, "Diversion"]){
       # Diversion node => update Qdiv with -U
       sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
-    } else if (sv$nodeProperties[[locU]]$Reservoir) {
+    } else if (sv$nodeProperties[locU, "Reservoir"]) {
       sv$InputsModel[[locU]]$Qrelease[sv$ts.index0 + sv$ts.index] <- U
     } else {
       stop("Node ", locU, " must be a Direct Injection or a Diversion node")

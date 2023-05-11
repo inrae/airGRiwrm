@@ -34,11 +34,7 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$InputsModel <- InputsModel
   e$griwrm <- attr(InputsModel, "GRiwrm")
   # Commands U are only applied on DirectInjection and Diversion
-  e$nodeProperties <- lapply(e$griwrm$id[getDiversionRows(e$griwrm, TRUE)],
-                             getNodeProperties,
-                             griwrm = e$griwrm)
-  names(e$nodeProperties) <- unique(e$griwrm$id)
-  dfNP <- do.call(rbind, lapply(e$nodeProperties, dplyr::bind_cols))
+  e$nodeProperties <- getAllNodesProperties(e$griwrm)
   models4U <- c("Diversion", "RunModel_Reservoir")
   e$griwrm4U <-
     e$griwrm[is.na(e$griwrm$model) |
