@@ -229,9 +229,8 @@ nodeError <- function(node, s) {
 #'
 #' @noRd
 getGaugedId <- function(id, griwrm) {
-  np <- getNodeProperties(id, griwrm)
-  if (np$RunOff && np$calibration == "Gauged") {
-    # Match with au gauged station!
+  if (isNodeGauged(id, griwrm, skip_reservoirs = TRUE)) {
+    # Match with a gauged station!
     return(id)
   } else {
     # Otherwise we need to search downstream on the natural network

@@ -223,3 +223,26 @@ test_that("Upstream node - equal Diversion should return same results", {
   expect_equal(OM_airGR$Qsimdown, OM_GriwrmInputs[[!!id]]$Qsimdown)
   expect_equal(OM_airGR$Qsim_m3, OM_GriwrmInputs[[!!id]]$Qsim_m3)
 })
+
+test_that("A transparent upstream node with area=NA should return same result #124", {
+  nodes <- loadSevernNodes()
+  nodes <- nodes[nodes$id %in% c("54095", "54001"), ]
+  nodes[nodes$id == "54001", c("down", "length")] <- c(NA, NA)
+  nodes$down[nodes$id == "54095"] <- "P"
+  nodes$length[nodes$id == "54095"] <- 0
+  nodes <- rbind(
+    nodes,
+    data.frame(id = "P", down = "54001", length = 42, area = NA, model = "RunModel_Lag")
+  )
+  g <- CreateGRiwrm(nodes)
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE)
+  for(x in ls(e)) assign(x, get(x, e))
+  Param <- ParamMichel[c("54095", "54001")]
+  Param[["P"]] <- 1
+  OM <- RunModel(InputsModel,
+                 RunOptions = RunOptions,
+                 Param = Param)
+  expect_equal(OM[["P"]]$Qsim_m3, OM[["54095"]]$Qsim_m3)
+  names(OM[["54001"]]$StateEnd$SD[[1]]) <- "54095" # For matching upstream IDs with ref
+  expect_equal(OM[["54001"]], OM_GriwrmInputs[["54001"]])
+})
