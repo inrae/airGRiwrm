@@ -226,7 +226,7 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
   })
 })
 
-test_that("Ungauged node with upstream node with diversion  should work", {
+test_that("Ungauged node with upstream node with diversion should work", {
   nodes <- loadSevernNodes()
   nodes <- nodes[nodes$id %in% c("54095", "54001", "54032"), ]
   nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
@@ -235,7 +235,7 @@ test_that("Ungauged node with upstream node with diversion  should work", {
   nodes$length[nodes$id == "54095"] <- 0
   nodes <- rbind(nodes,
                  data.frame(id = "P", down = "54001", length = 42, area = NA, model = "RunModel_Lag"),
-                 data.frame(id = c("54095", "P", "54001"),
+                 data.frame(id = c("54095", "P", "54001", "54032"),
                             down = NA,
                             length = NA,
                             area = NA,
@@ -245,6 +245,24 @@ test_that("Ungauged node with upstream node with diversion  should work", {
   colnames(Qobs2) <- g$id[g$model == "Diversion"]
   e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
   for(x in ls(e)) assign(x, get(x, e))
+
+  Param[["P"]] <- 1
+  OM <- RunModel(InputsModel,
+                 RunOptions = RunOptions,
+                 Param = Param)
+
+  l <- updateParameters4Ungauged(GaugedId = "54032",
+                                 InputsModel = InputsModel,
+                                 RunOptions = RunOptions,
+                                 CalibOptions = CO,
+                                 OutputsModel = OM,
+                                 useUpstreamQsim = TRUE)
+  g_reduced <- attr(l$InputsModel, "GRiwrm")
+
+  expect_true(!any(g_reduced$id == "P" & !is.na(g_reduced$model) & g_reduced$model == "Diversion"))
+  expect_true(any(g_reduced$id == "54001" & !is.na(g_reduced$model) & g_reduced$model == "Diversion"))
+  expect_true(any(g_reduced$id == "54032" & !is.na(g_reduced$model) & g_reduced$model == "Diversion"))
+
   np <- getAllNodesProperties(g)
 
   IC <- CreateInputsCrit(
@@ -258,8 +276,7 @@ test_that("Ungauged node with upstream node with diversion  should work", {
   CO[["P"]]$FixedParam = 1
   OC_Lag <- Calibration(InputsModel, RunOptions, IC, CO)
   Param_Lag <- sapply(OC_Lag, "[[", "ParamFinalR")
-  Param_Lag[["P"]] <- NULL
-  expect_equal(Param_Lag, Param)
+  expect_equal(Param_Lag, Param[names(Param_Lag)])
 })
 
 test_that("Donor node with diversion should work", {
