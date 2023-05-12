@@ -25,3 +25,13 @@ n_rsrvr <- rbind(
 # Model input
 Qobs_rsrvr <- data.frame(Dam = rep(0, 11536))
 
+get_nodes_derived_reservoir <- function(n_rsrvr) {
+  nodes_Severn <- loadSevernNodes()
+  n_rsrvr$model[n_rsrvr$id == "54095"] <- "Diversion"
+  n_rsrvr$area[n_rsrvr$id == "54095"] <- NA
+  nodes_Severn$model[nodes_Severn$id == "54095"] <- "Ungauged"
+  n_rsrvr <- rbind(n_rsrvr, nodes_Severn[nodes_Severn$id == "54095", ])
+  return(n_rsrvr)
+}
+n_derived_rsrvr <- get_nodes_derived_reservoir(n_rsrvr)
+

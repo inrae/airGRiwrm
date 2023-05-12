@@ -94,3 +94,9 @@ test_that("Calibration with ungauged node and reservoir in the middle works",{
   n_rsrvr$model[n_rsrvr$id == "54095"] <- "Ungauged"
   expect_dam(n_rsrvr, Qobs_rsrvr)
 })
+
+test_that("Calibration with ungauged node and reservoir filled by a diversion works",{
+  Qobs2 <- cbind(Qobs_rsrvr, rep(0, nrow(Qobs_rsrvr)))
+  colnames(Qobs2) <- c("Dam", "54095")
+  expect_dam(n_derived_rsrvr, Qobs2)
+})
