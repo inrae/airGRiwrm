@@ -229,8 +229,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
 CreateEmptyGRiwrmInputsModel <- function(griwrm) {
   InputsModel <- list()
   class(InputsModel) <- c("GRiwrmInputsModel", class(InputsModel))
-  # Update griwrm in case of manual change in model column
-  griwrm$donor <- setDonor(griwrm)
+  # Save the GRiwrm in InputsModel for later use
   attr(InputsModel, "GRiwrm") <- griwrm
   return(InputsModel)
 }
