@@ -35,29 +35,12 @@ test_that("airGR::Calibration should work", {
 })
 
 # data set up
-e <- setupRunModel()
-# variables are copied from environment 'e' to the current environment
-# https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
+e <- runCalibration(runRunModel = TRUE, FUN_CRIT = ErrorCrit_NSE)
 for(x in ls(e)) assign(x, get(x, e))
-
-CalibOptions <- CreateCalibOptions(InputsModel)
-
-InputsCrit <- CreateInputsCrit(
-  InputsModel = InputsModel,
-  RunOptions = RunOptions,
-  Obs = Qobs[IndPeriod_Run,]
-)
-
-OC <- Calibration(
-  InputsModel = InputsModel,
-  RunOptions = RunOptions,
-  InputsCrit = InputsCrit,
-  CalibOptions = CalibOptions
-)
 
 test_that("Calibrated parameters remains unchanged", {
 
-  ParamFinalR <- lapply(OC, "[[", "ParamFinalR")
+  ParamFinalR <- lapply(OutputsCalib, "[[", "ParamFinalR")
 
   lapply(names(ParamFinalR), function(id) expect_equal(ParamFinalR[[id]], ParamMichel[[id]]))
 
@@ -181,7 +164,7 @@ test_that("Derivation and normal connection should return same calibration", {
   ParamRef[["54095"]] <- c(1, ParamRef[["54095"]])
   ParamFinalR <- lapply(OC_2ol, "[[", "ParamFinalR")
   lapply(names(ParamFinalR), function(id) expect_equal(OC_2ol[[id]]$CritFinal,
-                                                       OC[[id]]$CritFinal,
+                                                       OutputsCalib[[id]]$CritFinal,
                                                        tolerance = 1E-5))
   #Excepted parameter #2 of GR4J all others are equal (precision 3/1000)
   lapply(names(ParamFinalR), function(id)
