@@ -238,11 +238,17 @@ getGaugedId <- function(id, griwrm) {
     id_down <- g2$down[g2$id == id]
     if (!is.na(id_down)) {
       return(getGaugedId(id_down, griwrm))
-    } else {
-      #If we already are at the downstream end, we have a problem...
-      return(FALSE)
+    } else if(length(getDiversionRows(griwrm)) > 0) {
+      # Search on Diversion
+      g3 <- griwrm[getDiversionRows(griwrm), ]
+      id_down <- g3$down[g3$id == id]
+      if (!is.na(id_down)) {
+        return(getGaugedId(id_down, griwrm))
+      }
     }
   }
+  #If we already are at the downstream end, we have a problem...
+  return(FALSE)
 }
 
 getDiversionRows <- function(griwrm, inverse = FALSE) {
