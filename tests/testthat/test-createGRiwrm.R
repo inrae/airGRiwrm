@@ -59,3 +59,14 @@ test_that("Allow several downstream ends", {
                  data.frame(id = "54029", down = NA, length = NA, area = NA, model = "Diversion"))
   expect_s3_class(CreateGRiwrm(nodes), "GRiwrm")
 })
+
+test_that("Derivated ungauged node without downstream node should have derivated node as donor", {
+  nodes <- loadSevernNodes()
+  nodes <- nodes[nodes$id %in% c("54095", "54001", "54032"), ]
+  nodes[nodes$id %in% c("54032", "54001"), c("down", "length")] <- NA
+  nodes$model[nodes$id %in% c("54095", "54001")] <- "Ungauged"
+  nodes <- rbind(nodes,
+                 data.frame(id = "54001", down = "54032", length = 45, area = NA, model = "Diversion"))
+  g <- CreateGRiwrm(nodes)
+  expect_equal(g$donor, c(rep("54032", 3), NA))
+})
