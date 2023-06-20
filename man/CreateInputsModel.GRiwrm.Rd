@@ -71,7 +71,7 @@ if not defined a single elevation is used for CemaNeige}
 of elevation layers requested \link{-}, required to create CemaNeige module
 inputs, default=5}
 
-\item{IsHyst}{\link{boolean} boolean indicating if the hysteresis version of
+\item{IsHyst}{\link{logical} boolean indicating if the hysteresis version of
 CemaNeige is used. See details of \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}.}
 
 \item{...}{used for compatibility with S3 methods}

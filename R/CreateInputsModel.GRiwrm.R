@@ -35,7 +35,7 @@
 #' @param NLayers (optional) named [vector] of [numeric] integer giving the number
 #'        of elevation layers requested [-], required to create CemaNeige module
 #'        inputs, default=5
-#' @param IsHyst [boolean] boolean indicating if the hysteresis version of
+#' @param IsHyst [logical] boolean indicating if the hysteresis version of
 #'        CemaNeige is used. See details of [airGR::CreateRunOptions].
 #' @param ... used for compatibility with S3 methods
 #'
