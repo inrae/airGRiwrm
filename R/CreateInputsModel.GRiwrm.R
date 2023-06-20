@@ -35,6 +35,8 @@
 #' @param NLayers (optional) named [vector] of [numeric] integer giving the number
 #'        of elevation layers requested [-], required to create CemaNeige module
 #'        inputs, default=5
+#' @param IsHyst [logical] boolean indicating if the hysteresis version of
+#'        CemaNeige is used. See details of [airGR::CreateRunOptions].
 #' @param ... used for compatibility with S3 methods
 #'
 #' @details Meteorological data are needed for the nodes of the network that
@@ -70,7 +72,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      PrecipScale = TRUE,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
-                                     HypsoData = NULL, NLayers = 5, ...) {
+                                     HypsoData = NULL, NLayers = 5,
+                                     IsHyst = FALSE, ...) {
 
   # Check and format inputs
   varNames <- c("Precip", "PotEvap", "TempMean", "Qobs", "Qmin",
@@ -212,7 +215,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  HypsoData = getInputBV(HypsoData, id),
                                  NLayers = getInputBV(NLayers, id, 5),
                                  Qobs = Qobs,
-                                 Qmin = getInputBV(Qmin, id)
+                                 Qmin = getInputBV(Qmin, id),
+                                 IsHyst = IsHyst
                                  )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
@@ -247,7 +251,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -326,7 +330,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
 
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
-  featModel <- .GetFeatModel(InputsModel)
+  featModel <- .GetFeatModel(InputsModel, IsHyst)
   InputsModel$isUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
   InputsModel$gaugedId <- griwrm$donor[griwrm$id == id]
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
@@ -334,8 +338,9 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
     list(
       indexParamUngauged = ifelse(inherits(InputsModel, "SD"), 0, 1) +
         seq.int(featModel$NbParam),
-      hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
-      iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4)
+      hasX4 = grepl("RunModel_(CemaNeige|)GR[456][HJ]", FUN_MOD),
+      iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4),
+      IsHyst = featModel$IsHyst
     )
   InputsModel$hasDiversion <- np$Diversion
   InputsModel$isReservoir <- np$Reservoir
@@ -446,7 +451,7 @@ hasUngaugedNodes <- function(id, griwrm) {
 #' function to extract model features partially copied from airGR:::.GetFeatModel
 #' @importFrom utils tail
 #' @noRd
-.GetFeatModel <- function(InputsModel) {
+.GetFeatModel <- function(InputsModel, IsHyst) {
   path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
   FeatMod <- read.table(path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
   NameFunMod <- ifelse(test = FeatMod$Pkg %in% "airGR",
@@ -460,6 +465,13 @@ hasUngaugedNodes <- function(id, griwrm) {
   FeatMod$IsSD <- inherits(InputsModel, "SD")
   if (FeatMod$IsSD) {
     FeatMod$NbParam <- FeatMod$NbParam + 1
+  }
+  FeatMod$IsHyst <- FALSE
+  if (grepl("CemaNeige", FeatMod$NameMod)) {
+    FeatMod$IsHyst <- IsHyst
+    if (IsHyst) {
+      FeatMod$NbParam <- FeatMod$NbParam + 2
+    }
   }
   return(FeatMod)
 }

@@ -15,7 +15,8 @@ setupRunModel <-
            runRunOptions = TRUE,
            runRunModel = TRUE,
            griwrm = NULL,
-           Qobs2 = NULL) {
+           Qobs2 = NULL,
+           IsHyst = FALSE) {
 
     data(Severn)
 
@@ -43,12 +44,20 @@ setupRunModel <-
     # Convert meteo data to SD (remove upstream areas)
     Precip <- ConvertMeteoSD(griwrm, PrecipTot)
     PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+    if (IsHyst) {
+      TempMean <- PotEvap+5 # Fake temperatures
+    } else {
+      TempMean <- NULL
+    }
 
     # set up inputs
     if (!runInputsModel)
       return(environment())
     InputsModel <-
-      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qobs = Qobs2))
+      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
+                                         TempMean = TempMean,
+                                         Qobs = Qobs2,
+                                         IsHyst = IsHyst))
 
     # RunOptions
     if (!runRunOptions)

@@ -233,3 +233,59 @@ test_that("Donor node with diversion should work", {
   for(x in ls(e)) assign(x, get(x, e))
   expect_equal(OC_ref$`54032`$CritFinal, OutputsCalib$`54032`$CritFinal, tolerance = 1E-3)
 })
+
+test_that("Cemaneige with hysteresis works",  {
+  nodes <- loadSevernNodes()
+  nodes <- nodes[nodes$id %in% c("54057", "54032", "54001"), ]
+  nodes$model <- "RunModel_CemaNeigeGR4J"
+  nodes$model[nodes$id != 54057] <- "Ungauged"
+  griwrm <- CreateGRiwrm(nodes)
+
+  # # The custom ErrorCrit function !!!
+  ErrorCrit_KGE3 <- function(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE) {
+    OutputsCritQ <- suppressMessages(
+      ErrorCrit_KGE2(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
+    )
+    InputsCrit$Obs <- InputsCrit$SCA #a adapter
+    OutputsModel$Qsim <- OutputsModel$CemaNeigeLayers[[1]]$Gratio #a adapter
+    OutputsCritSCA <- suppressMessages(
+      ErrorCrit_KGE2(InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)
+    )
+    OutputsCritQ$CritValue <-
+      (OutputsCritQ$CritValue + OutputsCritSCA$CritValue) / 2
+    OutputsCritQ$CritName <- "(0.5 * KGE2[Q] + 0.5 * KGE2[SCA])"
+    return(OutputsCritQ)
+  }
+  class(ErrorCrit_KGE3) <- c("FUN_CRIT", class(ErrorCrit_KGE3))
+
+  e <- suppressWarnings(
+    setupRunModel(griwrm = griwrm, runRunModel = FALSE, IsHyst = TRUE)
+  )
+  for(x in ls(e)) assign(x, get(x, e))
+
+  expect_true(all(sapply(InputsModel, function(x) x$model$hasX4)))
+
+  np <- getAllNodesProperties(griwrm)
+  InputsCrit <- CreateInputsCrit(
+    InputsModel,
+    FUN_CRIT = ErrorCrit_KGE3,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run, np$id[np$RunOff & np$calibration == "Gauged"], drop = FALSE],
+  )
+  InputsCrit$`54057`$SCA <- runif(length(IndPeriod_Run)) # Fake SCA
+  CalibOptions <- CreateCalibOptions(InputsModel)
+  CO <- lapply(CalibOptions, function(x) {
+    x$StartParamList <- matrix(
+      c(0.605,  320.596,   -0.042,   37.991,    2.221,    0.705,    6.764,   85.000,    0.850),
+      nrow = 1)
+    x$StartParamDistrib <- NULL
+    x
+  })
+  class(CO) <- class(CalibOptions)
+  e <- suppressWarnings(
+    runCalibration(nodes, InputsCrit = InputsCrit, CalibOptions = CO, IsHyst = TRUE)
+  )
+  for(x in ls(e)) assign(x, get(x, e))
+  expect_equal(sapply(Param, length),
+               c("54057" = 9, "54032" = 9, "54001" = 8))
+})

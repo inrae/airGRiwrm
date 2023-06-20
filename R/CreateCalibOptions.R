@@ -23,17 +23,21 @@ CreateCalibOptions <- function(x, ...) {
 #' @export
 CreateCalibOptions.InputsModel <- function(x,
                                            ...) {
-  if (!exists("FUN_MOD") && !is.null(x$FUN_MOD)) {
-    airGR::CreateCalibOptions(
-      FUN_MOD = x$FUN_MOD,
-      IsSD = !is.null(x$Qupstream) & x$FUN_MOD != "RunModel_Lag",
-      ...
-    )
-  } else {
-    airGR::CreateCalibOptions(
-      ...
-    )
+  dots <- list(...)
+  # Add FUN_MOD in parameters if carried by InputsModel
+  if (!"FUN_MOD" %in% names(dots)) {
+    if(!is.null(x$FUN_MOD)) {
+      dots$FUN_MOD <- x$FUN_MOD
+    } else {
+      stop(" The parameter `FUN_MOD` must be defined")
+    }
   }
+  # Automatically define IsSD for intermediate basin GR models
+  dots$IsSD = !is.null(x$Qupstream) & dots$FUN_MOD != "RunModel_Lag"
+  # Add IsHyst in parameters if carried by InputsModel
+  if (!is.null(x$model$IsHyst)) dots$IsHyst <- x$model$IsHyst
+  # Call airGR function
+  do.call(airGR::CreateCalibOptions, dots)
 }
 
 #' @rdname CreateCalibOptions

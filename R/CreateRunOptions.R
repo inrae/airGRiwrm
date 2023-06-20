@@ -43,6 +43,8 @@ CreateRunOptions.InputsModel <- function(x, ...) {
       stop(" The parameter `FUN_MOD` must be defined")
     }
   }
+  # Add IsHyst in parameters if carried by InputsModel
+  if (!is.null(x$model$IsHyst)) dots$IsHyst <- x$model$IsHyst
 
   # Temporary fix waiting for resolution of HYCAR-Hydro/airgr#167
   if (identical(match.fun(dots$FUN_MOD), RunModel_Lag)) {

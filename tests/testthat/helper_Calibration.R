@@ -1,14 +1,19 @@
 runCalibration <- function(nodes = NULL,
                            Qobs2 = NULL,
                            InputsCrit = NULL,
+                           CalibOptions = NULL,
                            FUN_CRIT = ErrorCrit_KGE2,
-                           runRunModel = FALSE) {
+                           runRunModel = FALSE,
+                           IsHyst = FALSE) {
   if (is.null(nodes)) {
     griwrm <- NULL
   } else {
     griwrm <- CreateGRiwrm(nodes)
   }
-  e <- setupRunModel(griwrm = griwrm, runRunModel = runRunModel, Qobs2 = Qobs2)
+  e <- setupRunModel(griwrm = griwrm,
+                     runRunModel = runRunModel,
+                     Qobs2 = Qobs2,
+                     IsHyst = IsHyst)
   for(x in ls(e)) assign(x, get(x, e))
   rm(e)
   np <- getAllNodesProperties(griwrm)
@@ -22,7 +27,8 @@ runCalibration <- function(nodes = NULL,
     )
   }
 
-  CalibOptions <- CreateCalibOptions(InputsModel)
+  if (is.null(CalibOptions)) CalibOptions <- CreateCalibOptions(InputsModel)
+
   OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
   Param <- sapply(OutputsCalib, "[[", "ParamFinalR")
   return(environment())
