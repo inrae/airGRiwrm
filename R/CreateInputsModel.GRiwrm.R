@@ -215,7 +215,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  HypsoData = getInputBV(HypsoData, id),
                                  NLayers = getInputBV(NLayers, id, 5),
                                  Qobs = Qobs,
-                                 Qmin = getInputBV(Qmin, id)
+                                 Qmin = getInputBV(Qmin, id),
+                                 IsHyst = IsHyst
                                  )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
@@ -250,7 +251,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
