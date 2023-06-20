@@ -258,8 +258,13 @@ test_that("Cemaneige with hysteresis works",  {
   }
   class(ErrorCrit_KGE3) <- c("FUN_CRIT", class(ErrorCrit_KGE3))
 
-  e <- setupRunModel(griwrm = griwrm, runRunModel = FALSE, IsHyst = TRUE)
+  e <- suppressWarnings(
+    setupRunModel(griwrm = griwrm, runRunModel = FALSE, IsHyst = TRUE)
+  )
   for(x in ls(e)) assign(x, get(x, e))
+
+  expect_true(all(sapply(InputsModel, function(x) x$model$hasX4)))
+
   np <- getAllNodesProperties(griwrm)
   InputsCrit <- CreateInputsCrit(
     InputsModel,
@@ -277,7 +282,9 @@ test_that("Cemaneige with hysteresis works",  {
     x
   })
   class(CO) <- class(CalibOptions)
-  e <- runCalibration(nodes, InputsCrit = InputsCrit, CalibOptions = CO, IsHyst = TRUE)
+  e <- suppressWarnings(
+    runCalibration(nodes, InputsCrit = InputsCrit, CalibOptions = CO, IsHyst = TRUE)
+  )
   for(x in ls(e)) assign(x, get(x, e))
   expect_equal(sapply(Param, length),
                c("54057" = 9, "54032" = 9, "54001" = 8))

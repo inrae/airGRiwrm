@@ -338,7 +338,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     list(
       indexParamUngauged = ifelse(inherits(InputsModel, "SD"), 0, 1) +
         seq.int(featModel$NbParam),
-      hasX4 = grepl("RunModel_GR[456][HJ]", FUN_MOD),
+      hasX4 = grepl("RunModel_(CemaNeige|)GR[456][HJ]", FUN_MOD),
       iX4 = ifelse(inherits(InputsModel, "SD"), 5, 4),
       IsHyst = featModel$IsHyst
     )
