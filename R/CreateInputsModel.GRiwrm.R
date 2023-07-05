@@ -352,7 +352,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     InputsModel$Qmin <- Qmin
   } else if(np$Reservoir) {
     # If an upstream node is ungauged then we are in an ungauged reduced network
-    InputsModel$isUngauged <- any(griwrm$model[griwrm$id == griwrm$id[UpstreamNodeRows]] == "Ungauged")
+    InputsModel$isUngauged <- any(griwrm$model[griwrm$id %in% griwrm$id[UpstreamNodeRows]] == "Ungauged")
     InputsModel$Qrelease <- Qobs[, id]
   }
   return(InputsModel)
