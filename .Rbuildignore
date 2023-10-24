@@ -16,3 +16,4 @@
 ^dev
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+^\.devcontainer$
