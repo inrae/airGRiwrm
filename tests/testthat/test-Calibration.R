@@ -39,6 +39,19 @@ e <- runCalibration(runRunModel = TRUE, FUN_CRIT = ErrorCrit_NSE)
 for(x in ls(e)) assign(x, get(x, e))
 
 test_that("Calibrated parameters remains unchanged", {
+  skip_on_cran()
+  InputsCrit <- CreateInputsCrit(
+    InputsModel = InputsModel,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run,]
+  )
+
+  OC <- Calibration(
+    InputsModel = InputsModel,
+    RunOptions = RunOptions,
+    InputsCrit = InputsCrit,
+    CalibOptions = CalibOptions
+  )
 
   ParamFinalR <- lapply(OutputsCalib, "[[", "ParamFinalR")
 
