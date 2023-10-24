@@ -43,6 +43,7 @@ for(x in ls(e)) assign(x, get(x, e))
 CalibOptions <- CreateCalibOptions(InputsModel)
 
 test_that("Calibrated parameters remains unchanged", {
+  skip_on_cran()
   InputsCrit <- CreateInputsCrit(
     InputsModel = InputsModel,
     RunOptions = RunOptions,

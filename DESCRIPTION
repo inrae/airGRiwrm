@@ -27,15 +27,15 @@ Imports:
     grDevices,
     utils
 Suggests:
-    spelling,
     htmltools,
     knitr,
     rmarkdown,
+    spelling,
     testthat
 VignetteBuilder:
     knitr
 Encoding: UTF-8
+Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
-Language: en-US
+RoxygenNote: 7.2.3

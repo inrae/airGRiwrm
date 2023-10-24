@@ -17,12 +17,13 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
+  - R -e 'remotes::install_git("https://gitlab.irstea.fr/HYCAR-Hydro/airgr.git", ref = "dev")'
   - R -e 'devtools::install_deps(dep = T)'
 
 test_all:
   stage: checks
   script:
-  - R -q -e 'devtools::test()'
+  - R -q -e 'options(error = function() quit(save = "no", status = 1)); testthat::test_local(stop_on_failure = TRUE, stop_on_warning = TRUE)'
 
 check:
   stage: checks

@@ -1,0 +1,14 @@
+{
+	"image": "rocker/geospatial:devel",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"eamodio.gitlens",
+				"REditorSupport.r"
+			]
+		}
+	},
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "R -q -e 'options(repos = c(CRAN = \"https://packagemanager.posit.co/cran/__linux__/focal/latest\"));install.packages(\"languageserver\");remotes::install_deps(dep = TRUE)'",
+	"postStartCommand": "R -q -e 'devtools::install()'"
+}
