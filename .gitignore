@@ -52,3 +52,5 @@ vignettes/*.pdf
 docs/
 
 inst/doc
+
+dev/config_attachment.yaml
