@@ -1,7 +1,13 @@
-# airGRiwrm (development version)
+# airGRiwrm 0.6.2
 
-airGRiwrm 0.6.1
-===============
+
+Internal changes:
+-----------------
+
+* airGR changes cause failed check (#139)
+
+
+# airGRiwrm 0.6.1
 
 Changes:
 --------
@@ -60,8 +66,7 @@ Internal changes:
 * Automatically update website from package repository (#47)
 
 
-airGRiwrm 0.5.0 (Release date: 2021-03-07)
-==========
+# airGRiwrm 0.5.0 (Release date: 2021-03-07)
 
 New features:
 -------------
@@ -76,8 +81,7 @@ Changes:
 * RunModel: Uncoupling of hydrological and hydraulic models (#28)
 
 
-airGRiwrm 0.4.0 (Release date: 2020-12-28)
-==========
+# airGRiwrm 0.4.0 (Release date: 2020-12-28)
 
 New features:
 -------------
@@ -101,8 +105,7 @@ Bug fixes:
 * Error in the area used for the sub basins (#22)
 
 
-airGRiwrm 0.3.1 (Release date: 2020-08-07)
-==========
+# airGRiwrm 0.3.1 (Release date: 2020-08-07)
 
 New features:
 -------------
@@ -110,8 +113,7 @@ New features:
 * Calibration of influenced semi-distributed model (#11)
 
 
-airGRiwrm 0.3.0 (Release date: 2020-08-07)
-==========
+# airGRiwrm 0.3.0 (Release date: 2020-08-07)
 
 New features:
 -------------
@@ -119,8 +121,7 @@ New features:
 * Add node of type "direct flow" in order to inject or withdraw flows into the model (#5)
 
 
-airGRiwrm 0.2.1 (Release date: 2020-06-11)
-==========
+# airGRiwrm 0.2.1 (Release date: 2020-06-11)
 
 Changes:
 --------
@@ -130,8 +131,7 @@ Changes:
 * Rename "Ginet" class object to "Griwrm" (#10)
 
 
-airGRiwrm 0.2.0 (Release date: 2020-06-06)
-==========
+# airGRiwrm 0.2.0 (Release date: 2020-06-06)
 
 New features:
 -------------
@@ -139,8 +139,7 @@ New features:
 * Calibration of semi-distributed model (#3)
 
 
-airGRiwrm 0.1.0 (Release date: 2020-05-25)
-==========
+# airGRiwrm 0.1.0 (Release date: 2020-05-25)
 
 New features:
 -------------

@@ -1,3 +1,4 @@
+AGPL
 ANR
 ASB
 Acknowledgement
@@ -10,6 +11,7 @@ BasinsInfo
 Bewdley
 Buildwas
 CHAUM
+CVD
 CalibOptions
 CemaNeige
 Centre
@@ -22,7 +24,9 @@ CreateGRiwrm
 CreateInputsCrit
 CreateInputsModel
 CreateRunOptions
+DOI
 De
+Dev
 DiagrammeR
 EAU
 EFI
@@ -39,7 +43,6 @@ GRiwrmOutputsModel
 GRiwrmRunOptions
 Ginet
 Girop
-Gitlab
 GriwmRunOptions
 Griwrm
 HTMLwidget
@@ -53,7 +56,6 @@ IniStates
 InputsCrit
 InputsModel
 Ip
-Irstea
 JPI
 KGE
 Lavenne
@@ -88,6 +90,7 @@ airGR
 airgr
 al
 anthropized
+ci
 ctrlr
 decile
 dev
@@ -95,13 +98,11 @@ et
 evapotranspiration
 frac
 github
+gitlab
 grey
 hydrological
 impoundments
-irrigations
 lfloor
-modelled
-optimises
 pkgdown
 priori
 rfloor
