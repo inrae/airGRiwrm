@@ -32,7 +32,7 @@ check:
       - tags
       - schedules
   script:
-  - tlmgr update --self && tlmgr install ec epstopdf-pkg
+  - tlmgr update --self && tlmgr install ec epstopdf-pkg amsmath
   - R -q -e 'remotes::update_packages("rcmdcheck")'
   - R -q -e 'options(error = function() quit(save = "no", status = 1)); rcmdcheck::rcmdcheck(args = "--as-cran", error_on = "warning")'
 
