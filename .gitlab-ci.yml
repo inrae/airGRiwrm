@@ -17,6 +17,7 @@ cache:
 before_script:
   - mkdir -p $R_LIBS_USER
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
+  - R -e 'remotes::install_git("https://gitlab.irstea.fr/HYCAR-Hydro/airgr.git@dev")'
   - R -e 'devtools::install_deps(dep = T)'
 
 test_all:
