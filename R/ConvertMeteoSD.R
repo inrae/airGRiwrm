@@ -22,7 +22,7 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
     stop("`meteo` column names should contain at least: ",
          paste(id_runoff, collapse = ", "))
   }
-  output <- lapply(id_runoff, ConvertMeteoSD, griwrm = x, meteo = meteo)
+  output <- lapply(id_runoff, ConvertMeteoSD, griwrm = x, meteo = meteo, ...)
   meteoOut <- do.call(cbind, output)
   dimnames(meteoOut)[[2]] <- id_runoff
   return(meteoOut)
@@ -40,7 +40,8 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
   areas <- griwrm$area[match(upperIDs, griwrm$id)]
   output <- ConvertMeteoSD(
     meteo[, upperIDs, drop = FALSE],
-    areas = areas
+    areas = areas,
+    ...
   )
   return(output)
 }

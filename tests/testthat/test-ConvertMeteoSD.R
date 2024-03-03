@@ -98,3 +98,12 @@ test_that("Downstream data should return 2", {
     matrix(rep(c(1,2),dataNumRows), byrow = TRUE, ncol = 2)
   )
 })
+
+test_that("Downstream temperature should return -2", {
+  meteo <- matrix(rep(c(-1, -1.5), dataNumRows), ncol = 2, byrow = TRUE)
+  colnames(meteo) <- c("Up", "Down")
+  expect_equivalent(
+    ConvertMeteoSD(griwrm, meteo, temperature = TRUE),
+    matrix(rep(c(-1,-2),dataNumRows), byrow = TRUE, ncol = 2)
+  )
+})
