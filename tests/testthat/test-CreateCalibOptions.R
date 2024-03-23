@@ -19,3 +19,21 @@ test_that("IsHyst is not handle by CreateCalibOptions.GRiwrmInputsModel", {
   expect_warning(CreateCalibOptions(InputsModel, IsHyst = TRUE))
 })
 
+test_that("FixedParam works on various models", {
+  # 54057 GR4J + Lag / 54032 GR4J + Neige + Lag / 54001 GR4J + Neige
+  FixedParam <- c(NA,   # C      (lag)
+                  NA,   # X1     (GR4J)
+                  NA,   # X2     (GR4J)
+                  NA,   # X3     (GR4J)
+                  NA,   # X4     (GR4J)
+                  0.25, # cT     (CemaNeige)
+                  NA,   # Kf     (CemaNeige)
+                  10,   # Gacc   (CemaNeige)
+                  NA)  # Gseuil (CemaNeige)
+  CO <- CreateCalibOptions(InputsModel, FixedParam = FixedParam)
+  expect_equal(lapply(CO, "[[", "FixedParam"),
+               list(`54057` = FixedParam[1:5],
+                    `54032` = FixedParam,
+                    `54001` = FixedParam[2:9]))
+
+})
