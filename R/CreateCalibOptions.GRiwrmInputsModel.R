@@ -1,6 +1,9 @@
 #' @rdname CreateCalibOptions
 #' @export
-CreateCalibOptions.GRiwrmInputsModel <- function(x, ...) {
+  dots <- list(...)
+  if ("IsHyst" %in% names(dots)) {
+    warning("The parameter `IsHyst` will be ignored. It should be defined before with `CreateInputsModel`")
+  }
 
   CalibOptions <- list()
   class(CalibOptions) <- c("GRiwrmCalibOptions", class(CalibOptions))
