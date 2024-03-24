@@ -300,8 +300,10 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     names(BasinAreas) <- c(griwrm$id[UpstreamNodeRows], id)
   }
 
+  FUN_MOD_REAL <- FUN_MOD
   if (np$Reservoir) {
     FUN_MOD <- "RunModel_Lag"
+    FUN_MOD_REAL <- "RunModel_Reservoir"
   }
   # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
@@ -355,6 +357,10 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     InputsModel$isUngauged <- any(griwrm$model[griwrm$id %in% griwrm$id[UpstreamNodeRows]] == "Ungauged")
     InputsModel$Qrelease <- Qobs[, id]
   }
+
+  # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)
+  class(InputsModel) <- c(FUN_MOD_REAL, class(InputsModel))
+
   return(InputsModel)
 }
 

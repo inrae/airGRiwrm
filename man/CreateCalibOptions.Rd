@@ -7,6 +7,7 @@
 \alias{CreateCalibOptions.InputsModel}
 \alias{CreateCalibOptions.character}
 \alias{CreateCalibOptions.function}
+\alias{CreateCalibOptions.RunModel_Reservoir}
 \title{Creation of the CalibOptions object}
 \usage{
 \method{CreateCalibOptions}{GRiwrmInputsModel}(x, FixedParam = NULL, ...)
@@ -18,6 +19,8 @@ CreateCalibOptions(x, FixedParam = NULL, ...)
 \method{CreateCalibOptions}{character}(x, FixedParam = NULL, ...)
 
 \method{CreateCalibOptions}{`function`}(x, FixedParam = NULL, ...)
+
+\method{CreateCalibOptions}{RunModel_Reservoir}(x, FixedParam = NULL, ...)
 }
 \arguments{
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
