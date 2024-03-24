@@ -7,20 +7,26 @@
 \alias{CreateCalibOptions.InputsModel}
 \alias{CreateCalibOptions.character}
 \alias{CreateCalibOptions.function}
+\alias{CreateCalibOptions.RunModel_Reservoir}
 \title{Creation of the CalibOptions object}
 \usage{
-\method{CreateCalibOptions}{GRiwrmInputsModel}(x, ...)
+\method{CreateCalibOptions}{GRiwrmInputsModel}(x, FixedParam = NULL, ...)
 
-CreateCalibOptions(x, ...)
+CreateCalibOptions(x, FixedParam = NULL, ...)
 
-\method{CreateCalibOptions}{InputsModel}(x, ...)
+\method{CreateCalibOptions}{InputsModel}(x, FixedParam = NULL, ...)
 
-\method{CreateCalibOptions}{character}(x, ...)
+\method{CreateCalibOptions}{character}(x, FixedParam = NULL, ...)
 
-\method{CreateCalibOptions}{`function`}(x, ...)
+\method{CreateCalibOptions}{`function`}(x, FixedParam = NULL, ...)
+
+\method{CreateCalibOptions}{RunModel_Reservoir}(x, FixedParam = NULL, ...)
 }
 \arguments{
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
+
+\item{FixedParam}{a \link{numeric} \link{vector} as for \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions},
+or a \link{list} giving the values of non-optimised parameters (see details)}
 
 \item{...}{arguments passed to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions}, see details}
 }
@@ -37,5 +43,19 @@ This function can be used either for a catchment (with an \emph{InputsModel} obj
 \details{
 See \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions} documentation for a complete list of arguments.
 
-With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
+With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network
+with some adaptation depending on the model used on each node.
+
+If the argument \code{FixedParam} is a \link{numeric} \link{vector}, it is applied to each node of
+the network. Parameters are adapted depending on the use of the routing model
+and the CemaNeige model on each node. If \code{FixedParam} is a \link{list} of \link{numeric},
+each item of the list will be applied on corresponding nodes. Use the id "*" for applying
+a setting on the remaining nodes. Example for applying one setting for all the
+nodes except the id "54057":
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{FixedParam <- list(`*` = c(NA, NA, NA, NA, NA, 0.25, NA, 10, NA),
+                   `54057` = c(0.5, NA, NA, NA, NA, 0.25, NA, 10, NA))
+}\if{html}{\out{</div>}}
+
+The argument \code{IsHyst} is ignored since it should be defined previously with \link{CreateInputsModel.GRiwrm}.
 }

@@ -80,6 +80,7 @@ getAllNodesProperties <- function(griwrm) {
 #' Does this node contains a gauged model?
 #'
 #' @inheritParams getNodeProperties
+#' @param skip_reservoirs if TRUE reservoirs are accounted for ungauged
 #'
 #' @return `TRUE` if the node contains a gauged model, `FALSE` if not.
 #' @noRd
