@@ -19,8 +19,7 @@ test_that("Calibration with Runmodel_Reservoir works!", {
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
                      Qobs2 = Qobs_rsrvr)
-  for (x in ls(e))
-    assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
 
   InputsCrit <- CreateInputsCrit(InputsModel,
                                  ErrorCrit_KGE2,
@@ -36,9 +35,9 @@ test_that("Calibration with Runmodel_Reservoir works!", {
     regexp = "No observations"
   )
 
-  CalibOptions <- CreateCalibOptions(InputsModel)
-  expect_message(CreateCalibOptions(InputsModel), regexp = "FixedParam")
+  expect_warning(CreateCalibOptions(InputsModel), regexp = "FixedParam")
 
+  CalibOptions <- suppressWarnings(CreateCalibOptions(InputsModel))
   expect_error(
     Calibration(
       InputsModel = InputsModel,
@@ -49,8 +48,8 @@ test_that("Calibration with Runmodel_Reservoir works!", {
     regexp = "FixedParam"
   )
 
-  CalibOptions[["Dam"]]$FixedParam <- c(650E6, 1)
-
+  CalibOptions <- CreateCalibOptions(InputsModel,
+                                     FixedParam = list(Dam = c(650E6, 1)))
   OC <- Calibration(
     InputsModel = InputsModel,
     RunOptions = RunOptions,
@@ -76,8 +75,8 @@ expect_dam <- function(nodes, Qobs2) {
                                  ErrorCrit_KGE2,
                                  RunOptions = RunOptions,
                                  Obs = Qobs[IndPeriod_Run, ])
-  CalibOptions <- CreateCalibOptions(InputsModel)
-  CalibOptions[["Dam"]]$FixedParam <- c(650E6, 1)
+  CalibOptions <- CreateCalibOptions(InputsModel,
+                                     FixedParam = list(Dam = c(650E6, 1)))
   OC <- Calibration(
     InputsModel = InputsModel,
     RunOptions = RunOptions,
@@ -88,7 +87,6 @@ expect_dam <- function(nodes, Qobs2) {
   expect_equal(OC$`54001`$ParamFinalR[2:4], OC$`54095`$ParamFinalR[1:3])
   expect_equal(OC$Dam$ParamFinalR, CalibOptions[["Dam"]]$FixedParam)
 }
-
 
 test_that("Calibration with ungauged node and reservoir in the middle works",{
   n_rsrvr$model[n_rsrvr$id == "54095"] <- "Ungauged"

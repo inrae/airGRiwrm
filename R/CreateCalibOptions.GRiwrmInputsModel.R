@@ -44,23 +44,28 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
 
   for(id in gaugedIds) {
     IM <- x[[id]]
+    FP <- NULL
     if (!is.null(FixedParam)) {
-      FP <- FixedParam[[id]]
-    } else {
-      FP <- NULL
+      if (!IM$isReservoir) { # Tramp patch before doing #142 (Reservoir calibration)
+        FP <- FixedParam[[id]]
+      }
     }
     CalibOptions[[IM$id]] <- CreateCalibOptions(
       IM,
       FixedParam = FP,
       ...
     )
+    if (IM$isReservoir) {
+      if (!is.null(FixedParam[[id]])) {
+        CalibOptions[[IM$id]]$FixedParam <- FixedParam[[id]]
+      } else {
+        warning("The following nodes modelled with `RunModel_Reservoir` must have their parameters fixed: ",
+                paste(paste0("\"",np$id[np$Reservoir], "\""), collapse = ", "), "\n",
+                "Fix these parameters by using the command:\n",
+                "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
+      }
+    }
   }
 
-  if (any(np$Reservoir)) {
-    message("The following nodes modelled with `RunModel_Reservoir` must have their parameters fixed: ",
-            paste(paste0("\"",np$id[np$Reservoir], "\""), collapse = ", "), "\n",
-            "Fix these parameters by using the command:\n",
-            "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
-  }
   return(CalibOptions)
 }
