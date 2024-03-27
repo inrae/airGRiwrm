@@ -7,7 +7,9 @@
 #'
 #' - an item `$Qsim_m3` storing the simulated discharge series in m3/s
 #' - an item `$Qover_m3` storing the volumes of over abstraction which occurs
-#' when `RunModel_Lag` warns for negative simulated flows.
+#' when `RunModel_Lag` warns for negative simulated flows. The latter reflects the volume
+#' that was planned to be drawn from the sub-basin but could not be drawn because
+#' of the lack of water.
 #'
 #' @inheritParams airGR::RunModel
 #' @param x \[object of class \emph{InputsModel}\] see [airGR::CreateInputsModel] for details
