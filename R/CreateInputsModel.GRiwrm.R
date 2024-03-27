@@ -353,8 +353,12 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     InputsModel$Qdiv <- -Qobs[, id]
     InputsModel$Qmin <- Qmin
   } else if(np$Reservoir) {
-    # If an upstream node is ungauged then we are in an ungauged reduced network
-    InputsModel$isUngauged <- any(griwrm$model[griwrm$id %in% griwrm$id[UpstreamNodeRows]] == "Ungauged")
+    # If an upstream node is ungauged and the donor is downstream then we are in an ungauged reduced network
+    iUpstreamUngaugedNodes <- which(griwrm$model[griwrm$id %in% griwrm$id[UpstreamNodeRows]] == "Ungauged")
+    if (length(iUpstreamUngaugedNodes) > 0) {
+      InputsModel$isUngauged <- any(griwrm$donor[iUpstreamUngaugedNodes] == InputsModel$gaugedId)
+    }
+    # Fill reservoir release with Qobs
     InputsModel$Qrelease <- Qobs[, id]
   }
 
