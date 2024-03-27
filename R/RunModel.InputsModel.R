@@ -2,7 +2,12 @@
 #'
 #' @details This function calls [airGR::RunModel] (See [airGR::RunModel] for further details).
 #'
-#' The list produced by the function (See Value section of [airGR::RunModel_GR4J]) is here completed by an item *$Qsim_m3* storing the simulated discharge series in m3/s.
+#' The list produced by the function (See Value section of [airGR::RunModel_GR4J])
+#' is here completed by:
+#'
+#' - an item `$Qsim_m3` storing the simulated discharge series in m3/s
+#' - an item `$Qover_m3` storing the volumes of over abstraction which occurs
+#' when `RunModel_Lag` warns for negative simulated flows.
 #'
 #' @inheritParams airGR::RunModel
 #' @param x \[object of class \emph{InputsModel}\] see [airGR::CreateInputsModel] for details
@@ -73,6 +78,8 @@ RunModel.InputsModel <- function(x = NULL,
   if (x$hasDiversion && !x$isReservoir) {
     OutputsModel <- RunModel_Diversion(x, RunOptions, OutputsModel)
   }
+  OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
+  OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
   return(OutputsModel)
 }
 
@@ -135,3 +142,27 @@ calc_Qdiv<- function(Qnat, Qdiv, Qmin) {
   }
   return(list(Qsim = Qsim, Qdiv = Qnat - Qsim))
 }
+
+
+#' Cap negative `OutputsModel$Qsim_m3` to zero and fill `OutputsModel$Qover_m3`
+#' with over-abstracted volumes
+#'
+#' @param O Either `OutputsModel` or `OutputsModel$RunOptions` (for warm-up Qsim)
+#' @param WarmUp `TRUE` if `O` is `OutputsModel$RunOptions`
+#'
+#' @return Modified `OutputsModel` or `OutputsModel$RunOptions`
+#' @noRd
+#'
+calcOverAbstraction <- function(O, WarmUp) {
+  f <- list(sim = "Qsim_m3", over = "Qover_m3")
+  if(WarmUp) {
+    f <- lapply(f, function(x) paste0("WarmUp", x))
+  }
+  if (any(O[[f$sim]] < 0)) {
+    O[[f$over]] <- rep(0, length(O[[f$sim]]))
+    O[[f$over]][O[[f$sim]] < 0] <- - O[[f$sim]][O[[f$sim]] < 0]
+    O[[f$sim]][O[[f$sim]] < 0] <- 0
+  }
+  return(O)
+}
+

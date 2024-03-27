@@ -30,5 +30,11 @@ Wrapper for \link[airGR:RunModel]{airGR::RunModel} for one sub-basin
 \details{
 This function calls \link[airGR:RunModel]{airGR::RunModel} (See \link[airGR:RunModel]{airGR::RunModel} for further details).
 
-The list produced by the function (See Value section of \link[airGR:RunModel_GR4J]{airGR::RunModel_GR4J}) is here completed by an item \emph{$Qsim_m3} storing the simulated discharge series in m3/s.
+The list produced by the function (See Value section of \link[airGR:RunModel_GR4J]{airGR::RunModel_GR4J})
+is here completed by:
+\itemize{
+\item an item \verb{$Qsim_m3} storing the simulated discharge series in m3/s
+\item an item \verb{$Qover_m3} storing the volumes of over abstraction which occurs
+when \code{RunModel_Lag} warns for negative simulated flows.
+}
 }
