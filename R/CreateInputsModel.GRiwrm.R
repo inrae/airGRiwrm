@@ -354,13 +354,10 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     InputsModel$Qmin <- Qmin
   } else if(np$Reservoir) {
     # If an upstream node is ungauged and the donor is downstream then we are in an ungauged reduced network
-    iUpstreamUngaugedNodes <- which(griwrm$model[griwrm$id %in% griwrm$id[UpstreamNodeRows]] == "Ungauged")
+    iUpstreamUngaugedNodes <- which(griwrm$id %in% griwrm$id[UpstreamNodeRows] &
+                                    griwrm$model == "Ungauged")
     # Fall back to non diversion node in order to get correct donor
     if (length(iUpstreamUngaugedNodes) > 0) {
-      if (griwrm$model[iUpstreamUngaugedNodes] == "Diversion") {
-        iUpstreamUngaugedNodes <- which(griwrm$id == griwrm$id[iUpstreamUngaugedNodes] &
-                                          (!is.na(griwrm$model) & griwrm$model != "Diversion"))
-      }
       InputsModel$isUngauged <- any(griwrm$donor[iUpstreamUngaugedNodes] == InputsModel$gaugedId)
     }
     # Fill reservoir release with Qobs
