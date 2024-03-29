@@ -311,6 +311,6 @@ test_that("Ungauged node with derivation to reservoir should work", {
   testDerivdedUngauged(FALSE)
 })
 
-# test_that("Ungauged node with donor by derivation through reservoir should work", {
-#   testDerivdedUngauged(TRUE)
-# })
+test_that("Ungauged node with donor by derivation through reservoir should work", {
+  testDerivdedUngauged(TRUE)
+})
