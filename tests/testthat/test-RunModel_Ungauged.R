@@ -299,8 +299,8 @@ testDerivdedUngauged <- function(donorByDerivation) {
   e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
   for (x in ls(e)) assign(x, get(x, e))
 
-  CalibOptions <- CreateCalibOptions(InputsModel)
-  CalibOptions[["Dam"]]$FixedParam <- c(650E6, 1)
+  CalibOptions <- CreateCalibOptions(InputsModel,
+                                     FixedParam = list(Dam = c(650E6, 1)))
   e <- runCalibration(g, Qobs2 = Qobs2, CalibOptions = CalibOptions)
   for(x in ls(e)) assign(x, get(x, e))
   expect_equal(Param[["54095"]][1:3],
