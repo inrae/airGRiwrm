@@ -344,7 +344,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
     InputsModel$diversionOutlet <- diversionOutlet
     InputsModel$Qdiv <- -Qobs[, id]
     InputsModel$Qmin <- Qmin
-  } else if(np$Reservoir) {
+  }
+  if (np$Reservoir) {
     # If an upstream node is ungauged and the donor is downstream then we are in an ungauged reduced network
     iUpstreamUngaugedNodes <- which(griwrm$id %in% griwrm$id[UpstreamNodeRows] &
                                     griwrm$model == "Ungauged")

@@ -98,3 +98,31 @@ test_that("Calibration with ungauged node and reservoir filled by a diversion wo
   colnames(Qobs2) <- c("Dam", "54095")
   expect_dam(n_derived_rsrvr, Qobs2)
 })
+
+test_that("Diversion on a reservoir works #146", {
+  e <- setupRunModel(runInputsModel = FALSE)
+  for (x in ls(e)) assign(x, get(x, e))
+  nodes <- rbind(
+    n_rsrvr,
+    data.frame(
+      id = "Dam",
+      down = NA,
+      length = NA,
+      area = NA,
+      model = "Diversion"
+    )
+  )
+  Qrelease <- data.frame(Dam = rep(3508465, length(DatesR)))
+  Qobs2 <- Qrelease / 10
+  g <- CreateGRiwrm(nodes)
+  e <- setupRunModel(griwrm = g,
+                     runRunModel = FALSE,
+                     Qobs2 = Qobs2,
+                     Qrelease = Qrelease)
+  for (x in ls(e)) assign(x, get(x, e))
+  Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(10E6, 1)))
+  OM <- RunModel(InputsModel,
+                 RunOptions = RunOptions,
+                 Param = Param)
+  expect_true(max(OM$Dam$Vsim) - min(OM$Dam$Vsim) > 0)
+})

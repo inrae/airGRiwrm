@@ -16,6 +16,7 @@ setupRunModel <-
            runRunModel = TRUE,
            griwrm = NULL,
            Qobs2 = NULL,
+           Qrelease = NULL,
            IsHyst = FALSE) {
 
     data(Severn)
@@ -57,6 +58,7 @@ setupRunModel <-
       suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
                                          TempMean = TempMean,
                                          Qobs = Qobs2,
+                                         Qrelease = Qrelease,
                                          IsHyst = IsHyst))
 
     # RunOptions

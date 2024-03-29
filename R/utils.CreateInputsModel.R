@@ -3,23 +3,23 @@ updateQObsQrelease <- function(g, Qobs, Qrelease) {
   # Fill Qrelease with Qobs
   warn_ids <- NULL
   for(id in reservoirIds) {
-    if (!id %in% names(Qrelease)) {
-      if (id %in% names(Qobs)) {
+    if (!id %in% colnames(Qrelease)) {
+      if (id %in% colnames(Qobs)) {
         if (!any(g$id == id & (!is.na(g$model) & g$model == "Diversion"))) {
           if (is.null(Qrelease)) {
             Qrelease = Qobs[, id, drop = FALSE]
           } else {
             Qrelease = cbind(Qrelease, Qobs[, id, drop = FALSE])
           }
-          Qobs <- Qobs[, names(Qobs) != id]
+          Qobs <- Qobs[, colnames(Qobs) != id, drop = FALSE]
           warn_ids = c(warn_ids, id)
         }
       }
     }
   }
   if (!is.null(warn_ids)) {
-    warning("Use of the `Qobs` parameter for reservoir releases is depracated\n",
-            "Processing `Qrelease <- cbind(Qrelease, Qobs[, c(", paste(warn_ids, collapse = "\", `"), "\"))`")
+    warning("Use of the `Qobs` parameter for reservoir releases is deprecated, please use `Qrelease` instead.\n",
+            "Processing `Qrelease <- cbind(Qrelease, Qobs[, c(\"", paste(warn_ids, collapse = "\", `"), "\"])`...")
   }
   return(list(Qobs = Qobs, Qrelease = Qrelease))
 }
