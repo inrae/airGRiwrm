@@ -171,7 +171,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
       warning(
         sprintf(
           "'Qmin' would include the following columns %s.\n Zero values are applied by default.",
-          paste(directFlowIds, collapse = ", ")
+          paste(x$id[diversionRows], collapse = ", ")
         )
       )
     }
