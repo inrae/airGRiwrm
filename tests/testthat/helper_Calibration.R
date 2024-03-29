@@ -7,6 +7,8 @@ runCalibration <- function(nodes = NULL,
                            IsHyst = FALSE) {
   if (is.null(nodes)) {
     griwrm <- NULL
+  } else if (inherits(nodes, "GRiwrm")) {
+    griwrm <- nodes
   } else {
     griwrm <- CreateGRiwrm(nodes)
   }
@@ -27,8 +29,9 @@ runCalibration <- function(nodes = NULL,
     )
   }
 
-  if (is.null(CalibOptions)) CalibOptions <- CreateCalibOptions(InputsModel)
-
+  if (is.null(CalibOptions)) {
+    CalibOptions <- CreateCalibOptions(InputsModel)
+  }
   OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
   Param <- sapply(OutputsCalib, "[[", "ParamFinalR")
   return(environment())

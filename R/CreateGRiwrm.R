@@ -130,7 +130,7 @@ CheckColumnTypes <- function(df, coltypes, keep_all) {
 #' @param griwrm \[object of class `GRiwrm`\] see [CreateGRiwrm] for details
 #'
 #' @return [numeric] ordered node names
-#' @noRd
+#' @export
 getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")

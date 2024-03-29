@@ -35,3 +35,24 @@ get_nodes_derived_reservoir <- function(n_rsrvr) {
 }
 n_derived_rsrvr <- get_nodes_derived_reservoir(n_rsrvr)
 
+getGriwrmDerivedReservoirUngauged <- function(donorByDerivation) {
+  nodes <- loadSevernNodes()
+  nodes <-
+    nodes[nodes$id %in% c("54095", "54001", "54029", "54032"),]
+  nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
+  nodes$model[nodes$id == "54095"] <- "Ungauged"
+  nodes <- rbind(nodes,
+                 data.frame(
+                   id = c("54095", "Dam"),
+                   down = c("54029", "54029"),
+                   length = c(10, 0),
+                   area = rep(NA, 2),
+                   model = c("Diversion", "RunModel_Reservoir")
+                 ))
+  nodes$down[nodes$id == "54095" &
+               nodes$model == "Diversion"] <- "Dam"
+  g <- CreateGRiwrm(nodes)
+  if (donorByDerivation)
+    g$donor[g$id == "54095"] <- "54029"
+  return(g)
+}
