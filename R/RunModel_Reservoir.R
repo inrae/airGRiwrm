@@ -68,10 +68,17 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   iPerTot <- seq(length(IndPerTot))
   Vsim <- rep(0, length(IndPerTot))
   Qsim_m3 <- Vsim
+  if (InputsModel$hasDiversion) {
+    Qdiv_m3 <- Vsim
+  }
 
   # Time series volume and release calculation
   for(i in iPerTot) {
     Vsim[i] <- V0 + Qinflows_m3[i]
+    if (InputsModel$hasDiversion) {
+      Qdiv_m3[i] <- min(Vsim[i] + InputsModel$Qmin[IndPerTot[i]], InputsModel$Qdiv[IndPerTot[i]])
+      Vsim[i] <- Vsim[i] - Qdiv_m3[i]
+    }
     Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])
     Vsim[i] <- Vsim[i] - Qsim_m3[i]
     if (Vsim[i] > Vmax) {
@@ -86,10 +93,16 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
     iWarmUp <- seq(length(RunOptions$IndPeriod_WarmUp))
     OutputsModel$RunOptions$WarmUpQsim_m3 <- Qsim_m3[iWarmUp]
     OutputsModel$RunOptions$WarmUpVsim <- Vsim[iWarmUp]
+    if (InputsModel$hasDiversion) {
+      OutputsModel$RunOptions$WarmUpQdiv_m3 <- Qdiv_m3[iWarmUp]
+    }
   }
   iRun <- length(IndPerWarmUp) + seq(length(RunOptions$IndPeriod_Run))
   OutputsModel$Qsim_m3 <- Qsim_m3[iRun]
   OutputsModel$Vsim <- Vsim[iRun]
+  if (InputsModel$hasDiversion) {
+    OutputsModel$Qdiv_m3 <- Qdiv_m3[iRun]
+  }
   OutputsModel$StateEnd$Reservoir <- list(V = Vsim[length(Vsim)])
   class(OutputsModel) <- c("OutputsModelReservoir", class(OutputsModel))
   return(OutputsModel)

@@ -16,6 +16,9 @@
 #' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
 #'        minimum flows to let downstream of a node with a Diversion \[m3 per
 #'        time step\]. Default is zero. Column names correspond to node IDs
+#' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
+#'        release flows by nodes using the model `RunModel_Reservoir` \[m3 per
+#'        time step\]
 #' @param PrecipScale (optional) named [vector] of [logical] indicating if the
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
@@ -69,6 +72,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      PotEvap = NULL,
                                      Qobs = NULL,
                                      Qmin = NULL,
+                                     Qrelease = NULL,
                                      PrecipScale = TRUE,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
@@ -120,31 +124,14 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
-  directFlowIds <- x$id[is.na(x$model) | x$model == "Diversion" | x$model == "RunModel_Reservoir"]
-  if (length(directFlowIds) > 0) {
-    err <- FALSE
-    if (is.null(Qobs)) {
-      err <- TRUE
-    } else {
-      Qobs <- as.matrix(Qobs)
-      if (is.null(colnames(Qobs))) {
-        err <- TRUE
-      } else if (!all(directFlowIds %in% colnames(Qobs))) {
-        err <- TRUE
-      }
-    }
-    if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
-  }
-  if (!all(colnames(Qobs) %in% directFlowIds)) {
-    warning(
-      "The following columns in 'Qobs' are ignored since they don't match with ",
-      "Direction Injection (model=`NA`), ",
-      "Reservoir (model=\"RunModelReservoir\"), ",
-      "or Diversion nodes (model=\"Diversion\"): ",
-      paste(setdiff(colnames(Qobs), directFlowIds), collapse = ", ")
-    )
-    Qobs <- Qobs[, directFlowIds]
-  }
+  if (is.null(Qobs)) Qobs <- matrix(0, ncol = 0, nrow = length(DatesR))
+  if (is.null(Qrelease)) Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
+  l <- updateQObsQrelease(g = x, Qobs = Qobs, Qrelease = Qrelease)
+  Qobs <- l$Qobs
+  Qrelease <- l$Qrelease
+  checkQobsQrelease(x, "Qobs", Qobs)
+  checkQobsQrelease(x, "Qrelease", Qrelease)
+
   diversionRows <- getDiversionRows(x)
   if (length(diversionRows) > 0) {
     warn <- FALSE
@@ -171,7 +158,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
       warning(
         sprintf(
           "'Qmin' would include the following columns %s.\n Zero values are applied by default.",
-          paste(directFlowIds, collapse = ", ")
+          paste(x$id[diversionRows], collapse = ", ")
         )
       )
     }
@@ -187,16 +174,6 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
   }
 
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
-
-  # Qobs completion for at least filling Qupstream of all nodes by zeros
-  Qobs0 <- matrix(0, nrow = length(DatesR), ncol = nrow(x))
-  colnames(Qobs0) <- x$id
-  if (is.null(Qobs)) {
-    Qobs <- Qobs0
-  } else {
-    Qobs0[, colnames(Qobs)] <- Qobs
-    Qobs <- Qobs0
-  }
 
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
@@ -216,6 +193,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  NLayers = getInputBV(NLayers, id, 5),
                                  Qobs = Qobs,
                                  Qmin = getInputBV(Qmin, id),
+                                 Qrelease = Qrelease,
                                  IsHyst = IsHyst
                                  )
   }
@@ -251,7 +229,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrelease, IsHyst) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -272,7 +250,20 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
 
   if(length(UpstreamNodeRows) > 0) {
     # Sub-basin with hydraulic routing
-    Qupstream <- as.matrix(Qobs[ , griwrm$id[UpstreamNodeRows], drop=FALSE])
+    Qupstream <- NULL
+    Qupstream <- as.matrix(cbind(
+      Qobs[ , colnames(Qobs)[colnames(Qobs) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE],
+      Qrelease[ , colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE]
+    ))
+    # Qupstream completion with zeros for all upstream nodes
+    Qupstream0 <- matrix(0, nrow = length(DatesR), ncol = length(UpstreamNodeRows))
+    colnames(Qupstream0) <- griwrm$id[UpstreamNodeRows]
+    if (is.null(Qupstream) || ncol(Qupstream) == 0) {
+      Qupstream <- Qupstream0
+    } else {
+      Qupstream0[, colnames(Qupstream)] <- Qupstream
+      Qupstream <- Qupstream0
+    }
     upstreamDiversion <- which(
       sapply(griwrm$id[UpstreamNodeRows],
              function(id) {
@@ -308,6 +299,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
   # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
     FUN_MOD,
+    DatesR = DatesR,
     ...,
     Qupstream = Qupstream,
     LengthHydro = LengthHydro,
@@ -352,7 +344,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
     InputsModel$diversionOutlet <- diversionOutlet
     InputsModel$Qdiv <- -Qobs[, id]
     InputsModel$Qmin <- Qmin
-  } else if(np$Reservoir) {
+  }
+  if (np$Reservoir) {
     # If an upstream node is ungauged and the donor is downstream then we are in an ungauged reduced network
     iUpstreamUngaugedNodes <- which(griwrm$id %in% griwrm$id[UpstreamNodeRows] &
                                     griwrm$model == "Ungauged")
@@ -361,7 +354,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
       InputsModel$isUngauged <- any(griwrm$donor[iUpstreamUngaugedNodes] == InputsModel$gaugedId)
     }
     # Fill reservoir release with Qobs
-    InputsModel$Qrelease <- Qobs[, id]
+    InputsModel$Qrelease <- Qrelease[, id]
   }
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)

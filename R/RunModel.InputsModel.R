@@ -70,7 +70,7 @@ RunModel.InputsModel <- function(x = NULL,
     OutputsModel$RunOptions$WarmUpQsim_m3 <-
       OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
   }
-  if (x$hasDiversion) {
+  if (x$hasDiversion && !x$isReservoir) {
     OutputsModel <- RunModel_Diversion(x, RunOptions, OutputsModel)
   }
   return(OutputsModel)

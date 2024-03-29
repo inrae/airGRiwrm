@@ -272,3 +272,12 @@ test_that("Node with upstream nodes having area = NA should return correct Basin
   expect_equal(sum(InputsModel$`54001`$BasinAreas),
                g$area[g$id == "54001"])
 })
+
+test_that("Use of Qobs for Qrelease should raise a warning",  {
+  g <- CreateGRiwrm(n_rsrvr)
+  e <- setupRunModel(griwrm = g, runInputsModel = FALSE)
+  for(x in ls(e)) assign(x, get(x, e))
+  expect_warning(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
+                                   TempMean = TempMean,
+                                   Qobs = Qobs_rsrvr))
+})

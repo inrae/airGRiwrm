@@ -11,6 +11,7 @@
   PotEvap = NULL,
   Qobs = NULL,
   Qmin = NULL,
+  Qrelease = NULL,
   PrecipScale = TRUE,
   TempMean = NULL,
   TempMin = NULL,
@@ -44,6 +45,10 @@ the model and positive flows are injected to the model}
 \item{Qmin}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
 minimum flows to let downstream of a node with a Diversion [m3 per
 time step]. Default is zero. Column names correspond to node IDs}
+
+\item{Qrelease}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
+release flows by nodes using the model \code{RunModel_Reservoir} [m3 per
+time step]}
 
 \item{PrecipScale}{(optional) named \link{vector} of \link{logical} indicating if the
 mean of the precipitation interpolated on the elevation layers must be

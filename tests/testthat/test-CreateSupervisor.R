@@ -54,7 +54,7 @@ test_that("CreateSupervisor using reservoir and diversion", {
   ))
   g <- CreateGRiwrm(nodes)
   # Add Qobs for the 2 new nodes and create InputsModel
-  Qobs <- matrix(data = rep(0, 2*length(DatesR)), ncol = 2)
+  Qobs <- matrix(data = 0, ncol = 2, nrow = length(DatesR))
   colnames(Qobs) <- c("54029", "Reservoir")
   InputsModel <- suppressWarnings(
       CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
