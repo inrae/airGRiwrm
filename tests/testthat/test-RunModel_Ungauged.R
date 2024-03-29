@@ -291,19 +291,7 @@ test_that("Cemaneige with hysteresis works",  {
 })
 
 testDerivdedUngauged <- function(donorByDerivation) {
-  nodes <- loadSevernNodes()
-  nodes <- nodes[nodes$id %in% c("54095", "54001", "54029", "54032"), ]
-  nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
-  nodes$model[nodes$id == "54095"] <- "Ungauged"
-  nodes <- rbind(nodes,
-                 data.frame(id = c("54095", "Dam"),
-                            down = c("54029", "54029"),
-                            length = c(10, 0),
-                            area = rep(NA,2),
-                            model = c("Diversion", "RunModel_Reservoir")))
-  nodes$down[nodes$id == "54095" & nodes$model == "Diversion"] <- "Dam"
-  g <- CreateGRiwrm(nodes)
-  if (donorByDerivation) g$donor[g$id == "54095"] <- "54029"
+  g <- getGriwrmDerivedReservoirUngauged(donorByDerivation)
   Qobs2 <- matrix(-1E9, ncol = 2, nrow = 11536)
   colnames(Qobs2) <- c("54095", "Dam")
   Qobs2[, "54095"] <- -1E9
