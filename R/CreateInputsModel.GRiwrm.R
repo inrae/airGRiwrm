@@ -16,6 +16,9 @@
 #' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
 #'        minimum flows to let downstream of a node with a Diversion \[m3 per
 #'        time step\]. Default is zero. Column names correspond to node IDs
+#' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
+#'        release flows by nodes using the model `RunModel_Reservoir` \[m3 per
+#'        time step\]
 #' @param PrecipScale (optional) named [vector] of [logical] indicating if the
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
@@ -69,6 +72,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      PotEvap = NULL,
                                      Qobs = NULL,
                                      Qmin = NULL,
+                                     Qrelease = NULL,
                                      PrecipScale = TRUE,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
@@ -120,31 +124,12 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
-  directFlowIds <- x$id[is.na(x$model) | x$model == "Diversion" | x$model == "RunModel_Reservoir"]
-  if (length(directFlowIds) > 0) {
-    err <- FALSE
-    if (is.null(Qobs)) {
-      err <- TRUE
-    } else {
-      Qobs <- as.matrix(Qobs)
-      if (is.null(colnames(Qobs))) {
-        err <- TRUE
-      } else if (!all(directFlowIds %in% colnames(Qobs))) {
-        err <- TRUE
-      }
-    }
-    if (err) stop(sprintf("'Qobs' column names must at least contain %s", paste(directFlowIds, collapse = ", ")))
-  }
-  if (!all(colnames(Qobs) %in% directFlowIds)) {
-    warning(
-      "The following columns in 'Qobs' are ignored since they don't match with ",
-      "Direction Injection (model=`NA`), ",
-      "Reservoir (model=\"RunModelReservoir\"), ",
-      "or Diversion nodes (model=\"Diversion\"): ",
-      paste(setdiff(colnames(Qobs), directFlowIds), collapse = ", ")
-    )
-    Qobs <- Qobs[, directFlowIds]
-  }
+  l <- updateQObsQrelease(g = x, Qobs = Qobs, Qrelease = Qrelease)
+  Qobs <- l$Qobs
+  Qrelease <- l$Qrelease
+  checkQobsQrelease(x, "Qobs", Qobs)
+  checkQobsQrelease(x, "Qrelease", Qrelease)
+
   diversionRows <- getDiversionRows(x)
   if (length(diversionRows) > 0) {
     warn <- FALSE
