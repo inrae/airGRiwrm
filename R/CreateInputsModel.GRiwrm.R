@@ -124,6 +124,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
+  if (is.null(Qobs)) Qobs <- matrix(0, ncol = 0, nrow = length(DatesR))
+  if (is.null(Qrelease)) Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
   l <- updateQObsQrelease(g = x, Qobs = Qobs, Qrelease = Qrelease)
   Qobs <- l$Qobs
   Qrelease <- l$Qrelease
@@ -173,16 +175,6 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
 
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
 
-  # Qobs completion for at least filling Qupstream of all nodes by zeros
-  Qobs0 <- matrix(0, nrow = length(DatesR), ncol = nrow(x))
-  colnames(Qobs0) <- x$id
-  if (is.null(Qobs)) {
-    Qobs <- Qobs0
-  } else {
-    Qobs0[, colnames(Qobs)] <- Qobs
-    Qobs <- Qobs0
-  }
-
   for(id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
 
@@ -201,6 +193,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  NLayers = getInputBV(NLayers, id, 5),
                                  Qobs = Qobs,
                                  Qmin = getInputBV(Qmin, id),
+                                 Qrelease = Qrelease,
                                  IsHyst = IsHyst
                                  )
   }
@@ -236,7 +229,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrelease, IsHyst) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -257,7 +250,20 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
 
   if(length(UpstreamNodeRows) > 0) {
     # Sub-basin with hydraulic routing
-    Qupstream <- as.matrix(Qobs[ , griwrm$id[UpstreamNodeRows], drop=FALSE])
+    Qupstream <- NULL
+    Qupstream <- as.matrix(cbind(
+      Qobs[ , colnames(Qobs)[colnames(Qobs) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE],
+      Qrelease[ , colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE]
+    ))
+    # Qupstream completion with zeros for all upstream nodes
+    Qupstream0 <- matrix(0, nrow = length(DatesR), ncol = length(UpstreamNodeRows))
+    colnames(Qupstream0) <- griwrm$id[UpstreamNodeRows]
+    if (is.null(Qupstream) || ncol(Qupstream) == 0) {
+      Qupstream <- Qupstream0
+    } else {
+      Qupstream0[, colnames(Qupstream)] <- Qupstream
+      Qupstream <- Qupstream0
+    }
     upstreamDiversion <- which(
       sapply(griwrm$id[UpstreamNodeRows],
              function(id) {
@@ -293,6 +299,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
   # Set model inputs with the **airGR** function
   InputsModel <- CreateInputsModel(
     FUN_MOD,
+    DatesR = DatesR,
     ...,
     Qupstream = Qupstream,
     LengthHydro = LengthHydro,
@@ -346,7 +353,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, ..., Qobs, Qmin, IsHyst) {
       InputsModel$isUngauged <- any(griwrm$donor[iUpstreamUngaugedNodes] == InputsModel$gaugedId)
     }
     # Fill reservoir release with Qobs
-    InputsModel$Qrelease <- Qobs[, id]
+    InputsModel$Qrelease <- Qrelease[, id]
   }
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)

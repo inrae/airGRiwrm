@@ -19,7 +19,7 @@ updateQObsQrelease <- function(g, Qobs, Qrelease) {
   }
   if (!is.null(warn_ids)) {
     warning("Use of the `Qobs` parameter for reservoir releases is depracated\n",
-            "`Qobs` for nodes ", paste(warn_ids, collapse = ", "), " are used as `Qrelease`")
+            "Processing `Qrelease <- cbind(Qrelease, Qobs[, c(", paste(warn_ids, collapse = "\", `"), "\"))`")
   }
   return(list(Qobs = Qobs, Qrelease = Qrelease))
 }
