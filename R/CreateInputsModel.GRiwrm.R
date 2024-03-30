@@ -431,24 +431,14 @@ getInputBV <- function(x, id, unset = NULL) {
 #'
 #' @noRd
 hasUngaugedNodes <- function(id, griwrm) {
-  nps <- getAllNodesProperties(griwrm)
-  upNodes <- griwrm[!is.na(griwrm$down) & griwrm$down == id, ]
-  upIds <- upNodes$id[upNodes$model != "Diversion"]
-  # No upstream nodes
-  if(length(upIds) == 0) return(FALSE)
-  # At least one upstream node is ungauged
-  UngNodes <- griwrm$model[griwrm$id %in% upIds] == "Ungauged"
-  UngNodes <- UngNodes[!is.na(UngNodes)]
-  if(length(UngNodes) > 0 && any(UngNodes)) return(TRUE)
-
-  upNps <- nps[nps$id %in% upIds, ]
-  if(any(upNps$DirectInjection) || any(upNps$Reservoir)) {
-    # At least one node's model is NA or Reservoir, we need to investigate next level
-    out <- sapply(upNps$id[upNps$DirectInjection | upNps$Reservoir],
-                  hasUngaugedNodes,
-                  griwrm = griwrm)
-    return(any(out))
-  }
+  g <- griwrm[!is.na(griwrm$model), ]
+  idsWithCurrentAsDonor <- g$id[g$id != id & g$donor == id]
+  if (length(idsWithCurrentAsDonor) == 0) return(FALSE)
+  areNodesUpstream <- sapply(idsWithCurrentAsDonor,
+                             function(x) isNodeUpstream(g, id, x))
+  if (!any(areNodesUpstream)) return(FALSE)
+  g_red <- g[g$id %in% idsWithCurrentAsDonor[areNodesUpstream], ]
+  if (any(g_red$model == "Ungauged")) return(TRUE)
   return(FALSE)
 }
 

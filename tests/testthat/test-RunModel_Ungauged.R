@@ -290,27 +290,10 @@ test_that("Cemaneige with hysteresis works",  {
                c("54057" = 9, "54032" = 9, "54001" = 8))
 })
 
-testDerivdedUngauged <- function(donorByDerivation) {
-  g <- getGriwrmDerivedReservoirUngauged(donorByDerivation)
-  Qobs2 <- matrix(-1E9, ncol = 2, nrow = 11536)
-  colnames(Qobs2) <- c("54095", "Dam")
-  Qobs2[, "54095"] <- -1E9
-  Qobs2[, "Dam"] <- 1E9
-  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
-  for (x in ls(e)) assign(x, get(x, e))
-
-  CalibOptions <- CreateCalibOptions(InputsModel,
-                                     FixedParam = list(Dam = c(650E6, 1)))
-  e <- runCalibration(g, Qobs2 = Qobs2, CalibOptions = CalibOptions)
-  for(x in ls(e)) assign(x, get(x, e))
-  expect_equal(Param[["54095"]][1:3],
-               Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4])
-}
-
 test_that("Ungauged node with derivation to reservoir should work", {
-  testDerivdedUngauged(FALSE)
+  testDerivedUngauged(FALSE)
 })
 
 test_that("Ungauged node with donor by derivation through reservoir should work", {
-  testDerivdedUngauged(TRUE)
+  testDerivedUngauged(TRUE)
 })
