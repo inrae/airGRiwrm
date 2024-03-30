@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateGRiwrm.R
 \name{getNodeRanking}
 \alias{getNodeRanking}
-\title{Sorting of the nodes from upstream to downstream}
+\title{Sorting of the nodes from upstream to downstream for RunModel and Calibration}
 \usage{
 getNodeRanking(griwrm)
 }
@@ -10,8 +10,8 @@ getNodeRanking(griwrm)
 \item{griwrm}{[object of class \code{GRiwrm}] see \link{CreateGRiwrm} for details}
 }
 \value{
-\link{numeric} ordered node names
+\link{numeric} ordered node ids
 }
 \description{
-Sorting of the nodes from upstream to downstream
+Sorting of the nodes from upstream to downstream for RunModel and Calibration
 }

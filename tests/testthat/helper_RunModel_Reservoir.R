@@ -56,3 +56,20 @@ getGriwrmDerivedReservoirUngauged <- function(donorByDerivation) {
     g$donor[g$id == "54095"] <- "54029"
   return(g)
 }
+
+testDerivedUngauged <- function(donorByDerivation) {
+  g <- getGriwrmDerivedReservoirUngauged(donorByDerivation)
+  Qobs2 <- matrix(-1E9, ncol = 2, nrow = 11536)
+  colnames(Qobs2) <- c("54095", "Dam")
+  Qobs2[, "54095"] <- -1E9
+  Qobs2[, "Dam"] <- 1E9
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
+  for (x in ls(e)) assign(x, get(x, e))
+
+  CalibOptions <- CreateCalibOptions(InputsModel,
+                                     FixedParam = list(Dam = c(650E6, 1)))
+  e <- runCalibration(g, Qobs2 = Qobs2, CalibOptions = CalibOptions)
+  for(x in ls(e)) assign(x, get(x, e))
+  expect_equal(Param[["54095"]][1:3],
+               Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4])
+}

@@ -1,5 +1,6 @@
 #' @rdname CreateCalibOptions
 #' @export
+#' @importFrom stats setNames
 CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
   dots <- list(...)
   if ("IsHyst" %in% names(dots)) {

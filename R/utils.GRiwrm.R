@@ -33,18 +33,40 @@ getNoSD_Ids <- function(InputsModel, include_diversion = TRUE) {
 }
 
 
-#' Check if a node is downstream another one
+#' Check if a node is downstream or upstream another one
 #'
-#' @param InputsModel \[`GRiwrmInputsModel` object\] see [CreateInputsModel.GRiwrm] for details
+#' @param x \[`GRiwrmInputsModel` object\] (see [CreateInputsModel.GRiwrm]) or
+#'        \[`GRiwrm` object\] (See [CreateGRiwrm])
 #' @param current_node [character] with the id of the current node
-#' @param down_node [character] with the id of the node for which we want to know if it is downstream `current_node`
+#' @param candidate_node [character] with the id of the node for which we want
+#'        to know if it is downstream or upstream `current_node`
 #'
-#' @return [logical] `TRUE` if the node with the id `down_node` is downstream the node with the id `current_node`
+#' @return [logical] `TRUE` if the node with the id `down_candidate` is downstream
+#'         or upstream the node with the id `current_node`
 #' @export
+#' @rdname isNodeDownstream
 #'
-isNodeDownstream <- function(InputsModel, current_node, down_node) {
-  current_down_node <- InputsModel[[current_node]]$down
-  if (is.na(current_down_node)) return(FALSE)
-  if (current_down_node == down_node) return(TRUE)
-  return(isNodeDownstream(InputsModel, current_down_node, down_node))
+isNodeDownstream <- function(x, current_node, candidate_node) {
+  UseMethod("isNodeDownstream", x)
+}
+
+#' @export
+#' @rdname isNodeDownstream
+isNodeDownstream.GRiwrmInputsModel <- function(x, current_node, candidate_node) {
+  isNodeDownstream(attr(x, "GRiwrm"), current_node, candidate_node)
+}
+
+#' @export
+#' @rdname isNodeDownstream
+isNodeDownstream.GRiwrm <- function(x, current_node, candidate_node) {
+  current_down_node <- x$down[x$id %in% current_node]
+  if (all(is.na(current_down_node))) return(FALSE)
+  if (any(current_down_node == candidate_node)) return(TRUE)
+  return(isNodeDownstream(x, current_down_node, candidate_node))
+}
+
+#' @export
+#' @rdname isNodeDownstream
+isNodeUpstream <- function(x, current_node, candidate_node) {
+  !isNodeDownstream(x, current_node, candidate_node)
 }

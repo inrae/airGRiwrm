@@ -2,20 +2,32 @@
 % Please edit documentation in R/utils.GRiwrm.R
 \name{isNodeDownstream}
 \alias{isNodeDownstream}
-\title{Check if a node is downstream another one}
+\alias{isNodeDownstream.GRiwrmInputsModel}
+\alias{isNodeDownstream.GRiwrm}
+\alias{isNodeUpstream}
+\title{Check if a node is downstream or upstream another one}
 \usage{
-isNodeDownstream(InputsModel, current_node, down_node)
+isNodeDownstream(x, current_node, candidate_node)
+
+\method{isNodeDownstream}{GRiwrmInputsModel}(x, current_node, candidate_node)
+
+\method{isNodeDownstream}{GRiwrm}(x, current_node, candidate_node)
+
+isNodeUpstream(x, current_node, candidate_node)
 }
 \arguments{
-\item{InputsModel}{[\code{GRiwrmInputsModel} object] see \link{CreateInputsModel.GRiwrm} for details}
+\item{x}{[\code{GRiwrmInputsModel} object] (see \link{CreateInputsModel.GRiwrm}) or
+[\code{GRiwrm} object] (See \link{CreateGRiwrm})}
 
 \item{current_node}{\link{character} with the id of the current node}
 
-\item{down_node}{\link{character} with the id of the node for which we want to know if it is downstream \code{current_node}}
+\item{candidate_node}{\link{character} with the id of the node for which we want
+to know if it is downstream or upstream \code{current_node}}
 }
 \value{
-\link{logical} \code{TRUE} if the node with the id \code{down_node} is downstream the node with the id \code{current_node}
+\link{logical} \code{TRUE} if the node with the id \code{down_candidate} is downstream
+or upstream the node with the id \code{current_node}
 }
 \description{
-Check if a node is downstream another one
+Check if a node is downstream or upstream another one
 }
