@@ -25,6 +25,11 @@ test_that("Check ranking with Diversion", {
 })
 
 test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
+  g <- getGriwrmDerivedReservoirUngauged(FALSE)
+  expect_equal(getNodeRanking(g), c("54095", "54001", "Dam", "54029", "54032"))
+})
+
+test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
   g <- getGriwrmDerivedReservoirUngauged(TRUE)
-  expect_equal(getNodeRanking(g), c("54029", "Dam", "54029", "54001", "54032"))
+  expect_equal(getNodeRanking(g), c("54095", "Dam", "54029", "54001", "54032"))
 })

@@ -125,33 +125,38 @@ CheckColumnTypes <- function(df, coltypes, keep_all) {
 }
 
 
-#' Sorting of the nodes from upstream to downstream
+#' Sorting of the nodes from upstream to downstream for RunModel and Calibration
 #'
 #' @param griwrm \[object of class `GRiwrm`\] see [CreateGRiwrm] for details
 #'
-#' @return [numeric] ordered node names
+#' @return [numeric] ordered node ids
 #' @export
+#' @import dplyr
 getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
   # Remove upstream nodes without model (direct flow connections)
-  griwrm <- griwrm[!is.na(griwrm$model), ]
-  # Rank 1
-  rank <- setdiff(griwrm$id, griwrm$down)
-  ranking <- rank
-  # Next ranks
-  while (any(griwrm$id %in% rank)) {
-    rank <- griwrm$down[griwrm$id %in% rank]
-    ranking <- c(ranking, rank)
+  g <- griwrm[!is.na(griwrm$model), ]
+  r <- c()
+  while (nrow(g) > 0) {
+    # Search for gauged ids or ungauged with upstream donor
+    upIds <- unique(g$id[!g$id %in% g$down & (g$id == g$donor | !g$donor %in% g$id)])
+    r <- c(r, upIds)
+    g <- g[!g$id %in% upIds, ]
+    #Search for ungauged ids
+    upIds <- unique(g$id[!g$id %in% g$down & g$id != g$donor])
+    for(upId in upIds) {
+      #Browse the ungauged sub-network until the donor
+      g2 <- g %>% filter(donor == g$donor[g$id == upId])
+      g2$donor <- g2$id
+      ungaugedIds <- getNodeRanking(g2)
+      r <- c(r, ungaugedIds)
+      g <- g[!g$id %in% ungaugedIds, ]
+    }
   }
-  ranking <- unique(ranking, fromLast = TRUE)
-  ranking <- ranking[-length(ranking)]
-  # Remove intermediate nodes without model (direct flow connections)
-  ranking <- ranking[ranking %in% griwrm$id]
-  return(ranking)
+  return(r)
 }
-
 
 checkNetworkConsistency <- function(db) {
   db2 <- db[getDiversionRows(db, TRUE), ]
