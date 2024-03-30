@@ -35,6 +35,8 @@ is here completed by:
 \itemize{
 \item an item \verb{$Qsim_m3} storing the simulated discharge series in m3/s
 \item an item \verb{$Qover_m3} storing the volumes of over abstraction which occurs
-when \code{RunModel_Lag} warns for negative simulated flows.
+when \code{RunModel_Lag} warns for negative simulated flows. The latter reflects the volume
+that was planned to be drawn from the sub-basin but could not be drawn because
+of the lack of water.
 }
 }

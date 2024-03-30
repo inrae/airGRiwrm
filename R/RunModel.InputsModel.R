@@ -161,10 +161,10 @@ calcOverAbstraction <- function(O, WarmUp) {
     f <- lapply(f, function(x) paste0("WarmUp", x))
   }
   if (!is.null(O[[f$sim]])) {
-    if (any(O[[f$sim]] < 0)) {
+    if (any(!is.na(O[[f$sim]]) & O[[f$sim]] < 0)) {
       O[[f$over]] <- rep(0, length(O[[f$sim]]))
-      O[[f$over]][O[[f$sim]] < 0] <- - O[[f$sim]][O[[f$sim]] < 0]
-      O[[f$sim]][O[[f$sim]] < 0] <- 0
+      O[[f$over]][O[[f$sim]] < 0] <- - O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0]
+      O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0] <- 0
     }
   }
   return(O)

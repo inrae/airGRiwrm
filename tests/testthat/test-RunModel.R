@@ -257,7 +257,7 @@ test_that("RunModel should return water deficit (Qover_m3)", {
   )
   g <- CreateGRiwrm(nodes)
   Qobs2 <- data.frame(P = rep(-2E6, length(DatesR)))
-  e <- setupRunModel(griwrm = g, runRunModel = TRUE, Qobs2 = Qobs2)
+  expect_warning(e <- setupRunModel(griwrm = g, runRunModel = TRUE, Qobs2 = Qobs2))
   for(x in ls(e)) assign(x, get(x, e))
   expect_false(any(OM_GriwrmInputs$`54001`$Qsim_m3 < 0))
   expect_true(all(OM_GriwrmInputs$`54001`$Qover_m3 >= 0))
