@@ -293,7 +293,7 @@ calcSubBasinAreas <- function(IM) {
 #' @references Lobligeois, Florent. Mieux connaître la distribution spatiale des
 #' pluies améliore-t-il la modélisation des crues ? Diagnostic sur 181 bassins
 #' versants français. Phdthesis, AgroParisTech, 2014.
-#' <https://pastel.archives-ouvertes.fr/tel-01134990/document>
+#' <https://pastel.hal.science/tel-01134990/document>
 #'
 #' @inheritParams airGR::RunModel
 #' @param ouput.all [logical] if `TRUE` returns the output of [RunModel.GRiwrm],
