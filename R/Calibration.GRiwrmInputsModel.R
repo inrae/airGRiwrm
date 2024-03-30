@@ -199,6 +199,7 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
 #' - `RunOptions`: a *GRiwrmRunOptions* of the reduced network
 #' @noRd
 #' @importFrom dplyr "%>%"
+#' @importFrom rlang .data
 #'
 updateParameters4Ungauged <- function(GaugedId,
                                       InputsModel,
@@ -211,12 +212,12 @@ updateParameters4Ungauged <- function(GaugedId,
   # Select nodes identified with the current node as donor gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
   donorIds <- griwrm$id[!is.na(griwrm$donor) & griwrm$donor == GaugedId]
-  gDonor <- griwrm %>% dplyr::filter(id %in% donorIds)
+  gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
   # Add upstream nodes for routing upstream flows
   upNodes <- griwrm %>%
-    dplyr::filter(down %in% gDonor$id,
-                  !id %in% gDonor$id) %>%
-    dplyr::mutate(model = ifelse(!is.na(model) & model != "Diversion", NA, model))
+    dplyr::filter(.data$down %in% gDonor$id,
+                  !.data$id %in% gDonor$id) %>%
+    dplyr::mutate(model = ifelse(!is.na(.data$model) & .data$model != "Diversion", NA, .data$model))
   upIds <- upNodes$id
   g <- rbind(upNodes, gDonor)
   # Set downstream nodes

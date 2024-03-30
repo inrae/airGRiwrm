@@ -25,6 +25,7 @@ Imports:
     dplyr,
     graphics,
     grDevices,
+    rlang,
     utils
 Suggests:
     htmltools,
