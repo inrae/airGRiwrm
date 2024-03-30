@@ -146,11 +146,14 @@ getNodeRanking <- function(griwrm) {
     g <- g[!g$id %in% upIds, ]
     #Search for ungauged ids
     upIds <- unique(g$id[!g$id %in% g$down & g$id != g$donor])
-    for(upId in upIds) {
+    while(length(upIds) > 0) {
+      upId <- upIds[1]
       #Browse the ungauged sub-network until the donor
-      g2 <- g %>% filter(donor == g$donor[g$id == upId])
+      upDonor <- g$donor[g$id == upId]
+      g2 <- g %>% filter(donor == upDonor)
       g2$donor <- g2$id
       ungaugedIds <- getNodeRanking(g2)
+      upIds <- upIds[!upIds %in% ungaugedIds]
       r <- c(r, ungaugedIds)
       g <- g[!g$id %in% ungaugedIds, ]
     }
