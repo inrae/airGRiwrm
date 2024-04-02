@@ -266,7 +266,7 @@ test_that("Node with upstream nodes having area = NA should return correct Basin
     Dam = rep(0,11536)
   )
   e <- setupRunModel(griwrm = g, runInputsModel = FALSE, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   InputsModel <-
     suppressWarnings(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs2))
   expect_equal(sum(InputsModel$`54001`$BasinAreas),
@@ -276,7 +276,7 @@ test_that("Node with upstream nodes having area = NA should return correct Basin
 test_that("Use of Qobs for Qrelease should raise a warning",  {
   g <- CreateGRiwrm(n_rsrvr)
   e <- setupRunModel(griwrm = g, runInputsModel = FALSE)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_warning(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
                                    TempMean = TempMean,
                                    Qobs = Qobs_rsrvr))

@@ -236,7 +236,7 @@ test_that("A transparent upstream node with area=NA should return same result #1
   )
   g <- CreateGRiwrm(nodes)
   e <- setupRunModel(griwrm = g, runRunModel = FALSE)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   Param <- ParamMichel[c("54095", "54001")]
   Param[["P"]] <- 1
   OM <- RunModel(InputsModel,
@@ -258,7 +258,7 @@ test_that("RunModel should return water deficit (Qover_m3)", {
   g <- CreateGRiwrm(nodes)
   Qobs2 <- data.frame(P = rep(-2E6, length(DatesR)))
   expect_warning(e <- setupRunModel(griwrm = g, runRunModel = TRUE, Qobs2 = Qobs2))
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_false(any(OM_GriwrmInputs$`54001`$Qsim_m3 < 0))
   expect_true(all(OM_GriwrmInputs$`54001`$Qover_m3 >= 0))
   sv <- CreateSupervisor(InputsModel)

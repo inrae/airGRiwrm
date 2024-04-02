@@ -12,7 +12,7 @@
 #'
 UpdateQsimUpstream <- function(InputsModel, Runoptions, OutputsModel) {
   iQ <- which(InputsModel$UpstreamIsModeled)
-  for(i in iQ) {
+  for (i in iQ) {
     InputsModel$Qupstream[Runoptions$IndPeriod_Run, i] <- OutputsModel[[InputsModel$UpstreamNodes[i]]][[InputsModel$UpstreamVarQ[i]]]
     varWarmupQ_m3 <- paste0("WarmUp", InputsModel$UpstreamVarQ[i])
     if (!is.null(OutputsModel[[InputsModel$UpstreamNodes[i]]]$RunOptions[[varWarmupQ_m3]])) {

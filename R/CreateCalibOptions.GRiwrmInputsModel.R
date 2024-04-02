@@ -43,7 +43,7 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
   CalibOptions <- list()
   class(CalibOptions) <- c("GRiwrmCalibOptions", class(CalibOptions))
 
-  for(id in gaugedIds) {
+  for (id in gaugedIds) {
     IM <- x[[id]]
     FP <- NULL
     if (!is.null(FixedParam)) {

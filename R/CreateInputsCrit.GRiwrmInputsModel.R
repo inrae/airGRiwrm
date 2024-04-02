@@ -74,7 +74,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
 
   np <- getAllNodesProperties(attr(InputsModel, "GRiwrm"))
   gaugedIds <- np$id[np$calibration == "Gauged"]
-  for(id in gaugedIds) {
+  for (id in gaugedIds) {
     if (id %in% colnames(Obs)) {
       IM <- InputsModel[[id]]
       InputsCrit[[IM$id]] <- CreateInputsCrit.InputsModel(

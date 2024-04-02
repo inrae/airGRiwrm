@@ -34,7 +34,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   b <- sapply(InputsModel, function(IM) !IM$isUngauged)
   gaugedIds <- names(b[b])
 
-  for(id in gaugedIds) {
+  for (id in gaugedIds) {
     IM <- InputsModel[[id]]
     message("Calibration.GRiwrmInputsModel: Processing sub-basin ", id, "...")
 

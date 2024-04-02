@@ -44,13 +44,13 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   class(x$OutputsModel) <- c("GRiwrmOutputsModel", class(x$OutputsModel))
 
   # Copy simulated pure runoff flows (no SD nor Diversion nodes) to Qupstream
-  for(id in getNoSD_Ids(x$InputsModel, include_diversion = FALSE)) {
+  for (id in getNoSD_Ids(x$InputsModel, include_diversion = FALSE)) {
     updateQupstream.Supervisor(x, id, IndPeriod_Run)
   }
 
   # Initialization of model states by running the model with no supervision on warm-up period
   RunOptionsWarmUp <- RunOptions
-  for(id in names(x$InputsModel)) {
+  for (id in names(x$InputsModel)) {
     RunOptionsWarmUp[[id]]$IndPeriod_Run <- RunOptionsWarmUp[[id]]$IndPeriod_WarmUp
     RunOptionsWarmUp[[id]]$IndPeriod_WarmUp <- 0L
     RunOptionsWarmUp[[id]]$Outputs_Sim <- c("StateEnd", "Qsim")
@@ -64,7 +64,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   # Adapt RunOptions to step by step simulation and copy states
   SD_Ids <- getSD_Ids(x$InputsModel, add_diversions = TRUE)
   names(SD_Ids) <- SD_Ids
-  for(id in SD_Ids) {
+  for (id in SD_Ids) {
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
     RunOptions[[id]]$Outputs_Sim <- c("Qsim_m3", "StateEnd")
     x$OutputsModel[[id]]$StateEnd <- serializeIniStates(OM_WarmUp[[id]]$StateEnd)
@@ -88,7 +88,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   iProgressSteps <- round(length(lSuperTS) * seq(0.1, 0.9, 0.1))
 
   # Loop over time steps with a step equal to the supervision time step
-  for(i in seq_along(lSuperTS)) {
+  for (i in seq_along(lSuperTS)) {
     iProgressMessage <- which(i == iProgressSteps)
     if (length(iProgressMessage) == 1) {
       message(" ", 10 * iProgressMessage, "%", appendLF = FALSE)
@@ -102,7 +102,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
       doSupervision(x)
     }
     # Loop over sub-basin using SD model
-    for(id in SD_Ids) {
+    for (id in SD_Ids) {
       # Run model for the sub-basin and one time step
       RunOptions[[id]]$IniStates <- serializeIniStates(x$OutputsModel[[id]]$StateEnd)
       RunOptions[[id]]$IndPeriod_Run <- iTS
@@ -136,7 +136,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   message(" 100%")
 
-  for(id in SD_Ids) {
+  for (id in SD_Ids) {
     x$OutputsModel[[id]]$DatesR <- x$DatesR[IndPeriod_Run]
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]

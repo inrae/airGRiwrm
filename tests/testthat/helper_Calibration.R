@@ -16,7 +16,7 @@ runCalibration <- function(nodes = NULL,
                      runRunModel = runRunModel,
                      Qobs2 = Qobs2,
                      IsHyst = IsHyst)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   rm(e)
   np <- getAllNodesProperties(griwrm)
 

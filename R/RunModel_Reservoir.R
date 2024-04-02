@@ -73,7 +73,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   }
 
   # Time series volume and release calculation
-  for(i in iPerTot) {
+  for (i in iPerTot) {
     Vsim[i] <- V0 + Qinflows_m3[i]
     if (InputsModel$hasDiversion) {
       Qdiv_m3[i] <- min(Vsim[i] + InputsModel$Qmin[IndPerTot[i]], InputsModel$Qdiv[IndPerTot[i]])

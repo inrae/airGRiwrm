@@ -2,7 +2,7 @@ updateQObsQrelease <- function(g, Qobs, Qrelease) {
   reservoirIds <- g$id[!is.na(g$model) & g$model == "RunModel_Reservoir"]
   # Fill Qrelease with Qobs
   warn_ids <- NULL
-  for(id in reservoirIds) {
+  for (id in reservoirIds) {
     if (!id %in% colnames(Qrelease)) {
       if (id %in% colnames(Qobs)) {
         if (!any(g$id == id & (!is.na(g$model) & g$model == "Diversion"))) {

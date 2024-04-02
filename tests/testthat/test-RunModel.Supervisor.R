@@ -94,7 +94,7 @@ test_that("RunModel.Supervisor with diversion node should not produce NAs", {
   Qobs2 <- matrix(data = rep(0, length(DatesR)), ncol = 1)
   colnames(Qobs2) <- "54001"
   e <- setupRunModel(griwrm = g_div, runRunModel = FALSE, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   sv <- CreateSupervisor(InputsModel, TimeStep = 1L)
   logicFunFactory <- function(sv) {
     #' @param Y Flow measured at "54002" the previous time step

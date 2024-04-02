@@ -175,7 +175,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
 
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
 
-  for(id in getNodeRanking(x)) {
+  for (id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
 
     InputsModel[[id]] <-
