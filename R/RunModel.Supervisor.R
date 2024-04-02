@@ -48,9 +48,6 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     updateQupstream.Supervisor(x, id, IndPeriod_Run)
   }
 
-  # Store OutputsModel for step by step simulation
-  x$storedOutputs <- initStoredOutputs(x)
-
   # Initialization of model states by running the model with no supervision on warm-up period
   RunOptionsWarmUp <- RunOptions
   for(id in names(x$InputsModel)) {
@@ -75,14 +72,17 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   # Set Outputs to archive for final restitution
   outputVars <- lapply(SD_Ids, function(id) {
-    ov <- "Qsim_m3"
+    ov <- c("Qsim_m3", "Qover_m3")
     if (x$InputsModel[[id]]$hasDiversion) {
       ov <- c(ov, "Qdiv_m3", "Qnat")
-    } else if (x$InputsModel[[id]]$isReservoir) {
+    }
+    if (x$InputsModel[[id]]$isReservoir) {
       ov <- c(ov, "Qinflows_m3", "Vsim")
     }
     return(ov)
   })
+  # Store OutputsModel for step by step simulation
+  x$storedOutputs <- initStoredOutputs(x, outputVars)
 
   message("Processing: 0%", appendLF = FALSE)
   iProgressSteps <- round(length(lSuperTS) * seq(0.1, 0.9, 0.1))
@@ -151,6 +151,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   return(x$OutputsModel)
 }
+
 
 updateQupstream.Supervisor <- function(x, id, iTS) {
   downId <- x$InputsModel[[id]]$down

@@ -60,12 +60,14 @@ RunModel.InputsModel <- function(x = NULL,
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)
   } else {
-    # Intermediate basins (other than reservoir) are launch with SD capabilities
+    # Intermediate basins (other than reservoir) are launched with SD capabilities
     if (!is.null(x$UpstreamNodes) & !inherits(x, "SD")) {
       # For calibration of node with diversion
       class(x) <- c(class(x), "SD")
     }
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
+    OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
+    OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
   }
   OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   if (is.null(OutputsModel$Qsim_m3)) {
@@ -80,8 +82,6 @@ RunModel.InputsModel <- function(x = NULL,
   if (x$hasDiversion && !x$isReservoir) {
     OutputsModel <- RunModel_Diversion(x, RunOptions, OutputsModel)
   }
-  OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
-  OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
   return(OutputsModel)
 }
 
@@ -144,29 +144,3 @@ calc_Qdiv<- function(Qnat, Qdiv, Qmin) {
   }
   return(list(Qsim = Qsim, Qdiv = Qnat - Qsim))
 }
-
-
-#' Cap negative `OutputsModel$Qsim_m3` to zero and fill `OutputsModel$Qover_m3`
-#' with over-abstracted volumes
-#'
-#' @param O Either `OutputsModel` or `OutputsModel$RunOptions` (for warm-up Qsim)
-#' @param WarmUp `TRUE` if `O` is `OutputsModel$RunOptions`
-#'
-#' @return Modified `OutputsModel` or `OutputsModel$RunOptions`
-#' @noRd
-#'
-calcOverAbstraction <- function(O, WarmUp) {
-  f <- list(sim = "Qsim_m3", over = "Qover_m3")
-  if(WarmUp) {
-    f <- lapply(f, function(x) paste0("WarmUp", x))
-  }
-  if (!is.null(O[[f$sim]])) {
-    if (any(!is.na(O[[f$sim]]) & O[[f$sim]] < 0)) {
-      O[[f$over]] <- rep(0, length(O[[f$sim]]))
-      O[[f$over]][O[[f$sim]] < 0] <- - O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0]
-      O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0] <- 0
-    }
-  }
-  return(O)
-}
-

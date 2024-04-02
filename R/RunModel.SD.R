@@ -1,4 +1,4 @@
-#' Run a semi-distributed model from rainfall-runoff model outputs
+#' Run a hydraulic routing model from rainfall-runoff model outputs
 #'
 #' @inheritParams airGR::RunModel_Lag
 #' @param x \[object of class `InputsModel`\] used as `InputsModel` parameter for [airGR::RunModel_Lag]
@@ -17,6 +17,8 @@ RunModel.SD <- function(x, RunOptions, Param, QcontribDown, ...) {
                                         RunOptions = RunOptions,
                                         Param = Param[1],
                                         QcontribDown = QcontribDown)
+    OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
+    OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
   }
   OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   return(OutputsModel)

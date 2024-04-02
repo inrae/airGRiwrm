@@ -97,30 +97,21 @@ doSupervision <- function(supervisor) {
 }
 
 
-initStoredOutputs <- function(x) {
-  np <- getAllNodesProperties(x$griwrm)
-  so <- list()
-  so$QcontribDown <- do.call(
+initStoredOutputs <- function(x, outputVars) {
+  QcontribDown <- do.call(
     cbind,
     lapply(x$OutputsModel, "[[", "Qsim")
   )
-  so$Qsim_m3 <- do.call(
-    cbind,
-    lapply(x$OutputsModel, "[[", "Qsim_m3")
-  )
-  if (sum(np$Diversion) > 0) {
-    # Outputs of Diversion nodes
-    so$Qdiv_m3 <- so$Qsim_m3[, np$id[np$Diversion], drop = FALSE] * NA
-    so$Qnat <- so$Qdiv_m3
-  }
-  if (sum(np$Reservoir) > 0) {
-    # Specific Outputs of RunModel_Reservoir
-    so$Vsim <- matrix(rep(NA, sum(np$Reservoir) * nrow(so$Qsim_m3)),
-                      nrow = nrow(so$Qsim_m3))
-    colnames(so$Vsim) <- np$id[np$Reservoir]
-    so$Qinflows_m3 <- so$Vsim
-    # Add columns Qsim_m3 at reservoir (out of the scope of GR models calculated above)
-    so$Qsim_m3 <- cbind(so$Qsim_m3, so$Vsim)
-  }
+  so <- lapply(setNames(nm = unique(unlist(outputVars))), function(ov) {
+    s <- sapply(outputVars, function(y) "Qsim_m3" %in% y)
+    ids <- names(s)[s]
+    if (length(ids) > 0) {
+      m <- matrix(NA, nrow = nrow(QcontribDown), ncol = length(ids))
+      colnames(m) <- ids
+      return(m)
+    }
+    return(NULL)
+  })
+  so$QcontribDown <- QcontribDown
   return(so)
 }

@@ -64,3 +64,27 @@ serializeIniStates <- function(IniStates) {
   unlist(IniStates)
 }
 
+
+#' Cap negative `OutputsModel$Qsim_m3` to zero and fill `OutputsModel$Qover_m3`
+#' with over-abstracted volumes
+#'
+#' @param O Either `OutputsModel` or `OutputsModel$RunOptions` (for warm-up Qsim)
+#' @param WarmUp `TRUE` if `O` is `OutputsModel$RunOptions`
+#'
+#' @return Modified `OutputsModel` or `OutputsModel$RunOptions`
+#' @noRd
+#'
+calcOverAbstraction <- function(O, WarmUp) {
+  f <- list(sim = "Qsim_m3", over = "Qover_m3")
+  if(WarmUp) {
+    f <- lapply(f, function(x) paste0("WarmUp", x))
+  }
+  if (!is.null(O[[f$sim]])) {
+    O[[f$over]] <- rep(0, length(O[[f$sim]]))
+    if (any(!is.na(O[[f$sim]]) & O[[f$sim]] < 0)) {
+      O[[f$over]][O[[f$sim]] < 0] <- - O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0]
+      O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0] <- 0
+    }
+  }
+  return(O)
+}

@@ -261,4 +261,8 @@ test_that("RunModel should return water deficit (Qover_m3)", {
   for(x in ls(e)) assign(x, get(x, e))
   expect_false(any(OM_GriwrmInputs$`54001`$Qsim_m3 < 0))
   expect_true(all(OM_GriwrmInputs$`54001`$Qover_m3 >= 0))
+  sv <- CreateSupervisor(InputsModel)
+  OM_sv <- RunModel(sv, RunOptions, ParamMichel)
+  expect_equal(OM_sv$`54001`$Qsim_m3, OM_GriwrmInputs$`54001`$Qsim_m3)
+  expect_equal(OM_sv$`54001`$Qover_m3, OM_GriwrmInputs$`54001`$Qover_m3)
 })
