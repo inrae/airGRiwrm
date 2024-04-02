@@ -5,7 +5,7 @@
 #' @param ... further arguments passed to or from other methods
 #'
 #' @return `OutputsModel` object. See [airGR::RunModel_Lag]
-#' @export
+#' @noRd
 #'
 RunModel.SD <- function(x, RunOptions, Param, QcontribDown, ...) {
   if (x$isReservoir) {
