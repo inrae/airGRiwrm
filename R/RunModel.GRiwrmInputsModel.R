@@ -19,7 +19,7 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
     message("RunModel.GRiwrmInputsModel: Processing sub-basin ", x[[id]]$id, "...")
 
     # Update x[[id]]$Qupstream with simulated upstream flows
-    if(any(x[[id]]$UpstreamIsModeled)) {
+    if (any(x[[id]]$UpstreamIsModeled)) {
       x[[id]] <- UpdateQsimUpstream(x[[id]], RunOptions[[id]], OutputsModel)
     }
     # Run the model for the sub-basin

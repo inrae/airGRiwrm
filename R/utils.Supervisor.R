@@ -43,7 +43,7 @@ setDataToLocation <- function(ctrlr, sv) {
       # Direct injection node => update Qusptream of downstream node
       node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
       # ! Qupstream contains warm up period and run period => the index is shifted
-      if(!is.null(sv$InputsModel[[node]])) {
+      if (!is.null(sv$InputsModel[[node]])) {
         sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, locU] <- U
       }
     } else if (sv$nodeProperties[locU, "Diversion"]){
@@ -73,7 +73,7 @@ doSupervision <- function(supervisor) {
     # Run logic
     supervisor$controllers[[id]]$U <-
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
-    if(is.vector(supervisor$controllers[[id]]$U)) {
+    if (is.vector(supervisor$controllers[[id]]$U)) {
       supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
     }
     # Check U output

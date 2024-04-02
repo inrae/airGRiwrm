@@ -13,7 +13,7 @@
 #'
 #' @example man-examples/RunModel.Supervisor.R
 CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
-  if(!inherits(InputsModel, "GRiwrmInputsModel")) {
+  if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
   }
   if (!is.integer(TimeStep)) stop("`TimeStep` parameter must be an integer")

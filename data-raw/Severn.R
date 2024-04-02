@@ -13,7 +13,7 @@ files <- file.path(
 )
 
 read_CAMELS_ts <- function(file, cut) {
-  if(!file.exists(file)) {
+  if (!file.exists(file)) {
     stop("File not found: ", file, "\n",
          "Please download it from:\n",
          "https://catalogue.ceh.ac.uk/documents/8344e4f3-d2ea-44f5-8afa-86d2987543a9")

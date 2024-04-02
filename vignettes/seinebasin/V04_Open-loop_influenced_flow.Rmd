@@ -23,14 +23,14 @@ library(airGRiwrm)
 
 ## Integration of the reservoir connections into the model
 
-The aim of this vignette is to add reservoir connections to the Seine River model 
-previously set up. A complete description of the reservoir system of the Seine 
+The aim of this vignette is to add reservoir connections to the Seine River model
+previously set up. A complete description of the reservoir system of the Seine
 River can be found in @dehayEtudeImpactChangement2012
 
 ### Add connections to the reservoirs in the gauging station network
 
-Because of the **airGR** SD model structure, the topology of the network will 
-differ between the physical one and the modeled one. In the following, we provide 
+Because of the **airGR** SD model structure, the topology of the network will
+differ between the physical one and the modeled one. In the following, we provide
 details for each of the 4 lakes, and then we present the complete SD network.
 
 First, the physical topology of the Aube lake is represented below:
@@ -39,7 +39,7 @@ First, the physical topology of the Aube lake is represented below:
 
 mmd <- function(x, ...) {
   # For avoiding crash of R CMD build in console mode
-  if(Sys.getenv("RSTUDIO") == "1") {
+  if (Sys.getenv("RSTUDIO") == "1") {
     mermaid(x, ...)
   }
 }
@@ -56,8 +56,8 @@ style AUBE fill:#ccf
 ", width = "100%")
 ```
 
-In the SD model, we do not simulate intermediate flows as well as the reservoir 
-in the catchment. As a result, an equivalent topology compatible with **airGR** 
+In the SD model, we do not simulate intermediate flows as well as the reservoir
+in the catchment. As a result, an equivalent topology compatible with **airGR**
 will be the one below:
 
 ```{r mmd_aube_model, echo = FALSE}
@@ -71,7 +71,7 @@ style AUBE_R3 fill:#fcc
 ", width = "100%")
 ```
 
-`AUBE_P2` will propagate negative flows downstream (reservoir inflows) while 
+`AUBE_P2` will propagate negative flows downstream (reservoir inflows) while
 `AUBE_R3` will propagate positive flows downstream (reservoir releases).
 
 The configuration on the lake Seine is similar:
@@ -115,8 +115,8 @@ style P fill:#ccf
 ", width = "100%")
 ```
 
-We can keep the same structure to model it. `PANNEC_R` corresponds to the flow 
-released by the Pannecière lake, it is acting as an upstream node which means 
+We can keep the same structure to model it. `PANNEC_R` corresponds to the flow
+released by the Pannecière lake, it is acting as an upstream node which means
 that the flow simulated at `CHAUM_07` is no longer routed to downstream.
 
 ```{r mmd_pannec_model, echo = FALSE}
@@ -194,7 +194,7 @@ plot(griwrm2)
 
 ## Loading reservoir observation time series
 
-Description of the files, the columns and the type of connection (inlet / outlet) 
+Description of the files, the columns and the type of connection (inlet / outlet)
 are defined in the list below:
 
 ```{r lCfgReservoirs}
@@ -230,7 +230,7 @@ load("_cache/V03.RData")
 
 ### How to handle former upstream sub-basins with upstream flows ?
 
-A lag parameter is now mandatory for these sub-basins. As no calibration is 
+A lag parameter is now mandatory for these sub-basins. As no calibration is
 possible at that stage an arbitrary one will be used (1 m/s).
 
 ```{r ParamMichel}

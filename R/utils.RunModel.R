@@ -7,9 +7,9 @@
 #' @param Param [list] of containing model parameter values of each node of the network
 #' @noRd
 checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
-  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateRunOptions.GRiwrmInputsModel)")
-  if(!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
-  if(!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
+  if (!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if (!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if (!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
 }
 
 
@@ -76,7 +76,7 @@ serializeIniStates <- function(IniStates) {
 #'
 calcOverAbstraction <- function(O, WarmUp) {
   f <- list(sim = "Qsim_m3", over = "Qover_m3")
-  if(WarmUp) {
+  if (WarmUp) {
     f <- lapply(f, function(x) paste0("WarmUp", x))
   }
   if (!is.null(O[[f$sim]])) {

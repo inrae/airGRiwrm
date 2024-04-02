@@ -36,7 +36,7 @@ RunModel.InputsModel <- function(x = NULL,
     }
   }
 
-  if(is.null(FUN_MOD)) {
+  if (is.null(FUN_MOD)) {
     if (x$isReservoir) {
       FUN_MOD <- "RunModel_Reservoir"
     } else {
@@ -56,7 +56,7 @@ RunModel.InputsModel <- function(x = NULL,
     x$BasinAreas[length(x$BasinAreas)] <- 1
     OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
     OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
-  } else if((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
+  } else if ((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)
   } else {

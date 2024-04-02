@@ -52,7 +52,7 @@ plot.Qm3s <- function(x,
     main = main,
     col = col, ...
   )
-  if(!is.null(legend)) {
+  if (!is.null(legend)) {
     legend(x = legend.x,
            y = legend.y,
            legend = legend,

@@ -59,7 +59,7 @@ plot.GRiwrm <- function(x,
     x$id[x$nodeclass == nc]
   })
   names(node_class) <- unique(x$nodeclass)
-  node_class <- lapply(node_class, function(id) if(length(id) > 0) paste0("id_", id))
+  node_class <- lapply(node_class, function(id) if (length(id) > 0) paste0("id_", id))
   node_class <- paste("class", sapply(node_class, paste, collapse = ","), names(node_class))
   css <- c(
     paste("classDef default", defaultClassDef),

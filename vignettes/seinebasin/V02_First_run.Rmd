@@ -56,7 +56,7 @@ ParamClimAware <- sapply(griwrm$id, function(id) {
   Param <- unlist(nodeParam[c("X1", "X2", "X3", "X4")])
   # Add lag model parameter if upstream nodes exist
   UpstrNodes <- which(griwrm$down == id & !is.na(griwrm$down))
-  if(length(UpstrNodes) > 0) {
+  if (length(UpstrNodes) > 0) {
     maxLength <- max(griwrm$length[UpstrNodes])
     Param <- c(
       maxLength * 1000 / ((nodeParam$Tau0 + nodeParam$K0) * 3600),

@@ -89,7 +89,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   }
 
   # Format OutputsModel
-  if(length(IndPerWarmUp) > 0) {
+  if (length(IndPerWarmUp) > 0) {
     iWarmUp <- seq(length(RunOptions$IndPeriod_WarmUp))
     OutputsModel$RunOptions$WarmUpQsim_m3 <- Qsim_m3[iWarmUp]
     OutputsModel$RunOptions$WarmUpVsim <- Vsim[iWarmUp]

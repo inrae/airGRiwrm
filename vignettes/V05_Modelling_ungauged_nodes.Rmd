@@ -30,19 +30,19 @@ Ungauged nodes in the semi-distributed model can be used to reach two different 
 - increase spatial resolution of the rain fall to improve streamflow simulation [@lobligeoisWhenDoesHigher2014].
 - simulate streamflows in location of interest for management purpose
 
-This vignette introduces the implementation in airGRiwrm of the method developped by @lobligeoisMieuxConnaitreDistribution2014 for calibrating ungauged nodes in a 
+This vignette introduces the implementation in airGRiwrm of the method developped by @lobligeoisMieuxConnaitreDistribution2014 for calibrating ungauged nodes in a
 semi-distributed model.
 
 ## Presentation of the study case
 
-Using the study case of the vignette #1 and #2, we considere this time that nodes `54001` and 
-`54029` are ungauged. We simulate the streamflow at these locations by sharing 
+Using the study case of the vignette #1 and #2, we considere this time that nodes `54001` and
+`54029` are ungauged. We simulate the streamflow at these locations by sharing
 hydrological parameters of the gauged node `54032`.
 
 ```{r network, echo = FALSE}
 mmd <- function(x, ...) {
   # For avoiding crash of R CMD build in console mode
-  if(Sys.getenv("RSTUDIO") == "1") {
+  if (Sys.getenv("RSTUDIO") == "1") {
     DiagrammeR::mermaid(x, ...)
   }
 }
@@ -157,7 +157,7 @@ OC_U <- suppressWarnings(
   Calibration(IM_U, RunOptions, InputsCrit, CalibOptions))
 ```
 
-Hydrological parameters for sub-basins 
+Hydrological parameters for sub-basins
 
 ## Run the model with the optimized model parameters
 
@@ -166,9 +166,9 @@ The hydrologic model uses parameters herited from the calibration of the gauged 
 ```{r param}
 ParamV05 <- sapply(griwrmV05$id, function(x) {OC_U[[x]]$Param})
 dfParam <- do.call(
-  rbind, 
-  lapply(ParamV05, function(x) 
-    if(length(x)==4) {return(c(NA, x))} else return(x))
+  rbind,
+  lapply(ParamV05, function(x)
+    if (length(x)==4) {return(c(NA, x))} else return(x))
 )
 colnames(dfParam) <- c("velocity", paste0("X", 1:4))
 knitr::kable(round(dfParam, 3))

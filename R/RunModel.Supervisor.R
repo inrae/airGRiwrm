@@ -33,7 +33,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   # Run runoff model for each sub-basin
   x$OutputsModel <- lapply(X = x$InputsModel, FUN = function(IM) {
-    if(inherits(IM, "GR")) {
+    if (inherits(IM, "GR")) {
       OM_GR <- RunModel.GR(IM,
                            RunOptions = RunOptions[[IM$id]],
                            Param = Param[[IM$id]])
@@ -98,7 +98,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     x$ts.index <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
     # Regulation occurs from second time step
-    if(iTS[1] > ts.start) {
+    if (iTS[1] > ts.start) {
       doSupervision(x)
     }
     # Loop over sub-basin using SD model
@@ -155,7 +155,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
 updateQupstream.Supervisor <- function(x, id, iTS) {
   downId <- x$InputsModel[[id]]$down
-  if(!is.null(x$InputsModel[[downId]])) {
+  if (!is.null(x$InputsModel[[downId]])) {
     x$InputsModel[[downId]]$Qupstream[iTS, id] <-
       x$OutputsModel[[id]]$Qsim_m3
   }

@@ -187,7 +187,7 @@ checkNetworkConsistency <- function(db) {
   })
   id_reservoirs <- db3$id[db3$model == "RunModel_Reservoir"]
   sapply(id_reservoirs, function(id) {
-    if(length(db$id[!is.na(db$down) & db$down == id]) == 0) {
+    if (length(db$id[!is.na(db$down) & db$down == id]) == 0) {
       stop("The reservoir ", id,
            " must have at least one upstream node as inflows.")
     }
@@ -246,7 +246,7 @@ getGaugedId <- function(id, griwrm) {
     id_down <- g2$down[g2$id == id]
     if (!is.na(id_down)) {
       return(getGaugedId(id_down, griwrm))
-    } else if(length(getDiversionRows(griwrm)) > 0) {
+    } else if (length(getDiversionRows(griwrm)) > 0) {
       # Search on Diversion
       g3 <- griwrm[getDiversionRows(griwrm), ]
       id_down <- g3$down[g3$id == id]
@@ -263,7 +263,7 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
 
   rows <- which(!is.na(griwrm$model) & griwrm$model == "Diversion")
   if (inverse) {
-    if(length(rows) == 0) {
+    if (length(rows) == 0) {
       rows <- seq.int(nrow(griwrm))
     } else {
       rows <- setdiff(seq.int(nrow(griwrm)), rows)
@@ -276,7 +276,7 @@ setDonor <- function(griwrm) {
   sapply(seq(nrow(griwrm)), function(i) {
     id <- griwrm$id[i]
     model <- griwrm$model[i]
-    if(model == "RunModel_Reservoir" && is.na(griwrm$down[i])){
+    if (model == "RunModel_Reservoir" && is.na(griwrm$down[i])){
       # RunModel_Reservoir needs to be its own "donor" only if at downstream
       # Otherwise we search the first gauged station downstream to allow
       # calibration with ungauged upstream nodes

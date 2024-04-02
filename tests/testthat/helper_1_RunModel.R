@@ -36,7 +36,7 @@ setupRunModel <-
     }))
 
     # Set network
-    if(is.null(griwrm)) {
+    if (is.null(griwrm)) {
       nodes <- loadSevernNodes()
       griwrm <-
         CreateGRiwrm(nodes)
