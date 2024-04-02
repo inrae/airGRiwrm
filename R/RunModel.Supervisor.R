@@ -54,6 +54,9 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     RunOptionsWarmUp[[id]]$IndPeriod_Run <- RunOptionsWarmUp[[id]]$IndPeriod_WarmUp
     RunOptionsWarmUp[[id]]$IndPeriod_WarmUp <- 0L
     RunOptionsWarmUp[[id]]$Outputs_Sim <- c("StateEnd", "Qsim")
+    if (x$InputsModel[[id]]$isReservoir) {
+      RunOptionsWarmUp[[id]]$Outputs_Sim <- c(RunOptionsWarmUp[[id]]$Outputs_Sim, "Qsim_m3")
+    }
   }
   OM_WarmUp <- suppressMessages(
     RunModel.GRiwrmInputsModel(x$InputsModel,
