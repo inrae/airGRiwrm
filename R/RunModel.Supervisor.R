@@ -106,16 +106,20 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
       # Run model for the sub-basin and one time step
       RunOptions[[id]]$IniStates <- serializeIniStates(x$OutputsModel[[id]]$StateEnd)
       RunOptions[[id]]$IndPeriod_Run <- iTS
-      if (RunOptions[[id]]$FeatFUN_MOD$IsSD) {
-        # Route upstream flows for SD nodes
+      # Route upstream flows for SD nodes
+      if (x$InputsModel[[id]]$isReservoir) {
+        x$OutputsModel[[id]] <- RunModel_Reservoir(
+          x$InputsModel[[id]],
+          RunOptions = RunOptions[[id]],
+          Param = Param[[id]]
+        )
+      } else {
         x$OutputsModel[[id]] <- RunModel.SD(
           x$InputsModel[[id]],
           RunOptions = RunOptions[[id]],
           Param = Param[[id]],
           QcontribDown = x$storedOutputs$QcontribDown[x$ts.index, id]
         )
-      } else {
-        x$OutputsModel[[id]]$Qsim_m3 <- x$storedOutputs$Qsim_m3[x$ts.index, id]
       }
       if (x$InputsModel[[id]]$hasDiversion) {
         # Compute diverted and simulated flows on Diversion nodes

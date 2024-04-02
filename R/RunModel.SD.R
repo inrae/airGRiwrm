@@ -7,19 +7,29 @@
 #' @return `OutputsModel` object. See [airGR::RunModel_Lag]
 #' @noRd
 #'
-RunModel.SD <- function(x, RunOptions, Param, QcontribDown, ...) {
-  if (x$isReservoir) {
-    OutputsModel <- RunModel_Reservoir(x,
-                                       RunOptions = RunOptions,
-                                       Param = Param[1:2])
-  } else {
-    OutputsModel <- airGR::RunModel_Lag(x,
-                                        RunOptions = RunOptions,
-                                        Param = Param[1],
-                                        QcontribDown = QcontribDown)
-    OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
-    OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
+RunModel.SD <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
+  if (is.null(QcontribDown)) {
+    QcontribDown <- list(
+      RunOptions = list(
+        WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp))
+      ),
+      Qsim = rep(0, length(RunOptions$IndPeriod_Run))
+    )
+    class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
+    x$BasinAreas[length(x$BasinAreas)] <- 1E-6
   }
+  OutputsModel <- airGR::RunModel_Lag(x,
+                                      RunOptions = RunOptions,
+                                      Param = Param[1],
+                                      QcontribDown = QcontribDown)
+  OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
+  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
+    OutputsModel$RunOptions$WarmUpQsim_m3 <-
+      OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
+  }
+  OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
+  OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
+
   OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   return(OutputsModel)
 }

@@ -51,7 +51,9 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   celerity <- Param[2]
 
   # Compute inflows with RunModel_Lag
-  OutputsModel <- RunModel(InputsModel, RunOptions, celerity, FUN_MOD = "RunModel_Lag")
+  OutputsModel <- RunModel.SD(InputsModel,
+                              RunOptions,
+                              Param = celerity)
   names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
   Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
                    OutputsModel$Qinflows_m3)

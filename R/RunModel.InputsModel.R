@@ -46,16 +46,7 @@ RunModel.InputsModel <- function(x = NULL,
 
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
-    QcontribDown <- list(
-      RunOptions = list(
-        WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp))
-      ),
-      Qsim = rep(0, length(RunOptions$IndPeriod_Run))
-    )
-    class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
-    x$BasinAreas[length(x$BasinAreas)] <- 1
-    OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
-    OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
+    OutputsModel <- RunModel.SD(x, RunOptions, Param)
   } else if ((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)
