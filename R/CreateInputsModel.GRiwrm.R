@@ -342,7 +342,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   # Add specific properties for Diversion and Reservoir nodes
   if (np$Diversion) {
     InputsModel$diversionOutlet <- diversionOutlet
-    InputsModel$Qdiv <- -Qobs[, id]
+    InputsModel$Qdiv <- -Qobs[, id, drop = TRUE]
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
@@ -354,7 +354,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
       InputsModel$isUngauged <- any(griwrm$donor[iUpstreamUngaugedNodes] == InputsModel$gaugedId)
     }
     # Fill reservoir release with Qobs
-    InputsModel$Qrelease <- Qrelease[, id]
+    InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
   }
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)
