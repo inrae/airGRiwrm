@@ -23,6 +23,9 @@ RunModel.SD <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
                                       RunOptions = RunOptions,
                                       Param = Param[1],
                                       QcontribDown = QcontribDown)
+  if (is.null(OutputsModel$DatesR)) {
+    OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
+  }
   if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
     OutputsModel$RunOptions$WarmUpQsim_m3 <-
       OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
