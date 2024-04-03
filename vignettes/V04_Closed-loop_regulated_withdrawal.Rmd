@@ -257,7 +257,7 @@ As for the previous model, we need to set up an `GRiwrmInputsModel` object conta
 ```{r}
 # Flow time series are needed for all direct injection nodes in the network
 # even if they may be overwritten after by a controller
-QobsIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)), 
+QobsIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)),
                         Irrigation2 = rep(0, length(DatesR)))
 
 # Creation of the GRiwrmInputsModel object
@@ -298,7 +298,7 @@ fIrrigationFactory <- function(supervisor,
     month <- as.numeric(format(supervisor$ts.date, "%m"))
     U <- irrigationObjective[month, c(2,3)] # m3/s
     meanU <- mean(rowSums(U))
-    if(meanU > 0) {
+    if (meanU > 0) {
       # calculate the naturalized flow from the measured flow and the abstracted flow of the previous week
       lastU <- supervisor$controllers[[supervisor$controller.id]]$U # m3/day
       Qnat <- (Y - rowSums(lastU)) / 86400 # m3/s

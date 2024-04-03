@@ -51,7 +51,9 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   celerity <- Param[2]
 
   # Compute inflows with RunModel_Lag
-  OutputsModel <- RunModel(InputsModel, RunOptions, celerity, FUN_MOD = "RunModel_Lag")
+  OutputsModel <- RunModel.SD(InputsModel,
+                              RunOptions,
+                              Param = celerity)
   names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
   Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
                    OutputsModel$Qinflows_m3)
@@ -73,7 +75,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   }
 
   # Time series volume and release calculation
-  for(i in iPerTot) {
+  for (i in iPerTot) {
     Vsim[i] <- V0 + Qinflows_m3[i]
     if (InputsModel$hasDiversion) {
       Qdiv_m3[i] <- min(Vsim[i] + InputsModel$Qmin[IndPerTot[i]], InputsModel$Qdiv[IndPerTot[i]])
@@ -89,7 +91,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   }
 
   # Format OutputsModel
-  if(length(IndPerWarmUp) > 0) {
+  if (length(IndPerWarmUp) > 0) {
     iWarmUp <- seq(length(RunOptions$IndPeriod_WarmUp))
     OutputsModel$RunOptions$WarmUpQsim_m3 <- Qsim_m3[iWarmUp]
     OutputsModel$RunOptions$WarmUpVsim <- Vsim[iWarmUp]

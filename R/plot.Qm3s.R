@@ -22,7 +22,6 @@
 #'
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
-#' @importFrom grDevices rainbow
 #' @importFrom graphics matplot
 #' @export plot.Qm3s
 #' @export
@@ -32,7 +31,7 @@ plot.Qm3s <- function(x,
                       xlab = "Date",
                       ylab = expression("Flow rate (m"^"3"*"/s)"),
                       main = "Simulated flows",
-                      col = rainbow(ncol(x) - 1),
+                      col = grDevices::hcl.colors(ncol(x) - 1, "Zissou 1"),
                       legend = colnames(x)[-1],
                       legend.cex = 0.7,
                       legend.x = "topright",
@@ -53,7 +52,7 @@ plot.Qm3s <- function(x,
     main = main,
     col = col, ...
   )
-  if(!is.null(legend)) {
+  if (!is.null(legend)) {
     legend(x = legend.x,
            y = legend.y,
            legend = legend,

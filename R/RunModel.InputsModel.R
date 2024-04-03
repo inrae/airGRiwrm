@@ -2,7 +2,14 @@
 #'
 #' @details This function calls [airGR::RunModel] (See [airGR::RunModel] for further details).
 #'
-#' The list produced by the function (See Value section of [airGR::RunModel_GR4J]) is here completed by an item *$Qsim_m3* storing the simulated discharge series in m3/s.
+#' The list produced by the function (See Value section of [airGR::RunModel_GR4J])
+#' is here completed by:
+#'
+#' - an item `$Qsim_m3` storing the simulated discharge series in m3/s
+#' - an item `$Qover_m3` storing the volumes of over abstraction which occurs
+#' when `RunModel_Lag` warns for negative simulated flows. The latter reflects the volume
+#' that was planned to be drawn from the sub-basin but could not be drawn because
+#' of the lack of water.
 #'
 #' @inheritParams airGR::RunModel
 #' @param x \[object of class \emph{InputsModel}\] see [airGR::CreateInputsModel] for details
@@ -29,7 +36,7 @@ RunModel.InputsModel <- function(x = NULL,
     }
   }
 
-  if(is.null(FUN_MOD)) {
+  if (is.null(FUN_MOD)) {
     if (x$isReservoir) {
       FUN_MOD <- "RunModel_Reservoir"
     } else {
@@ -39,26 +46,19 @@ RunModel.InputsModel <- function(x = NULL,
 
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
-    QcontribDown <- list(
-      RunOptions = list(
-        WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp))
-      ),
-      Qsim = rep(0, length(RunOptions$IndPeriod_Run))
-    )
-    class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
-    x$BasinAreas[length(x$BasinAreas)] <- 1
-    OutputsModel <- RunModel_Lag(x, RunOptions, Param, QcontribDown)
-    OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
-  } else if((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
+    OutputsModel <- RunModel.SD(x, RunOptions, Param)
+  } else if ((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)
   } else {
-    # Intermediate basins (other than reservoir) are launch with SD capabilities
+    # Intermediate basins (other than reservoir) are launched with SD capabilities
     if (!is.null(x$UpstreamNodes) & !inherits(x, "SD")) {
       # For calibration of node with diversion
       class(x) <- c(class(x), "SD")
     }
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
+    OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
+    OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
   }
   OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   if (is.null(OutputsModel$Qsim_m3)) {

@@ -6,7 +6,7 @@ CreateRunOptions.GRiwrmInputsModel <- function(x, IniStates = NULL, ...) {
   RunOptions <- list()
   class(RunOptions) <- append(class(RunOptions), "GRiwrmRunOptions")
 
-  for(id in names(x)) {
+  for (id in names(x)) {
     RunOptions[[id]] <- CreateRunOptions(x[[id]], IniStates = IniStates[[id]], ...)
     RunOptions[[id]]$id <- id
   }

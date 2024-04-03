@@ -8,7 +8,7 @@
 #' e <- setupRunModel()
 # variables are copied from environment 'e' to the current environment
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
-#' for(x in ls(e)) assign(x, get(x, e))
+#' for (x in ls(e)) assign(x, get(x, e))
 #'
 setupRunModel <-
   function(runInputsModel = TRUE,
@@ -36,7 +36,7 @@ setupRunModel <-
     }))
 
     # Set network
-    if(is.null(griwrm)) {
+    if (is.null(griwrm)) {
       nodes <- loadSevernNodes()
       griwrm <-
         CreateGRiwrm(nodes)

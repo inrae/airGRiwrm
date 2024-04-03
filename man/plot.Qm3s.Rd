@@ -10,7 +10,7 @@
   xlab = "Date",
   ylab = expression("Flow rate (m"^"3" * "/s)"),
   main = "Simulated flows",
-  col = rainbow(ncol(x) - 1),
+  col = grDevices::hcl.colors(ncol(x) - 1, "Zissou 1"),
   legend = colnames(x)[-1],
   legend.cex = 0.7,
   legend.x = "topright",

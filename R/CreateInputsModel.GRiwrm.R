@@ -175,7 +175,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
 
   InputsModel <- CreateEmptyGRiwrmInputsModel(x)
 
-  for(id in getNodeRanking(x)) {
+  for (id in getNodeRanking(x)) {
     message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
 
     InputsModel[[id]] <-
@@ -248,7 +248,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   LengthHydro <- NULL
   BasinAreas <- NULL
 
-  if(length(UpstreamNodeRows) > 0) {
+  if (length(UpstreamNodeRows) > 0) {
     # Sub-basin with hydraulic routing
     Qupstream <- NULL
     Qupstream <- as.matrix(cbind(
@@ -309,7 +309,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   # Add Identifiers of connected nodes in order to be able to update them with simulated flows
   InputsModel$id <- id
   InputsModel$down <- node$down
-  if(length(UpstreamNodeRows) > 0) {
+  if (length(UpstreamNodeRows) > 0) {
     InputsModel$UpstreamNodes <- griwrm$id[UpstreamNodeRows]
     InputsModel$UpstreamIsModeled <- !is.na(griwrm$model[UpstreamNodeRows])
     names(InputsModel$UpstreamIsModeled) <- InputsModel$UpstreamNodes
@@ -386,7 +386,7 @@ getModelTimeStep <- function(InputsModel) {
     return(NA)
   })
   TS <- TS[!is.na(TS)]
-  if(length(unique(TS)) != 1) {
+  if (length(unique(TS)) != 1) {
     stop("Time steps of the model of all nodes should be identical")
   }
   return(unique(TS))
@@ -401,7 +401,7 @@ getModelTimeStep <- function(InputsModel) {
 #' @return the selected column or value in respect to `id`
 #' @noRd
 getInputBV <- function(x, id, unset = NULL) {
-  if(is.null(x)) {
+  if (is.null(x)) {
     return(unset)
   }
   if (is.matrix(x) || is.data.frame(x)) {
@@ -412,7 +412,7 @@ getInputBV <- function(x, id, unset = NULL) {
     # vector (for ZInputs and NLayers)
     if (length(x) == 1 && is.null(names(x))) {
       return(x)
-    } else if(!id %in% names(x)) {
+    } else if (!id %in% names(x)) {
       return(unset)
     } else {
       return(x[id])
@@ -491,7 +491,7 @@ getNodeBasinArea <- function(i, griwrm) {
   if (i %in% which(Diversions)) return(NA)
   UpstreamNodeRows <-
     which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down) & !Diversions)
-  if(length(UpstreamNodeRows) > 0) {
+  if (length(UpstreamNodeRows) > 0) {
     upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     return(sum(upstreamAreas, na.rm = TRUE))
   } else {

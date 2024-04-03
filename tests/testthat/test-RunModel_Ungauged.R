@@ -8,7 +8,7 @@ test_that("RunModel_Ungauged should act as RunModel", {
   nodes$model[nodes$id == "54095"] <- "Ungauged"
   g <- CreateGRiwrm(nodes)
   e <- setupRunModel(runRunModel = FALSE, griwrm = g)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
 
   Param <- ParamMichel["54001"]
   Param[["54095"]] <-
@@ -65,7 +65,7 @@ test_that("RunModel_Ungauged works with a diversion as donor (#110)", {
   Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qobs2) <- "54032"
   e <- runCalibration(nodes, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   OCdiv <- OutputsCalib
   expect_equal(OCdiv, OC)
 })
@@ -101,7 +101,7 @@ test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
   Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qobs2) <- "54095"
   e <- runCalibration(nodes, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_equal(OutputsCalib$`54032`$CritFinal, CritValue)
 })
 
@@ -111,7 +111,7 @@ test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
   Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qobs2) <- "54095"
   e <- runCalibration(nodes, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_equal(OutputsCalib$`54032`$CritFinal, CritValue)
 })
 
@@ -123,7 +123,7 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
 
   # First without Diversion
   e <- runCalibration(nodes, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   OC1 <- OutputsCalib
   Param1 <- Param
   OM1 <- RunModel(
@@ -146,7 +146,7 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
   Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qobs2) <- "54095"
   e <- runCalibration(nodes, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   OC2 <- OutputsCalib
   expect_equal(OC2$`54001`$CritFinal, OC1$`54001`$CritFinal)
   expect_equal(OC2$`54032`$CritFinal, OC1$`54032`$CritFinal)
@@ -184,7 +184,7 @@ test_that("Ungauged node with upstream node with diversion should work", {
   Qobs2 <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
   colnames(Qobs2) <- g$id[g$model == "Diversion"]
   e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
 
   ParamRef[["P"]] <- 1
   OM <- RunModel(InputsModel,
@@ -230,7 +230,7 @@ test_that("Donor node with diversion should work", {
   Qobs2 <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
   colnames(Qobs2) <- g$id[g$model == "Diversion"]
   e <- runCalibration(nodes, Qobs2 = Qobs2)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_equal(OC_ref$`54032`$CritFinal, OutputsCalib$`54032`$CritFinal, tolerance = 1E-3)
 })
 
@@ -261,7 +261,7 @@ test_that("Cemaneige with hysteresis works",  {
   e <- suppressWarnings(
     setupRunModel(griwrm = griwrm, runRunModel = FALSE, IsHyst = TRUE)
   )
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
 
   expect_true(all(sapply(InputsModel, function(x) x$model$hasX4)))
 
@@ -285,7 +285,7 @@ test_that("Cemaneige with hysteresis works",  {
   e <- suppressWarnings(
     runCalibration(nodes, InputsCrit = InputsCrit, CalibOptions = CO, IsHyst = TRUE)
   )
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_equal(sapply(Param, length),
                c("54057" = 9, "54032" = 9, "54001" = 8))
 })

@@ -34,7 +34,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   b <- sapply(InputsModel, function(IM) !IM$isUngauged)
   gaugedIds <- names(b[b])
 
-  for(id in gaugedIds) {
+  for (id in gaugedIds) {
     IM <- InputsModel[[id]]
     message("Calibration.GRiwrmInputsModel: Processing sub-basin ", id, "...")
 
@@ -79,18 +79,18 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       # Select nodes with model in the sub-network
       g <- attr(IM, "GRiwrm")
       Ids <- g$id[!is.na(g$donor) & g$donor == id]
-      if(IM[[id]]$model$hasX4) {
+      if (IM[[id]]$model$hasX4) {
         # Extract the X4 calibrated for the whole intermediate basin
         X4 <- OutputsCalib[[id]]$ParamFinalR[IM[[id]]$model$iX4] # Global parameter
       }
       for (uId in Ids) {
-        if(!IM[[uId]]$isReservoir) {
+        if (!IM[[uId]]$isReservoir) {
           # Add OutputsCalib for ungauged nodes
           OutputsCalib[[uId]] <- OutputsCalib[[id]]
           # Copy parameters and transform X4 relatively to the sub-basin area
           OutputsCalib[[uId]]$ParamFinalR <-
             OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
-          if(IM[[id]]$model$hasX4) {
+          if (IM[[id]]$model$hasX4) {
             subBasinAreas <- calcSubBasinAreas(IM)
             OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <- max(
               X4 * (subBasinAreas[uId] / subBasinAreas[id]) ^ 0.3,
@@ -107,7 +107,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
           )
         }
       }
-      if(useUpstreamQsim) {
+      if (useUpstreamQsim) {
         OM_subnet <- RunModel_Ungauged(IM,
                                        RunOptions[[id]],
                                        OutputsCalib[[id]]$ParamFinalR,
@@ -115,7 +115,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         OutputsModel <- c(OutputsModel, OM_subnet)
       }
       IM <- IM[[id]]
-    } else if(useUpstreamQsim) {
+    } else if (useUpstreamQsim) {
       # Run the model for the sub-basin
       OutputsModel[[id]] <- RunModel(
         x = IM,
@@ -150,7 +150,7 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
   AprCelerity <- attr(InputsCrit[[id]], "AprCelerity")
   Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
   AprParamR <- OutputsModel[[AprioriId]]$RunOptions$Param
-  if(!inherits(OutputsModel[[AprioriId]], "SD")) {
+  if (!inherits(OutputsModel[[AprioriId]], "SD")) {
     # Add default velocity parameter for a priori upstream catchment
     AprParamR <- c(AprCelerity, AprParamR)
   }
@@ -199,6 +199,7 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
 #' - `RunOptions`: a *GRiwrmRunOptions* of the reduced network
 #' @noRd
 #' @importFrom dplyr "%>%"
+#' @importFrom rlang .data
 #'
 updateParameters4Ungauged <- function(GaugedId,
                                       InputsModel,
@@ -211,12 +212,12 @@ updateParameters4Ungauged <- function(GaugedId,
   # Select nodes identified with the current node as donor gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
   donorIds <- griwrm$id[!is.na(griwrm$donor) & griwrm$donor == GaugedId]
-  gDonor <- griwrm %>% dplyr::filter(id %in% donorIds)
+  gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
   # Add upstream nodes for routing upstream flows
   upNodes <- griwrm %>%
-    dplyr::filter(down %in% gDonor$id,
-                  !id %in% gDonor$id) %>%
-    dplyr::mutate(model = ifelse(!is.na(model) & model != "Diversion", NA, model))
+    dplyr::filter(.data$down %in% gDonor$id,
+                  !.data$id %in% gDonor$id) %>%
+    dplyr::mutate(model = ifelse(!is.na(.data$model) & .data$model != "Diversion", NA, .data$model))
   upIds <- upNodes$id
   g <- rbind(upNodes, gDonor)
   # Set downstream nodes
@@ -236,7 +237,7 @@ updateParameters4Ungauged <- function(GaugedId,
   # Update Qupstream already modeled in the reduced network upstream nodes
   idIM <- unique(g$down[g$id %in% upIds])
   for (id in idIM) {
-    if(useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {
+    if (useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {
       # Temporarily switch off upstream nodes belonging to the donor basin
       UpIsModeledBackUp <- InputsModel[[id]]$UpstreamIsModeled
       ImUpIds <- InputsModel[[id]]$UpstreamNodes
@@ -269,7 +270,7 @@ updateParameters4Ungauged <- function(GaugedId,
 calcSubBasinAreas <- function(IM) {
   unlist(
     sapply(IM, function(x) {
-      if(is.list(x)) as.numeric(x$BasinAreas[length(x$BasinAreas)])})
+      if (is.list(x)) as.numeric(x$BasinAreas[length(x$BasinAreas)])})
   )
 }
 
@@ -293,7 +294,7 @@ calcSubBasinAreas <- function(IM) {
 #' @references Lobligeois, Florent. Mieux connaître la distribution spatiale des
 #' pluies améliore-t-il la modélisation des crues ? Diagnostic sur 181 bassins
 #' versants français. Phdthesis, AgroParisTech, 2014.
-#' <https://pastel.archives-ouvertes.fr/tel-01134990/document>
+#' <https://pastel.hal.science/tel-01134990/document>
 #'
 #' @inheritParams airGR::RunModel
 #' @param ouput.all [logical] if `TRUE` returns the output of [RunModel.GRiwrm],
@@ -311,7 +312,7 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
       return(IM$FixedParam)
     }
     p <- Param[IM$model$indexParamUngauged]
-    if(IM$model$hasX4) {
+    if (IM$model$hasX4) {
       p[IM$model$iX4] <- max(
         Param[InputsModel[[donor]]$model$iX4] *
           (IM$BasinAreas[length(IM$BasinAreas)] / donorArea) ^ 0.3,

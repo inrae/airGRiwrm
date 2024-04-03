@@ -7,9 +7,9 @@
 #' @param Param [list] of containing model parameter values of each node of the network
 #' @noRd
 checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
-  if(!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateRunOptions.GRiwrmInputsModel)")
-  if(!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
-  if(!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
+  if (!inherits(InputsModel, "GRiwrmInputsModel")) stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if (!inherits(RunOptions, "GRiwrmRunOptions")) stop("Argument `RunOptions` parameter must of class 'GRiwrmRunOptions' (See ?CreateRunOptions.GRiwrmInputsModel)")
+  if (!is.list(Param) || !all(names(InputsModel) %in% names(Param))) stop("Argument `Param` must be a list with names equal to nodes IDs")
 }
 
 
@@ -64,3 +64,27 @@ serializeIniStates <- function(IniStates) {
   unlist(IniStates)
 }
 
+
+#' Cap negative `OutputsModel$Qsim_m3` to zero and fill `OutputsModel$Qover_m3`
+#' with over-abstracted volumes
+#'
+#' @param O Either `OutputsModel` or `OutputsModel$RunOptions` (for warm-up Qsim)
+#' @param WarmUp `TRUE` if `O` is `OutputsModel$RunOptions`
+#'
+#' @return Modified `OutputsModel` or `OutputsModel$RunOptions`
+#' @noRd
+#'
+calcOverAbstraction <- function(O, WarmUp) {
+  f <- list(sim = "Qsim_m3", over = "Qover_m3")
+  if (WarmUp) {
+    f <- lapply(f, function(x) paste0("WarmUp", x))
+  }
+  if (!is.null(O[[f$sim]])) {
+    O[[f$over]] <- rep(0, length(O[[f$sim]]))
+    if (any(!is.na(O[[f$sim]]) & O[[f$sim]] < 0)) {
+      O[[f$over]][O[[f$sim]] < 0] <- - O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0]
+      O[[f$sim]][!is.na(O[[f$sim]]) & O[[f$sim]] < 0] <- 0
+    }
+  }
+  return(O)
+}

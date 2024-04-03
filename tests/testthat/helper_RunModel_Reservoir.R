@@ -69,7 +69,7 @@ testDerivedUngauged <- function(donorByDerivation) {
   CalibOptions <- CreateCalibOptions(InputsModel,
                                      FixedParam = list(Dam = c(650E6, 1)))
   e <- runCalibration(g, Qobs2 = Qobs2, CalibOptions = CalibOptions)
-  for(x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) assign(x, get(x, e))
   expect_equal(Param[["54095"]][1:3],
                Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4])
 }

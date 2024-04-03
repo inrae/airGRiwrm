@@ -1,23 +1,38 @@
-#' Run a semi-distributed model from rainfall-runoff model outputs
+#' Run a hydraulic routing model from rainfall-runoff model outputs
 #'
 #' @inheritParams airGR::RunModel_Lag
 #' @param x \[object of class `InputsModel`\] used as `InputsModel` parameter for [airGR::RunModel_Lag]
 #' @param ... further arguments passed to or from other methods
 #'
 #' @return `OutputsModel` object. See [airGR::RunModel_Lag]
-#' @export
+#' @noRd
 #'
-RunModel.SD <- function(x, RunOptions, Param, QcontribDown, ...) {
-  if (x$isReservoir) {
-    OutputsModel <- RunModel_Reservoir(x,
-                                       RunOptions = RunOptions,
-                                       Param = Param[1:2])
-  } else {
-    OutputsModel <- airGR::RunModel_Lag(x,
-                                        RunOptions = RunOptions,
-                                        Param = Param[1],
-                                        QcontribDown = QcontribDown)
+RunModel.SD <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
+  if (is.null(QcontribDown)) {
+    QcontribDown <- list(
+      Qsim = rep(0, length(RunOptions$IndPeriod_Run))
+    )
+    if (!is.null(RunOptions$IndPeriod_WarmUp) &&
+        !(length(RunOptions$IndPeriod_WarmUp) == 1 && RunOptions$IndPeriod_WarmUp == 0L)) {
+      QcontribDown$RunOptions = list(WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp)))
+    }
+    class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
+    x$BasinAreas[length(x$BasinAreas)] <- 1E-6
   }
+  OutputsModel <- airGR::RunModel_Lag(x,
+                                      RunOptions = RunOptions,
+                                      Param = Param[1],
+                                      QcontribDown = QcontribDown)
+  if (is.null(OutputsModel$DatesR)) {
+    OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
+  }
+  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
+    OutputsModel$RunOptions$WarmUpQsim_m3 <-
+      OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
+  }
+  OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
+  OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
+
   OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   return(OutputsModel)
 }

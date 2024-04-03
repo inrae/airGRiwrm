@@ -34,7 +34,7 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
 ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
   griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
   upperIDs <- getUpstreamRunOffIds(x, griwrm)
-  if(length(upperIDs) == 1) {
+  if (length(upperIDs) == 1) {
     return(meteo[,x])
   }
   areas <- griwrm$area[match(upperIDs, griwrm$id)]
@@ -52,29 +52,29 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
 #' @rdname ConvertMeteoSD
 ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {
   # Check arguments
-  if(nrow(x) < 2) {
+  if (nrow(x) < 2) {
     stop("Meteorological data matrix should contain more than one row")
   }
-  if(length(areas) != ncol(x)) {
+  if (length(areas) != ncol(x)) {
     stop("'areas' length and meteo data matrix number of columns should be equal")
   }
-  if(areas[1] <= sum(areas[-1])) {
+  if (areas[1] <= sum(areas[-1])) {
     stop("Basin area 'areas[1]' should be greater than the sum of the upstream sub-basin areas")
   }
-  if(ncol(x) == 1) {
+  if (ncol(x) == 1) {
     return(x)
   }
   # Convert mm to 1E3 m3
   V <- x * rep(areas, rep(nrow(x), length(areas)))
   # Sum upstream data
-  if(ncol(x) > 2) {
+  if (ncol(x) > 2) {
     Vup <- rowSums(V[,-1])
   } else {
     Vup <- V[,2]
   }
   # Remove to basin to get downstream data
   Vdown <- V[,1] - Vup
-  if(!temperature) Vdown[Vdown < 0] <- 0
+  if (!temperature) Vdown[Vdown < 0] <- 0
   # Convert to mm
   meteoDown <- Vdown / (areas[1] - sum(areas[-1]))
   return(as.matrix(meteoDown, ncol = 1))
@@ -85,7 +85,7 @@ getUpstreamRunOffIds <- function(id, griwrm) {
   upstreamNodeIds <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
   upstreamRunOffIds <- griwrm$id[griwrm$id %in% upstreamNodeIds & !is.na(griwrm$area)]
   upstreamNaAreaIds <- upstreamNodeIds[!upstreamNodeIds %in% upstreamRunOffIds]
-  if(length(upstreamNaAreaIds) > 0) {
+  if (length(upstreamNaAreaIds) > 0) {
     upstreamRunOffIds <-  c(
       upstreamRunOffIds,
       unlist(sapply(upstreamNaAreaIds, getUpstreamRunOffIds, griwrm = griwrm))
