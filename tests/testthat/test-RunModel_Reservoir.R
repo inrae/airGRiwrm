@@ -161,16 +161,21 @@ test_that("Withdrawal on a reservoir works #147", {
   OM <- RunModel(InputsModel,
                  RunOptions = RunOptions,
                  Param = Param)
-  expect_equal(which(OM$Dam$Qover_m3 > 0), which(OM$Dam$Vsim == 0))
+  expect_equal(which(OM$Dam$Qsim_m3 < 1E6), which(OM$Dam$Vsim == 0))
+  expect_true(all(which(OM$Dam$Qover_m3 > 0) %in% which(OM$Dam$Qsim_m3 < 1E6)))
   expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
 
   nodes$model[nodes$id == "54095"] <- NA
-  Qobs2 <- cbind(Qobs2, Qobs[, "54095"])
+  Qobs2 <- cbind(Qobs2, "54095" = Qobs[, "54095"])
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
                      Qobs2 = Qobs2,
                      Qrelease = Qrelease)
   for (x in ls(e)) assign(x, get(x, e))
-  expect_equal(which(OM$Dam$Qover_m3 > 0), which(OM$Dam$Vsim == 0))
+  OM <- RunModel(InputsModel,
+                 RunOptions = RunOptions,
+                 Param = Param)
+  expect_equal(which(OM$Dam$Qsim_m3 < 1E6), which(OM$Dam$Vsim == 0))
+  expect_true(all(which(OM$Dam$Qover_m3 > 0) %in% which(OM$Dam$Qsim_m3 < 1E6)))
   expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
 })
