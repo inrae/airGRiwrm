@@ -276,6 +276,9 @@ setDonor <- function(griwrm) {
   sapply(seq(nrow(griwrm)), function(i) {
     id <- griwrm$id[i]
     model <- griwrm$model[i]
+    if (is.na(model)) {
+      return(as.character(NA))
+    }
     if (model == "RunModel_Reservoir" && is.na(griwrm$down[i])){
       # RunModel_Reservoir needs to be its own "donor" only if at downstream
       # Otherwise we search the first gauged station downstream to allow
