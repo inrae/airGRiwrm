@@ -15,7 +15,7 @@ RunModel_Reservoir(InputsModel, RunOptions, Param)
 of the reservoir and (2) the celerity in m/s of the upstream inflows.}
 }
 \value{
-An OutputsModel object like the one return by \link[airGR:RunModel]{airGR::RunModel} but
+An \emph{OutputsModel} object like the one return by \link[airGR:RunModel]{airGR::RunModel} but
 completed with an item \code{Vsim} representing the water volume time series in m3.
 }
 \description{
@@ -47,6 +47,12 @@ The final state of the reservoir is stored in \code{OutputsModel$StateEnd} and
 can be reused for starting a new simulation with the following instruction:
 
 \code{RunOptions[[id_of_the_reservoir]]$IniStates <- unlist(OutputsModel[[id_of_the_reservoir]]$StateEnd)}
+
+Direct injection nodes connected to a reservoir nodes act as water injections
+or withdrawals directly in the reservoir volume (whatever the length between
+the direct injection nodes and the reservoir node). The abstraction volumes
+that cannot be operated due to an empty reservoir are notified by the
+item \code{Qover_m3} in the returned \emph{OutputsModel} object.
 }
 \examples{
 #######################################################
