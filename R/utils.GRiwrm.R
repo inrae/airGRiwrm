@@ -67,13 +67,14 @@ isNodeDownstream.GRiwrm <- function(x, current_node, candidate_node) {
   return(any(sapply(current_down_node, function(cdn) isNodeDownstream(x, cdn, candidate_node))))
 }
 
-#' Reduce the size of a GRiwrm by selecting the set of nodes corresponding to a downstream node
+#' Reduce the size of a GRiwrm by selecting the subset of nodes corresponding to a downstream node
 #'
-#' @param griwrm A GRiwrm object (See [CreateGRiwrm])
-#' @param down_node The ID of the downstream node of the reduced GRiwrm
+#' @param griwrm A *GRiwrm* object (See [CreateGRiwrm])
+#' @param down_node The ID of the downstream node of the reduced *GRiwrm*
+#' @param check [logical] Check the consistency of the reduced *GRiwrm*
 #' @param ...
 #'
-#' @return The reduced GRiwrm object only containing nodes from
+#' @return A *GRiwrm* object only containing nodes located upstream the given downstream node
 #' @export
 #'
 #' @examples
@@ -91,7 +92,7 @@ isNodeDownstream.GRiwrm <- function(x, current_node, candidate_node) {
 #' plot(griwrm_severn)
 #' plot(reduceGRiwrm(griwrm_severn, "54032"))
 #'
-reduceGRiwrm <- function(griwrm, down_node, ...) {
+reduceGRiwrm <- function(griwrm, down_node, check = FALSE) {
   visited <- c()
   to_visit <- down_node
 
@@ -112,7 +113,9 @@ reduceGRiwrm <- function(griwrm, down_node, ...) {
   subgriwrm[subgriwrm$id == down_node, c("down", "length")] <- NA
   subgriwrm[!subgriwrm$down %in% subgriwrm$id, c("down", "length")] <- NA
 
-  return(CreateGRiwrm(subgriwrm))
+  if (check) subgriwrm <- CreateGRiwrm(subgriwrm, keep_all = TRUE)
+
+  return(subgriwrm)
 }
 
 
