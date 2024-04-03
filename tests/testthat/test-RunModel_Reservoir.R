@@ -135,3 +135,42 @@ test_that("Diversion on a reservoir works #146", {
   expect_true(max(OM$Dam$Vsim) - min(OM$Dam$Vsim) > 0)
   expect_false(all(OM$Dam$Vsim == OM_resOnly$Dam$Vsim))
 })
+
+test_that("Withdrawal on a reservoir works #147", {
+  e <- setupRunModel(runInputsModel = FALSE)
+  for (x in ls(e)) assign(x, get(x, e))
+  nodes <- rbind(
+    n_rsrvr,
+    data.frame(
+      id = "Irrigation",
+      down = "Dam",
+      length = 0,
+      area = NA,
+      model = NA
+    )
+  )
+  Qrelease <- data.frame(Dam = rep(1E6, length(DatesR)))
+  Qobs2 <- data.frame(Irrigation = rep(-1E6, length(DatesR)))
+  g <- CreateGRiwrm(nodes)
+  e <- setupRunModel(griwrm = g,
+                     runRunModel = FALSE,
+                     Qobs2 = Qobs2,
+                     Qrelease = Qrelease)
+  for (x in ls(e)) assign(x, get(x, e))
+  Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(20E6, 1)))
+  OM <- RunModel(InputsModel,
+                 RunOptions = RunOptions,
+                 Param = Param)
+  expect_equal(which(OM$Dam$Qover_m3 > 0), which(OM$Dam$Vsim == 0))
+  expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
+
+  nodes$model[nodes$id == "54095"] <- NA
+  Qobs2 <- cbind(Qobs2, Qobs[, "54095"])
+  e <- setupRunModel(griwrm = g,
+                     runRunModel = FALSE,
+                     Qobs2 = Qobs2,
+                     Qrelease = Qrelease)
+  for (x in ls(e)) assign(x, get(x, e))
+  expect_equal(which(OM$Dam$Qover_m3 > 0), which(OM$Dam$Vsim == 0))
+  expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
+})
