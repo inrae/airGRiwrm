@@ -29,11 +29,17 @@
 #'
 #' `RunOptions[[id_of_the_reservoir]]$IniStates <- unlist(OutputsModel[[id_of_the_reservoir]]$StateEnd)`
 #'
+#' Direct injection nodes connected to a reservoir nodes act as water injections
+#' or withdrawals directly in the reservoir volume (whatever the length between
+#' the direct injection nodes and the reservoir node). The abstraction volumes
+#' that cannot be operated due to an empty reservoir are notified by the
+#' item `Qover_m3` in the returned *OutputsModel* object.
+#'
 #' @inheritParams airGR::RunModel
 #' @param Param [numeric] vector of length 2 containing (1) the maximum capacity
 #' of the reservoir and (2) the celerity in m/s of the upstream inflows.
 #'
-#' @return An OutputsModel object like the one return by [airGR::RunModel] but
+#' @return An *OutputsModel* object like the one return by [airGR::RunModel] but
 #' completed with an item `Vsim` representing the water volume time series in m3.
 #' @export
 #'
@@ -50,13 +56,35 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   Vmax <- Param[1]
   celerity <- Param[2]
 
+  # Time parameters
+  IndPerWarmUp <- RunOptions$IndPeriod_WarmUp[RunOptions$IndPeriod_WarmUp > 0]
+  IndPerTot   <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
+  iPerTot <- seq(length(IndPerTot))
+
+  # Relocate upstream direct injection into the reservoir
+  Qdirect <- InputsModel$Qupstream[IndPerTot, !InputsModel$UpstreamIsModeled, drop = FALSE]
+  InputsModel$Qupstream <-  InputsModel$Qupstream[, InputsModel$UpstreamIsModeled, drop = FALSE]
+  InputsModel$LengthHydro <- InputsModel$LengthHydro[InputsModel$UpstreamIsModeled]
+  InputsModel$BasinAreas <- InputsModel$BasinAreas[c(InputsModel$UpstreamIsModeled, TRUE)]
+  InputsModel$UpstreamNodes <- InputsModel$UpstreamNodes[InputsModel$UpstreamIsModeled]
+  InputsModel$UpstreamVarQ <- InputsModel$UpstreamVarQ[InputsModel$UpstreamIsModeled]
+  InputsModel$UpstreamIsModeled <- InputsModel$UpstreamIsModeled[InputsModel$UpstreamIsModeled]
+
   # Compute inflows with RunModel_Lag
-  OutputsModel <- RunModel.SD(InputsModel,
-                              RunOptions,
-                              Param = celerity)
-  names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
-  Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
-                   OutputsModel$Qinflows_m3)
+  if (ncol(InputsModel$Qupstream) > 0) {
+    OutputsModel <- RunModel.SD(InputsModel,
+                                RunOptions,
+                                Param = celerity)
+    names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
+    Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
+                     OutputsModel$Qinflows_m3)
+  } else {
+    Qinflows_m3 <- rep(0, length(IndPerTot))
+  }
+  if (ncol(Qdirect) > 0) {
+    if (ncol(Qdirect) > 1) Qdirect <- rowSums(Qdirect)
+    Qinflows_m3 <- Qinflows_m3 + Qdirect
+  }
 
   # Reservoir initial conditions
   V0 <- RunOptions$IniStates["Reservoir.V"]
@@ -65,10 +93,8 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   }
 
   # Initiation of output variables
-  IndPerWarmUp <- RunOptions$IndPeriod_WarmUp[RunOptions$IndPeriod_WarmUp > 0]
-  IndPerTot   <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
-  iPerTot <- seq(length(IndPerTot))
   Vsim <- rep(0, length(IndPerTot))
+  Qover_m3 <- rep(0, length(IndPerTot))
   Qsim_m3 <- Vsim
   if (InputsModel$hasDiversion) {
     Qdiv_m3 <- Vsim
@@ -77,6 +103,10 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   # Time series volume and release calculation
   for (i in iPerTot) {
     Vsim[i] <- V0 + Qinflows_m3[i]
+    if (Vsim[i] < 0) {
+      Qover_m3[i] <- -Vsim[i]
+      Vsim[i] <- 0
+    }
     if (InputsModel$hasDiversion) {
       Qdiv_m3[i] <- min(Vsim[i] + InputsModel$Qmin[IndPerTot[i]], InputsModel$Qdiv[IndPerTot[i]])
       Vsim[i] <- Vsim[i] - Qdiv_m3[i]
@@ -102,6 +132,9 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   iRun <- length(IndPerWarmUp) + seq(length(RunOptions$IndPeriod_Run))
   OutputsModel$Qsim_m3 <- Qsim_m3[iRun]
   OutputsModel$Vsim <- Vsim[iRun]
+  if (ncol(Qdirect) > 0) {
+    OutputsModel$Qover_m3 <- Qover_m3[iRun]
+  }
   if (InputsModel$hasDiversion) {
     OutputsModel$Qdiv_m3 <- Qdiv_m3[iRun]
   }
