@@ -5,6 +5,8 @@
 \alias{isNodeDownstream.GRiwrmInputsModel}
 \alias{isNodeDownstream.GRiwrm}
 \alias{isNodeUpstream}
+\alias{isNodeUpstream.GRiwrm}
+\alias{isNodeUpstream.GRiwrmInputsModel}
 \title{Check if a node is downstream or upstream another one}
 \usage{
 isNodeDownstream(x, current_node, candidate_node)
@@ -14,6 +16,10 @@ isNodeDownstream(x, current_node, candidate_node)
 \method{isNodeDownstream}{GRiwrm}(x, current_node, candidate_node)
 
 isNodeUpstream(x, current_node, candidate_node)
+
+\method{isNodeUpstream}{GRiwrm}(x, current_node, candidate_node)
+
+\method{isNodeUpstream}{GRiwrmInputsModel}(x, current_node, candidate_node)
 }
 \arguments{
 \item{x}{[\code{GRiwrmInputsModel} object] (see \link{CreateInputsModel.GRiwrm}) or
