@@ -2,22 +2,24 @@
 % Please edit documentation in R/utils.GRiwrm.R
 \name{reduceGRiwrm}
 \alias{reduceGRiwrm}
-\title{Reduce the size of a GRiwrm by selecting the set of nodes corresponding to a downstream node}
+\title{Reduce the size of a GRiwrm by selecting the subset of nodes corresponding to a downstream node}
 \usage{
-reduceGRiwrm(griwrm, down_node, ...)
+reduceGRiwrm(griwrm, down_node, check = FALSE)
 }
 \arguments{
-\item{griwrm}{A GRiwrm object (See \link{CreateGRiwrm})}
+\item{griwrm}{A \emph{GRiwrm} object (See \link{CreateGRiwrm})}
 
-\item{down_node}{The ID of the downstream node of the reduced GRiwrm}
+\item{down_node}{The ID of the downstream node of the reduced \emph{GRiwrm}}
+
+\item{check}{\link{logical} Check the consistency of the reduced \emph{GRiwrm}}
 
 \item{...}{}
 }
 \value{
-The reduced GRiwrm object only containing nodes from
+A \emph{GRiwrm} object only containing nodes located upstream the given downstream node
 }
 \description{
-Reduce the size of a GRiwrm by selecting the set of nodes corresponding to a downstream node
+Reduce the size of a GRiwrm by selecting the subset of nodes corresponding to a downstream node
 }
 \examples{
 data(Severn)
