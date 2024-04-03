@@ -12,8 +12,6 @@ reduceGRiwrm(griwrm, down_node, check = FALSE)
 \item{down_node}{The ID of the downstream node of the reduced \emph{GRiwrm}}
 
 \item{check}{\link{logical} Check the consistency of the reduced \emph{GRiwrm}}
-
-\item{...}{}
 }
 \value{
 A \emph{GRiwrm} object only containing nodes located upstream the given downstream node

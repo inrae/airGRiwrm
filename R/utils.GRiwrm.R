@@ -72,7 +72,6 @@ isNodeDownstream.GRiwrm <- function(x, current_node, candidate_node) {
 #' @param griwrm A *GRiwrm* object (See [CreateGRiwrm])
 #' @param down_node The ID of the downstream node of the reduced *GRiwrm*
 #' @param check [logical] Check the consistency of the reduced *GRiwrm*
-#' @param ...
 #'
 #' @return A *GRiwrm* object only containing nodes located upstream the given downstream node
 #' @export
