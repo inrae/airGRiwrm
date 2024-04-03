@@ -59,14 +59,78 @@ isNodeDownstream.GRiwrmInputsModel <- function(x, current_node, candidate_node) 
 #' @export
 #' @rdname isNodeDownstream
 isNodeDownstream.GRiwrm <- function(x, current_node, candidate_node) {
-  current_down_node <- x$down[x$id %in% current_node]
+  stopifnot(length(current_node) == 1)
+  current_down_node <- x$down[x$id == current_node]
   if (all(is.na(current_down_node))) return(FALSE)
+  current_down_node <- current_down_node[!is.na(current_down_node)]
   if (any(current_down_node == candidate_node)) return(TRUE)
-  return(isNodeDownstream(x, current_down_node, candidate_node))
+  return(any(sapply(current_down_node, function(cdn) isNodeDownstream(x, cdn, candidate_node))))
 }
+
+#' Reduce the size of a GRiwrm by selecting the set of nodes corresponding to a downstream node
+#'
+#' @param griwrm A GRiwrm object (See [CreateGRiwrm])
+#' @param down_node The ID of the downstream node of the reduced GRiwrm
+#' @param ...
+#'
+#' @return The reduced GRiwrm object only containing nodes from
+#' @export
+#'
+#' @examples
+#' data(Severn)
+#' nodes <- Severn$BasinsInfo
+#' nodes$model <- "RunModel_GR4J"
+#' str(nodes)
+#' # Mismatch column names are renamed to stick with GRiwrm requirements
+#' rename_columns <- list(id = "gauge_id",
+#'                        down = "downstream_id",
+#'                        length = "distance_downstream")
+#' griwrm_severn <- CreateGRiwrm(nodes, rename_columns)
+#' griwrm_severn
+#' # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
+#' plot(griwrm_severn)
+#' plot(reduceGRiwrm(griwrm_severn, "54032"))
+#'
+reduceGRiwrm <- function(griwrm, down_node, ...) {
+  visited <- c()
+  to_visit <- down_node
+
+  while (length(to_visit) > 0) {
+    current_node <- to_visit[1]
+
+    visited <- c(visited, current_node)
+
+    to_visit <- to_visit[-1]
+
+    upstream_nodes <- griwrm$id[!is.na(griwrm$down) & griwrm$down == current_node]
+
+    upstream_nodes <- upstream_nodes[!upstream_nodes %in% visited]
+    to_visit <- unique(c(upstream_nodes, to_visit))
+  }
+
+  subgriwrm <- griwrm[griwrm$id %in% visited, ]
+  subgriwrm[subgriwrm$id == down_node, c("down", "length")] <- NA
+  subgriwrm[!subgriwrm$down %in% subgriwrm$id, c("down", "length")] <- NA
+
+  return(CreateGRiwrm(subgriwrm))
+}
+
 
 #' @export
 #' @rdname isNodeDownstream
 isNodeUpstream <- function(x, current_node, candidate_node) {
-  !isNodeDownstream(x, current_node, candidate_node)
+  UseMethod("isNodeUpstream", x)
+}
+
+#' @export
+#' @rdname isNodeDownstream
+isNodeUpstream.GRiwrm <- function(x, current_node, candidate_node) {
+  g <- reduceGRiwrm(x, current_node)
+  return(candidate_node %in% g$id)
+}
+
+#' @export
+#' @rdname isNodeDownstream
+isNodeUpstream.GRiwrmInputsModel <- function(x, current_node, candidate_node) {
+  isNodeUpstream(attr(x, "GRiwrm"), current_node, candidate_node)
 }
