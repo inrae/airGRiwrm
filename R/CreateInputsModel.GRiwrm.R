@@ -97,6 +97,12 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
             "'%s' column names must be included in 'id's of the GRiwrm object",
             varName
           ))
+        } else if (any(duplicated(colnames(v)))) {
+          stop(sprintf(
+            "'%s' has duplicated column names: '%s'",
+            varName,
+            paste(colnames(v)[duplicated(colnames(v))], collapse = "', '")
+          ))
         }
         if (!varName %in% c("ZInputs", "NLayers", "HypsoData") && nrow(v) != length(DatesR)) {
           stop(sprintf(
