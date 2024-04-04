@@ -109,6 +109,9 @@ CreateGRiwrm <- function(db,
 CheckColumnTypes <- function(df, coltypes, keep_all) {
   lapply(names(df), function(x) {
     if (x %in% names(coltypes)) {
+      if (coltypes[[x]] == "double" && typeof(df[[x]]) == "integer") {
+        df[[x]] <- as.double(df[[x]])
+      }
       if (typeof(df[[x]]) != coltypes[[x]]) {
         stop(
           sprintf(
