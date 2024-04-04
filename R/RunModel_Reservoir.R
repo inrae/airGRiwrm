@@ -79,11 +79,17 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
     Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
                      OutputsModel$Qinflows_m3)
   } else {
+    OutputsModel <- list(
+      DatesR = InputsModel$DatesR[RunOptions$IndPeriod_Run]
+    )
+    class(OutputsModel) <- c("OutputsModel", class(OutputsModel))
     Qinflows_m3 <- rep(0, length(IndPerTot))
   }
   if (ncol(Qdirect) > 0) {
     if (ncol(Qdirect) > 1) Qdirect <- rowSums(Qdirect)
     Qinflows_m3 <- Qinflows_m3 + Qdirect
+  } else {
+    Qdirect <- NULL
   }
 
   # Reservoir initial conditions
@@ -132,7 +138,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   iRun <- length(IndPerWarmUp) + seq(length(RunOptions$IndPeriod_Run))
   OutputsModel$Qsim_m3 <- Qsim_m3[iRun]
   OutputsModel$Vsim <- Vsim[iRun]
-  if (ncol(Qdirect) > 0) {
+  if (!is.null(Qdirect)) {
     OutputsModel$Qover_m3 <- Qover_m3[iRun]
   }
   if (InputsModel$hasDiversion) {
