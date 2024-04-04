@@ -13,6 +13,9 @@ test_that("Checks on GRiwrm object with Runmodel_Reservoir", {
 
 skip_on_cran()
 
+e <- setupRunModel(runInputsModel = FALSE)
+for (x in ls(e)) assign(x, get(x, e))
+
 test_that("Calibration with Runmodel_Reservoir works!", {
   g <- CreateGRiwrm(n_rsrvr)
 
@@ -100,8 +103,6 @@ test_that("Calibration with ungauged node and reservoir filled by a diversion wo
 })
 
 test_that("Diversion on a reservoir works #146", {
-  e <- setupRunModel(runInputsModel = FALSE)
-  for (x in ls(e)) assign(x, get(x, e))
   Qrelease <- data.frame(Dam = rep(3508465, length(DatesR)))
   Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(10E6, 1)))
   e <- setupRunModel(runRunModel = FALSE,
@@ -137,8 +138,6 @@ test_that("Diversion on a reservoir works #146", {
 })
 
 test_that("Withdrawal on a reservoir works #147", {
-  e <- setupRunModel(runInputsModel = FALSE)
-  for (x in ls(e)) assign(x, get(x, e))
   nodes <- rbind(
     n_rsrvr,
     data.frame(
@@ -166,6 +165,7 @@ test_that("Withdrawal on a reservoir works #147", {
   expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
 
   nodes$model[nodes$id == "54095"] <- NA
+  g <- CreateGRiwrm(nodes)
   Qobs2 <- cbind(Qobs2, "54095" = Qobs[, "54095"])
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
@@ -178,4 +178,40 @@ test_that("Withdrawal on a reservoir works #147", {
   expect_equal(which(OM$Dam$Qsim_m3 < 1E6), which(OM$Dam$Vsim == 0))
   expect_true(all(which(OM$Dam$Qover_m3 > 0) %in% which(OM$Dam$Qsim_m3 < 1E6)))
   expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
+})
+
+test_that("Reservoir with downstream ungauged node works", {
+  g <- reduceGRiwrm(CreateGRiwrm(loadSevernNodes()), "54032")
+  g$donor <- NULL
+  g$model[g$id %in% c("54001", "54029")] <- "Ungauged"
+  g$down[g$id == "54001"] <- "Dam2"
+  g <- rbind(g,
+             data.frame(id = "Dam", down = "54001", length = 0, area = NA, model = "RunModel_Reservoir"),
+             data.frame(id = "54001", down = "54029", length = 0, area = NA, model = "Diversion"),
+             data.frame(id = "Dam2", down = "54032", length = 0, area = NA, model = "RunModel_Reservoir"))
+  g$down[g$id == "54095"] <- "Dam"
+  g <- CreateGRiwrm(g)
+  Qrelease <- data.frame(Dam = rep(0, length(DatesR)),
+                         Dam2 = rep(0, length(DatesR)))
+  Qobs2 <- matrix(0, ncol = 1, nrow = length(DatesR))
+  colnames(Qobs2) <- "54001"
+  e <- setupRunModel(griwrm = g,
+                     runRunModel = FALSE,
+                     Qrelease = Qrelease,
+                     Qobs2 = Qobs2)
+  for (x in ls(e)) assign(x, get(x, e))
+  InputsCrit <- CreateInputsCrit(InputsModel,
+                                 ErrorCrit_KGE2,
+                                 RunOptions = RunOptions,
+                                 Obs = Qobs[IndPeriod_Run, ])
+  CalibOptions <- CreateCalibOptions(InputsModel,
+                                     FixedParam = list(Dam = c(1E6, 1),
+                                                       Dam2 = c(1E6, 1)))
+  OC <- Calibration(
+    InputsModel = InputsModel,
+    RunOptions = RunOptions,
+    InputsCrit = InputsCrit,
+    CalibOptions = CalibOptions
+  )
+  expect_true(OC$`54032`$CritFinal > 0.96)
 })

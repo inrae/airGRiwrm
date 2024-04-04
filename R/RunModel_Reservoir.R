@@ -76,6 +76,8 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
                                 RunOptions,
                                 Param = celerity)
     names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
+    OutputsModel$Qsim <- NULL
+    OutputsModel$RunOptions$WarmUpQsim <- NULL
     Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
                      OutputsModel$Qinflows_m3)
   } else {
