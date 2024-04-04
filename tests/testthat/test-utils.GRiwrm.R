@@ -16,3 +16,8 @@ test_that("isNodeupstream works", {
   expect_true(isNodeUpstream(g, "54002", "54029"))
   expect_false(isNodeUpstream(g, "54029", "54095"))
 })
+
+test_that("Ungauged clusters are processed when all upstream nodes are processed", {
+  g <- CreateGRiwrm(read.csv(test_path("test-utils.GRiwrm_issue_149.csv")))
+  expect_equal(getNodeRanking(g), c("G1", "U1", "G2", "U2", "U3", "G3"))
+})

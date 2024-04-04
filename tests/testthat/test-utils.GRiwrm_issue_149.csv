@@ -1,0 +1,7 @@
+id,down,length,area,model
+U2,G3,0,1,Ungauged
+U3,G3,0,100,Ungauged
+G3,NA,NA,1000,RunModel_GR4J
+G1,U1,0,1,RunModel_GR4J
+U1,G2,0,10,Ungauged
+G2,U3,0,50,RunModel_GR4J
