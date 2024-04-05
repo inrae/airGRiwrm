@@ -11,7 +11,7 @@
   width = "100\%",
   height = "100\%",
   box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermediateUngauged
-    = "#efe", IntermediateGauged = "#afa", DirectInjection = "#faa", Reservoir = "#9de"),
+    = "#efe", IntermediateGauged = "#afa", Reservoir = "#9de", DirectInjection = "#faa"),
   defaultClassDef = "stroke:#333",
   ...
 )
