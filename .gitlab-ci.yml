@@ -36,29 +36,8 @@ check:
   - R -q -e 'remotes::update_packages("rcmdcheck")'
   - R -q -e 'options(error = function() quit(save = "no", status = 1)); rcmdcheck::rcmdcheck(args = "--as-cran", error_on = "warning")'
 
-website:
-  stage: publish
-  only:
-    refs:
-      - dev
-      - tags
-  except:
-    refs:
-      - schedules
-  script:
-    - R -e 'install.packages("pkgdown")'
-    - Rscript dev/update_mermaid.R
-    - sed -i 's/`function`/function/g' man/CreateRunOptions.Rd
-    - sed -i 's/`function`/function/g' man/CreateCalibOptions.Rd
-    - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
-    - test "$CI_COMMIT_BRANCH" -eq "master" && PKGDOWN_DEV_MODE="release" || PKGDOWN_DEV_MODE="devel"
-    - R -e 'pkgdown::build_site()'
-    - sudo apt-get update && sudo apt-get install -y sshpass rsync
-    - sshpass -p "${OVH_PASS}" rsync -a -e "ssh -o StrictHostKeyChecking=no" docs/ ${OVH_LOGIN}@${OVH_SFTP}:/home/${OVH_LOGIN}/airgriwrm/
-
 .github:
   stage: publish
-  image: bitnami/git:latest
   except:
     refs:
       - schedules
@@ -71,6 +50,27 @@ website:
     - git config --global user.name "Gitlab CI"
     - git remote add github ${GITHUB_CLONE} || git remote set-url github ${GITHUB_CLONE}
     - git fetch
+
+website:
+  extends:
+    - .github
+  only:
+    refs:
+      - master
+      - dev
+  script:
+    - R -e 'install.packages("pkgdown")'
+    - Rscript dev/update_mermaid.R
+    - sed -i 's/`function`/function/g' man/CreateRunOptions.Rd
+    - sed -i 's/`function`/function/g' man/CreateCalibOptions.Rd
+    - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
+    - test "$CI_COMMIT_BRANCH" -eq "master" && PKGDOWN_DEV_MODE="release" || PKGDOWN_DEV_MODE="devel"
+    - R -e 'pkgdown::build_site()'
+    - git branch -D gh-pages || echo "Branch gh-pages not existing"
+    - git checkout -b gh-pages
+    - git add -f docs
+    - git commit -m "Publish doc on github"
+    - git push --force github HEAD:refs/heads/gh-pages
 
 github_master_dev:
   extends:
