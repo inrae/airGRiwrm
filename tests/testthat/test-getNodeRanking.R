@@ -30,6 +30,8 @@ test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
 })
 
 test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
-  g <- getGriwrmDerivedReservoirUngauged(TRUE)
+  g <- getGriwrmDerivedReservoirUngauged(TRUE, inconsistent = TRUE)
+  expect_error(getNodeRanking(g), regexp = "Inconstancy")
+  g <- getGriwrmDerivedReservoirUngauged(TRUE, inconsistent = FALSE)
   expect_equal(getNodeRanking(g), c("54095", "Dam", "54029", "54001", "54032"))
 })

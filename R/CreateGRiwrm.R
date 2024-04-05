@@ -142,6 +142,7 @@ getNodeRanking <- function(griwrm) {
   # Remove upstream nodes without model (direct flow connections)
   g <- griwrm[!is.na(griwrm$model), ]
   r <- c()
+  oupIds <- character(0)
   while (nrow(g) > 0) {
     # Search for gauged ids or ungauged with upstream donor
     upIds <- unique(g$id[!g$id %in% g$down & (g$id == g$donor | !g$donor %in% g$id)])
@@ -149,6 +150,12 @@ getNodeRanking <- function(griwrm) {
     g <- g[!g$id %in% upIds, ]
     #Search for ungauged ids
     upIds <- unique(g$id[!g$id %in% g$down & g$id != g$donor])
+    if (!identical(oupIds, character(0)) && identical(upIds, oupIds)) {
+      stop("Inconstancy detected in GRiwrm object: impossible to reach donor of ungauged node(s): '",
+           paste(upIds, collapse = "', '"),
+           "'")
+    }
+    oupIds <- upIds
     while (length(upIds) > 0) {
       upId <- upIds[1]
       #Browse the ungauged sub-network until the donor
@@ -327,9 +334,8 @@ refineReservoirDonor <- function(i, griwrm) {
       stop("Ungauged nodes located upstream the node '", id,
            "' cannot have different donors")
     }
-    return(donor)
-  } else {
-    # No upstream ungauged nodes: Reservoir is its own donor!
-    return(griwrm$id[i])
+    if (isNodeDownstream(griwrm, id, donor)) return(donor)
   }
+  # No upstream ungauged nodes: Reservoir is its own donor!
+  return(griwrm$id[i])
 }

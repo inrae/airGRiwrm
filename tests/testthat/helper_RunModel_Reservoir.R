@@ -35,7 +35,7 @@ get_nodes_derived_reservoir <- function(n_rsrvr) {
 }
 n_derived_rsrvr <- get_nodes_derived_reservoir(n_rsrvr)
 
-getGriwrmDerivedReservoirUngauged <- function(donorByDerivation) {
+getGriwrmDerivedReservoirUngauged <- function(donorByDerivation, inconsistent = FALSE) {
   nodes <- loadSevernNodes()
   nodes <-
     nodes[nodes$id %in% c("54095", "54001", "54029", "54032"),]
@@ -52,8 +52,8 @@ getGriwrmDerivedReservoirUngauged <- function(donorByDerivation) {
   nodes$down[nodes$id == "54095" &
                nodes$model == "Diversion"] <- "Dam"
   g <- CreateGRiwrm(nodes)
-  if (donorByDerivation)
-    g$donor[g$id == "54095"] <- "54029"
+  if (donorByDerivation) g$donor[g$id == "54095"] <- "54029"
+  if (!inconsistent) g$donor[g$id == "Dam"] <- "54029"
   return(g)
 }
 
