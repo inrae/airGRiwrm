@@ -173,8 +173,7 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
 reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
   objAttributes <- attributes(obj)
   obj <- lapply(obj, function(o) {
-    if (o$id %in% griwrm$id &&
-        !is.na(griwrm$model[griwrm$id == o$id & griwrm$model != "Diversion"])) {
+    if (o$id %in% griwrm$id && any(!is.na(griwrm$model[griwrm$id == o$id]))) {
       o
     } else {
       NULL
@@ -217,7 +216,7 @@ updateParameters4Ungauged <- function(GaugedId,
   upNodes <- griwrm %>%
     dplyr::filter(.data$down %in% gDonor$id,
                   !.data$id %in% gDonor$id) %>%
-    dplyr::mutate(model = ifelse(!is.na(.data$model) & .data$model != "Diversion", NA, .data$model))
+    dplyr::mutate(model = ifelse(!is.na(.data$model), NA, .data$model))
   upIds <- upNodes$id
   g <- rbind(upNodes, gDonor)
   # Set downstream nodes

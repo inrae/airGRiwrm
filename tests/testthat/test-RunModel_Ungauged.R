@@ -297,3 +297,26 @@ test_that("Ungauged node with derivation to reservoir should work", {
 test_that("Ungauged node with donor by derivation through reservoir should work", {
   testDerivedUngauged(TRUE)
 })
+
+test_that("Diversion to an ungauged node should works", {
+  nodes <- loadSevernNodes()
+  nodes[nodes$id == "54001", c("down", "length")] <- c(NA, NA)
+  nodes <- rbind(
+    nodes,
+    data.frame(
+      id = "54001",
+      down = "54032",
+      length = 45,
+      area = NA,
+      model = "Diversion"
+    )
+  )
+  nodes$model[nodes$id == "54032"] <- "Ungauged"
+  Qobs2 <- Qobs_rsrvr + 1E9
+  colnames(Qobs2) <- "54001"
+  e <- suppressWarnings(
+    runCalibration(nodes, Qobs2 = Qobs2)
+  )
+  for (x in ls(e)) assign(x, get(x, e))
+  expect_true(OutputsCalib$`54057`$CritFinal > 0.4)
+})
