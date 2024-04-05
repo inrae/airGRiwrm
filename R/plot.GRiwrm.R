@@ -27,8 +27,8 @@ plot.GRiwrm <- function(x,
                                        UpstreamGauged = "#aaf",
                                        IntermediateUngauged = "#efe",
                                        IntermediateGauged = "#afa",
-                                       DirectInjection = "#faa",
-                                       Reservoir = "#9de"),
+                                       Reservoir = "#9de",
+                                       DirectInjection = "#faa"),
                         defaultClassDef = "stroke:#333",
                         ...) {
 
@@ -65,8 +65,8 @@ plot.GRiwrm <- function(x,
     paste("classDef default", defaultClassDef),
     paste("classDef", names(box_colors), paste0("fill:", box_colors)),
     paste("classDef",
-          paste0(names(box_colors[1:4]), "Diversion"),
-          sprintf("fill:%s, stroke:%s, stroke-width:3px", box_colors[1:4], box_colors["DirectInjection"]))
+          paste0(names(box_colors[1:5]), "Diversion"),
+          sprintf("fill:%s, stroke:%s, stroke-width:3px", box_colors[1:5], box_colors["DirectInjection"]))
   )
   if (length(getDiversionRows(g2)) > 0) {
     css <- c(css,
