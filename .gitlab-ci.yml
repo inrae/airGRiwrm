@@ -54,6 +54,10 @@ check:
 website:
   extends:
     - .github
+  only:
+    refs:
+      - master
+      - dev
   script:
     - R -e 'install.packages("pkgdown")'
     - Rscript dev/update_mermaid.R
