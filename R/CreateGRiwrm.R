@@ -283,7 +283,7 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
 }
 
 setDonor <- function(griwrm) {
-  sapply(seq(nrow(griwrm)), function(i) {
+  griwrm$donor <- sapply(seq(nrow(griwrm)), function(i) {
     id <- griwrm$id[i]
     model <- griwrm$model[i]
     if (is.na(model)) {
@@ -301,4 +301,30 @@ setDonor <- function(griwrm) {
     }
     return(gaugedId)
   })
+  d <- sapply(seq(nrow(griwrm)), refineReservoirDonor, griwrm = griwrm)
+  return(d)
+}
+
+#' Correct donor for reservoir nodes in case they're not in ungauged node clusters
+#'
+#' @param i rown number to process in `griwrm`
+#' @param griwrm A *GRiwrm* object (See [CreateGRiwrm])
+#'
+#' @return [character] [vector] of donor ids
+#' @noRd
+refineReservoirDonor <- function(i, griwrm) {
+  id <- griwrm$id[i]
+  if (all(!is.na(griwrm$model[griwrm$id == id]) &
+          griwrm$model[griwrm$id == id] != "RunModel_Reservoir")) {
+    return(griwrm$donor[i])
+  }
+  upIds <- griwrm$id[!is.na(griwrm$down) & griwrm$down == griwrm$id[i]]
+  if (any(!is.na(griwrm$model[griwrm$id %in% upIds]) &
+          griwrm$model[griwrm$id %in% upIds] == "Ungauged")) {
+    # Upstream ungauged nodes found: keep downstream donor
+    return(griwrm$donor[i])
+  } else {
+    # No upstream ungauged nodes: Reservoir is its own donor!
+    return(griwrm$id[i])
+  }
 }
