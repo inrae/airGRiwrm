@@ -319,10 +319,15 @@ refineReservoirDonor <- function(i, griwrm) {
     return(griwrm$donor[i])
   }
   upIds <- griwrm$id[!is.na(griwrm$down) & griwrm$down == griwrm$id[i]]
-  if (any(!is.na(griwrm$model[griwrm$id %in% upIds]) &
-          griwrm$model[griwrm$id %in% upIds] == "Ungauged")) {
+  g_up <- griwrm[griwrm$id %in% upIds, ]
+  if (any(!is.na(g_up$model) & g_up$model == "Ungauged")) {
     # Upstream ungauged nodes found: keep downstream donor
-    return(griwrm$donor[i])
+    donor <- unique(g_up$donor[!is.na(g_up$model) & g_up$model == "Ungauged"])
+    if (length(donor) > 1) {
+      stop("Ungauged nodes located upstream the node '", id,
+           "' cannot have different donors")
+    }
+    return(donor)
   } else {
     # No upstream ungauged nodes: Reservoir is its own donor!
     return(griwrm$id[i])

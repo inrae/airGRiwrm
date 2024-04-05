@@ -83,3 +83,13 @@ test_that("Reservoir supplied by derivated ungauged node should have the first d
   g <- CreateGRiwrm(n_derived_rsrvr) # Network provided by helper_RunModel_Reservoir.R
   expect_equal(g$donor[g$id == "Dam"], "54001")
 })
+
+test_that("Reservoir and Diversion on reservoir should have same donor", {
+  nodes <- n_rsrvr
+  nodes[nodes$id == "Dam", c("down", "length")] <- NA
+  nodes$model[nodes$id == "54095"] <- "Ungauged"
+  nodes <- rbind(nodes,
+                 data.frame(id = "Dam", down = "54001", length = 42, area = NA, model = "Diversion"))
+  g <- CreateGRiwrm(nodes)
+  expect_equal(g$donor[g$id == "Dam"], c("54001", "54001"))
+})
