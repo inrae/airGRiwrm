@@ -185,6 +185,12 @@ checkNetworkConsistency <- function(db) {
          paste(db2$id[duplicated(db2$id)], collapse = "\n"),
          "\nNodes `id` must be unique (except for `Diversion` nodes)")
   }
+  dbDiv <- db[getDiversionRows(db), ]
+  if (any(duplicated(dbDiv$id))) {
+    stop("Duplicated Diversion nodes detected: ",
+         paste(dbDiv$id[duplicated(dbDiv$id)], collapse = "\n"),
+         "\nThere can only be one Diversion per node")
+  }
   if (sum(is.na(db$down)) == 0) {
     stop("At least one node must be a network downstream node",
       " specified by 'down = NA'")

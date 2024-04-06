@@ -93,3 +93,15 @@ test_that("Reservoir and Diversion on reservoir should have same donor", {
   g <- CreateGRiwrm(nodes)
   expect_equal(g$donor[g$id == "Dam"], c("54001", "54001"))
 })
+
+test_that("Several Diversion on same node should raise error", {
+  nodes <- n_rsrvr
+  nodes <- rbind(nodes,
+                 data.frame(id = rep("Dam", 2),
+                            down = rep(as.character(NA), 2),
+                            length = rep(as.numeric(NA), 2),
+                            area = rep(as.numeric(NA), 2),
+                            model = rep("Diversion", 2)))
+  expect_error(CreateGRiwrm(nodes),
+               regexp = "Diversion")
+})
