@@ -320,3 +320,11 @@ test_that("Diversion to an ungauged node should works", {
   for (x in ls(e)) assign(x, get(x, e))
   expect_true(OutputsCalib$`54057`$CritFinal > 0.4)
 })
+
+test_that("Ungauged with donor at upstream works", {
+  nupd <- loadSevernNodes()
+  nupd$donor[nupd$id == "54032"] <- "54001"
+  nupd$model[nupd$id == "54032"] <- "Ungauged"
+  e <- runCalibration(nupd)
+  for (x in ls(e)) assign(x, get(x, e))
+})

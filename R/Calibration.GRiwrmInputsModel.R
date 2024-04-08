@@ -67,13 +67,20 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
            "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
     }
 
-    OutputsCalib[[id]] <- Calibration(
-      InputsModel = IM,
-      RunOptions = RunOptions[[id]],
-      InputsCrit = IC,
-      CalibOptions = CalibOptions[[id]],
-      ...
-    )
+    if (!hasUngauged && IM$isReceiver) {
+      # Ungauged node receiving parameters from upstream or sibling node
+      OutputsCalib[[id]] <- list(ParamFinalR = OutputsCalib[[IM$gaugedId]]$ParamFinalR)
+      class(OutputsCalib[[id]]) <- c("OutputsCalib", class(OutputsCalib[[id]]))
+    } else {
+      # Let's calibrate a gauged node!
+      OutputsCalib[[id]] <- Calibration(
+        InputsModel = IM,
+        RunOptions = RunOptions[[id]],
+        InputsCrit = IC,
+        CalibOptions = CalibOptions[[id]],
+        ...
+      )
+    }
 
     if (hasUngauged) {
       # Select nodes with model in the sub-network
