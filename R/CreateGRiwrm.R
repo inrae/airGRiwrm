@@ -142,12 +142,17 @@ getNodeRanking <- function(griwrm) {
   # Remove upstream nodes without model (direct flow connections)
   g <- griwrm[!is.na(griwrm$model), ]
   r <- c()
+  o_r <- r
   oupIds <- character(0)
   while (nrow(g) > 0) {
     # Search for gauged ids or ungauged with upstream donor
-    upIds <- unique(g$id[!g$id %in% g$down & (g$id == g$donor | !g$donor %in% g$id)])
-    r <- c(r, upIds)
-    g <- g[!g$id %in% upIds, ]
+    repeat {
+      upIds <- unique(g$id[!g$id %in% g$down & (g$id == g$donor | !g$donor %in% g$id)])
+      r <- c(r, upIds)
+      g <- g[!g$id %in% upIds, ]
+      if (identical(r, o_r)) break
+      o_r <- r
+    }
     #Search for ungauged ids
     upIds <- unique(g$id[!g$id %in% g$down & g$id != g$donor])
     if (!identical(oupIds, character(0)) && identical(upIds, oupIds)) {
