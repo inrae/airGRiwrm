@@ -241,12 +241,11 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   if (np$Diversion) {
     rowDiv <- which(griwrm$id == id & griwrm$model == "Diversion")
     diversionOutlet <- griwrm$down[rowDiv]
-    griwrm <- griwrm[-rowDiv, ]
   }
-  node <- griwrm[griwrm$id == id,]
 
   g2 <- griwrm[getDiversionRows(griwrm, TRUE), ]
-  FUN_MOD <- g2$model[g2$id == g2$donor[g2$id == id]]
+  node <- g2[g2$id == id, ]
+  FUN_MOD <- g2$model[g2$id == node$donor]
 
   # Set hydraulic parameters
   UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
@@ -331,8 +330,11 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
   featModel <- .GetFeatModel(InputsModel, IsHyst)
-  InputsModel$isUngauged <- griwrm$model[griwrm$id == id] == "Ungauged"
-  InputsModel$gaugedId <- griwrm$donor[griwrm$id == id]
+  InputsModel$isUngauged <- node$id != node$donor &&
+    isNodeDownstream(griwrm, id, node$donor)
+  InputsModel$isReceiver <- node$id != node$donor &&
+    !isNodeDownstream(griwrm, id, node$donor)
+  InputsModel$gaugedId <- node$donor
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
   InputsModel$model <-
     list(
@@ -352,13 +354,6 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
-    # If an upstream node is ungauged and the donor is downstream then we are in an ungauged reduced network
-    iUpstreamUngaugedNodes <- which(griwrm$id %in% griwrm$id[UpstreamNodeRows] &
-                                    griwrm$model == "Ungauged")
-    # Fall back to non diversion node in order to get correct donor
-    if (length(iUpstreamUngaugedNodes) > 0) {
-      InputsModel$isUngauged <- any(griwrm$donor[iUpstreamUngaugedNodes] == InputsModel$gaugedId)
-    }
     # Fill reservoir release with Qobs
     InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
   }
