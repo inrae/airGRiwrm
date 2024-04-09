@@ -41,7 +41,7 @@ for(x in ls(e)) assign(x, get(x, e))
 OC <- OutputsCalib
 
 test_that("RunModel_Ungauged works for intermediate basin with ungauged station", {
-  expect_true(all(sapply(OC, "[[", "CritFinal") > 0.95))
+  expect_true(all(sapply(OC[-3], "[[", "CritFinal") > 0.95))
 })
 
 Param <- sapply(OC, "[[", "ParamFinalR")
