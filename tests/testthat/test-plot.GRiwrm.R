@@ -5,7 +5,7 @@ test_that("Diverted ungauged nodes have correct color", {
   nodes_div <- nodes
   nodes_div$model[nodes_div$id == "54029"] <- "Ungauged"
   nodes_div <- rbind(nodes_div, data.frame(id = "54029",
-                                           down = "54001",
+                                           down = "54002",
                                            length = 20,
                                            model = "Diversion",
                                            area = NA))

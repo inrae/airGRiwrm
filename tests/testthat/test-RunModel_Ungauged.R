@@ -287,7 +287,7 @@ test_that("Cemaneige with hysteresis works",  {
   )
   for (x in ls(e)) assign(x, get(x, e))
   expect_equal(sapply(Param, length),
-               c("54057" = 9, "54032" = 9, "54001" = 8))
+               c("54057" = 9, "54001" = 8, "54032" = 9))
 })
 
 test_that("Ungauged node with derivation to reservoir should work", {
@@ -327,4 +327,5 @@ test_that("Ungauged with donor at upstream works", {
   nupd$model[nupd$id == "54032"] <- "Ungauged"
   e <- runCalibration(nupd)
   for (x in ls(e)) assign(x, get(x, e))
+  expect_true(OutputsCalib$`54057`$CritFinal > 0.96)
 })

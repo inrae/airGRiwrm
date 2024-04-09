@@ -106,9 +106,9 @@ CreateGRiwrm <- function(db,
   # Set automatic downstream donors for ungauged nodes
   griwrm$donor <- setDonor(griwrm)
 
+  griwrm <- sort(griwrm)
 
-
-  griwrm
+  return(griwrm)
 }
 
 

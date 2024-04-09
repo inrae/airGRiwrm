@@ -34,7 +34,7 @@ getNodeRanking <- function(griwrm) {
     while (length(upIds) > 0) {
       upId <- upIds[1]
       #Browse the ungauged sub-network until the donor
-      upDonor <- g$donor[g$id == upId]
+      upDonor <- unique(g$donor[g$id == upId])
       g2 <- g[g$donor == upDonor, ]
       # Check if upstream nodes have already been processed
       immediate_upstream_nodes <- g$id[!is.na(g$down) & g$down %in% g2$id]
@@ -51,4 +51,28 @@ getNodeRanking <- function(griwrm) {
     }
   }
   return(r)
+}
+
+
+#' Sort a GRiwrm network in upstream-downstream order ready for Calibration
+#'
+#' It Uses [getNodeRanking] for determining the best order for calibration and leaves
+#' direct injection nodes at the tail of the list.
+#'
+#' @param x A *GRiwrm* object (See [CreateGRiwrm])
+#' @inheritParams base::sort
+#'
+#' @return The sorted *GRiwrm* object in upstream-downstream order ready for Calibration
+#' @export
+#'
+sort.GRiwrm <- function(x, decreasing = FALSE, ...) {
+  sorted_id <- getNodeRanking(x)
+  rank <- unlist(sapply(sorted_id, function(id) which(x$id == id)))
+  direct_injection_rows <- which(is.na(x$model))
+  if (length(direct_injection_rows) > 0) {
+    rank <- c(rank,
+              direct_injection_rows)
+  }
+  x <- x[rank, ]
+  return(x)
 }
