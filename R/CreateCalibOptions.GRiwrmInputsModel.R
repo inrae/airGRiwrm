@@ -7,6 +7,7 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
     warning("The parameter `IsHyst` will be ignored. It should be defined before with `CreateInputsModel`")
   }
   np <- getAllNodesProperties(attr(x, "GRiwrm"))
+  np <- np[!np$DirectInjection, ]
   gaugedIds <- np$id[np$calibration == "Gauged"]
 
   if (!is.null(FixedParam)) {
@@ -16,8 +17,8 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
     if (!is.list(FixedParam)) {
       FixedParam <- list("*" = FixedParam)
     }
-    if (!all(names(FixedParam) %in% c(gaugedIds, "*"))) {
-      stop("Each item of the list `FixedParam` should correspond to a gauged node ids:\n",
+    if (!all(names(FixedParam) %in% c(np$id, "*"))) {
+      stop("Each item of the list `FixedParam` should correspond to a node ids:\n",
            "Unknown id(s): ", paste(names(FixedParam)[which(!names(FixedParam) %in% gaugedIds)], sep = ", "))
     }
     if (!all(sapply(FixedParam, is.numeric))) {
@@ -43,17 +44,21 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
   CalibOptions <- list()
   class(CalibOptions) <- c("GRiwrmCalibOptions", class(CalibOptions))
 
-  for (id in gaugedIds) {
+  for (id in np$id) {
     IM <- x[[id]]
     FP <- NULL
     if (!is.null(FixedParam)) {
       FP <- FixedParam[[id]]
     }
-    CalibOptions[[IM$id]] <- CreateCalibOptions(
-      IM,
-      FixedParam = FP,
-      ...
-    )
+    if (np$calibration[np$id == id] == "Gauged") {
+      CalibOptions[[IM$id]] <- CreateCalibOptions(
+        IM,
+        FixedParam = FP,
+        ...
+      )
+    } else if(!is.null(FP)) {
+      CalibOptions[[IM$id]] <- list(FixedParam = FP)
+    }
   }
 
   return(CalibOptions)

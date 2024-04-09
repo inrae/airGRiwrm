@@ -73,7 +73,8 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         ParamFinalR = transferGRparams(InputsModel,
                                        OutputsCalib[[IM$gaugedId]]$ParamFinalR,
                                        IM$gaugedId,
-                                       id)
+                                       id,
+                                       CalibOptions[[id]]$FixedParam)
       )
       class(OutputsCalib[[id]]) <- c("OutputsCalib", class(OutputsCalib[[id]]))
     } else {
