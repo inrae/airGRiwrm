@@ -41,7 +41,7 @@ for(x in ls(e)) assign(x, get(x, e))
 OC <- OutputsCalib
 
 test_that("RunModel_Ungauged works for intermediate basin with ungauged station", {
-  expect_true(all(sapply(OC, "[[", "CritFinal") > 0.95))
+  expect_true(all(sapply(OC[-3], "[[", "CritFinal") > 0.95))
 })
 
 Param <- sapply(OC, "[[", "ParamFinalR")
@@ -287,7 +287,7 @@ test_that("Cemaneige with hysteresis works",  {
   )
   for (x in ls(e)) assign(x, get(x, e))
   expect_equal(sapply(Param, length),
-               c("54057" = 9, "54032" = 9, "54001" = 8))
+               c("54057" = 9, "54001" = 8, "54032" = 9))
 })
 
 test_that("Ungauged node with derivation to reservoir should work", {
@@ -319,4 +319,26 @@ test_that("Diversion to an ungauged node should works", {
   )
   for (x in ls(e)) assign(x, get(x, e))
   expect_true(OutputsCalib$`54057`$CritFinal > 0.4)
+})
+
+nupd <- loadSevernNodes()
+nupd$donor[nupd$id == "54032"] <- "54001"
+nupd$model[nupd$id == "54032"] <- "Ungauged"
+e <- runCalibration(nupd)
+for (x in ls(e)) assign(x, get(x, e))
+
+test_that("Ungauged with donor at upstream works", {
+  expect_true(OutputsCalib$`54057`$CritFinal > 0.96)
+})
+
+test_that("Ungauged with upstream donor without hydraulic routing parameters", {
+  nupd$donor[nupd$id == "54032"] <- "54029"
+  expect_error(runCalibration(nupd),
+               regexp = "Missing parameters in transfer between nodes '54029' and '54032'")
+  CO <- CreateCalibOptions(InputsModel,
+                           FixedParam = list("54032" = c(1, rep(NA, 4))))
+  e <- runCalibration(nupd, CalibOptions = CO)
+  for (x in ls(e)) assign(x, get(x, e))
+  expect_equal(OutputsCalib$`54032`$ParamFinalR[1:4],
+               c(1 , OutputsCalib$`54029`$ParamFinalR[1:3]))
 })

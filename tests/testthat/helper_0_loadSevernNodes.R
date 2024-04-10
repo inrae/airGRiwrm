@@ -13,3 +13,8 @@ loadSevernNodes <- function() {
   nodes$model <- "RunModel_GR4J"
   return(nodes)
 }
+
+expect_equal_map <- function(x, y) {
+  comp <- as.character(waldo::compare(x, y, list_as_map = TRUE))
+  expect_equal(comp, character(0))
+}

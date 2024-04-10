@@ -51,9 +51,10 @@ getGriwrmDerivedReservoirUngauged <- function(donorByDerivation, inconsistent = 
                  ))
   nodes$down[nodes$id == "54095" &
                nodes$model == "Diversion"] <- "Dam"
+  nodes$donor <- as.character(NA)
+  if (donorByDerivation) nodes$donor[nodes$id == "54095"] <- "54029"
   g <- CreateGRiwrm(nodes)
-  if (donorByDerivation) g$donor[g$id == "54095"] <- "54029"
-  if (!inconsistent) g$donor[g$id == "Dam"] <- "54029"
+  if (donorByDerivation && inconsistent) g$donor[g$id == "Dam"] <- "Dam"
   return(g)
 }
 

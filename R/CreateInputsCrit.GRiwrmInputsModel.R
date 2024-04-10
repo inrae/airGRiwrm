@@ -99,8 +99,10 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
         attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
         attr(InputsCrit[[IM$id]], "model") <- IM$model
         if (IM$model$hasX4) {
-          attr(InputsCrit[[IM$id]], "model")$X4Ratio <-
-            (tail(IM$BasinAreas, 1) / tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3
+          attr(InputsCrit[[IM$id]], "model")$X4Ratio <- max(
+            (tail(IM$BasinAreas, 1) / tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3,
+            0.5
+          )
         }
         class(InputsCrit[[IM$id]]) <- c("InputsCritLavenneFunction", class(InputsCrit[[IM$id]]))
       }

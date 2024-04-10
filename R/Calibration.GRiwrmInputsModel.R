@@ -67,36 +67,41 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
            "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
     }
 
-    OutputsCalib[[id]] <- Calibration(
-      InputsModel = IM,
-      RunOptions = RunOptions[[id]],
-      InputsCrit = IC,
-      CalibOptions = CalibOptions[[id]],
-      ...
-    )
+    if (!hasUngauged && IM$isReceiver) {
+      # Ungauged node receiving parameters from upstream or sibling node
+      OutputsCalib[[id]] <- list(
+        ParamFinalR = transferGRparams(InputsModel,
+                                       OutputsCalib[[IM$gaugedId]]$ParamFinalR,
+                                       IM$gaugedId,
+                                       id,
+                                       CalibOptions[[id]]$FixedParam)
+      )
+      class(OutputsCalib[[id]]) <- c("OutputsCalib", class(OutputsCalib[[id]]))
+    } else {
+      # Let's calibrate a gauged node!
+      OutputsCalib[[id]] <- Calibration(
+        InputsModel = IM,
+        RunOptions = RunOptions[[id]],
+        InputsCrit = IC,
+        CalibOptions = CalibOptions[[id]],
+        ...
+      )
+    }
 
     if (hasUngauged) {
       # Select nodes with model in the sub-network
       g <- attr(IM, "GRiwrm")
-      Ids <- g$id[!is.na(g$donor) & g$donor == id]
-      if (IM[[id]]$model$hasX4) {
-        # Extract the X4 calibrated for the whole intermediate basin
-        X4 <- OutputsCalib[[id]]$ParamFinalR[IM[[id]]$model$iX4] # Global parameter
-      }
+      Ids <- g$id[!is.na(g$donor) & g$donor == id & g$id != id]
       for (uId in Ids) {
         if (!IM[[uId]]$isReservoir) {
           # Add OutputsCalib for ungauged nodes
-          OutputsCalib[[uId]] <- OutputsCalib[[id]]
-          # Copy parameters and transform X4 relatively to the sub-basin area
-          OutputsCalib[[uId]]$ParamFinalR <-
-            OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$indexParamUngauged]
-          if (IM[[id]]$model$hasX4) {
-            subBasinAreas <- calcSubBasinAreas(IM)
-            OutputsCalib[[uId]]$ParamFinalR[IM[[uId]]$model$iX4] <- max(
-              X4 * (subBasinAreas[uId] / subBasinAreas[id]) ^ 0.3,
-              0.5
-            )
-          }
+          OutputsCalib[[uId]] <- list(
+            ParamFinalR = transferGRparams(InputsModel,
+                                           OutputsCalib[[id]]$ParamFinalR,
+                                           id,
+                                           uId)
+          )
+          class(OutputsCalib[[uId]]) <- class(OutputsCalib[[id]])
         } else {
           OutputsCalib[[uId]] <- Calibration(
             InputsModel = IM[[uId]],
@@ -304,21 +309,13 @@ calcSubBasinAreas <- function(IM) {
 RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE) {
   InputsModel$FUN_MOD <- NULL
   donor <- RunOptions$id
-  donorArea <- InputsModel[[donor]]$BasinAreas[length(InputsModel[[donor]]$BasinAreas)]
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
+    if (IM$id == donor) return(Param)
     if (IM$isReservoir) {
       return(IM$FixedParam)
     }
-    p <- Param[IM$model$indexParamUngauged]
-    if (IM$model$hasX4) {
-      p[IM$model$iX4] <- max(
-        Param[InputsModel[[donor]]$model$iX4] *
-          (IM$BasinAreas[length(IM$BasinAreas)] / donorArea) ^ 0.3,
-        0.5
-      )
-    }
-    return(p)
+    return(transferGRparams(InputsModel, Param, donor, IM$id))
   })
   OM <- suppressMessages(
     RunModel.GRiwrmInputsModel(InputsModel, attr(RunOptions, "GRiwrmRunOptions"), P)
@@ -328,4 +325,61 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
   } else {
     return(OM[[length(OM)]])
   }
+}
+
+#' Transfer GR parameters from one donor sub-basin to a receiver sub-basin
+#'
+#' This function is used by `Calibration.GRiwrmInputsModel` for transferring parameters
+#' to ungauged nodes and
+#'
+#' @details
+#' `donor` and `receiver` nodes should have the same GR model with the same snow
+#' module configuration.
+#'
+#' The transfer takes care of:
+#' - the presence/absence of hydraulic routing parameters between the donor and the receiver
+#' - the transformationof the X4 parameters of GR models
+#'
+#' @param InputsModel A *GRiwrmInputsModel* object (See [CreateInputsModel.GRiwrm])
+#' @param Param [numeric] vector of GR model parameters
+#' @param donor [character] id of the node which gives its parameters
+#' @param receiver [character] id of the node which receives the parameters from the donor
+#' @param default_param [numeric] vector of GR model parameters if parameters are missing from the donor
+#'
+#' @return
+#' @export
+#'
+transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL) {
+  missing_params <- setdiff(InputsModel[[receiver]]$model$indexParamUngauged,
+                            InputsModel[[donor]]$model$indexParamUngauged)
+  if (length(missing_params) > 0) {
+    if (is.null(default_param)) {
+      stop("Missing parameters in transfer between nodes '",
+           donor, "' and '", receiver, "'\n",
+           "Fix the missing parameters with the argument `FixedParam` of `CreateCalibOptions`")
+    }
+    max_params <- max(
+      max(InputsModel[[receiver]]$model$indexParamUngauged),
+      max(InputsModel[[donor]]$model$indexParamUngauged)
+    )
+    if (length(default_param) < max_params) {
+      stop("Error in parameter transfer between nodes '", donor, "' and '",
+           receiver, "'\n`default_params` should have a minimum length of ", max_params)
+    }
+    Param2 <- rep(as.numeric(NA), length(InputsModel[[receiver]]$model$indexParamUngauged))
+    Param2[InputsModel[[donor]]$model$indexParamUngauged] <- Param
+    Param2[missing_params] <- default_param[missing_params]
+    Param <- Param2
+  }
+  p <- Param[InputsModel[[receiver]]$model$indexParamUngauged]
+  if (InputsModel[[receiver]]$model$hasX4) {
+    donor_area <- InputsModel[[donor]]$BasinAreas[length(InputsModel[[donor]]$BasinAreas)]
+    receiver_area <- InputsModel[[receiver]]$BasinAreas[length(InputsModel[[receiver]]$BasinAreas)]
+    p[InputsModel[[receiver]]$model$iX4] <- max(
+      Param[InputsModel[[donor]]$model$iX4] *
+        (receiver_area / donor_area) ^ 0.3,
+      0.5
+    )
+  }
+  return(p)
 }

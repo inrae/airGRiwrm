@@ -21,3 +21,8 @@ test_that("Ungauged clusters are processed when all upstream nodes are processed
   g <- CreateGRiwrm(read.csv(test_path("test-utils.GRiwrm_issue_149.csv")))
   expect_equal(getNodeRanking(g), c("G1", "U1", "G2", "U2", "U3", "G3"))
 })
+
+test_that("IsNodeDownstream works through a derivation", {
+  g <- getGriwrmDerivedReservoirUngauged(TRUE)
+  expect_true(isNodeDownstream(g, "54095", "54029"))
+})

@@ -32,7 +32,8 @@ Suggests:
     knitr,
     rmarkdown,
     spelling,
-    testthat
+    testthat,
+    waldo
 VignetteBuilder:
     knitr
 Encoding: UTF-8

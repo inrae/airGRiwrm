@@ -11,22 +11,25 @@
 #'  Direct injection node can have a null area defined by `NA`
 #'  * the model to use ([character] column `model`), see section below for details
 #'
+#' An optional column `donor` can be used to manually define which sub-basin
+#' will give its parameters to an ungauged node (See `Ungauged` model below).
+#'
 #' ## Available models in airGRiwrm
 #'
 #' The "model" column should be filled by one of the following:
 #'
 #' * One of the hydrological models available in the *airGR* package defined by its
 #' `RunModel` function (i.e.: `RunModel_GR4J`, `RunModel_GR5HCemaneige`...)
+#' * `RunModel_Reservoir` for simulating a reservoir (See: [RunModel_Reservoir])
 #' * `Ungauged` for an ungauged node. The sub-basin inherits hydrological model and
-#' parameters from a "donor" sub-basin. By default the donor is the first gauged
-#' node at downstream
+#' parameters from a "donor" sub-basin. If not defined by the user in the column `donor`,
+#' the donor is automatically set to the first gauged node at downstream
 #' * `NA` for injecting (or abstracting) a flow time series at the location of the node
 #' (direct flow injection)
 #' * `Diversion` for abstracting a flow time series from an existing node transfer it
 #' to another node. As a `Diversion` is attached to an existing node, this node is
 #' then described with 2 lines: one for the hydrological model and another one for the
 #' diversion
-#'
 #'
 #' @param db [data.frame] description of the network (See details)
 #' @param cols [list] or [vector] columns of `db`. By default, mandatory column
@@ -60,34 +63,52 @@ CreateGRiwrm <- function(db,
                      id = "id",
                      down = "down",
                      length = "length",
+                     area = "area",
                      model = "model",
-                     area = "area"
+                     donor = "donor"
                    ),
                    keep_all = FALSE) {
+
+  stopifnot(inherits(db, "data.frame"))
+
   colsDefault <-
     list(
       id = "id",
       down = "down",
       length = "length",
+      area = "area",
       model = "model",
-      area = "area"
+      donor = "donor"
     )
   cols <- utils::modifyList(colsDefault, as.list(cols))
+
+  if (is.null(db[[cols$donor]])) db[[cols$donor]] <- as.character(NA)
+
   griwrm <- dplyr::rename(db, unlist(cols))
+
   if (!keep_all) {
     griwrm <- dplyr::select(griwrm, names(cols))
   }
+
   CheckColumnTypes(griwrm,
                    list(id = "character",
                         down = "character",
                         length = "double",
                         model = "character",
-                        area = "double"),
+                        area = "double",
+                        donor = "character"),
                    keep_all)
+
   checkNetworkConsistency(griwrm)
+
   class(griwrm) <- c("GRiwrm", class(griwrm))
+
+  # Set automatic downstream donors for ungauged nodes
   griwrm$donor <- setDonor(griwrm)
-  griwrm
+
+  griwrm <- sort(griwrm)
+
+  return(griwrm)
 }
 
 
@@ -128,61 +149,6 @@ CheckColumnTypes <- function(df, coltypes, keep_all) {
 }
 
 
-#' Sorting of the nodes from upstream to downstream for RunModel and Calibration
-#'
-#' @param griwrm \[object of class `GRiwrm`\] see [CreateGRiwrm] for details
-#'
-#' @return [numeric] ordered node ids
-#' @export
-#' @import dplyr
-getNodeRanking <- function(griwrm) {
-  if (!inherits(griwrm, "GRiwrm")) {
-    stop("getNodeRanking: griwrm argument should be of class GRiwrm")
-  }
-  # Remove upstream nodes without model (direct flow connections)
-  g <- griwrm[!is.na(griwrm$model), ]
-  r <- c()
-  o_r <- r
-  oupIds <- character(0)
-  while (nrow(g) > 0) {
-    # Search for gauged ids or ungauged with upstream donor
-    repeat {
-      upIds <- unique(g$id[!g$id %in% g$down & (g$id == g$donor | !g$donor %in% g$id)])
-      r <- c(r, upIds)
-      g <- g[!g$id %in% upIds, ]
-      if (identical(r, o_r)) break
-      o_r <- r
-    }
-    #Search for ungauged ids
-    upIds <- unique(g$id[!g$id %in% g$down & g$id != g$donor])
-    if (!identical(oupIds, character(0)) && identical(upIds, oupIds)) {
-      stop("Inconstancy detected in GRiwrm object: impossible to reach donor of ungauged node(s): '",
-           paste(upIds, collapse = "', '"),
-           "'")
-    }
-    oupIds <- upIds
-    while (length(upIds) > 0) {
-      upId <- upIds[1]
-      #Browse the ungauged sub-network until the donor
-      upDonor <- g$donor[g$id == upId]
-      g2 <- g[g$donor == upDonor, ]
-      # Check if upstream nodes have already been processed
-      immediate_upstream_nodes <- g$id[!is.na(g$down) & g$down %in% g2$id]
-      immediate_upstream_nodes <- immediate_upstream_nodes[!immediate_upstream_nodes %in% g2$id]
-      if (all(immediate_upstream_nodes %in% r)) {
-        g2$donor <- g2$id
-        ungaugedIds <- getNodeRanking(g2)
-        r <- c(r, ungaugedIds)
-        g <- g[!g$id %in% ungaugedIds, ]
-        upIds <- upIds[!upIds %in% ungaugedIds]
-      } else {
-        upIds <- upIds[upIds != upId]
-      }
-    }
-  }
-  return(r)
-}
-
 checkNetworkConsistency <- function(db) {
   db2 <- db[getDiversionRows(db, TRUE), ]
   if (any(duplicated(db2$id))) {
@@ -203,6 +169,11 @@ checkNetworkConsistency <- function(db) {
   sapply(db$down[!is.na(db$down)], function(x) {
     if (!(x %in% db$id)) {
       stop("The 'down' id ", x, " is not found in the 'id' column")
+    }
+  })
+  sapply(db$donor[!is.na(db$donor)], function(x) {
+    if (!(x %in% db$id)) {
+      stop("The 'donor' id ", x, " is not found in the 'id' column")
     }
   })
   db3 <- db2[!is.na(db2$model), ]
@@ -302,6 +273,10 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
 
 setDonor <- function(griwrm) {
   griwrm$donor <- sapply(seq(nrow(griwrm)), function(i) {
+    if (!is.na(griwrm$donor[i])) {
+      # Donor set by user
+      return(griwrm$donor[i])
+    }
     id <- griwrm$id[i]
     model <- griwrm$model[i]
     if (is.na(model)) {
@@ -316,6 +291,9 @@ setDonor <- function(griwrm) {
     gaugedId <- getGaugedId(id, griwrm = griwrm)
     if (gaugedId == FALSE) {
       stop("No Gauged node found downstream the node '", id, "'")
+    }
+    if (id != gaugedId) {
+      message("Ungauged node '", id, "' automatically gets the node '", gaugedId, "' as parameter donor")
     }
     return(gaugedId)
   })

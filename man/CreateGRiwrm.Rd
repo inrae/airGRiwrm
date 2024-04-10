@@ -8,8 +8,8 @@ description of their connections}
 \usage{
 CreateGRiwrm(
   db,
-  cols = list(id = "id", down = "down", length = "length", model = "model", area =
-    "area"),
+  cols = list(id = "id", down = "down", length = "length", area = "area", model =
+    "model", donor = "donor"),
   keep_all = FALSE
 )
 }
@@ -56,15 +56,19 @@ last downstream node should have fields \code{down} and \code{length} set to \co
 Direct injection node can have a null area defined by \code{NA}
 \item the model to use (\link{character} column \code{model}), see section below for details
 }
+
+An optional column \code{donor} can be used to manually define which sub-basin
+will give its parameters to an ungauged node (See \code{Ungauged} model below).
 \subsection{Available models in airGRiwrm}{
 
 The "model" column should be filled by one of the following:
 \itemize{
 \item One of the hydrological models available in the \emph{airGR} package defined by its
 \code{RunModel} function (i.e.: \code{RunModel_GR4J}, \code{RunModel_GR5HCemaneige}...)
+\item \code{RunModel_Reservoir} for simulating a reservoir (See: \link{RunModel_Reservoir})
 \item \code{Ungauged} for an ungauged node. The sub-basin inherits hydrological model and
-parameters from a "donor" sub-basin. By default the donor is the first gauged
-node at downstream
+parameters from a "donor" sub-basin. If not defined by the user in the column \code{donor},
+the donor is automatically set to the first gauged node at downstream
 \item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
 (direct flow injection)
 \item \code{Diversion} for abstracting a flow time series from an existing node transfer it

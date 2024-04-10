@@ -105,3 +105,17 @@ test_that("Several Diversion on same node should raise error", {
   expect_error(CreateGRiwrm(nodes),
                regexp = "Diversion")
 })
+
+test_that("Upstream donor works", {
+  nupd <- loadSevernNodes()
+  nupd$donor[nupd$id == "54032"] <- "Wrong_node"
+  expect_error(CreateGRiwrm(nupd))
+  nupd$donor[nupd$id == "54032"] <- "54001"
+  nupd$model[nupd$id == "54032"] <- "Ungauged"
+  g <- CreateGRiwrm(nupd)
+  expect_equal(g$donor[g$id == "54032"], "54001")
+  nupd$donor[nupd$id == "54002"] <- "54029"
+  nupd$model[nupd$id == "54002"] <- "Ungauged"
+  g <- CreateGRiwrm(nupd)
+  expect_equal(g$donor[g$id == "54002"], "54029")
+})

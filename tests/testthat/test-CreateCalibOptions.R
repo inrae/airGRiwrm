@@ -45,14 +45,14 @@ test_that("List FixedParam should have correct ids", {
 test_that("FixedParam works on various models", {
 
   CO <- CreateCalibOptions(InputsModel, FixedParam = FixedParam)
-  expect_equal(lapply(CO, "[[", "FixedParam"),
-               list(`54057` = as.logical(FixedParam[1:5]),
-                    `54032` = FixedParam,
-                    `54001` = FixedParam[2:9]))
+  expect_equal_map(lapply(CO, "[[", "FixedParam"),
+                   list(`54057` = as.logical(FixedParam[1:5]),
+                        `54032` = FixedParam,
+                        `54001` = FixedParam[2:9]))
   CO2 <- CreateCalibOptions(InputsModel,
                             FixedParam = list(`54057` = c(NA, 1:4),
                                               `*` = FixedParam))
-  expect_equal(lapply(CO2, "[[", "FixedParam"),
+  expect_equal_map(lapply(CO2, "[[", "FixedParam"),
                list(`54057` = c(NA, 1:4),
                     `54032` = FixedParam,
                     `54001` = FixedParam[2:9]))
