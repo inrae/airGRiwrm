@@ -21,12 +21,14 @@ Depends:
     airGR (>= 1.7.0),
     R (>= 3.5)
 Imports:
-    DiagrammeR,
     dplyr,
     graphics,
     grDevices,
+    jsonlite,
+    png,
     rlang,
-    utils
+    utils,
+    zlib
 Suggests:
     htmltools,
     knitr,
