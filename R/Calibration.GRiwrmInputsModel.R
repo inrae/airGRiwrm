@@ -346,7 +346,7 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
 #' @param receiver [character] id of the node which receives the parameters from the donor
 #' @param default_param [numeric] vector of GR model parameters if parameters are missing from the donor
 #'
-#' @return
+#' @return A [numeric] [vector] with transferred parameters
 #' @export
 #'
 transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL) {
