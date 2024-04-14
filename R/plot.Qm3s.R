@@ -10,7 +10,7 @@
 #' @param xlab [character] label for the x axis, default to "Date"
 #' @param ylab [character] label for the y axis, default to "Flow (m3/s)"
 #' @param main [character] main title for the plot, default to "Simulated flows"
-#' @param col [character] plotting color (See [par]), default to rainbow colors
+#' @param col [character] plotting colors (See [par])
 #' @param legend [character] see parameter `legend` of [legend]. Set it to [NULL]
 #'        to hide the legend
 #' @param legend.cex [character] `cex` parameter for the text of the legend (See [par])
@@ -22,7 +22,6 @@
 #'
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
-#' @importFrom graphics matplot
 #' @export plot.Qm3s
 #' @export
 #'
@@ -42,7 +41,12 @@ plot.Qm3s <- function(x,
   stopifnot(is.data.frame(x),
             inherits(x[, 1], "POSIXct"))
 
-  matplot(
+  col <- tryCatch(
+    length(col),
+    error = function(e) "#619CFF"
+  )
+
+  graphics::matplot(
     x[, 1],
     x[, -1],
     type = type,
