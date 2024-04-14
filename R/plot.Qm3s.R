@@ -61,3 +61,23 @@ plot.Qm3s <- function(x,
            col = col)
   }
 }
+
+#' Coerce [data.frame]or content of a [data.frame] into a *Qm3s* object ready
+#' for plotting
+#'
+#' @param ... A [data.frame] for a single argument, or the arguments of function [data.frame]
+#'
+#' @return A [data.frame] of class *Qm3s*
+#' @export
+#'
+as.Qm3s <- function(...) {
+  arg_list <- list(...)
+  if (length(arg_list) == 1) {
+    stopifnot(is.data.frame(arg_list[[1]]))
+    df <- arg_list[[1]]
+  } else {
+    df <- data.frame(...)
+  }
+  class(df) <- c("Qm3s", class(df))
+  return(df)
+}
