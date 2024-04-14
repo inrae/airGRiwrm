@@ -221,6 +221,7 @@ plot_png = function(path, add=FALSE)
 #' @param ... Not used
 #'
 #' @return Nothing, used for side effect.
+#' @export plot.mermaid
 #' @export
 #'
 #' @examples
