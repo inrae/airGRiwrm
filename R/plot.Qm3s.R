@@ -10,7 +10,7 @@
 #' @param xlab [character] label for the x axis, default to "Date"
 #' @param ylab [character] label for the y axis, default to "Flow (m3/s)"
 #' @param main [character] main title for the plot, default to "Simulated flows"
-#' @param col [character] plotting color (See [par]), default to rainbow colors
+#' @param col [character] plotting colors (See [par])
 #' @param legend [character] see parameter `legend` of [legend]. Set it to [NULL]
 #'        to hide the legend
 #' @param legend.cex [character] `cex` parameter for the text of the legend (See [par])
@@ -22,7 +22,6 @@
 #'
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
-#' @importFrom graphics matplot
 #' @export plot.Qm3s
 #' @export
 #'
@@ -42,7 +41,12 @@ plot.Qm3s <- function(x,
   stopifnot(is.data.frame(x),
             inherits(x[, 1], "POSIXct"))
 
-  matplot(
+  col <- tryCatch(
+    length(col),
+    error = function(e) "#619CFF"
+  )
+
+  graphics::matplot(
     x[, 1],
     x[, -1],
     type = type,
@@ -60,4 +64,24 @@ plot.Qm3s <- function(x,
            lty = lty,
            col = col)
   }
+}
+
+#' Coerce [data.frame]or content of a [data.frame] into a *Qm3s* object ready
+#' for plotting
+#'
+#' @param ... A [data.frame] for a single argument, or the arguments of function [data.frame]
+#'
+#' @return A [data.frame] of class *Qm3s*
+#' @export
+#'
+as.Qm3s <- function(...) {
+  arg_list <- list(...)
+  if (length(arg_list) == 1) {
+    stopifnot(is.data.frame(arg_list[[1]]))
+    df <- arg_list[[1]]
+  } else {
+    df <- data.frame(...)
+  }
+  class(df) <- c("Qm3s", class(df))
+  return(df)
 }

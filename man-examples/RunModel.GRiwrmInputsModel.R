@@ -195,16 +195,17 @@ Ind_Plot <- which(
   OM_div[[1]]$DatesR >= as.POSIXct("2003-01-01", tz = "UTC") &
   OM_div[[1]]$DatesR <= as.POSIXct("2003-12-31", tz = "UTC")
 )
-dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR[Ind_Plot],
+dfQdiv <- as.Qm3s(DatesR = OM_div[[1]]$DatesR[Ind_Plot],
                      Diverted_flow = Qdiv_m3s[Ind_Plot])
 
 oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
-plot.Qm3s(dfQdiv)
+plot(dfQdiv)
 
 # Plot natural and influenced flow at station "54001"
 df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
                  attr(OM_severn, "Qm3s")[Ind_Plot, "54001"])
 names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
-plot.Qm3s(df54001, ylim = c(0,70))
+df54001 <- as.Qm3s(df54001)
+plot(df54001, ylim = c(0,70))
 abline(h = 12, col = "green")
 par(oldpar)

@@ -8,8 +8,6 @@
   x,
   display = TRUE,
   orientation = "LR",
-  width = "100\%",
-  height = "100\%",
   box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermediateUngauged
     = "#efe", IntermediateGauged = "#afa", Reservoir = "#9de", DirectInjection = "#faa"),
   defaultClassDef = "stroke:#333",
@@ -19,19 +17,15 @@
 \arguments{
 \item{x}{[GRiwrm object] data to display. See \link{CreateGRiwrm} for details}
 
-\item{display}{\link{logical} if \code{TRUE} displays the diagram with \link[DiagrammeR:mermaid]{DiagrammeR::mermaid}, returns the mermaid code otherwise}
+\item{display}{\link{logical} if \code{TRUE} plots the diagram, returns the mermaid code otherwise}
 
 \item{orientation}{\link{character} orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default}
-
-\item{width}{\link{numeric} width of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
-
-\item{height}{\link{numeric} height of the resulting graphic in pixels (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
 
 \item{box_colors}{\link{list} containing the color used for the different types of nodes}
 
 \item{defaultClassDef}{\link{character} default style apply to all boxes}
 
-\item{...}{Other arguments and parameters you would like to send to JavaScript (See \link[DiagrammeR:mermaid]{DiagrammeR::mermaid})}
+\item{...}{Not used}
 }
 \value{
 Mermaid code of the diagram if display is \code{FALSE}, otherwise the function returns the diagram itself.

@@ -111,9 +111,9 @@ oldpar <- par(mfrow=c(2,1),
               mgp = c(2,1,0))
 plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
      ylim = c(0, 200))
-Vres <- data.frame(DatesR = OM_dam$Dam$DatesR,
+Vres <- as.Qm3s(DatesR = OM_dam$Dam$DatesR,
                    "Simulated volume" = OM_dam$Dam$Vsim / 1E6)
-plot.Qm3s(Vres,
-          main = "Simulated reservoir storage",
-          ylab = expression("Storage (Mm"^"3" * ")"))
+plot(Vres,
+     main = "Simulated reservoir storage",
+     ylab = expression("Storage (Mm" ^ "3" * ")"))
 par(oldpar)
