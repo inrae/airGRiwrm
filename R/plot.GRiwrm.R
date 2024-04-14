@@ -204,14 +204,31 @@ mermaid_gen_link <- function(diagram, theme = "default", format = "png", server 
 #' @return Nothing, used to side effect.
 #' @noRd
 #'
-plot_png = function(path, add=FALSE)
+plot_png = function(path, add = FALSE)
 {
-   # read the file
+  # read the file
   pic <- png::readPNG(path, native = TRUE)
   res <- dim(pic)[2:1] # get the resolution, [x, y]
-  if (!add) # initialize an empty plot area if add==FALSE
-    plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),asp=1,type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
-  graphics::rasterImage(pic,1,1,res[1],res[2])
+  if (!add) {
+    opar <- par(mar = c(0, 0, 0, 0))
+    plot(
+      1,
+      1,
+      xlim = c(1, res[1]),
+      ylim = c(1, res[2]),
+      asp = 1,
+      type = 'n',
+      xaxs = 'i',
+      yaxs = 'i',
+      xaxt = 'n',
+      yaxt = 'n',
+      xlab = '',
+      ylab = '',
+      bty = 'n'
+    )
+    par(opar)
+  }
+  graphics::rasterImage(pic, 1, 1, res[1], res[2], xpd = T)
 }
 
 #' Plot a mermaid diagram
