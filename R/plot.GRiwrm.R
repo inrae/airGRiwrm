@@ -1,13 +1,11 @@
 #' Display of a diagram representing the network structure of a GRiwrm object
 #'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
-#' @param display [logical] if `TRUE` displays the diagram with [DiagrammeR::mermaid], returns the mermaid code otherwise
+#' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
 #' @param orientation [character] orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default
-#' @param width [numeric] width of the resulting graphic in pixels (See [DiagrammeR::mermaid])
-#' @param height [numeric] height of the resulting graphic in pixels (See [DiagrammeR::mermaid])
 #' @param box_colors [list] containing the color used for the different types of nodes
 #' @param defaultClassDef [character] default style apply to all boxes
-#' @param ... Other arguments and parameters you would like to send to JavaScript (See [DiagrammeR::mermaid])
+#' @param ... Not used
 #'
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
 #' is not handled on some platforms
@@ -21,8 +19,6 @@
 plot.GRiwrm <- function(x,
                         display = TRUE,
                         orientation = "LR",
-                        width = "100%",
-                        height = "100%",
                         box_colors = c(UpstreamUngauged = "#eef",
                                        UpstreamGauged = "#aaf",
                                        IntermediateUngauged = "#efe",
@@ -37,10 +33,6 @@ plot.GRiwrm <- function(x,
             length(display) == 1,
             is.character(orientation),
             length(orientation) == 1,
-            is.character(width),
-            length(width) == 1,
-            is.character(height),
-            length(height) == 1,
             is.character(box_colors),
             length(setdiff(names(box_colors), c("UpstreamUngauged", "UpstreamGauged",
                                                 "IntermediateUngauged",   "IntermediateGauged",
@@ -146,7 +138,7 @@ mermaid <- function(diagram,
   if (dirname(file.dest) == ".") file.dest <- file.path(dir.dest, file.dest)
   if (!file.exists(file.dest)) {
     ret <- tryCatch(
-      download.file(link, file.dest, quiet = TRUE, mode = "wb"),
+      utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"),
       error = function(e) e
     )
     if (inherits(ret, "error")) {
@@ -219,13 +211,14 @@ plot_png = function(path, add=FALSE)
   res <- dim(pic)[2:1] # get the resolution, [x, y]
   if (!add) # initialize an empty plot area if add==FALSE
     plot(1,1,xlim=c(1,res[1]),ylim=c(1,res[2]),asp=1,type='n',xaxs='i',yaxs='i',xaxt='n',yaxt='n',xlab='',ylab='',bty='n')
-  rasterImage(pic,1,1,res[1],res[2])
+  graphics::rasterImage(pic,1,1,res[1],res[2])
 }
 
 #' Plot a mermaid diagram
 #'
 #' @param x [character] mermaid diagram dialect
 #' @param add [logical] to add the diagram on the existing plot
+#' @param ... Not used
 #'
 #' @return Nothing, used for side effect.
 #' @export
@@ -233,9 +226,9 @@ plot_png = function(path, add=FALSE)
 #' @examples
 #' s <- "flowchart LR
 #' A -> B"
-#' class(s) <- "mermaid"
+#' class(s) <- c("mermaid", class(s))
 #' plot(s)
-plot.mermaid <- function(x, add = FALSE) {
+plot.mermaid <- function(x, add = FALSE, ...) {
   file_mmd <- mermaid(x)
   if (is.na(file_mmd)) {
     warning("Mermaid diaagram generation failed with error:\n",

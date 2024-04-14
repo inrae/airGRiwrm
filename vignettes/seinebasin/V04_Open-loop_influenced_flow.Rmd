@@ -14,7 +14,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-library(DiagrammeR)
 ```
 
 ```{r library}
@@ -37,14 +36,7 @@ First, the physical topology of the Aube lake is represented below:
 
 ```{r mmd_aube_true, echo = FALSE, fig.height = 3}
 
-mmd <- function(x, ...) {
-  # For avoiding crash of R CMD build in console mode
-  if (Sys.getenv("RSTUDIO") == "1") {
-    mermaid(x, ...)
-  }
-}
-
-mmd("graph LR
+plot.mermaid("graph LR
   TRANN_01 -->|1.5km| AUBE_P2
   AUBE_P2 -->|22km| AUBE_R3
   AUBE_P2 --> AUBE(AUBE)
@@ -53,7 +45,7 @@ mmd("graph LR
 style AUBE_P2 fill:#fcc
 style AUBE_R3 fill:#fcc
 style AUBE fill:#ccf
-", width = "100%")
+")
 ```
 
 In the SD model, we do not simulate intermediate flows as well as the reservoir
@@ -61,14 +53,14 @@ in the catchment. As a result, an equivalent topology compatible with **airGR**
 will be the one below:
 
 ```{r mmd_aube_model, echo = FALSE}
-mmd("
+plot.mermaid("
 graph LR
 TRANN_01 -->|68km| ARCIS_24
 AUBE_P2 -->|66.5km| ARCIS_24
 AUBE_R3 -->|44.5km| ARCIS_24
 style AUBE_P2 fill:#fcc
 style AUBE_R3 fill:#fcc
-", width = "100%")
+")
 ```
 
 `AUBE_P2` will propagate negative flows downstream (reservoir inflows) while
@@ -77,7 +69,7 @@ style AUBE_R3 fill:#fcc
 The configuration on the lake Seine is similar:
 
 ```{r mmd_seine_true, echo = FALSE, fig.height = 3}
-mmd("
+plot.mermaid("
 graph LR
   BAR-S_06 -->|6km| SEINE_P7
   SEINE_P7 -->|32km| SEINE_R8
@@ -87,32 +79,32 @@ graph LR
   style SEINE_P7 fill:#fcc
   style SEINE_R8 fill:#fcc
   style SEINE fill:#ccf
-", width = "100%")
+")
 ```
 
 which can be translated as:
 
 ```{r mmd_seine_model, echo = FALSE}
-mmd("
+plot.mermaid("
 graph LR
   BAR-S_06 -->|79.7km| MERY-_22
   SEINE_P7 -->|73.7km| MERY-_22
   SEINE_R8 -->|41.7km| MERY-_22
   style SEINE_P7 fill:#fcc
   style SEINE_R8 fill:#fcc
-", width = "100%")
+")
 ```
 
 The Pannecière lake is an inline reservoir:
 
 ```{r mmd_pannec_true, echo = FALSE, fig.height = 2}
-mmd("
+plot.mermaid("
 graph LR
 P(PANNECIERE)
 CHAUM_07 -->|0km| P
 P --> |153km| GURGY_02
 style P fill:#ccf
-", width = "100%")
+")
 ```
 
 We can keep the same structure to model it. `PANNEC_R` corresponds to the flow
@@ -120,18 +112,18 @@ released by the Pannecière lake, it is acting as an upstream node which means
 that the flow simulated at `CHAUM_07` is no longer routed to downstream.
 
 ```{r mmd_pannec_model, echo = FALSE}
-mmd("
+plot.mermaid("
 graph LR
 CHAUM_07 --> |0km| PANNEC_R
 PANNEC_R --> |153km| GURGY_02
 style PANNEC_R fill:#fcc
-", width = "100%")
+")
 ```
 
 The Marne lake can be mapped as:
 
 ```{r mmd_marne_true, echo = FALSE}
-mmd("
+plot.mermaid("
 graph LR
 LOUVE_19 -->|0.5km| MARNE_P28
 MARNE_P23 -->|3km| STDIZ_04
@@ -145,13 +137,13 @@ style MARNE_P28 fill:#fcc
 style MARNE_P23 fill:#fcc
 style MARNE_R25 fill:#fcc
 style M fill:#ccf
-", width = "100%")
+")
 ```
 
 And can be modeled as:
 
 ```{r mmd_marne_model, echo = FALSE}
-mmd("
+plot.mermaid("
 graph LR
 MARNE_P23 -->|3km| STDIZ_04
 LOUVE_19 -->|83km| CHALO_21
@@ -161,7 +153,7 @@ MARNE_R25 -->|56.9km| CHALO_21
 style MARNE_P28 fill:#fcc
 style MARNE_P23 fill:#fcc
 style MARNE_R25 fill:#fcc
-", width = "100%")
+")
 ```
 
 Hence the topological connection to the reservoirs is described in the model as below:

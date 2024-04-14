@@ -4,12 +4,14 @@
 \alias{plot.mermaid}
 \title{Plot a mermaid diagram}
 \usage{
-\method{plot}{mermaid}(x, add = FALSE)
+\method{plot}{mermaid}(x, add = FALSE, ...)
 }
 \arguments{
 \item{x}{\link{character} mermaid diagram dialect}
 
 \item{add}{\link{logical} to add the diagram on the existing plot}
+
+\item{...}{Not used}
 }
 \value{
 Nothing, used for side effect.
@@ -20,6 +22,6 @@ Plot a mermaid diagram
 \examples{
 s <- "flowchart LR
 A -> B"
-class(s) <- "mermaid"
+class(s) <- c("mermaid", class(s))
 plot(s)
 }
