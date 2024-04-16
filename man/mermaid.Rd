@@ -4,7 +4,7 @@
 \alias{mermaid}
 \alias{mermaid_gen_link}
 \alias{plot.mermaid}
-\title{Generate a file from a mermaid diagram}
+\title{Plot a mermaid diagram}
 \usage{
 mermaid(
   diagram,
@@ -48,20 +48,25 @@ if it only contains the name of the file without a folder path.}
 \item{...}{Other argument passed to \link{mermaid}}
 }
 \value{
-The path to the downloaded image or \code{NA} if the download failed.
+\itemize{
+\item \code{mermaid} returns the path to the downloaded image or \code{NA} if the download failed.
 In this latter case, get the error message in the attribute "error".
+\item \code{mermaid_gen_link} returns the link to the web service which generates the diagram
+\item \code{plot.mermaid} produces a R plot with the mermaid diagram
+}
 
 Nothing, used for side effect.
 }
 \description{
-This function download the file from https://mermaid.ink which generates the image.
-The file is downloaded only if it does not already exist.
+These functions download the diagram from https://mermaid.ink which generates the image.
 }
 \details{
-Use this function with \link[knitr:include_graphics]{knitr::include_graphics} to display a mermaid diagram
-in a Rmarkdown document. Compared to the \code{diagrammeR::mermaid} function, the
-generated image is not a HTMLwidget and can be knit in pdf through latex and
+Compared to the \code{diagrammeR::mermaid} function, the generated image or plot
+is not a HTMLwidget and can be knit in pdf through latex and
 moreover, its size can be controlled with \code{fig.width} and \code{fig.height}.
+
+If the generation failed (due to internet connection failure or syntax error
+in mermaid script), the functions raises no error (see \code{mermaid} returned value).
 }
 \examples{
 diagram <- "flowchart LR\n  A --> B"
