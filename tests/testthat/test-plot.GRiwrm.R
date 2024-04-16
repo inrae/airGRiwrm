@@ -21,5 +21,5 @@ test_that("Unguaged nodes and donors are in a box!", {
   expect_equal(sortGRiwrm4plot(g)$id,
                c("54095", "54001", "54029", "54002", "54032", "54057"))
   s <- plot(g, display = FALSE)
-  expect_equal(strsplit(s, "\n")[[1]][c(3,11)], c("subgraph donor_54095 [54095]", "end"))
+  expect_equal(strsplit(s, "\n")[[1]][c(5,13)], c("subgraph donor_54095 [54095]", "end"))
 })
