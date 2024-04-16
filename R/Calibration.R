@@ -21,6 +21,7 @@
 #' - a `GRiwrmInputsCrit` object which is a [list] of `InputsCrit` objects with one item per modeled sub-catchment
 #'
 #' @rdname Calibration
+#' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateInputsCrit()], [CreateCalibOptions()]
 #' @export
 Calibration <- function(InputsModel, ...) {
   UseMethod("Calibration", InputsModel)

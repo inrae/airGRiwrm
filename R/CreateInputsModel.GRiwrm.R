@@ -65,6 +65,7 @@
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
 #' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
 #' @export
+#' @seealso [CreateGRiwrm()], [CreateRunOptions()], [RunModel.GRiwrmInputsModel()]
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
 CreateInputsModel.GRiwrm <- function(x, DatesR,

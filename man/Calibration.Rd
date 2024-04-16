@@ -57,3 +57,6 @@ Argument classes should be consistent to the usage:
 
 See the vignettes for examples.
 }
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateInputsModel.GRiwrm]{CreateInputsModel.GRiwrm()}}, \code{\link[=CreateInputsCrit]{CreateInputsCrit()}}, \code{\link[=CreateCalibOptions]{CreateCalibOptions()}}
+}

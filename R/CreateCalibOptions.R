@@ -30,6 +30,7 @@
 #' - a `CalibOptions` object (See [airGR::CreateCalibOptions])
 #' - a `GRiwrmCalibOptions` object which is a [list] of `CalibOptions` object with one item per modeled sub-catchment
 #'
+#' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()], [CreateInputsCrit()], [Calibration()]
 #' @rdname CreateCalibOptions
 #' @export
 CreateCalibOptions <- function(x, FixedParam = NULL, ...) {

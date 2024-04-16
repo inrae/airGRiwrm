@@ -2,9 +2,12 @@
 % Please edit documentation in R/getNodeProperties.R
 \name{getNodeProperties}
 \alias{getNodeProperties}
-\title{Get list of properties of a GRiwrm network node}
+\alias{getAllNodesProperties}
+\title{Properties of GRiwrm nodes}
 \usage{
 getNodeProperties(id, griwrm)
+
+getAllNodesProperties(griwrm)
 }
 \arguments{
 \item{id}{\link{character} Id of the node in the GRiwrm object}
@@ -12,7 +15,7 @@ getNodeProperties(id, griwrm)
 \item{griwrm}{[GRiwrm object] describing the network of the semi-distributed model (See \link{CreateGRiwrm})}
 }
 \value{
-A \link{list} with the following items:
+\code{getNodeProperties} returns a \link{list} with the following items:
 \itemize{
 \item "position" (\link{character}): Position of the node in the network ("Upstream" or "Intermediate")
 \item "DirectInjection" (\link{logical}): is the node a Direct Injection node?
@@ -24,9 +27,12 @@ A \link{list} with the following items:
 \item "Upstream" (\link{logical}): is the node an upstream node?
 \item "RunOff" (\link{logical}): is the node contains an hydrological model?
 }
+
+\code{getAllNodeProperties} returns a \link{data.frame} constituted from the list returned
+by \code{getNodeProperties} for all nodes.
 }
 \description{
-Get list of properties of a GRiwrm network node
+\code{getNodeProperties} returns properties of a single node, and
 }
 \details{
 A "Gauged" node is either a node containing a model that is already
@@ -68,4 +74,7 @@ griwrm <- CreateGRiwrm(nodes, rename_columns)
 str(getNodeProperties("54001", griwrm))
 
 getAllNodesProperties(griwrm)
+}
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}
 }

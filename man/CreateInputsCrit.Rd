@@ -63,3 +63,6 @@ The parameter \code{AprioriIds} allows to define which upstream sub-catchment is
 \references{
 De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}
 }
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateInputsModel.GRiwrm]{CreateInputsModel.GRiwrm()}}, \code{\link[=CreateRunOptions]{CreateRunOptions()}}, \code{\link[=CreateCalibOptions]{CreateCalibOptions()}}, \code{\link[=Calibration]{Calibration()}}
+}

@@ -5,6 +5,7 @@
 #'
 #' @return [matrix] a matrix containing the converted meteorological data
 #' @export
+#' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()]
 #' @rdname ConvertMeteoSD
 #'
 ConvertMeteoSD <- function(x, ...) {

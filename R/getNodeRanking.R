@@ -4,6 +4,7 @@
 #'
 #' @return A [character] [vector] containing ordered node ids
 #' @export
+#' @seealso [CreateGRiwrm()]
 #' @import dplyr
 getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {

@@ -18,6 +18,7 @@
 #'
 #' @export plot.GRiwrm
 #' @export
+#' @seealso [CreateGRiwrm()]
 #'
 #' @example man-examples/CreateGRiwrm.R
 #'

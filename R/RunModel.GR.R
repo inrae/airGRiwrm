@@ -1,5 +1,9 @@
 #' Run of a rainfall-runoff model on a sub-basin
 #'
+#' @details
+#' This function runs [airGR::RunModel] and add an item `Qsim_m3` to the returned
+#' *OutputsModel* object.
+#'
 #' @param x \[object of class `InputsModel`\] `InputsModel` for [airGR::RunModel]
 #' @param RunOptions \[object of class *RunOptions*\] see [airGR::CreateRunOptions] for details
 #' @param Param [numeric] vector of model parameters (See details for SD lag model)

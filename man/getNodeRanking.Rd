@@ -15,3 +15,6 @@ A \link{character} \link{vector} containing ordered node ids
 \description{
 Sorting of the nodes from upstream to downstream for RunModel and Calibration
 }
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}
+}

@@ -24,5 +24,6 @@ If \code{InputsModel} parameter has been created for using a semi-distributed (S
 Function which performs a single model run with the provided function over the selected period.
 }
 \details{
-If \code{InputsModel} parameter has been created for using a semi-distributed (SD) lag model (See \code{\link[airGR]{CreateInputsModel}}), the first item of \code{Param} parameter should contain a constant lag parameter expressed as a velocity in m/s, parameters for the hydrological model are then shift one position to the right.
+This function runs \link[airGR:RunModel]{airGR::RunModel} and add an item \code{Qsim_m3} to the returned
+\emph{OutputsModel} object.
 }

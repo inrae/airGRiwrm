@@ -7,6 +7,7 @@
 #'
 #' @return An object of class \emph{GRiwrmOutputsModel}. This object is a [list] of *OutputsModel* objects produced by [RunModel.InputsModel] for each node of the semi-distributed model.
 #' @export
+#' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()]
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
 RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
 

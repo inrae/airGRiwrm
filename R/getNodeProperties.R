@@ -1,10 +1,11 @@
-#' Get list of properties of a GRiwrm network node
+#' Properties of GRiwrm nodes
 #'
+#' `getNodeProperties` returns properties of a single node, and
 #'
 #' @param id [character] Id of the node in the GRiwrm object
 #' @param griwrm \[GRiwrm object\] describing the network of the semi-distributed model (See [CreateGRiwrm])
 #'
-#' @return A [list] with the following items:
+#' @return `getNodeProperties` returns a [list] with the following items:
 #' - "position" ([character]): Position of the node in the network ("Upstream" or "Intermediate")
 #' - "DirectInjection" ([logical]): is the node a Direct Injection node?
 #' - "Diversion" ([logical]): is the node a Diversion node?
@@ -15,6 +16,9 @@
 #' - "Upstream" ([logical]): is the node an upstream node?
 #' - "RunOff" ([logical]): is the node contains an hydrological model?
 #'
+#' `getAllNodeProperties` returns a [data.frame] constituted from the list returned
+#' by `getNodeProperties` for all nodes.
+#'
 #' @details
 #' A "Gauged" node is either a node containing a model that is already
 #' calibrated (parameters are already fixed) or a node containing a model where
@@ -24,6 +28,8 @@
 #' another "donor" node.
 #'
 #' @export
+#' @rdname getNodeProperties
+#' @seealso [CreateGRiwrm()]
 #'
 #' @example man-examples/getNodeProperties.R
 getNodeProperties <- function(id, griwrm) {
@@ -55,15 +61,9 @@ getNodeProperties <- function(id, griwrm) {
 }
 
 
-#' Get the array of the properties of all the nodes in the network
-#'
-#' @inheritParams getNodeProperties
-#'
-#' @return A [data.frame] containing one line by node Id and one column by
-#' property (See [getNodeProperties] for a complete list of properties)
 #' @export
+#' @rdname getNodeProperties
 #'
-#' @example man-examples/getNodeProperties.R
 getAllNodesProperties <- function(griwrm) {
   stopifnot(inherits(griwrm, "GRiwrm"))
   uids <- griwrm$id[getDiversionRows(griwrm, TRUE)]

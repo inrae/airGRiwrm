@@ -85,11 +85,13 @@ plot(griwrm_severn)
 ####################################################################
 # Severn network with an ungauged station at nodes 54029 and 54001 #
 ####################################################################
-# By default the first gauged node at downstream is used for parameter calibration (54032)
 nodes_ungauged <- nodes
 nodes_ungauged$model[nodes_ungauged$gauge_id \%in\% c("54029", "54001")] <- "Ungauged"
+# By default the first gauged node at downstream is used for parameter calibration (54032)
+# Add a `donor`column for defining manually an upstream or sibling donor
+nodes_ungauged$donor <- as.character(NA)
+nodes_ungauged$donor[nodes_ungauged$id == "54001"] <- "54095"
 griwrm_ungauged <- CreateGRiwrm(nodes_ungauged, rename_columns)
-# The `donor` column define which node is used for parameter calibration
 griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
 plot(griwrm_ungauged)
@@ -116,8 +118,8 @@ plot(griwrm_div, orientation = "TB")
 # See https://mermaid.js.org/config/directives.html and
 # https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
 plot(griwrm_div,
-     header = "\%\%{init: {'flowchart': {'defaultRenderer': 'elk'}} }\%\%")
-
-plot(griwrm_div,
      header = "\%\%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}\%\%")
+}
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}
 }

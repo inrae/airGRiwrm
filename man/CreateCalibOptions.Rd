@@ -59,3 +59,6 @@ nodes except the id "54057":
 
 The argument \code{IsHyst} is ignored since it should be defined previously with \link{CreateInputsModel.GRiwrm}.
 }
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateInputsModel.GRiwrm]{CreateInputsModel.GRiwrm()}}, \code{\link[=CreateRunOptions]{CreateRunOptions()}}, \code{\link[=CreateInputsCrit]{CreateInputsCrit()}}, \code{\link[=Calibration]{Calibration()}}
+}

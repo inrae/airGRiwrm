@@ -34,3 +34,6 @@ ConvertMeteoSD(x, ...)
 \description{
 Conversion of meteorological data from basin scale to sub-basin scale
 }
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateInputsModel.GRiwrm]{CreateInputsModel.GRiwrm()}}
+}

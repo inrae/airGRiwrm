@@ -27,6 +27,7 @@
 #'
 #' @references De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}
 #'
+#' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()], [CreateCalibOptions()], [Calibration()]
 #' @rdname CreateInputsCrit
 #' @export
 CreateInputsCrit <- function(InputsModel, ...) {

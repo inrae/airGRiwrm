@@ -9,6 +9,8 @@
 #' for the previous time step and returns calculated `U`. These `U` will then be applied
 #' at their location for the current time step of calculation of the model.
 #'
+#' See [RunModel.Supervisor] and vignettes for examples of use.
+#'
 #' @param supervisor `Supervisor` object, see [CreateSupervisor]
 #' @param ctrl.id [character] id of the controller (see Details)
 #' @param Y [character] location of the controlled and/or measured variables in the model.
@@ -25,8 +27,8 @@
 #' - `Ynames` [character]: location of the controlled variables
 #' - `FUN` [function]: controller logic which calculates `U` from `Y`
 #' @export
+#' @seealso [RunModel.Supervisor()], [CreateSupervisor()]
 #'
-#' @example man-examples/RunModel.Supervisor.R
 CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 
   if (!is.character(ctrl.id)) stop("Parameter `ctrl.id` should be character")

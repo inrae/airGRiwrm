@@ -1,5 +1,8 @@
 #' Creation of a Supervisor for handling regulation in a model
 #'
+#' @details
+#' See [RunModel.Supervisor] and vignettes for examples of use.
+#'
 #' @param InputsModel \[object of type `GRiwrmInputsModel`\] inputs of the model
 #' @param TimeStep [numeric] number of time steps between each supervision
 #'
@@ -10,8 +13,8 @@
 #' - `Controllers` [list]: list of the controllers used in the supervised simulation (See [CreateController])
 #' - some internal state variables updated during simulation (`ts.index`, `ts.previous`, `ts.date`, `ts.index0`, `controller.id`)
 #' @export
+#' @seealso [RunModel.Supervisor()], [CreateController()]
 #'
-#' @example man-examples/RunModel.Supervisor.R
 CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")

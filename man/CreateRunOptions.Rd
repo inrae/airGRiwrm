@@ -264,3 +264,6 @@ plot(df54001, ylim = c(0,70))
 abline(h = 12, col = "green")
 par(oldpar)
 }
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateInputsModel.GRiwrm]{CreateInputsModel.GRiwrm()}}, \code{\link[=RunModel.GRiwrmInputsModel]{RunModel.GRiwrmInputsModel()}}
+}
