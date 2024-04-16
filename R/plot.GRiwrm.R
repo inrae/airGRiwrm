@@ -2,9 +2,13 @@
 #'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
 #' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
-#' @param orientation [character] orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default
+#' @param orientation [character] orientation of the graph. Possible values are
+#'        "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top).
+#' @param with_donors [logical] for drawing boxes around ungauged nodes and their donors
 #' @param box_colors [list] containing the color used for the different types of nodes
 #' @param defaultClassDef [character] default style apply to all boxes
+#' @param header mermaid script to add before the generated script (init configuration)
+#' @param footer mermaid script to add after the generated script
 #' @param ... Not used
 #'
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
@@ -12,6 +16,7 @@
 #'
 #' @return Mermaid code of the diagram if display is `FALSE`, otherwise the function returns the diagram itself.
 #'
+#' @export plot.GRiwrm
 #' @export
 #'
 #' @example man-examples/CreateGRiwrm.R
@@ -19,6 +24,7 @@
 plot.GRiwrm <- function(x,
                         display = TRUE,
                         orientation = "LR",
+                        with_donors = TRUE,
                         box_colors = c(UpstreamUngauged = "#eef",
                                        UpstreamGauged = "#aaf",
                                        IntermediateUngauged = "#efe",
@@ -26,6 +32,8 @@ plot.GRiwrm <- function(x,
                                        Reservoir = "#9de",
                                        DirectInjection = "#faa"),
                         defaultClassDef = "stroke:#333",
+                        header = "%%{init: {'theme': 'neutral'} }%%",
+                        footer = NULL,
                         ...) {
 
   stopifnot(inherits(x, "GRiwrm"),
@@ -37,7 +45,8 @@ plot.GRiwrm <- function(x,
             length(setdiff(names(box_colors), c("UpstreamUngauged", "UpstreamGauged",
                                                 "IntermediateUngauged",   "IntermediateGauged",
                                                 "DirectInjection", "Reservoir"))) == 0)
-  nodes <- sprintf("id_%1$s[%1$s]", x$id)
+  x <- sortGRiwrm4plot(x)
+  nodes <- unlist(sapply(unique(x$donor), plotGriwrmCluster, x = x, with_donors = with_donors))
   g2 <- x[!is.na(x$down),]
   links <- paste(
     sprintf("id_%1$s", g2$id),
@@ -67,7 +76,7 @@ plot.GRiwrm <- function(x,
                    sprintf("stroke:%s, stroke-width:2px,stroke-dasharray: 5 5;",
                            box_colors["DirectInjection"])))
   }
-  diagram <- paste(c(paste("graph", orientation), nodes, links, node_class, css),
+  diagram <- paste(c(header, paste("graph", orientation), nodes, links, node_class, css, footer),
                    collapse = "\n\n")
   class(diagram) <- c("mermaid", class(diagram))
   if (display) {
@@ -75,6 +84,48 @@ plot.GRiwrm <- function(x,
   } else {
     return(diagram)
   }
+}
+
+#' Order GRiwrm network grouping it by donor
+#'
+#' This sort algorithm respects the original order of nodes but reorder nodes
+#' by donor groups by conserving the sort of first nodes by donor groups.
+#'
+#' @param g
+#'
+#' @return *GRiwrm*
+#' @noRd
+#'
+sortGRiwrm4plot <- function(g) {
+  class_g <- class(g)
+  g <- g %>% group_by(.data$donor)
+  r <- attr(g, "groups")$.rows
+  r_min <- sapply(r, min)
+  r <- unlist(r[order(r_min)])
+  x <- g[r, ]
+  class(x) <- class_g
+  return(x)
+}
+
+#' Mermaid script for one donor cluster
+#'
+#' @param d donor id
+#' @param x GRiwrm
+#'
+#' @return mermaid script
+#' @noRd
+#'
+plotGriwrmCluster <- function(d, x, with_donors) {
+  x <- x[getDiversionRows(x, TRUE), ]
+  cluster_nodes <- sprintf("id_%1$s[%1$s]", x$id[is.na(d) | !is.na(x$donor) & x$donor == d])
+  if (length(cluster_nodes) > 1 && with_donors && !is.na(d)) {
+    s <- c(sprintf("subgraph donor_%1$s [%1$s]", d),
+           cluster_nodes,
+           "end")
+  } else {
+    s <- cluster_nodes
+  }
+  return(s)
 }
 
 getNodeClass <- function(id, griwrm) {
@@ -90,16 +141,17 @@ getNodeClass <- function(id, griwrm) {
   return(nc)
 }
 
-#' Generate a file from a mermaid diagram
+#' Plot a mermaid diagram
 #'
-#' This function download the file from https://mermaid.ink which generates the image.
-#' The file is downloaded only if it does not already exist.
+#' These functions download the diagram from https://mermaid.ink which generates the image.
 #'
 #' @details
-#' Use this function with [knitr::include_graphics] to display a mermaid diagram
-#' in a Rmarkdown document. Compared to the `diagrammeR::mermaid` function, the
-#' generated image is not a HTMLwidget and can be knit in pdf through latex and
+#' Compared to the `diagrammeR::mermaid` function, the generated image or plot
+#' is not a HTMLwidget and can be knit in pdf through latex and
 #' moreover, its size can be controlled with `fig.width` and `fig.height`.
+#'
+#' If the generation failed (due to internet connection failure or syntax error
+#' in mermaid script), the functions raises no error (see `mermaid` returned value).
 #'
 #' @param diagram Diagram in mermaid markdown-like language or file (as a connection or file name) containing a diagram specification
 #' @param theme Mermaid theme (See https://mermaid.js.org/config/theming.html#available-themes)
@@ -111,10 +163,14 @@ getNodeClass <- function(id, griwrm) {
 #' @param link Link generated by [mermaid_gen_link]
 #' @param server URL of the server used to generate the link
 #'
-#' @return The path to the downloaded image or `NA` if the download failed.
+#' @return
+#' - `mermaid` returns the path to the downloaded image or `NA` if the download failed.
 #' In this latter case, get the error message in the attribute "error".
-#' @noRd
+#' - `mermaid_gen_link` returns the link to the web service which generates the diagram
+#' - `plot.mermaid` produces a R plot with the mermaid diagram
+#'
 #' @rdname mermaid
+#' @export
 #'
 #' @examples
 #' diagram <- "flowchart LR\n  A --> B"
@@ -171,7 +227,8 @@ pako_deflate <- function(data) {
 return(compressed_data)
 }
 
-#' @noRd
+#' @rdname mermaid
+#' @export
 mermaid_gen_link <- function(diagram, theme = "default", format = "png", server = "https://mermaid.ink") {
   is_connection_or_file <- inherits(diagram[1], "connection") ||
     file.exists(diagram[1])
@@ -204,8 +261,7 @@ mermaid_gen_link <- function(diagram, theme = "default", format = "png", server 
 #' @return Nothing, used to side effect.
 #' @noRd
 #'
-plot_png = function(path, add = FALSE)
-{
+plot_png <- function(path, add = FALSE) {
   # read the file
   pic <- png::readPNG(path, native = TRUE)
   res <- dim(pic)[2:1] # get the resolution, [x, y]
@@ -228,18 +284,17 @@ plot_png = function(path, add = FALSE)
     )
     par(opar)
   }
-  graphics::rasterImage(pic, 1, 1, res[1], res[2], xpd = T)
+  graphics::rasterImage(pic, 1, 1, res[1], res[2], xpd = TRUE)
 }
 
-#' Plot a mermaid diagram
-#'
 #' @param x [character] mermaid diagram dialect
 #' @param add [logical] to add the diagram on the existing plot
-#' @param ... Not used
+#' @param ... Other argument passed to [mermaid]
 #'
 #' @return Nothing, used for side effect.
 #' @export plot.mermaid
 #' @export
+#' @rdname mermaid
 #'
 #' @examples
 #' s <- "flowchart LR
@@ -247,9 +302,9 @@ plot_png = function(path, add = FALSE)
 #' class(s) <- c("mermaid", class(s))
 #' plot(s)
 plot.mermaid <- function(x, add = FALSE, ...) {
-  file_mmd <- mermaid(x)
+  file_mmd <- mermaid(x, ...)
   if (is.na(file_mmd)) {
-    warning("Mermaid diaagram generation failed with error:\n",
+    warning("Mermaid diagram generation failed with error:\n",
             attr(file_mmd, "error"))
     return(invisible())
   }

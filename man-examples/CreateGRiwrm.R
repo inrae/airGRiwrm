@@ -44,16 +44,29 @@ griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
 plot(griwrm_ungauged)
 
-#######################################################
-# Severn network with a Diversion on the node "54029" #
-# which transfer flows to the node "54001"            #
-#######################################################
+###########################################################
+# Severn network with a Diversion on the node "54029"     #
+# to a reservoir which transfer flows to the node "54001" #
+# and a withdrawal on the reservoir                       #
+###########################################################
 nodes_div <- nodes[, c("gauge_id", "downstream_id", "distance_downstream", "model", "area")]
-nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54029",
-                                         downstream_id = "54001",
-                                         distance_downstream = 20,
-                                         model = "Diversion",
-                                         area = NA))
+nodes_div <- rbind(
+  nodes_div,
+  data.frame(gauge_id            = c("54029"    , "Reservoir"         , "Irrigation_Pump"),
+             downstream_id       = c("Reservoir", "54001"             , "Reservoir"      ),
+             distance_downstream = c(10         , 5                   , 0                ),
+             model               = c("Diversion", "RunModel_Reservoir", NA      ),
+             area                = c(NA         , NA                  , NA))
+)
 griwrm_div <- CreateGRiwrm(nodes_div, rename_columns)
 # Network diagram figures Diversion node by a red frame and a red arrow
-plot(griwrm_div)
+plot(griwrm_div, orientation = "TB")
+
+# It's also possible to custom the diagram's look with mermaid instructions
+# See https://mermaid.js.org/config/directives.html and
+# https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
+plot(griwrm_div,
+     header = "%%{init: {'flowchart': {'defaultRenderer': 'elk'}} }%%")
+
+plot(griwrm_div,
+     header = "%%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}%%")

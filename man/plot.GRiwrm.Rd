@@ -8,9 +8,12 @@
   x,
   display = TRUE,
   orientation = "LR",
+  with_donors = TRUE,
   box_colors = c(UpstreamUngauged = "#eef", UpstreamGauged = "#aaf", IntermediateUngauged
     = "#efe", IntermediateGauged = "#afa", Reservoir = "#9de", DirectInjection = "#faa"),
   defaultClassDef = "stroke:#333",
+  header = "\%\%{init: {'theme': 'neutral'} }\%\%",
+  footer = NULL,
   ...
 )
 }
@@ -19,11 +22,18 @@
 
 \item{display}{\link{logical} if \code{TRUE} plots the diagram, returns the mermaid code otherwise}
 
-\item{orientation}{\link{character} orientation of the graph. Possible values are "LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top). "LR" by default}
+\item{orientation}{\link{character} orientation of the graph. Possible values are
+"LR" (left-right), "RL" (right-left), "TB" (top-bottom), or "BT" (bottom-top).}
+
+\item{with_donors}{\link{logical} for drawing boxes around ungauged nodes and their donors}
 
 \item{box_colors}{\link{list} containing the color used for the different types of nodes}
 
 \item{defaultClassDef}{\link{character} default style apply to all boxes}
+
+\item{header}{mermaid script to add before the generated script (init configuration)}
+
+\item{footer}{mermaid script to add after the generated script}
 
 \item{...}{Not used}
 }
@@ -84,17 +94,30 @@ griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
 plot(griwrm_ungauged)
 
-#######################################################
-# Severn network with a Diversion on the node "54029" #
-# which transfer flows to the node "54001"            #
-#######################################################
+###########################################################
+# Severn network with a Diversion on the node "54029"     #
+# to a reservoir which transfer flows to the node "54001" #
+# and a withdrawal on the reservoir                       #
+###########################################################
 nodes_div <- nodes[, c("gauge_id", "downstream_id", "distance_downstream", "model", "area")]
-nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54029",
-                                         downstream_id = "54001",
-                                         distance_downstream = 20,
-                                         model = "Diversion",
-                                         area = NA))
+nodes_div <- rbind(
+  nodes_div,
+  data.frame(gauge_id            = c("54029"    , "Reservoir"         , "Irrigation_Pump"),
+             downstream_id       = c("Reservoir", "54001"             , "Reservoir"      ),
+             distance_downstream = c(10         , 5                   , 0                ),
+             model               = c("Diversion", "RunModel_Reservoir", NA      ),
+             area                = c(NA         , NA                  , NA))
+)
 griwrm_div <- CreateGRiwrm(nodes_div, rename_columns)
 # Network diagram figures Diversion node by a red frame and a red arrow
-plot(griwrm_div)
+plot(griwrm_div, orientation = "TB")
+
+# It's also possible to custom the diagram's look with mermaid instructions
+# See https://mermaid.js.org/config/directives.html and
+# https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
+plot(griwrm_div,
+     header = "\%\%{init: {'flowchart': {'defaultRenderer': 'elk'}} }\%\%")
+
+plot(griwrm_div,
+     header = "\%\%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}\%\%")
 }
