@@ -42,7 +42,7 @@ plot.Qm3s <- function(x,
             inherits(x[, 1], "POSIXct"))
 
   col <- tryCatch(
-    length(col),
+    col,
     error = function(e) "#619CFF"
   )
 
