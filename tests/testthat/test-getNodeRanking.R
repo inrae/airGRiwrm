@@ -55,3 +55,14 @@ test_that("Impossible case detected: ungauged node with diversion to an upstream
                                            area = NA))
   expect_error(CreateGRiwrm(nodes_div))
 })
+
+test_that("donor of ungauged cluster is processed before sibling ungauged nodes (#155)", {
+  n155 <- data.frame(id   = c("UngSib", "UngUp", "Donor", "Down"),
+                     down = c("Down",   "Donor", "Down", NA),
+                     length = c(rep(1, 3), NA),
+                     model = c("Ungauged", "Ungauged", "RunModel_GR4J", "RunModel_GR4J"),
+                     area = rep(1,4),
+                     donor = c("Donor", NA, NA, NA))
+  g155 <- CreateGRiwrm(n155)
+  expect_equal(getNodeRanking(g155), c("UngUp", "Donor", "UngSib", "Down"))
+})

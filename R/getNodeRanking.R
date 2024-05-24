@@ -40,7 +40,10 @@ getNodeRanking <- function(griwrm) {
       # Check if upstream nodes have already been processed
       immediate_upstream_nodes <- g$id[!is.na(g$down) & g$down %in% g2$id]
       immediate_upstream_nodes <- immediate_upstream_nodes[!immediate_upstream_nodes %in% g2$id]
-      if (all(immediate_upstream_nodes %in% r)) {
+      if (all(immediate_upstream_nodes %in% r) &&
+          (upDonor %in% r || isNodeDownstream(g2, upId, upDonor))) {
+        areNodesUpstreamDonor <- sapply(g2$id, function(id) isNodeDownstream(g2, id, upDonor))
+        g2 <- g2[upDonor %in% r | g2$id == upDonor | areNodesUpstreamDonor, ]
         g2$donor <- g2$id
         ungaugedIds <- getNodeRanking(g2)
         r <- c(r, ungaugedIds)
