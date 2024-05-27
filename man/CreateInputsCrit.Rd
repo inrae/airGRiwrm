@@ -57,8 +57,23 @@ Then, each column of the \link{matrix} or \link{data.frame} represents the obser
 
 With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 
-Parameter regularization consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
-The parameter \code{AprioriIds} allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: \code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)} where the quoted strings are the ids of the sub-catchments. See vignettes for more details. The parameter \code{AprCelerity} is a default value used as a priori for the parameter 'Celerity' in case of an upstream catchment (without celerity parameter) is used as a priori catchment.
+Parameter regularization consists of defining a priori parameters which are
+used in a composed criterion based on the formula proposed by
+Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
+The parameter \code{AprioriIds} allows to define which neighbour sub-catchment is
+used for providing a priori parameters.
+Its format is as follows:
+\code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)}
+where the quoted strings are the ids of the sub-catchments.
+The node providing a priori parameters must be calibrated before the
+current one.
+The sequence order of calibration can be checked with \link{getNodeRanking}.
+If the latter is not adequate, this order can be forced by setting the node providing
+a priori parameters as donor of the current node in \link{CreateGRiwrm}.
+See vignettes for more details.
+The parameter \code{AprCelerity} is a default value used as a priori for the
+parameter 'Celerity' in case of an upstream catchment (without celerity parameter)
+is used as a priori catchment.
 }
 \references{
 De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}

@@ -53,14 +53,16 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
         stop("'Each item of AprioriIds must be an id of a modelled node:",
              " the id \"", AprioriIds[id] ,"\" is not in the list of the modelled nodes")
       }
-      if (! isNodeDownstream(InputsModel, AprioriIds[id], id)) {
+      if (!AprioriIds[id] %in% names(InputsModel)[1:which(id == names(InputsModel))]) {
         stop("'AprioriIds': the node \"", AprioriIds[id],
-             "\" is not upstream the node \"", id,"\"")
+             "\" is not calibrated before the node \"", id,"\".",
+             "\nIf possible, set this apriori id as the donor of the node \"",
+             id,"\" to force the calibration sequence order")
       }
       if (InputsModel[[AprioriIds[id]]]$isUngauged &
           InputsModel[[AprioriIds[id]]]$gaugedId == id) {
         stop("'AprioriIds': the node \"", AprioriIds[id],
-             "\" is an ungauged upstream node of the node \"", id,"\"")
+             "\" is ungauged, use a gauged node instead")
       }
       if (!identical(InputsModel[[id]]$FUN_MOD, InputsModel[[AprioriIds[id]]]$FUN_MOD)) {
         stop("'AprioriIds': the node \"", AprioriIds[id],
