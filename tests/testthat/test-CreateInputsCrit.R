@@ -103,10 +103,25 @@ test_that("Lavenne criterion: wrong sub-catchment order should throw error", {
     CreateInputsCrit(InputsModel = InputsModel,
                      RunOptions = RunOptions,
                      Obs = Qobs[IndPeriod_Run,],
-                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029"),
+                     AprioriIds = c("54057" = "54032", "54032" = "54001", "54095" = "54029"),
                      transfo = "sqrt"),
-    regexp = "is not upstream the node"
+    regexp = "is not calibrated before the node"
   )
+})
+
+test_that("Lavenne criterion: not upstream a priori nodes are allow if processed before #156", {
+  IC156 <- CreateInputsCrit(
+    InputsModel = InputsModel,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run, ],
+    AprioriIds = c(
+      "54057" = "54032",
+      "54032" = "54001",
+      "54029" = "54095"
+    ),
+    transfo = "sqrt"
+  )
+  expect_equal(attr(IC156$`54029`, "AprioriId"), c("54029" = "54095"))
 })
 
 test_that("Lavenne criterion: current node and a priori node must use the same model", {
@@ -131,6 +146,6 @@ test_that("Ungauged node as Apriori node should throw an error", {
                      Obs = Qobs[IndPeriod_Run,],
                      AprioriIds = c("54057" = "54032", "54032" = "54001", "54001" = "54029"),
                      transfo = "sqrt"),
-    regexp = "\"54001\" is an ungauged upstream node of the node \"54032\""
+    regexp = "\"54001\" is ungauged"
   )
 })
