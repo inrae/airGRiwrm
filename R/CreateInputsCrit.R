@@ -18,8 +18,23 @@
 #'
 #' With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-catchments of the network.
 #'
-#' Parameter regularization consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by Lavenne et al. (2019) (See [airGR::CreateInputsCrit_Lavenne]).
-#' The parameter `AprioriIds` allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: `AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)` where the quoted strings are the ids of the sub-catchments. See vignettes for more details. The parameter `AprCelerity` is a default value used as a priori for the parameter 'Celerity' in case of an upstream catchment (without celerity parameter) is used as a priori catchment.
+#' Parameter regularization consists of defining a priori parameters which are
+#' used in a composed criterion based on the formula proposed by
+#' Lavenne et al. (2019) (See [airGR::CreateInputsCrit_Lavenne]).
+#' The parameter `AprioriIds` allows to define which neighbour sub-catchment is
+#' used for providing a priori parameters.
+#' Its format is as follows:
+#' `AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)`
+#' where the quoted strings are the ids of the sub-catchments.
+#' The node providing a priori parameters must be calibrated before the
+#' current one.
+#' The sequence order of calibration can be checked with [getNodeRanking].
+#' If the latter is not adequate, this order can be forced by setting the node providing
+#' a priori parameters as donor of the current node in [CreateGRiwrm].
+#' See vignettes for more details.
+#' The parameter `AprCelerity` is a default value used as a priori for the
+#' parameter 'Celerity' in case of an upstream catchment (without celerity parameter)
+#' is used as a priori catchment.
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `InputsCrit` object (See [airGR::CreateInputsCrit])
