@@ -59,7 +59,7 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
              "\nIf possible, set this apriori id as the donor of the node \"",
              id,"\" to force the calibration sequence order")
       }
-      if (InputsModel[[AprioriIds[id]]]$isUngauged &
+      if (InputsModel[[AprioriIds[id]]]$inUngaugedCluster &
           InputsModel[[AprioriIds[id]]]$gaugedId == id) {
         stop("'AprioriIds': the node \"", AprioriIds[id],
              "\" is ungauged, use a gauged node instead")

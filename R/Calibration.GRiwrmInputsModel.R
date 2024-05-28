@@ -31,7 +31,7 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   OutputsModel <- list()
   class(OutputsModel) <- append("GRiwrmOutputsModel", class(OutputsModel))
 
-  b <- sapply(InputsModel, function(IM) !IM$isUngauged)
+  b <- sapply(InputsModel, function(IM) !IM$inUngaugedCluster)
   gaugedIds <- names(b[b])
 
   for (id in gaugedIds) {

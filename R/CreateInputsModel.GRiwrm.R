@@ -331,10 +331,14 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   # Add the model function
   InputsModel$FUN_MOD <- FUN_MOD
   featModel <- .GetFeatModel(InputsModel, IsHyst)
-  InputsModel$isUngauged <- node$id != node$donor &&
-    isNodeDownstream(griwrm, id, node$donor)
-  InputsModel$isReceiver <- node$id != node$donor &&
-    !isNodeDownstream(griwrm, id, node$donor)
+  # inUngaugedCluster: Ungauged node with downstream donor
+  # including reservoirs between ungauged nodes and donor
+  InputsModel$inUngaugedCluster <- (node$model == "Ungauged" || np$Reservoir) &&
+                                   node$id != node$donor &&
+                                   isNodeDownstream(griwrm, id, node$donor)
+  # isReceiver: Ungauged node with not downstream donor
+  InputsModel$isReceiver <- node$model == "Ungauged" &&
+                            !isNodeDownstream(griwrm, id, node$donor)
   InputsModel$gaugedId <- node$donor
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
   InputsModel$model <-
