@@ -122,6 +122,18 @@ test_that("Lavenne criterion: not upstream a priori nodes are allow if processed
     transfo = "sqrt"
   )
   expect_equal(attr(IC156$`54029`, "AprioriId"), c("54029" = "54095"))
+  e <- runCalibration(
+    nodes = nodes,
+    Qobs2 = NULL,
+    InputsCrit = IC156,
+    CalibOptions = NULL,
+    FUN_CRIT = ErrorCrit_KGE2,
+    runRunModel = FALSE,
+    IsHyst = FALSE
+  )
+  for (x in ls(e)) assign(x, get(x, e))
+  # 54029 not processed as ungauged
+  expect_false(is.null(OutputsCalib$`54029`$CritFinal))
 })
 
 test_that("Lavenne criterion: current node and a priori node must use the same model", {
