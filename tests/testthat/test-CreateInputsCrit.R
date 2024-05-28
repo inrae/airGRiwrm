@@ -122,6 +122,48 @@ test_that("Lavenne criterion: not upstream a priori nodes are allow if processed
     transfo = "sqrt"
   )
   expect_equal(attr(IC156$`54029`, "AprioriId"), c("54029" = "54095"))
+  e <- runCalibration(
+    nodes = nodes,
+    Qobs2 = NULL,
+    InputsCrit = IC156,
+    CalibOptions = NULL,
+    FUN_CRIT = ErrorCrit_KGE2,
+    runRunModel = FALSE,
+    IsHyst = FALSE
+  )
+  for (x in ls(e)) assign(x, get(x, e))
+  # 54029 not processed as ungauged
+  expect_false(is.null(OutputsCalib$`54029`$CritFinal))
+})
+
+test_that("Lavenne criterion: redefined calibration order works #157", {
+  nodes$donor <- nodes$id
+  nodes$donor[nodes$id == "54095"] <- "54029"
+  e <- setupRunModel(runRunModel = FALSE,
+                          griwrm = CreateGRiwrm(nodes))
+  for (x in ls(e)) assign(x, get(x, e))
+  IC157 <- CreateInputsCrit(
+    InputsModel = InputsModel,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run, ],
+    AprioriIds = c(
+      "54057" = "54032",
+      "54032" = "54001",
+      "54095" = "54029"
+    ),
+    transfo = "sqrt"
+  )
+  e <- runCalibration(
+    nodes = nodes,
+    Qobs2 = NULL,
+    InputsCrit = IC157,
+    CalibOptions = NULL,
+    FUN_CRIT = ErrorCrit_KGE2,
+    runRunModel = FALSE,
+    IsHyst = FALSE
+  )
+  for (x in ls(e)) assign(x, get(x, e))
+  expect_false(is.null(OutputsCalib$`54095`$CritFinal))
 })
 
 test_that("Lavenne criterion: current node and a priori node must use the same model", {
