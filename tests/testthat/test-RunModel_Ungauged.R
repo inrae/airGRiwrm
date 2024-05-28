@@ -342,3 +342,13 @@ test_that("Ungauged with upstream donor without hydraulic routing parameters", {
   expect_equal(OutputsCalib$`54032`$ParamFinalR[1:4],
                c(1 , OutputsCalib$`54029`$ParamFinalR[1:3]))
 })
+
+test_that("Ungauged upstream node with upstream donor works", {
+  nup2up <- loadSevernNodes()
+  nup2up$model[nup2up$id == "54095"] <- "Ungauged"
+  nup2up$donor[nup2up$id == "54095"] <- "54029"
+  e <- runCalibration(nup2up)
+  for (x in ls(e)) assign(x, get(x, e))
+  expect_equal(OutputsCalib$`54095`$ParamFinalR[1:3],
+               OutputsCalib$`54029`$ParamFinalR[1:3])
+})
