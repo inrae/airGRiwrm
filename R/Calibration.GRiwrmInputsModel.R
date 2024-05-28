@@ -156,13 +156,15 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
   Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
   AprParamR <- OutputsModel[[AprioriId]]$RunOptions$Param
   if (!inherits(OutputsModel[[AprioriId]], "SD")) {
-    # Add default velocity parameter for a priori upstream catchment
+    # Add Celerity parameter if apriori is an upstream node
     AprParamR <- c(AprCelerity, AprParamR)
   }
-  if (attr(InputsCrit[[id]], "model")$hasX4) {
-    featMod <- attr(InputsCrit[[id]], "model")
+  featMod <- attr(InputsCrit[[id]], "model")
+  if (featMod$hasX4) {
     AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
   }
+  AprParamR <- AprParamR[featMod$indexParamUngauged]
+  message("A priori parameters from node ", AprioriId, ": ", paste(round(AprParamR, 3), collapse = ", "))
   AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
   return(Lavenne_FUN(AprParamR, AprCrit))
 }
