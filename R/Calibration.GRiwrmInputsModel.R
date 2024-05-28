@@ -373,7 +373,13 @@ transferGRparams <- function(InputsModel, Param, donor, receiver, default_param 
     Param2[missing_params] <- default_param[missing_params]
     Param <- Param2
   }
-  p <- Param[InputsModel[[receiver]]$model$indexParamUngauged]
+
+  p <- Param
+  if (length(Param) > length(InputsModel[[receiver]]$model$indexParamUngauged)) {
+    # Transfer from intermediate node to upstream node
+    p <- p[InputsModel[[receiver]]$model$indexParamUngauged]
+  }
+
   if (InputsModel[[receiver]]$model$hasX4) {
     donor_area <- InputsModel[[donor]]$BasinAreas[length(InputsModel[[donor]]$BasinAreas)]
     receiver_area <- InputsModel[[receiver]]$BasinAreas[length(InputsModel[[receiver]]$BasinAreas)]
