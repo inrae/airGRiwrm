@@ -9,7 +9,7 @@
 #' @param defaultClassDef [character] default style apply to all boxes
 #' @param header mermaid script to add before the generated script (init configuration)
 #' @param footer mermaid script to add after the generated script
-#' @param ... Not used
+#' @param ... further parameters passed to [mermaid]
 #'
 #' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
 #' is not handled on some platforms
@@ -81,7 +81,7 @@ plot.GRiwrm <- function(x,
                    collapse = "\n\n")
   class(diagram) <- c("mermaid", class(diagram))
   if (display) {
-    plot(diagram)
+    plot(diagram, ...)
   } else {
     return(diagram)
   }
