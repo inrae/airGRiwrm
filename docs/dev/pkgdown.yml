@@ -1,0 +1,23 @@
+pandoc: 3.1.1
+pkgdown: 2.0.9
+pkgdown_sha: ~
+articles:
+  airGRiwrm: airGRiwrm.html
+  V01_First_network: seinebasin/V01_First_network.html
+  V01_Structure_SD_model: V01_Structure_SD_model.html
+  V02_Calibration_SD_model: V02_Calibration_SD_model.html
+  V02_First_run: seinebasin/V02_First_run.html
+  V03_First_Calibration: seinebasin/V03_First_Calibration.html
+  V03_Open-loop_influenced_flow: V03_Open-loop_influenced_flow.html
+  V04_Closed-loop_regulated_withdrawal: V04_Closed-loop_regulated_withdrawal.html
+  V04_Open-loop_influenced_flow: seinebasin/V04_Open-loop_influenced_flow.html
+  V05_Modelling_ungauged_nodes: V05_Modelling_ungauged_nodes.html
+  V05_Open-loop_influenced_flow_calibration: seinebasin/V05_Open-loop_influenced_flow_calibration.html
+  V05b_Open-loop_influenced_flow_calibration_GR6J: seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J.html
+  V06_Modelling_regulated_diversion: V06_Modelling_regulated_diversion.html
+  V06_Naturalised_flow_simulation: seinebasin/V06_Naturalised_flow_simulation.html
+last_built: 2024-06-18T15:21Z
+urls:
+  reference: https://airgriwrm.g-eau.fr/reference
+  article: https://airgriwrm.g-eau.fr/articles
+
