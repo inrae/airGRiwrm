@@ -90,7 +90,7 @@ plot(OutputsModel$Reservoir)
 
 #######################################################
 # Daily time step simulation of a reservoir tracking  #
-# an objective filling curve using a Regulator        #
+# an objective filling curve using a local regulation #
 #######################################################
 
 # The objective here is to simulate the same reservoir as above
@@ -151,17 +151,15 @@ fun_factory_Regulation_Reservoir <- function(Vini, Vobj, Qmin, Qmax, Vmax) {
 Regulation_Reservoir <-
   fun_factory_Regulation_Reservoir(RunOptions$Reservoir$IniStates, Vobj, Qmin, Qmax, Vmax)
 
-# The regulation function is declared in the GRiwrm object as follow:
-db_reg <- db
-db_reg$regulator <- as.character(NA)
-db_reg$regulator[db_reg$id == "Reservoir"] <- "Regulation_Reservoir"
-g_reg <- CreateGRiwrm(db_reg)
-
 # Then we need to update InputsModel in order to take into account the regulation
 # function instead of predefined Qrelease in the previous study case
-IM_reg <- CreateInputsModel(g_reg, DatesR = BasinObs$DatesR,
-                                 Precip = Precip,
-                                 PotEvap = PotEvap)
+IM_reg <- CreateInputsModel(griwrm,
+                            DatesR = BasinObs$DatesR,
+                            Precip = Precip,
+                            PotEvap = PotEvap,
+                            Qrelease = Qrelease,
+                            FUN_REGUL = list(Reservoir = Regulation_Reservoir))
+
 # And we can finally run the simulation!
 OM_reg <- RunModel(IM_reg, RunOptions, Param)
 

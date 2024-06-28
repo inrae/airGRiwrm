@@ -48,8 +48,7 @@ getNodeProperties <- function(id, griwrm) {
     DirectInjection = is.na(model),
     Diversion = "Diversion" %in% griwrm$model[griwrm$id == id],
     Reservoir = !is.na(model) && model == "RunModel_Reservoir",
-    airGR = grepl("RunModel_", donor_model),
-    regulated = any(!is.na(griwrm$regulator[griwrm$id == id]))
+    airGR = grepl("RunModel_", donor_model)
   )
   if (p$DirectInjection) {
     p$calibration <- "NA"

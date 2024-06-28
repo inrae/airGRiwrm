@@ -26,9 +26,9 @@ updateQObsQrelease <- function(g, Qobs, Qrelease) {
 
 checkQobsQrelease <- function(g, varname, Q) {
   if (varname == "Qobs") {
-    directFlowIds <- g$id[is.na(g$model) | (is.na(g$regulator) & g$model == "Diversion")]
+    directFlowIds <- g$id[is.na(g$model) | g$model == "Diversion"]
   } else {
-    directFlowIds <- g$id[!is.na(g$model) & (is.na(g$regulator) & g$model == "RunModel_Reservoir")]
+    directFlowIds <- g$id[!is.na(g$model) & g$model == "RunModel_Reservoir"]
   }
   if (length(directFlowIds) > 0) {
     err <- FALSE

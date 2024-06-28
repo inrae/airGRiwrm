@@ -20,6 +20,7 @@
   HypsoData = NULL,
   NLayers = 5,
   IsHyst = FALSE,
+  FUN_REGUL = NULL,
   ...
 )
 }

@@ -183,7 +183,6 @@ test_that("Withdrawal on a reservoir works #147", {
 test_that("Reservoir with downstream ungauged node works", {
   g <- reduceGRiwrm(CreateGRiwrm(loadSevernNodes()), "54032")
   g$donor <- NULL
-  g$regulator <- NULL
   g$model[g$id %in% c("54001", "54029")] <- "Ungauged"
   g$down[g$id == "54001"] <- "Dam2"
   g <- rbind(g,

@@ -24,9 +24,8 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
       x[[id]] <- UpdateQsimUpstream(x[[id]], RunOptions[[id]], OutputsModel)
     }
     # Run node regulation if any
-    if (!is.null(x[[id]]$FUN_REGULATION)) {
-      FUN_REGULATION <- match.fun(x[[id]]$FUN_REGULATION)
-      x[[id]] <- FUN_REGULATION(x[[id]], RunOptions[[id]], OutputsModel)
+    if (!is.null(x[[id]]$FUN_REGUL)) {
+      x[[id]] <- x[[id]]$FUN_REGUL(x[[id]], RunOptions[[id]], OutputsModel)
     }
     # Run the model for the sub-basin
     OutputsModel[[id]] <- RunModel.InputsModel(

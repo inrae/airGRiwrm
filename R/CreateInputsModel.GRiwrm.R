@@ -78,7 +78,9 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
                                      HypsoData = NULL, NLayers = 5,
-                                     IsHyst = FALSE, ...) {
+                                     IsHyst = FALSE,
+                                     FUN_REGUL = NULL,
+                                     ...) {
 
   # Check and format inputs
   varNames <- c("Precip", "PotEvap", "TempMean", "Qobs", "Qmin",
@@ -201,7 +203,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  Qobs = Qobs,
                                  Qmin = getInputBV(Qmin, id),
                                  Qrelease = Qrelease,
-                                 IsHyst = IsHyst
+                                 IsHyst = IsHyst,
+                                 FUN_REGUL = FUN_REGUL[[id]]
                                  )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
@@ -236,7 +239,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrelease, IsHyst) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrelease, IsHyst, FUN_REGUL) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -366,16 +369,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
     }
   }
 
-  # Add regulator function (handle duplicates due to Diversion)
-  FUN_REGULATION <- griwrm$regulator[griwrm$id == id]
-  FUN_REGULATION <- FUN_REGULATION[!is.na(FUN_REGULATION)]
-  if (length(FUN_REGULATION) > 0) {
-    tryCatch(
-      match.fun(FUN_REGULATION),
-      error = function(e) stop("Node \"", id, "\": regulator function `", FUN_REGULATION, "` not found")
-    )
-    InputsModel$FUN_REGULATION <- FUN_REGULATION
-  }
+  # Add regulation function
+  InputsModel$FUN_REGUL <- FUN_REGUL
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)
   class(InputsModel) <- c(FUN_MOD_REAL, class(InputsModel))
