@@ -9,7 +9,7 @@ description of their connections}
 CreateGRiwrm(
   db,
   cols = list(id = "id", down = "down", length = "length", area = "area", model =
-    "model", donor = "donor"),
+    "model", donor = "donor", regulator = "regulator"),
   keep_all = FALSE
 )
 }

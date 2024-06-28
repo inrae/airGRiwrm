@@ -65,7 +65,8 @@ CreateGRiwrm <- function(db,
                      length = "length",
                      area = "area",
                      model = "model",
-                     donor = "donor"
+                     donor = "donor",
+                     regulator = "regulator"
                    ),
                    keep_all = FALSE) {
 
@@ -78,11 +79,13 @@ CreateGRiwrm <- function(db,
       length = "length",
       area = "area",
       model = "model",
-      donor = "donor"
+      donor = "donor",
+      regulator = "regulator"
     )
   cols <- utils::modifyList(colsDefault, as.list(cols))
 
   if (is.null(db[[cols$donor]])) db[[cols$donor]] <- as.character(NA)
+  if (is.null(db[[cols$regulator]])) db[[cols$regulator]] <- as.character(NA)
 
   griwrm <- dplyr::rename(db, unlist(cols))
 
@@ -96,7 +99,8 @@ CreateGRiwrm <- function(db,
                         length = "double",
                         model = "character",
                         area = "double",
-                        donor = "character"),
+                        donor = "character",
+                        regulator = "character"),
                    keep_all)
 
   checkNetworkConsistency(griwrm)

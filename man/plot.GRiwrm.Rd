@@ -35,7 +35,7 @@
 
 \item{footer}{mermaid script to add after the generated script}
 
-\item{...}{Not used}
+\item{...}{further parameters passed to \link{mermaid}}
 }
 \value{
 Mermaid code of the diagram if display is \code{FALSE}, otherwise the function returns the diagram itself.
