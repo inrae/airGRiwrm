@@ -99,9 +99,9 @@ argument is optional, only the column or the named item has to be provided.
 
 See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} documentation for details concerning each input.
 
-Number of rows of \code{Precip}, \code{PotEvap}, \code{Qobs}, \code{Qmin}, \code{TempMean}, \code{TempMin},
-\code{TempMax} must be the same of the length of \code{DatesR} (each row corresponds to
-a time step defined in \code{DatesR}).
+Number of rows of \code{Precip}, \code{PotEvap}, \code{Qobs}, \code{Qmin}, \code{Qrelease}, \code{TempMean},
+\code{TempMin}, \code{TempMax} must be the same of the length of \code{DatesR} (each row
+corresponds to a time step defined in \code{DatesR}).
 
 For example of use of Direct Injection nodes, see vignettes
 "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".

@@ -52,9 +52,9 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' Number of rows of `Precip`, `PotEvap`, `Qobs`, `Qmin`, `TempMean`, `TempMin`,
-#' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
-#' a time step defined in `DatesR`).
+#' Number of rows of `Precip`, `PotEvap`, `Qobs`, `Qmin`, `Qrelease`, `TempMean`,
+#' `TempMin`, `TempMax` must be the same of the length of `DatesR` (each row
+#' corresponds to a time step defined in `DatesR`).
 #'
 #' For example of use of Direct Injection nodes, see vignettes
 #' "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".
@@ -273,7 +273,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
     upstreamDiversion <- which(
       sapply(griwrm$id[UpstreamNodeRows],
              function(id) {
-               getNodeProperties(id, griwrm)$Diversion
+               np <- getNodeProperties(id, griwrm)
+               np$Diversion
              })
     )
     if (length(upstreamDiversion) > 0) {
@@ -359,8 +360,21 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
-    # Fill reservoir release with Qobs
-    InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+    if (!is.null(Qrelease) && id %in% names(Qrelease)) {
+      # Fill reservoir release with Qobs
+      InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+    }
+  }
+
+  # Add regulator function (handle duplicates due to Diversion)
+  FUN_REGULATION <- griwrm$regulator[griwrm$id == id]
+  FUN_REGULATION <- FUN_REGULATION[!is.na(FUN_REGULATION)]
+  if (length(FUN_REGULATION) > 0) {
+    tryCatch(
+      match.fun(FUN_REGULATION),
+      error = function(e) stop("Node \"", id, "\": regulator function `", FUN_REGULATION, "` not found")
+    )
+    InputsModel$FUN_REGULATION <- FUN_REGULATION
   }
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)

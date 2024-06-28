@@ -187,6 +187,11 @@ checkNetworkConsistency <- function(db) {
       nodeError(db[i, ],
                 "A Diversion node must have the same `id` of one (and only one) node with a model")
     }
+    if (!is.na(db3$regulator[db3$id == x]) &
+        !is.na(db$regulator[db$id == x & db$model == "Diversion"])) {
+      nodeError(db[i, ],
+                "A regulator function cannot be defined twice on a node with a Diversion")
+    }
   })
   id_reservoirs <- db3$id[db3$model == "RunModel_Reservoir"]
   sapply(id_reservoirs, function(id) {
@@ -215,6 +220,9 @@ checkNode <- function(node) {
   }
   if (is.na(node$length) & !is.na(node$down)) {
     nodeError(node, "A node with a defined downstream node must have a numeric `length`")
+  }
+  if (is.na(node$model) & !is.na(node$regulator)) {
+    nodeError(node, "A Direct Injection node cannot be regulated, you should regulate the downstream node instead")
   }
 }
 
