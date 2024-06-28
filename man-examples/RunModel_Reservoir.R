@@ -61,6 +61,7 @@ InputsCrit <- CreateInputsCrit(InputsModel,
                                Obs = Qobs)
 
 # preparation of CalibOptions object with fixed parameters for the reservoir
+Vmax <- 30E6
 CalibOptions <-
   CreateCalibOptions(InputsModel,
                      FixedParam = list(Reservoir = c(Vmax = 30E6, celerity = 0.5)))
@@ -95,9 +96,9 @@ plot(OutputsModel$Reservoir)
 # The objective here is to simulate the same reservoir as above
 # but with new rules:
 # - A minimum flow downstream the reservoir defined as:
-Qmin <- Qrelease[1] / 5
+(Qmin <- Qrelease[1,] / 2)
 # - A maximum release flow due to reservoir outlet limitation
-Qmax <- Qrelease[1] * 5
+(Qmax <- Qrelease[1,] * 5)
 # - An annual objective filling curve managing floods and droughts by
 # trying to keep the reservoir volume between 10 and 20 Mm3:
 Vobj <- approx(c(1, 120, 300, 366),
@@ -109,19 +110,24 @@ plot(Vobj, type = "l", col = "red", lty = 2)
 # global GRiwrm OutputsModel as arguments and returns a modified
 # InputsModel used by RunModel_Reservoir afterward
 fun_factory_Regulation_Reservoir <- function(Vini, Vobj, Qmin, Qmax, Vmax) {
-  function(InputsModel, OutputsModel) {
+  function(InputsModel, RunOptions, OutputsModel) {
     # Release flow time series initialisation
-    Qrelease <- rep(0, length(OutputsModel$L0123001$DatesR))
+    Qrelease <- rep(0, length(InputsModel$DatesR))
+    # Build inflows time series from upstream Qsim (warmup & run)
+    Qinflows <- Qrelease
+    IPR_all <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
+    Qinflows[IPR_all] <- c(OutputsModel$L0123001$RunOptions$WarmUpQsim_m3,
+                           OutputsModel$L0123001$Qsim_m3)
     # Reservoir volume initialisation
     V <- Vini
-    # Loop over simulation time steps
-    for(ts in seq_along(OutputsModel$L0123001$Qsim_m3)) {
+    # Loop over simulation time steps (warmup & run periods)
+    for(ts in IPR_all) {
       # Update reservoir volume with inflows
-      V <- V + OutputsModel$L0123001$Qsim_m3[ts]
+      V <- V + Qinflows[ts]
       # Rule #1: follow the objective filling curve (lower priority)
-      j <- as.numeric(format(OutputsModel$L0123001$DatesR[ts], "%j"))
-      Vobj_ts <- approx(seq(366), Vobj, j)
-      Qrelease[ts] <- Vobj_ts - V
+      j <- as.numeric(format(InputsModel$DatesR[ts], "%j"))
+      Vobj_ts <- approx(Vobj, xout = j)$y
+      Qrelease[ts] <- V - Vobj_ts
       # Rule #2: Release cannot be less than Qmin
       Qrelease[ts] <- max(Qmin, Qrelease[ts])
       # Rule #3: Release cannot be more than Qmax
@@ -135,13 +141,15 @@ fun_factory_Regulation_Reservoir <- function(Vini, Vobj, Qmin, Qmax, Vmax) {
       }
       V <- min(V, Vmax)
     }
+    InputsModel$Qrelease <- Qrelease
+    return(InputsModel)
   }
 }
 # A call to fun_factory_Regulation_Reservoir returns the regulation
 # function with the parameters Qmin, Qmax, Vobj enclosed in the environment
 # of the function
 Regulation_Reservoir <-
-  fun_factory_Regulation_Reservoir(RunOptions$Reservoir$IniStates, Vobj, Qmin, Qmax)
+  fun_factory_Regulation_Reservoir(RunOptions$Reservoir$IniStates, Vobj, Qmin, Qmax, Vmax)
 
 # The regulation function is declared in the GRiwrm object as follow:
 db_reg <- db
@@ -158,4 +166,4 @@ IM_reg <- CreateInputsModel(g_reg, DatesR = BasinObs$DatesR,
 OM_reg <- RunModel(IM_reg, RunOptions, Param)
 
 # And plot the new result
-plot(OutputsModel$Reservoir)
+plot(OM_reg$Reservoir)
