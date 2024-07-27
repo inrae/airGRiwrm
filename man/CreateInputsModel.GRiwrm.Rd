@@ -9,6 +9,7 @@
   DatesR,
   Precip = NULL,
   PotEvap = NULL,
+  Qinf = NULL,
   Qobs = NULL,
   Qmin = NULL,
   Qrelease = NULL,
@@ -34,13 +35,15 @@ precipitation in [mm per time step]. Column names correspond to node IDs}
 \item{PotEvap}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
 potential evaporation [mm per time step]. Column names correspond to node IDs}
 
-\item{Qobs}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
+\item{Qinf}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
 observed flows. It must be provided only for nodes of type "Direct
 injection" and "Diversion". See \link{CreateGRiwrm} for
 details about these node types. Unit is [mm per time step] for nodes
 with an area, and [m3 per time step] for nodes with \code{area=NA}.
 Column names correspond to node IDs. Negative flows are abstracted from
 the model and positive flows are injected to the model}
+
+\item{Qobs}{(deprecated) use \code{Qinf} instead}
 
 \item{Qmin}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
 minimum flows to let downstream of a node with a Diversion [m3 per
@@ -99,7 +102,7 @@ argument is optional, only the column or the named item has to be provided.
 
 See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} documentation for details concerning each input.
 
-Number of rows of \code{Precip}, \code{PotEvap}, \code{Qobs}, \code{Qmin}, \code{TempMean}, \code{TempMin},
+Number of rows of \code{Precip}, \code{PotEvap}, \code{Qinf}, \code{Qmin}, \code{TempMean}, \code{TempMin},
 \code{TempMax} must be the same of the length of \code{DatesR} (each row corresponds to
 a time step defined in \code{DatesR}).
 

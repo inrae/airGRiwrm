@@ -6,13 +6,14 @@
 #'        precipitation in \[mm per time step\]. Column names correspond to node IDs
 #' @param PotEvap (optional) [matrix] or [data.frame] of [numeric] containing
 #'        potential evaporation \[mm per time step\]. Column names correspond to node IDs
-#' @param Qobs (optional) [matrix] or [data.frame] of [numeric] containing
+#' @param Qinf (optional) [matrix] or [data.frame] of [numeric] containing
 #'        observed flows. It must be provided only for nodes of type "Direct
 #'        injection" and "Diversion". See [CreateGRiwrm] for
 #'        details about these node types. Unit is \[mm per time step\] for nodes
 #'        with an area, and \[m3 per time step\] for nodes with `area=NA`.
 #'        Column names correspond to node IDs. Negative flows are abstracted from
 #'        the model and positive flows are injected to the model
+#' @param Qobs (deprecated) use `Qinf` instead
 #' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
 #'        minimum flows to let downstream of a node with a Diversion \[m3 per
 #'        time step\]. Default is zero. Column names correspond to node IDs
@@ -52,7 +53,7 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' Number of rows of `Precip`, `PotEvap`, `Qobs`, `Qmin`, `TempMean`, `TempMin`,
+#' Number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `TempMean`, `TempMin`,
 #' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
 #' a time step defined in `DatesR`).
 #'
@@ -71,6 +72,7 @@
 CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      Precip = NULL,
                                      PotEvap = NULL,
+                                     Qinf = NULL,
                                      Qobs = NULL,
                                      Qmin = NULL,
                                      Qrelease = NULL,
@@ -81,7 +83,14 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      IsHyst = FALSE, ...) {
 
   # Check and format inputs
-  varNames <- c("Precip", "PotEvap", "TempMean", "Qobs", "Qmin",
+  if (!is.null(Qobs) && !is.null(Qinf)) {
+    stop("'Qobs' and 'Qinf' cannot be used together, use only 'Qinf' instead")
+  }
+  if (!is.null(Qobs)) {
+    warning("The usage of 'Qobs' is deprecated, use 'Qinf' instead")
+    Qinf <- Qobs
+  }
+  varNames <- c("Precip", "PotEvap", "TempMean", "Qinf", "Qmin",
                 "TempMin", "TempMax", "ZInputs", "HypsoData", "NLayers")
   names(varNames) <- varNames
   lapply(varNames, function(varName) {
