@@ -14,7 +14,8 @@ Description: Semi-distributed Precipitation-Runoff Modelling based on
     'airGR' package models integrating human infrastructures and their
     managements.
 License: AGPL-3
-URL: https://github.com/inrae/airGRiwrm#readme
+URL: https://inrae.github.io/airGRiwrm/,
+    https://github.com/inrae/airGRiwrm#readme
 BugReports: https://github.com/inrae/airGRiwrm/issues
 Depends:
     airGR (>= 1.7.0),
