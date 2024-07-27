@@ -140,6 +140,7 @@
 <span>  <span class="va">DatesR</span>,</span>
 <span>  Precip <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  PotEvap <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  Qinf <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Qobs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Qmin <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Qrelease <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -177,7 +178,7 @@ precipitation in [mm per time step]. Column names correspond to node IDs</p></dd
 potential evaporation [mm per time step]. Column names correspond to node IDs</p></dd>
 
 
-<dt id="arg-qobs">Qobs<a class="anchor" aria-label="anchor" href="#arg-qobs"></a></dt>
+<dt id="arg-qinf">Qinf<a class="anchor" aria-label="anchor" href="#arg-qinf"></a></dt>
 <dd><p>(optional) <a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a> or <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> of <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> containing
 observed flows. It must be provided only for nodes of type "Direct
 injection" and "Diversion". See <a href="CreateGRiwrm.html">CreateGRiwrm</a> for
@@ -185,6 +186,10 @@ details about these node types. Unit is [mm per time step] for nodes
 with an area, and [m3 per time step] for nodes with <code>area=NA</code>.
 Column names correspond to node IDs. Negative flows are abstracted from
 the model and positive flows are injected to the model</p></dd>
+
+
+<dt id="arg-qobs">Qobs<a class="anchor" aria-label="anchor" href="#arg-qobs"></a></dt>
+<dd><p>(deprecated) use <code>Qinf</code> instead</p></dd>
 
 
 <dt id="arg-qmin">Qmin<a class="anchor" aria-label="anchor" href="#arg-qmin"></a></dt>
@@ -263,7 +268,7 @@ as column names. For single values (<code>ZInputs</code> or <code>NLayers</code>
 requires named <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> with the id of the sub-catchment as name item. If an
 argument is optional, only the column or the named item has to be provided.</p>
 <p>See <a href="https://rdrr.io/pkg/airGR/man/CreateInputsModel.html" class="external-link">airGR::CreateInputsModel</a> documentation for details concerning each input.</p>
-<p>Number of rows of <code>Precip</code>, <code>PotEvap</code>, <code>Qobs</code>, <code>Qmin</code>, <code>TempMean</code>, <code>TempMin</code>,
+<p>Number of rows of <code>Precip</code>, <code>PotEvap</code>, <code>Qinf</code>, <code>Qmin</code>, <code>TempMean</code>, <code>TempMin</code>,
 <code>TempMax</code> must be the same of the length of <code>DatesR</code> (each row corresponds to
 a time step defined in <code>DatesR</code>).</p>
 <p>For example of use of Direct Injection nodes, see vignettes
@@ -339,6 +344,7 @@ a time step defined in <code>DatesR</code>).</p>
 <span class="r-in"><span>                            Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
 <span class="r-in"><span>                            PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
 <span class="r-in"><span>                            Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The usage of 'Qobs' is deprecated, use 'Qinf' instead</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin GaugingDown...</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">InputsModels</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
@@ -608,6 +614,7 @@ a time step defined in <code>DatesR</code>).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Creation of GRimwrInputsModel object</span></span></span>
 <span class="r-in"><span><span class="va">IM_div</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">g_div</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span>, Qobs <span class="op">=</span> <span class="va">Qirrig</span>, Qmin <span class="op">=</span> <span class="va">Qmin</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The usage of 'Qobs' is deprecated, use 'Qinf' instead</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span>
