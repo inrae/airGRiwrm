@@ -90,15 +90,15 @@ n_div <- rbind(nodes,
 g_div <- CreateGRiwrm(n_div)
 Qmin = matrix(1E5, nrow = length(DatesR), ncol = 1)
 colnames(Qmin) = "54029"
-Qobs <- -Qmin
-IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+Qinf <- -Qmin
+IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = Qmin)
 RO_div <- setupRunOptions(IM_div)$RunOptions
 P_div <- ParamMichel
 P_div$`54002` <- c(1, ParamMichel$`54002`)
 
 test_that("RunModel_Diversion with zero diversion equals no diversion", {
-  Qobs[, ] <- 0
-  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  Qinf[, ] <- 0
+  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = Qmin)
   OM <- RunModel(IM, RunOptions = RO_div, Param = P_div)
   expect_s3_class(OM, "GRiwrmOutputsModel")
   lapply(names(OM), function(id) {
@@ -110,8 +110,8 @@ test_that("RunModel_Diversion with zero diversion equals no diversion", {
 })
 
 test_that("Huge diversion would result in Qsim_m3 == Qmin", {
-  Qobs[, ] <- -1E12
-  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  Qinf[, ] <- -1E12
+  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = Qmin)
   OM <- RunModel(IM, RunOptions = RO_div, Param = P_div)
   expect_equal(OM[["54029"]]$Qsim_m3, Qmin[RunOptions[[1]]$IndPeriod_Run])
   expect_equal(OM[["54029"]]$Qsim,
@@ -120,9 +120,9 @@ test_that("Huge diversion would result in Qsim_m3 == Qmin", {
 })
 
 test_that("Huge minimum remaining flow results in Qdiv = 0", {
-  Qobs[, ] <- -1000
+  Qinf[, ] <- -1000
   Qmin[, ] <- 1E12
-  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  IM <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = Qmin)
   OM <- RunModel(IM, RunOptions = RO_div, Param = P_div)
   expect_equal(OM[["54029"]]$Qsim, OM[["54029"]]$Qnat)
   expect_equal(OM[["54029"]]$Qdiv_m3, rep(0, length(IndPeriod_Run)))
@@ -179,7 +179,7 @@ test_that("Upstream node - equal Diversion should return same results", {
                               DatesR,
                               Precip[, meteoIds],
                               PotEvap[, meteoIds],
-                              Qobs = Qinf,
+                              Qinf = Qinf,
                               Qmin = Qmin)
 
   RO_2ol <- setupRunOptions(IM_2ol)$RunOptions
@@ -256,8 +256,8 @@ test_that("RunModel should return water deficit (Qover_m3)", {
     data.frame(id = "P", down = "54001", length = 10, area = NA, model = NA)
   )
   g <- CreateGRiwrm(nodes)
-  Qobs2 <- data.frame(P = rep(-2E6, length(DatesR)))
-  expect_warning(e <- setupRunModel(griwrm = g, runRunModel = TRUE, Qobs2 = Qobs2))
+  Qinf <- data.frame(P = rep(-2E6, length(DatesR)))
+  expect_warning(e <- setupRunModel(griwrm = g, runRunModel = TRUE, Qinf = Qinf))
   for (x in ls(e)) assign(x, get(x, e))
   expect_false(any(OM_GriwrmInputs$`54001`$Qsim_m3 < 0))
   expect_true(all(OM_GriwrmInputs$`54001`$Qover_m3 >= 0))

@@ -15,11 +15,11 @@ nodes2 <- rbind(nodes,
                 ))
 griwrm2 <- CreateGRiwrm(nodes2)
 
-# Add Qobs for the 2 new nodes and create InputsModel
-Qobs <- matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2)
-colnames(Qobs) <- c("R1", "R2")
+# Add Qinf for the 2 new nodes and create InputsModel
+Qinf <- matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2)
+colnames(Qinf) <- c("R1", "R2")
 InputsModel <-
-  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs)
+  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qinf)
 sv <- CreateSupervisor(InputsModel)
 
 test_that("Checks in CreateSupervisor", {
@@ -53,11 +53,11 @@ test_that("CreateSupervisor using reservoir and diversion", {
     model  = c("Diversion" , "RunModel_Reservoir")
   ))
   g <- CreateGRiwrm(nodes)
-  # Add Qobs for the 2 new nodes and create InputsModel
-  Qobs <- matrix(data = 0, ncol = 2, nrow = length(DatesR))
-  colnames(Qobs) <- c("54029", "Reservoir")
+  # Add Qinf for the 2 new nodes and create InputsModel
+  Qinf <- matrix(data = 0, ncol = 2, nrow = length(DatesR))
+  colnames(Qinf) <- c("54029", "Reservoir")
   InputsModel <- suppressWarnings(
-      CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
+      CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf)
   )
   sv <- CreateSupervisor(InputsModel)
   expect_equal(sv$griwrm4U$id, c("54029", "Reservoir"))

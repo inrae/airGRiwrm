@@ -62,9 +62,9 @@ test_that("Ungauged node with gauged upstream node should works", {
 test_that("RunModel_Ungauged works with a diversion as donor (#110)", {
   nodes <- rbind(nodes,
                  data.frame(id = "54032", down = NA, length = NA, area = NA, model = "Diversion"))
-  Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
-  colnames(Qobs2) <- "54032"
-  e <- runCalibration(nodes, Qobs2 = Qobs2)
+  Qinf <- matrix(0, ncol = 1, nrow = 11536)
+  colnames(Qinf) <- "54032"
+  e <- runCalibration(nodes, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   OCdiv <- OutputsCalib
   expect_equal(OCdiv, OC)
@@ -98,9 +98,9 @@ test_that("Ungauged node with gauged upstream node should works", {
 test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
   nodes <- rbind(nodes,
                  data.frame(id = "54095", down = "54032", length = 100, area = NA, model = "Diversion"))
-  Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
-  colnames(Qobs2) <- "54095"
-  e <- runCalibration(nodes, Qobs2 = Qobs2)
+  Qinf <- matrix(0, ncol = 1, nrow = 11536)
+  colnames(Qinf) <- "54095"
+  e <- runCalibration(nodes, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   expect_equal(OutputsCalib$`54032`$CritFinal, CritValue)
 })
@@ -108,9 +108,9 @@ test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
 test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
   nodes <- rbind(nodes,
                  data.frame(id = "54095", down = "54001", length = 100, area = NA, model = "Diversion"))
-  Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
-  colnames(Qobs2) <- "54095"
-  e <- runCalibration(nodes, Qobs2 = Qobs2)
+  Qinf <- matrix(0, ncol = 1, nrow = 11536)
+  colnames(Qinf) <- "54095"
+  e <- runCalibration(nodes, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   expect_equal(OutputsCalib$`54032`$CritFinal, CritValue)
 })
@@ -122,7 +122,7 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
   nodes$model[nodes$id == "54095"] <- "Ungauged"
 
   # First without Diversion
-  e <- runCalibration(nodes, Qobs2 = Qobs2)
+  e <- runCalibration(nodes, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   OC1 <- OutputsCalib
   Param1 <- Param
@@ -143,9 +143,9 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
   nodes <- rbind(nodes,
                  data.frame(id = "54095", down = "54032", length = 100,
                             area = NA, model = "Diversion"))
-  Qobs2 <- matrix(0, ncol = 1, nrow = 11536)
-  colnames(Qobs2) <- "54095"
-  e <- runCalibration(nodes, Qobs2 = Qobs2)
+  Qinf <- matrix(0, ncol = 1, nrow = 11536)
+  colnames(Qinf) <- "54095"
+  e <- runCalibration(nodes, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   OC2 <- OutputsCalib
   expect_equal(OC2$`54001`$CritFinal, OC1$`54001`$CritFinal)
@@ -181,9 +181,9 @@ test_that("Ungauged node with upstream node with diversion should work", {
                             area = NA,
                             model = "Diversion"))
   g <- CreateGRiwrm(nodes)
-  Qobs2 <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
-  colnames(Qobs2) <- g$id[g$model == "Diversion"]
-  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
+  Qinf <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
+  colnames(Qinf) <- g$id[g$model == "Diversion"]
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
 
   ParamRef[["P"]] <- 1
@@ -227,9 +227,9 @@ test_that("Donor node with diversion should work", {
                             area = NA,
                             model = "Diversion"))
   g <- CreateGRiwrm(nodes)
-  Qobs2 <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
-  colnames(Qobs2) <- g$id[g$model == "Diversion"]
-  e <- runCalibration(nodes, Qobs2 = Qobs2)
+  Qinf <- matrix(0, ncol = length(g$id[g$model == "Diversion"]), nrow = 11536)
+  colnames(Qinf) <- g$id[g$model == "Diversion"]
+  e <- runCalibration(nodes, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   expect_equal(OC_ref$`54032`$CritFinal, OutputsCalib$`54032`$CritFinal, tolerance = 1E-3)
 })
@@ -312,10 +312,10 @@ test_that("Diversion to an ungauged node should works", {
     )
   )
   nodes$model[nodes$id == "54032"] <- "Ungauged"
-  Qobs2 <- Qobs_rsrvr + 1E9
-  colnames(Qobs2) <- "54001"
+  Qinf <- Qinf_rsrvr + 1E9
+  colnames(Qinf) <- "54001"
   e <- suppressWarnings(
-    runCalibration(nodes, Qobs2 = Qobs2)
+    runCalibration(nodes, Qinf = Qinf)
   )
   for (x in ls(e)) assign(x, get(x, e))
   expect_true(OutputsCalib$`54057`$CritFinal > 0.4)

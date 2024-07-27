@@ -127,20 +127,20 @@ test_that("throws error when missing CemaNeige data", {
                regexp = "'TempMean' is missing")
 })
 
-test_that("throws error when missing Qobs on node Direct Injection node", {
+test_that("throws error when missing Qinf on node Direct Injection node", {
   l$griwrm$model[1] <- NA
   expect_error(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
                                  Precip = l$Precip,
                                  PotEvap = l$PotEvap),
-               regexp = "'Qobs' column names must at least contain")
+               regexp = "'Qinf' column names must at least contain")
 
   expect_error(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
                                  Precip = l$Precip,
                                  PotEvap = l$PotEvap,
-                                 Qobs = l$Qobs[, -1]),
-               regexp = "'Qobs' column names must at least contain")
+                                 Qinf = l$Qobs[, -1]),
+               regexp = "'Qinf' column names must at least contain")
 })
 
 test_that("must works with node not related to an hydrological model", {
@@ -150,7 +150,7 @@ test_that("must works with node not related to an hydrological model", {
     DatesR = l$DatesR,
     Precip = l$Precip,
     PotEvap = l$PotEvap,
-    Qobs = l$Qobs[, 1, drop = FALSE],
+    Qinf = l$Qobs[, 1, drop = FALSE],
     TempMean = l$TempMean,
     ZInputs = l$ZInputs,
     HypsoData = l$HypsoData
@@ -159,16 +159,16 @@ test_that("must works with node not related to an hydrological model", {
   expect_equal(colnames(IM[[2]]$Qupstream), c("Up1", "Up2"))
 })
 
-test_that("Qobs on hydrological nodes should throw a warning", {
+test_that("Qinf on hydrological nodes should throw a warning", {
   expect_warning(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
                                  Precip = l$Precip,
                                  PotEvap = l$PotEvap,
-                                 Qobs = l$Qobs,
+                                 Qinf = l$Qobs,
                                  TempMean = l$TempMean,
                                  ZInputs = l$ZInputs,
                                  HypsoData = l$HypsoData),
-               regexp = "columns in 'Qobs' are ignored since they don't match with")
+               regexp = "columns in 'Qinf' are ignored since they don't match with")
   l$griwrm$model[1] <- NA
   expect_s3_class(suppressWarnings(
     CreateInputsModel(
@@ -176,7 +176,7 @@ test_that("Qobs on hydrological nodes should throw a warning", {
       DatesR = l$DatesR,
       Precip = l$Precip,
       PotEvap = l$PotEvap,
-      Qobs = l$Qobs[,1, drop = F],
+      Qinf = l$Qobs[,1, drop = F],
       TempMean = l$TempMean,
       ZInputs = l$ZInputs,
       HypsoData = l$HypsoData
@@ -211,10 +211,10 @@ test_that("Network with Diversion works", {
     nodes
   )
   g <- CreateGRiwrm(n_div)
-  Qobs = matrix(-1, nrow = length(DatesR), ncol = 1)
-  colnames(Qobs) = "54029"
+  Qinf = matrix(-1, nrow = length(DatesR), ncol = 1)
+  colnames(Qinf) = "54029"
   IM <- suppressWarnings(
-    CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs)
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf)
   )
   expect_equal(IM[["54032"]]$UpstreamNodes, c("54029", "54001"))
   expect_equal(IM[["54032"]]$UpstreamVarQ , c("54029" = "Qsim_m3", "54001" = "Qsim_m3"))
@@ -228,20 +228,20 @@ test_that("Diversion node: checks about 'Qmin'", {
   n_div <- rbind(nodes,
                  data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
   g <- CreateGRiwrm(n_div)
-  Qobs = matrix(-1, nrow = length(DatesR), ncol = 1)
-  colnames(Qobs) = "54029"
-  expect_warning(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs),
+  Qinf = matrix(-1, nrow = length(DatesR), ncol = 1)
+  colnames(Qinf) = "54029"
+  expect_warning(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf),
                  regexp = "Zero values")
-  Qmin <- -Qobs
-  IM <- CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = Qmin)
+  Qmin <- -Qinf
+  IM <- CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = Qmin)
   expect_equivalent(IM$`54029`$Qmin, Qmin)
   QminNA <- Qmin
   QminNA[1] <- NA
-  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminNA),
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = QminNA),
                regexp = "NA")
   QminBadCol <- Qmin
   colnames(QminBadCol) = "54002"
-  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs, Qmin = QminBadCol),
+  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = QminBadCol),
                regexp = "columns that does not match with IDs of Diversion nodes")
 })
 
@@ -262,22 +262,22 @@ test_that("Node with upstream nodes having area = NA should return correct Basin
                             area = NA,
                             model = "RunModel_Reservoir"))
   g <- CreateGRiwrm(nodes)
-  Qobs2 <- data.frame(
+  Qinf <- data.frame(
     Dam = rep(0,11536)
   )
-  e <- setupRunModel(griwrm = g, runInputsModel = FALSE, Qobs2 = Qobs2)
+  e <- setupRunModel(griwrm = g, runInputsModel = FALSE, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   InputsModel <-
-    suppressWarnings(CreateInputsModel(g, DatesR, Precip, PotEvap, Qobs = Qobs2))
+    suppressWarnings(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf))
   expect_equal(sum(InputsModel$`54001`$BasinAreas),
                g$area[g$id == "54001"])
 })
 
-test_that("Use of Qobs for Qrelease should raise a warning",  {
+test_that("Use of Qinf for Qrelease should raise a warning",  {
   g <- CreateGRiwrm(n_rsrvr)
   e <- setupRunModel(griwrm = g, runInputsModel = FALSE)
   for (x in ls(e)) assign(x, get(x, e))
   expect_warning(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
                                    TempMean = TempMean,
-                                   Qobs = Qobs_rsrvr))
+                                   Qinf = Qinf_rsrvr))
 })

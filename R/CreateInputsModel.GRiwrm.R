@@ -6,13 +6,14 @@
 #'        precipitation in \[mm per time step\]. Column names correspond to node IDs
 #' @param PotEvap (optional) [matrix] or [data.frame] of [numeric] containing
 #'        potential evaporation \[mm per time step\]. Column names correspond to node IDs
-#' @param Qobs (optional) [matrix] or [data.frame] of [numeric] containing
+#' @param Qinf (optional) [matrix] or [data.frame] of [numeric] containing
 #'        observed flows. It must be provided only for nodes of type "Direct
 #'        injection" and "Diversion". See [CreateGRiwrm] for
 #'        details about these node types. Unit is \[mm per time step\] for nodes
 #'        with an area, and \[m3 per time step\] for nodes with `area=NA`.
 #'        Column names correspond to node IDs. Negative flows are abstracted from
 #'        the model and positive flows are injected to the model
+#' @param Qobs (deprecated) use `Qinf` instead
 #' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
 #'        minimum flows to let downstream of a node with a Diversion \[m3 per
 #'        time step\]. Default is zero. Column names correspond to node IDs
@@ -52,7 +53,7 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' Number of rows of `Precip`, `PotEvap`, `Qobs`, `Qmin`, `TempMean`, `TempMin`,
+#' Number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `TempMean`, `TempMin`,
 #' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
 #' a time step defined in `DatesR`).
 #'
@@ -71,6 +72,7 @@
 CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      Precip = NULL,
                                      PotEvap = NULL,
+                                     Qinf = NULL,
                                      Qobs = NULL,
                                      Qmin = NULL,
                                      Qrelease = NULL,
@@ -81,7 +83,14 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      IsHyst = FALSE, ...) {
 
   # Check and format inputs
-  varNames <- c("Precip", "PotEvap", "TempMean", "Qobs", "Qmin",
+  if (!is.null(Qobs) && !is.null(Qinf)) {
+    stop("'Qobs' and 'Qinf' cannot be used together, use only 'Qinf' instead")
+  }
+  if (!is.null(Qobs)) {
+    warning("The usage of 'Qobs' is deprecated, use 'Qinf' instead")
+    Qinf <- Qobs
+  }
+  varNames <- c("Precip", "PotEvap", "TempMean", "Qinf", "Qmin",
                 "TempMin", "TempMax", "ZInputs", "HypsoData", "NLayers")
   names(varNames) <- varNames
   lapply(varNames, function(varName) {
@@ -131,13 +140,13 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     }
   })
 
-  if (is.null(Qobs)) Qobs <- matrix(0, ncol = 0, nrow = length(DatesR))
+  if (is.null(Qinf)) Qinf <- matrix(0, ncol = 0, nrow = length(DatesR))
   if (is.null(Qrelease)) Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
-  l <- updateQObsQrelease(g = x, Qobs = Qobs, Qrelease = Qrelease)
-  Qobs <- l$Qobs
+  l <- updateQinfQrelease(g = x, Qinf = Qinf, Qrelease = Qrelease)
+  Qinf <- l$Qinf
   Qrelease <- l$Qrelease
-  checkQobsQrelease(x, "Qobs", Qobs)
-  checkQobsQrelease(x, "Qrelease", Qrelease)
+  checkQinfQrelease(x, "Qinf", Qinf)
+  checkQinfQrelease(x, "Qrelease", Qrelease)
 
   diversionRows <- getDiversionRows(x)
   if (length(diversionRows) > 0) {
@@ -198,7 +207,7 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  ZInputs = getInputBV(ZInputs, id),
                                  HypsoData = getInputBV(HypsoData, id),
                                  NLayers = getInputBV(NLayers, id, 5),
-                                 Qobs = Qobs,
+                                 Qinf = Qinf,
                                  Qmin = getInputBV(Qmin, id),
                                  Qrelease = Qrelease,
                                  IsHyst = IsHyst
@@ -232,11 +241,11 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'        - `DatesR` [vector] of dates required to create the GR model and CemaNeige module inputs
 #'        - `Precip` [vector] time series of potential evapotranspiration (catchment average) (mm/time step)
 #'        - `PotEvap` [vector] time series of potential evapotranspiration (catchment average) (mm/time step)
-#' @param Qobs Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs
+#' @param Qinf Matrix or data frame of numeric containing observed flow (mm/time step). Column names correspond to node IDs
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrelease, IsHyst) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrelease, IsHyst) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -258,7 +267,7 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
     # Sub-basin with hydraulic routing
     Qupstream <- NULL
     Qupstream <- as.matrix(cbind(
-      Qobs[ , colnames(Qobs)[colnames(Qobs) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE],
+      Qinf[ , colnames(Qinf)[colnames(Qinf) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE],
       Qrelease[ , colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE]
     ))
     # Qupstream completion with zeros for all upstream nodes
@@ -355,11 +364,11 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qobs, Qmin, Qrel
   # Add specific properties for Diversion and Reservoir nodes
   if (np$Diversion) {
     InputsModel$diversionOutlet <- diversionOutlet
-    InputsModel$Qdiv <- -Qobs[, id, drop = TRUE]
+    InputsModel$Qdiv <- -Qinf[, id, drop = TRUE]
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
-    # Fill reservoir release with Qobs
+    # Fill reservoir release with Qinf
     InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
   }
 

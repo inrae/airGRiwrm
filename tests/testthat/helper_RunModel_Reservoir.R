@@ -23,7 +23,7 @@ n_rsrvr <- rbind(
 )
 
 # Model input
-Qobs_rsrvr <- data.frame(Dam = rep(0, 11536))
+Qinf_rsrvr <- data.frame(Dam = rep(0, 11536))
 
 get_nodes_derived_reservoir <- function(n_rsrvr) {
   nodes_Severn <- loadSevernNodes()
@@ -60,16 +60,16 @@ getGriwrmDerivedReservoirUngauged <- function(donorByDerivation, inconsistent = 
 
 testDerivedUngauged <- function(donorByDerivation) {
   g <- getGriwrmDerivedReservoirUngauged(donorByDerivation)
-  Qobs2 <- matrix(-1E9, ncol = 2, nrow = 11536)
-  colnames(Qobs2) <- c("54095", "Dam")
-  Qobs2[, "54095"] <- -1E9
-  Qobs2[, "Dam"] <- 1E9
-  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qobs2 = Qobs2)
+  Qinf <- matrix(-1E9, ncol = 2, nrow = 11536)
+  colnames(Qinf) <- c("54095", "Dam")
+  Qinf[, "54095"] <- -1E9
+  Qinf[, "Dam"] <- 1E9
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
 
   CalibOptions <- CreateCalibOptions(InputsModel,
                                      FixedParam = list(Dam = c(650E6, 1)))
-  e <- runCalibration(g, Qobs2 = Qobs2, CalibOptions = CalibOptions)
+  e <- runCalibration(g, Qinf = Qinf, CalibOptions = CalibOptions)
   for (x in ls(e)) assign(x, get(x, e))
   expect_equal(Param[["54095"]][1:3],
                Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4])

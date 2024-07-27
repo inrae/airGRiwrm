@@ -105,7 +105,7 @@ test_that("Calibration with Diversion works", {
   Qmin = matrix(1E5, nrow = length(DatesR), ncol = 1)
   colnames(Qmin) = "54029"
   Qdiv <- -Qmin
-  IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qdiv, Qmin = Qmin)
+  IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qdiv, Qmin = Qmin)
   RO_div <- setupRunOptions(IM_div)$RunOptions
   P_div <- ParamMichel
   P_div$`54002` <- c(1, ParamMichel$`54002`)
@@ -152,7 +152,7 @@ test_that("Derivation and normal connection should return same calibration", {
                               DatesR,
                               Precip[, meteoIds],
                               PotEvap[, meteoIds],
-                              Qobs = Qinf,
+                              Qinf = Qinf,
                               Qmin = Qmin)
 
   # Copy area of upstream node to downstream node in order to get

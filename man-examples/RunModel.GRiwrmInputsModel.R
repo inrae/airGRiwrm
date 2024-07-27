@@ -49,15 +49,15 @@ PotEvap <- matrix(BasinObs$E, ncol = 1)
 colnames(PotEvap) <- "GaugingDown"
 
 # Observed flows contain flows that are directly injected in the model
-Qobs = matrix(Qupstream, ncol = 1)
-colnames(Qobs) <- "Reservoir"
+Qinf = matrix(Qupstream, ncol = 1)
+colnames(Qinf) <- "Reservoir"
 
 # Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)
 InputsModels <- CreateInputsModel(griwrm,
                             DatesR = BasinObs$DatesR,
                             Precip = Precip,
                             PotEvap = PotEvap,
-                            Qobs = Qobs)
+                            Qinf = Qinf)
 str(InputsModels)
 
 ## run period selection
@@ -180,7 +180,7 @@ Qmin <- matrix(12 * 86400, nrow = length(DatesR), ncol = 1)
 colnames(Qmin) = "54001"
 
 # Creation of GRimwrInputsModel object
-IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qirrig, Qmin = Qmin)
+IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qirrig, Qmin = Qmin)
 
 # RunOptions and parameters are unchanged, we can directly run the simulation
 OM_div <- RunModel(IM_div,
