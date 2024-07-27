@@ -2,7 +2,7 @@
 #'
 #' The reservoir model is a model combining a lag model and the calculation of
 #' the water storage time series according to the released flow time series
-#' from the `Qobs` parameter of [CreateInputsModel.GRiwrm].
+#' from the `Qinf` parameter of [CreateInputsModel.GRiwrm].
 #'
 #' @details
 #' The simulated flow corresponds to the released flow except when the reservoir
