@@ -25,12 +25,12 @@ data(Severn)
 
 ## The study case
 
-In this vignette, we are still using the study case of the vignette #1 and #2, and 
-we are going to simulate a diversion at the node "54001" to provide flow to the node 
+In this vignette, we are still using the study case of the vignette #1 and #2, and
+we are going to simulate a diversion at the node "54001" to provide flow to the node
 "54029" in order to support low flows in the Severn river.
 
-This objective is to maintain a minimum flow equals to the 3th decile of the flow 
-at station "54029" without remaining less than the first decile of the flow downstream 
+This objective is to maintain a minimum flow equals to the 3th decile of the flow
+at station "54029" without remaining less than the first decile of the flow downstream
 the station "54001".
 
 Let's compute the flow quantiles at each station in m3/s:
@@ -45,7 +45,7 @@ apply(Qobs_m3s[, c("54029", "54001")], 2, quantile, probs = seq(0,1,0.1), na.rm 
 The rule to apply is expressed as follow:
 
 > The diversion from "54001" is computed to maintain a minimum flow of 5.3 m3/s at
-the gauging station "54029". The diversion is allowed as far as the flow at the 
+the gauging station "54029". The diversion is allowed as far as the flow at the
 gauging station "54001" is above 11.5 m3/s.
 
 ## Network
@@ -82,7 +82,7 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 ```
 
 The main difference here is that we need to provide a diverted flow and a minimum
-remaining flow at station "54029". As, the diverted flow will be calculated during 
+remaining flow at station "54029". As, the diverted flow will be calculated during
 simulation, we provide a initial diverted flow equals to zero for all the time steps.
 
 ```{r}
@@ -90,16 +90,16 @@ Qdiv <- matrix(rep(0, length(DatesR)), ncol = 1)
 colnames(Qdiv) <- "54001"
 Qmin <- matrix(rep(11.5 * 86400, length(DatesR)), ncol = 1)
 colnames(Qmin) <- "54001"
-IM_div <- CreateInputsModel(griwrmV06, DatesR, Precip, PotEvap, Qobs = Qdiv, Qmin = Qmin)
+IM_div <- CreateInputsModel(griwrmV06, DatesR, Precip, PotEvap, Qinf = Qdiv, Qmin = Qmin)
 ```
 
 ## Implementation of the regulation controller
 
 ### The supervisor
 
-The simulation is piloted through a `Supervisor` that can contain one or more 
-`Controller`. The supervision time step will be here the same as the simulation 
-time step:  1 day. Each day, the decision is taken for the current day from the 
+The simulation is piloted through a `Supervisor` that can contain one or more
+`Controller`. The supervision time step will be here the same as the simulation
+time step:  1 day. Each day, the decision is taken for the current day from the
 measurement simulated the previous time step.
 
 ```{r}
@@ -108,12 +108,12 @@ sv <- CreateSupervisor(IM_div, TimeStep = 1L)
 
 ### The control logic function
 
-On a Diversion node, the minimum remaining flow is provided with the inputs and 
+On a Diversion node, the minimum remaining flow is provided with the inputs and
 is automatically taken into account by the model. So the control logic function
-has only to take care about how much water to divert to the gauging station 
+has only to take care about how much water to divert to the gauging station
 "54002".
 
-We need to enclose the logic function in a function factory providing the 
+We need to enclose the logic function in a function factory providing the
 Supervisor in the environment of the function:
 
 ```{r}
@@ -134,7 +134,7 @@ logicFunFactory <- function(sv) {
 
 ### The controller
 
-We declare the controller which defines where is the measurement `Y` , where to 
+We declare the controller which defines where is the measurement `Y` , where to
 apply the decision `U` with which logic function:
 
 ```{r}
@@ -153,7 +153,7 @@ First we need to create a `GRiwrmRunOptions` object and load the parameters cali
 ```{r}
 # Running simulation on year 2003
 IndPeriod_Run <- which(
-  DatesR >= as.POSIXct("2003-03-01", tz = "UTC") & 
+  DatesR >= as.POSIXct("2003-03-01", tz = "UTC") &
     DatesR <= as.POSIXct("2004-01-01", tz = "UTC")
 )
 IndPeriod_WarmUp = seq(IndPeriod_Run[1] - 366,IndPeriod_Run[1] - 1)
@@ -164,8 +164,8 @@ ParamV02 <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwr
 ```
 
 The node "54029" was initially an upstream node. As it receives water from "54001"
-it is no longer an upstream node and needs a parameter for routing its upstream 
-flows. We arbitrary say that the velocity in the channel between "54001" and 
+it is no longer an upstream node and needs a parameter for routing its upstream
+flows. We arbitrary say that the velocity in the channel between "54001" and
 "54029" is 1 m/s.
 
 ```{r}
@@ -188,7 +188,7 @@ OM_nat <- RunModel(IM_div, RunOptions = RunOptions, Param = ParamV02)
 
 ## Exploring results
 
-Let's plot the diverted flow, and compare the flow at stations 54029 and 54001, 
+Let's plot the diverted flow, and compare the flow at stations 54029 and 54001,
 with and without low-flow support at station 54001:
 
 ```{r, fig.asp=1}
@@ -203,8 +203,8 @@ thresholds <- c("54001" = 11.5, "54029" = 5.3)
 lapply(names(thresholds), function(id) {
   df <- cbind(attr(OM_div, "Qm3s")[, c("DatesR", id)],
                    attr(OM_nat, "Qm3s")[, id])
-  names(df) <- c("DatesR", 
-                      paste(id, "with low-flow support"), 
+  names(df) <- c("DatesR",
+                      paste(id, "with low-flow support"),
                       paste(id, "natural flow"))
   plot.Qm3s(df, ylim = c(0,50), lty = c("solid", "dashed"))
   abline(h = thresholds[id], col = "green", lty = "dotted")
