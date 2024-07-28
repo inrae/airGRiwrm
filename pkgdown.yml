@@ -1,0 +1,20 @@
+pandoc: 3.1.11
+pkgdown: 2.1.0
+pkgdown_sha: ~
+articles:
+  airGRiwrm: airGRiwrm.html
+  seinebasin/V01_First_network: seinebasin/V01_First_network.html
+  V01_Structure_SD_model: V01_Structure_SD_model.html
+  V02_Calibration_SD_model: V02_Calibration_SD_model.html
+  seinebasin/V02_First_run: seinebasin/V02_First_run.html
+  seinebasin/V03_First_Calibration: seinebasin/V03_First_Calibration.html
+  V03_Open-loop_influenced_flow: V03_Open-loop_influenced_flow.html
+  V04_Closed-loop_regulated_withdrawal: V04_Closed-loop_regulated_withdrawal.html
+  seinebasin/V04_Open-loop_influenced_flow: seinebasin/V04_Open-loop_influenced_flow.html
+  seinebasin/V05_Open-loop_influenced_flow_calibration: seinebasin/V05_Open-loop_influenced_flow_calibration.html
+  seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J: seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J.html
+  seinebasin/V06_Naturalised_flow_simulation: seinebasin/V06_Naturalised_flow_simulation.html
+last_built: 2024-07-28T07:49Z
+urls:
+  reference: https://inrae.github.io/airGRiwrm/reference
+  article: https://inrae.github.io/airGRiwrm/articles
