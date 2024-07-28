@@ -13,7 +13,7 @@ navbar:
   components:
     intro:
       text: Get started
-      href: articles/airgriwrm.html
+      href: articles/airGRiwrm.html
     galaxy:
       text: airGR Galaxy
       menu:
