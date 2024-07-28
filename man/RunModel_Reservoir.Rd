@@ -21,7 +21,7 @@ completed with an item \code{Vsim} representing the water volume time series in 
 \description{
 The reservoir model is a model combining a lag model and the calculation of
 the water storage time series according to the released flow time series
-from the \code{Qobs} parameter of \link{CreateInputsModel.GRiwrm}.
+from the \code{Qinf} parameter of \link{CreateInputsModel.GRiwrm}.
 }
 \details{
 The simulated flow corresponds to the released flow except when the reservoir
@@ -93,7 +93,7 @@ Qrelease <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
 InputsModel <- CreateInputsModel(griwrm, DatesR = BasinObs$DatesR,
                                  Precip = Precip,
                                  PotEvap = PotEvap,
-                                 Qobs = Qrelease)
+                                 Qinf = Qrelease)
 
 ## run period selection
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),

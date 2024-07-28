@@ -58,7 +58,7 @@ Qrelease <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
 InputsModel <- CreateInputsModel(griwrm, DatesR = BasinObs$DatesR,
                                  Precip = Precip,
                                  PotEvap = PotEvap,
-                                 Qobs = Qrelease)
+                                 Qinf = Qrelease)
 
 ## run period selection
 Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
