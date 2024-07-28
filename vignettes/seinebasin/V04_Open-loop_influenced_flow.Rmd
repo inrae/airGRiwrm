@@ -198,24 +198,6 @@ data(QNAT)
 data(Qreservoirs)
 ```
 
-## How to handle an inline reservoir? The Pannecière lake case.
-
-There are two possibilities:
-
-- truncate the system and only simulate the release of the reservoir if we only care about downstream flows
-- add a fictive inlet to the reservoir that will store all upstream discharge into the reservoir
-
-If we know in advance the flows released by the reservoir, upstream flow informations is not useful for the simulation. However, reservoir management simulation would require upstream flow informations for simulating the reservoir state during simulation. The second alternative will therefore be useful for the next phases.
-
-```{r Qnat}
-Qreservoirs <- cbind(
-  Qreservoirs,
-  -Qnat[, "CHAUM_07"] * griwrm2$area[griwrm2$id == "CHAUM_07"] * 1e3
-)
-colnames(Qreservoirs)[ncol(Qreservoirs)] <- "PANNEC_P"
-```
-
-
 ## Create the InputsModel object
 
 ```{r CreateInputsModel}
