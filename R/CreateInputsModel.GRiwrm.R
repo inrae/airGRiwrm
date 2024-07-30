@@ -106,7 +106,9 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
           stop(sprintf(
             "'%s' column names must be included in 'id's of the GRiwrm object",
             varName
-          ))
+          ), "\n",
+          sprintf("These columns are not known: %s",
+                  paste(colnames(v)[!colnames(v) %in% x$id]), collapse = ", "))
         } else if (any(duplicated(colnames(v)))) {
           stop(sprintf(
             "'%s' has duplicated column names: '%s'",

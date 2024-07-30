@@ -82,7 +82,7 @@ test_that("throws error on wrong column name", {
                                  TempMean = l$TempMean,
                                  ZInputs = l$ZInputs,
                                  HypsoData = l$HypsoData),
-               regexp = "column names must be included in")
+               regexp = "column names must be included in.*Up0")
   colnames(l$Precip) <- NULL
   expect_error(CreateInputsModel(l$griwrm,
                                  DatesR = l$DatesR,
