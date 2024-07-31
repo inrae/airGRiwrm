@@ -53,9 +53,9 @@ test_that("Calibrated parameters remains unchanged", {
     CalibOptions = CalibOptions
   )
 
-  ParamFinalR <- lapply(OutputsCalib, "[[", "ParamFinalR")
+  ParamFinalR <- extractParam(OutputsCalib)
 
-  lapply(names(ParamFinalR), function(id) expect_equal(ParamFinalR[[id]], ParamMichel[[id]]))
+  lapply(names(ParamFinalR), function(id) expect_equal(ParamFinalR[[!!id]], ParamMichel[[id]]))
 
 })
 
@@ -79,7 +79,7 @@ test_that("Calibration with regularization is OK", {
     CalibOptions = CalibOptions
   )
 
-  ParamLavenne <- lapply(OC, "[[", "ParamFinalR")
+  ParamLavenne <- extractParam(OC)
   expect_equal(OC[["54095"]]$CritFinal, ErrorCrit(
     InputsCrit[["54095"]],
     RunModel(InputsModel, RunOptions, ParamLavenne)[["54095"]]
@@ -175,7 +175,7 @@ test_that("Derivation and normal connection should return same calibration", {
   )
   ParamRef <- ParamMichel[names(IM_2ol)]
   ParamRef[["54095"]] <- c(1, ParamRef[["54095"]])
-  ParamFinalR <- lapply(OC_2ol, "[[", "ParamFinalR")
+  ParamFinalR <- extractParam(OC_2ol)
   lapply(names(ParamFinalR), function(id) expect_equal(OC_2ol[[id]]$CritFinal,
                                                        OutputsCalib[[id]]$CritFinal,
                                                        tolerance = 1E-5))
