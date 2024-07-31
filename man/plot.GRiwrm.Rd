@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.GRiwrm.R
 \name{plot.GRiwrm}
 \alias{plot.GRiwrm}
-\title{Display of a diagram representing the network structure of a GRiwrm object}
+\title{Plot of a diagram representing the network structure of a GRiwrm object}
 \usage{
 \method{plot}{GRiwrm}(
   x,
@@ -41,11 +41,7 @@
 Mermaid code of the diagram if display is \code{FALSE}, otherwise the function returns the diagram itself.
 }
 \description{
-Display of a diagram representing the network structure of a GRiwrm object
-}
-\details{
-This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
-is not handled on some platforms
+Plot of a diagram representing the network structure of a GRiwrm object
 }
 \examples{
 library(airGRiwrm)

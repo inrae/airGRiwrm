@@ -40,14 +40,7 @@ Using the study case of the vignette #1 and #2, we considere this time that node
 hydrological parameters of the gauged node `54032`.
 
 ```{r network, echo = FALSE}
-mmd <- function(x, ...) {
-  # For avoiding crash of R CMD build in console mode
-  if (Sys.getenv("RSTUDIO") == "1") {
-    DiagrammeR::mermaid(x, ...)
-  }
-}
-
-mmd("
+plot.mermaid("
 graph LR
 id95[54095]
 id01[54001]

@@ -1,4 +1,4 @@
-#' Display of a diagram representing the network structure of a GRiwrm object
+#' Plot of a diagram representing the network structure of a GRiwrm object
 #'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
 #' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
@@ -10,9 +10,6 @@
 #' @param header mermaid script to add before the generated script (init configuration)
 #' @param footer mermaid script to add after the generated script
 #' @param ... further parameters passed to [mermaid]
-#'
-#' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
-#' is not handled on some platforms
 #'
 #' @return Mermaid code of the diagram if display is `FALSE`, otherwise the function returns the diagram itself.
 #'
@@ -261,7 +258,6 @@ mermaid_gen_link <- function(diagram, theme = "default", format = "png", server 
 #' @source From https://stackoverflow.com/a/28729601/5300212
 #' @param path Path of the file
 #' @param add [logical] Add the image to the existing plot
-#' @param pic output of
 #'
 #' @return Nothing, used to side effect.
 #' @noRd
