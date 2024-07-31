@@ -198,12 +198,7 @@ modeled one. In the following, we provide details for each of the 4
 lakes, and then we present the complete SD network.</p>
 <p>First, the physical topology of the Aube lake is represented
 below:</p>
-<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslJKL0osyFDwCYrJU1AICXL084s3MFTQ1bWrMdQzzc6tUXAMdXKNDzACSUOZYFkjI7hkkDGaJJitASI0YTJwYWTVQcZgo0xMoDYFOXsGxxuZxOQVl1TmpMJNTMvMybFSTktORpEAasYqARVNTk6LyVPSUcpNLcpNzExRsqpWKslIzQX5OCU1LbE0p0SpthYAPctORA?type=png':</span></span>
-<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("graph LR\n  TRANN_01 --&gt;|1.5km| AUBE_P2\n  AUBE_P2 --&gt;|22km| AUBE_R3\n  AUBE_P2 --&gt; AUBE(AUBE)\n  AUBE --&gt; AUBE_R3\n  AUBE_R3 --&gt;|44.5km| ARCIS_24\nstyle AUBE_P2 fill:#fcc\nstyle AUBE_R3 fill:#fcc\nstyle AUBE fill:#ccf\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslJKL0osyFDwCYrJU1AICXL084s3MFTQ1bWrMdQzzc6tUXAMdXKNDzACSUOZYFkjI7hkkDGaJJitASI0YTJwYWTVQcZgo0xMoDYFOXsGxxuZxOQVl1TmpMJNTMvMybFSTktORpEAasYqARVNTk6LyVPSUcpNLcpNzExRsqpWKslIzQX5OCU1LbE0p0SpthYAPctORA?type=png'</span></span></code></pre>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_aube_true-1.png" width="700"></p>
 <p>In the SD model, we do not simulate intermediate flows as well as the
 reservoir in the catchment. As a result, an equivalent topology
 compatible with <strong>airGR</strong> will be the one below:</p>
@@ -212,30 +207,35 @@ compatible with <strong>airGR</strong> will be the one below:</p>
 (reservoir inflows) while <code>AUBE_R3</code> will propagate positive
 flows downstream (reservoir releases).</p>
 <p>The configuration on the lake Seine is similar:</p>
-<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_true-1.png" width="700"></p>
-<p>which can be translated as:</p>
 <pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
 <span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png':</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png':</span></span>
 <span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 --&gt;|79.7km| MERY-_22\n  SEINE_P7 --&gt;|73.7km| MERY-_22\n  SEINE_R8 --&gt;|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png'</span></span></code></pre>
+<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 --&gt;|6km| SEINE_P7\n  SEINE_P7 --&gt;|32km| SEINE_R8\n  SEINE_P7 --&gt; SEINE(SEINE)\n  SEINE--&gt; SEINE_R8\n  SEINE_R8 --&gt;|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n  style SEINE fill:#ccf\n"): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png'</span></span></code></pre>
+<p>which can be translated as:</p>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_model-1.png" width="700"></p>
 <p>The Pannecière lake is an inline reservoir:</p>
-<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_true-1.png" width="700"></p>
+<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
+<span><span class="co">#&gt; URL</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png':</span></span>
+<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
+<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 --&gt;|0km| P\nP --&gt; |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'</span></span></code></pre>
 <p>We can keep the same structure to model it. <code>PANNEC_R</code>
 corresponds to the flow released by the Pannecière lake, it is acting as
 an upstream node which means that the flow simulated at
 <code>CHAUM_07</code> is no longer routed to downstream.</p>
-<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png" width="700"></p>
+<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
+<span><span class="co">#&gt; URL</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':</span></span>
+<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
+<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --&gt; |0km| PANNEC_R\nPANNEC_R --&gt; |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'</span></span></code></pre>
 <p>The Marne lake can be mapped as:</p>
 <p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_true-1.png" width="700"></p>
 <p>And can be modeled as:</p>
-<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png':</span></span>
-<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nMARNE_P23 --&gt;|3km| STDIZ_04\nLOUVE_19 --&gt;|83km| CHALO_21\nMARNE_P28 --&gt;|82.5km| CHALO_21\nSTDIZ_04 --&gt;|85.6km| CHALO_21\nMARNE_R25 --&gt;|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png'</span></span></code></pre>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_model-1.png" width="700"></p>
 <p>Hence the topological connection to the reservoirs is described in
 the model as below:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
