@@ -265,6 +265,6 @@ df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
 names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
 df54001 <- as.Qm3s(df54001)
 plot(df54001, ylim = c(0,70))
-abline(h = 12, col = "green")
+abline(h = 12, col = "green", lty = "dotted")
 par(oldpar)
 }

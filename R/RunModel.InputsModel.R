@@ -1,21 +1,20 @@
 #' Wrapper for [airGR::RunModel] for one sub-basin
 #'
-#' @details This function calls [airGR::RunModel] (See [airGR::RunModel] for further details).
-#'
-#' The list produced by the function (See Value section of [airGR::RunModel_GR4J])
-#' is here completed by:
-#'
-#' - an item `$Qsim_m3` storing the simulated discharge series in m3/s
-#' - an item `$Qover_m3` storing the volumes of over abstraction which occurs
-#' when `RunModel_Lag` warns for negative simulated flows. The latter reflects the volume
-#' that was planned to be drawn from the sub-basin but could not be drawn because
-#' of the lack of water.
-#'
 #' @inheritParams airGR::RunModel
 #' @param x \[object of class \emph{InputsModel}\] see [airGR::CreateInputsModel] for details
 #' @param ... Further arguments for compatibility with S3 methods
 #'
-#' @inherit airGR::RunModel return return
+#' @returns \[object of class \emph{OutputsModel}\] returned by [airGR::RunModel]
+#' (See Value section of [airGR::RunModel_GR4J]) completed by new items:
+#' - `Qsim_m3`: simulated flow in cubic meters per time step
+#' - `Qover_m3` volumes of over abstractions which occurs when `RunModel_Lag` warns
+#' for negative simulated flows
+#' - `Qnat`: only present in case of Diversion in the node, simulated flow in mm
+#' per time step before application of the Diversion
+#' - `Qdiv_m3`: only present in case of Diversion in the node, simulated diverted flow in
+#' cubic meters per time step. The latter differs from the flows time series provided
+#' in argument `Qinf` of [CreateInputsModel.GRiwrm] by the limitation of diversion
+#' applied by the minimum flow threshold `Qmin` to keep flowing in the river
 #'
 #' @export
 RunModel.InputsModel <- function(x = NULL,

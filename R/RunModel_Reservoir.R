@@ -40,7 +40,16 @@
 #' of the reservoir and (2) the celerity in m/s of the upstream inflows.
 #'
 #' @return An *OutputsModel* object like the one return by [airGR::RunModel] but
-#' completed with an item `Vsim` representing the water volume time series in m3.
+#' completed with the items:
+#' - `Vsim`: representing the water volume time series in m3
+#' - `Qsim_m3`: flow released by the reservoir in cubic meters by time step
+#' (see Details)
+#' - `Qdiv_m3`: only present in case of Diversion in the node, diverted flow in
+#' cubic meters per time step. The latter differs from the flows time series provided
+#' in argument `Qinf` of [CreateInputsModel.GRiwrm] by the limitation due to an
+#' empty reservoir
+#' - `Qover_m3`: only present in case of Diversion in the node, diverted volumes
+#' that cannot be operated due to an empty reservoir
 #' @export
 #'
 #' @example man-examples/RunModel_Reservoir.R

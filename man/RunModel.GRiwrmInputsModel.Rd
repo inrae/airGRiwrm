@@ -16,7 +16,17 @@
 \item{...}{Further arguments for compatibility with S3 methods}
 }
 \value{
-An object of class \emph{GRiwrmOutputsModel}. This object is a \link{list} of \emph{OutputsModel} objects produced by \link{RunModel.InputsModel} for each node of the semi-distributed model.
+An object of class \emph{GRiwrmOutputsModel}.
+This object is a \link{list} of \emph{OutputsModel} objects produced by \link{RunModel.InputsModel}
+for each node of the semi-distributed model.
+
+It also contains the following attributes (see \link{attr}):
+\itemize{
+\item "Qm3s": a \link{data.frame} containing the dates of simulation and one column by node
+with the simulated flows in cubic meters per seconds (See \link{plot.Qm3s})
+\item "GRiwrm":  a copy of the \emph{GRiwrm} object produced by \link{CreateGRiwrm} and used for the simulation
+\item "TimeStep":  time step of the simulation in seconds
+}
 }
 \description{
 RunModel function for \emph{GRiwrmInputsModel} object
@@ -231,7 +241,7 @@ df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
 names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
 df54001 <- as.Qm3s(df54001)
 plot(df54001, ylim = c(0,70))
-abline(h = 12, col = "green")
+abline(h = 12, col = "green", lty = "dotted")
 par(oldpar)
 }
 \seealso{

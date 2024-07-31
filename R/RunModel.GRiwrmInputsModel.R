@@ -5,7 +5,16 @@
 #' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
 #' @param ... Further arguments for compatibility with S3 methods
 #'
-#' @return An object of class \emph{GRiwrmOutputsModel}. This object is a [list] of *OutputsModel* objects produced by [RunModel.InputsModel] for each node of the semi-distributed model.
+#' @return An object of class \emph{GRiwrmOutputsModel}.
+#' This object is a [list] of *OutputsModel* objects produced by [RunModel.InputsModel]
+#' for each node of the semi-distributed model.
+#'
+#' It also contains the following attributes (see [attr]):
+#' - "Qm3s": a [data.frame] containing the dates of simulation and one column by node
+#' with the simulated flows in cubic meters per seconds (See [plot.Qm3s])
+#' - "GRiwrm":  a copy of the *GRiwrm* object produced by [CreateGRiwrm] and used for the simulation
+#' - "TimeStep":  time step of the simulation in seconds
+#'
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()]
 #' @example man-examples/RunModel.GRiwrmInputsModel.R

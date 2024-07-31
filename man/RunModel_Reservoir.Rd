@@ -16,7 +16,18 @@ of the reservoir and (2) the celerity in m/s of the upstream inflows.}
 }
 \value{
 An \emph{OutputsModel} object like the one return by \link[airGR:RunModel]{airGR::RunModel} but
-completed with an item \code{Vsim} representing the water volume time series in m3.
+completed with the items:
+\itemize{
+\item \code{Vsim}: representing the water volume time series in m3
+\item \code{Qsim_m3}: flow released by the reservoir in cubic meters by time step
+(see Details)
+\item \code{Qdiv_m3}: only present in case of Diversion in the node, diverted flow in
+cubic meters per time step. The latter differs from the flows time series provided
+in argument \code{Qinf} of \link{CreateInputsModel.GRiwrm} by the limitation due to an
+empty reservoir
+\item \code{Qover_m3}: only present in case of Diversion in the node, diverted volumes
+that cannot be operated due to an empty reservoir
+}
 }
 \description{
 The reservoir model is a model combining a lag model and the calculation of
