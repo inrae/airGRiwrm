@@ -166,14 +166,21 @@ checkNetworkConsistency <- function(db) {
     stop("At least one node must be a network downstream node",
       " specified by 'down = NA'")
   }
-  sapply(db$down[!is.na(db$down)], function(x) {
-    if (!(x %in% db$id)) {
-      stop("The 'down' id ", x, " is not found in the 'id' column")
+  lapply(which(!is.na(db$down)), function(i) {
+    node <- db[i, ]
+    if (!(node$down %in% db$id)) {
+      nodeError(node, "The 'down' id ", node$down, " is not found in the 'id' column")
     }
   })
-  sapply(db$donor[!is.na(db$donor)], function(x) {
-    if (!(x %in% db$id)) {
-      stop("The 'donor' id ", x, " is not found in the 'id' column")
+  lapply(which(!is.na(db$donor)), function(i) {
+    node <- db[i, ]
+    if (!(node$donor %in% db$id)) {
+      nodeError(node, "The 'donor' id ", node$donor, " is not found in the 'id' column")
+    }
+    donor_model <- db$model[db$id == node$donor]
+    if (is.na(donor_model) || donor_model %in% c("RunModel_Reservoir", "Ungauged")) {
+      nodeError(node, "The 'donor' node ", node$donor, " must be an hydrological model",
+                " (Found model = '", donor_model, "')")
     }
   })
   db3 <- db2[!is.na(db2$model), ]
@@ -223,8 +230,8 @@ displayNodeDetails <- function(node) {
         sep = "\n")
 }
 
-nodeError <- function(node, s) {
-  stop(displayNodeDetails(node), "\n", s)
+nodeError <- function(node, ...) {
+  stop(displayNodeDetails(node), "\n", ...)
 }
 
 #' Get the Id of the nearest gauged model at downstream
