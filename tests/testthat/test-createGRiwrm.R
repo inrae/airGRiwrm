@@ -109,7 +109,8 @@ test_that("Several Diversion on same node should raise error", {
 test_that("Upstream donor works", {
   nupd <- loadSevernNodes()
   nupd$donor[nupd$id == "54032"] <- "Wrong_node"
-  expect_error(CreateGRiwrm(nupd))
+  expect_error(CreateGRiwrm(nupd),
+               regexp = "The 'donor' id Wrong_node is not found in the 'id' column")
   nupd$donor[nupd$id == "54032"] <- "54001"
   nupd$model[nupd$id == "54032"] <- "Ungauged"
   g <- CreateGRiwrm(nupd)
@@ -118,4 +119,19 @@ test_that("Upstream donor works", {
   nupd$model[nupd$id == "54002"] <- "Ungauged"
   g <- CreateGRiwrm(nupd)
   expect_equal(g$donor[g$id == "54002"], "54029")
+})
+
+test_that("Donor node can't be Ungauged nor DirectInjection nor Reservoir", {
+  n <- loadSevernNodes()
+  n$model[n$id == "54001"] <- "Ungauged"
+  n$donor[n$id == "54001"] <- "54032"
+  n$model[n$id == "54032"] <- "Ungauged"
+  expect_error(CreateGRiwrm(n),
+               regexp = "must be an hydrological model")
+  n$model[n$id == "54032"] <- NA
+  expect_error(CreateGRiwrm(n),
+               regexp = "must be an hydrological model")
+  n$model[n$id == "54032"] <- "RunModel_Reservoir"
+  expect_error(CreateGRiwrm(n),
+               regexp = "must be an hydrological model")
 })
