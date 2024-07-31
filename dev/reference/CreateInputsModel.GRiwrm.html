@@ -491,6 +491,14 @@ a time step defined in <code>DatesR</code>).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ DatesR     : POSIXct[1:3652], format: "1990-01-01" "1990-01-02" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ GaugingDown: num [1:3652] 10.13 9.86 10.68 12.07 12.96 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Reservoir  : num [1:3652] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "GRiwrm")=Classes ‘GRiwrm’ and 'data.frame':	2 obs. of  6 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id    : chr [1:2] "GaugingDown" "Reservoir"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ down  : chr [1:2] NA "GaugingDown"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ length: num [1:2] NA 150</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ area  : num [1:2] 360 NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ model : chr [1:2] "RunModel_GR4J" NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ donor : chr [1:2] "GaugingDown" "Reservoir"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "TimeStep")= num 86400</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compare regimes of the simulation with reservoir and observation of natural flow</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>,</span></span>
