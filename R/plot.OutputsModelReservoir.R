@@ -9,6 +9,14 @@
 #'
 #' @example man-examples/RunModel_Reservoir.R
 plot.OutputsModelReservoir <- function(x, Qobs = NULL, ...) {
+
+  # Argument checks
+  if (!is.null(Qobs)) {
+    stopifnot(is.numeric(Qobs),
+              length(Qobs) == length(x$Qsim_m3))
+
+  }
+
   oldpar <- par(mfrow=c(2,1),
                 mar = c(2,3.3,1.2,0.5),
                 mgp = c(2,1,0))

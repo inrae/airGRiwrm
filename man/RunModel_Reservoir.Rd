@@ -21,7 +21,7 @@ completed with an item \code{Vsim} representing the water volume time series in 
 \description{
 The reservoir model is a model combining a lag model and the calculation of
 the water storage time series according to the released flow time series
-from the \code{Qinf} parameter of \link{CreateInputsModel.GRiwrm}.
+from the \code{Qrelease} parameter of \link{CreateInputsModel.GRiwrm}.
 }
 \details{
 The simulated flow corresponds to the released flow except when the reservoir
@@ -143,5 +143,5 @@ plot(OutputsModel, Qobs = Qobs)
 # N.B. "Observed releases" should be considered as "Target releases" here
 
 # The plot for the reservoir can also be plotted alone
-plot(OutputsModel$Reservoir)
+plot(OutputsModel$Reservoir, Qobs = Qobs[, "Reservoir"])
 }
