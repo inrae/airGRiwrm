@@ -44,7 +44,7 @@ test_that("RunModel_Ungauged works for intermediate basin with ungauged station"
   expect_true(all(sapply(OC[-3], "[[", "CritFinal") > 0.95))
 })
 
-Param <- sapply(OC, "[[", "ParamFinalR")
+Param <- extractParam(OC)
 OM <- RunModel(
   InputsModel,
   RunOptions = RunOptions,
@@ -215,7 +215,7 @@ test_that("Ungauged node with upstream node with diversion should work", {
   CO <- CreateCalibOptions(InputsModel)
   CO[["P"]]$FixedParam = 1
   OC_Lag <- Calibration(InputsModel, RunOptions, IC, CO)
-  Param_Lag <- sapply(OC_Lag, "[[", "ParamFinalR")
+  Param_Lag <- extractParam(OC_Lag)
   expect_equal(Param_Lag, ParamRef[names(Param_Lag)])
 })
 

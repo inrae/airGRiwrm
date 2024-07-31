@@ -131,7 +131,8 @@ OC <- Calibration(
 )
 
 # Model parameters
-Param <- lapply(OC, "[[", "ParamFinalR")
+Param <- extractParam(OC)
+str(Param)
 
 # Running simulation
 OutputsModel <- RunModel(InputsModel, RunOptions, Param)
