@@ -690,17 +690,15 @@ downstream nodes.</p>
 <span><span class="co">#&gt;       Param =    1.200, 1164.445,   -1.222,   24.047,    1.700</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9645</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])</span></span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ParamV02</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">OutputsCalib</span>, <span class="st">"[["</span>, <span class="st">"ParamFinalR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="run-the-model-with-the-optimized-model-parameters">Run the model with the optimized model parameters<a class="anchor" aria-label="anchor" href="#run-the-model-with-the-optimized-model-parameters"></a>
 </h2>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel</span>,</span>
 <span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span>
-<span>  Param <span class="op">=</span> <span class="va">ParamV02</span></span>
+<span>  Param <span class="op">=</span> <span class="fu"><a href="../reference/extractParam.html">extractParam</a></span><span class="op">(</span><span class="va">OutputsCalib</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54095...</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54002...</span></span></code></pre>
@@ -712,12 +710,12 @@ downstream nodes.</p>
 <div class="section level2">
 <h2 id="plot-the-results-for-each-basin">Plot the results for each basin<a class="anchor" aria-label="anchor" href="#plot-the-results-for-each-basin"></a>
 </h2>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-2.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-3.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-4.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-5.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-6.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The resulting flows of each node in m<sup>3</sup>/s are directly
 available and can be plotted with these commands:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Qm3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">OutputsModels</span>, <span class="st">"Qm3s"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Qm3s</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">150</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;"></p>

@@ -365,7 +365,7 @@ performed:</p>
 <p>Now that the model is calibrated, we can run it with the optimized
 parameter values:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Param5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OutputsCalib</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">Param5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/extractParam.html">extractParam</a></span><span class="op">(</span><span class="va">OutputsCalib</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">OutputsModels3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/RunModel.html">RunModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel3</span>,</span>

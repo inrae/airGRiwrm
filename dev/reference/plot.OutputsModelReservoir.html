@@ -266,7 +266,12 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 	     Param = 30000000.000,    0.500</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Model parameters</span></span></span>
-<span class="r-in"><span><span class="va">Param</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">OC</span>, <span class="st">"[["</span>, <span class="st">"ParamFinalR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Param</span> <span class="op">&lt;-</span> <span class="fu"><a href="extractParam.html">extractParam</a></span><span class="op">(</span><span class="va">OC</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">Param</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ L0123001 : num [1:4] 147.886 0.347 58.983 2.345</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ Reservoir: Named num [1:2] 3e+07 5e-01</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "names")= chr [1:2] "Vmax" "celerity"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running simulation</span></span></span>
 <span class="r-in"><span><span class="va">OutputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">RunOptions</span>, <span class="va">Param</span><span class="op">)</span></span></span>
