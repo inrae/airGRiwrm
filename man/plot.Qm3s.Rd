@@ -16,6 +16,7 @@
   legend.x = "topright",
   legend.y = NULL,
   lty = 1,
+  mgp = c(2.5, 1, 0),
   ...
 )
 }
@@ -41,6 +42,8 @@ to hide the legend}
 \item{legend.x, legend.y}{Legend position, see \code{x} and \code{y} parameters in \link[graphics:legend]{graphics::legend}}
 
 \item{lty}{\link{character} or \link{numeric} The line type (See \link{par})}
+
+\item{mgp}{The margin line for the axis title, axis labels and axis line (See \link{par})}
 
 \item{...}{Further arguments to pass to the \link{matplot} functions}
 }
