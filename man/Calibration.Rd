@@ -34,25 +34,31 @@ Calibration(InputsModel, ...)
 \item{...}{further arguments passed to \link[airGR:Calibration]{airGR::Calibration}, see details}
 }
 \value{
-Depending on the class of \code{InputsModel} argument (respectively \code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
+Depending on the class of \code{InputsModel} argument (respectively
+\code{InputsModel} and \code{GRiwrmInputsModel} object), the returned value is respectively:
 \itemize{
-\item a \code{InputsCrit} object (See \link[airGR:CreateInputsCrit]{airGR::CreateInputsCrit})
-\item a \code{GRiwrmInputsCrit} object which is a \link{list} of \code{InputsCrit} objects with one item per modeled sub-catchment
+\item a \code{OutputsCalib} object (See \link[airGR:Calibration]{airGR::Calibration} for more details on this object)
+\item a \code{GRiwrmOutputsCalib} object which is a \link{list} of \code{OutputsCalib} objects with
+one item per modeled sub-catchment
 }
 }
 \description{
-Calibration algorithm that optimizes the error criterion selected as objective function using the provided functions.
+Calibration algorithm that optimizes the error criterion selected as objective
+function using the provided functions.
 }
 \details{
-This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
+This function can be used either for a catchment (with an \emph{InputsModel}
+object) or for a network (with a \emph{GRiwrmInputsModel} object)
 
 Argument classes should be consistent to the usage:
 \itemize{
-\item a \code{InputsModel} argument of class \emph{InputsModel} must be followed by a \code{RunOptions} argument of class \emph{RunOptions}, a \code{InputsCrit} argument of class \emph{InputsCrit} and a \code{CalibOptions} of class \emph{CalibOptions}
-\item 
-\itemize{
-\item a \code{InputsModel} argument of class \emph{GRiwrmInputsModel} must be followed by a \code{RunOptions} argument of class \emph{GRiwrmRunOptions}, a \code{InputsCrit} argument of class \emph{GRiwrmInputsCrit} and a \code{CalibOptions} of class \emph{GRiwrmCalibOptions}
-}
+\item a \code{InputsModel} argument of class \emph{InputsModel} must be followed by a
+\code{RunOptions} argument of class \emph{RunOptions}, a \code{InputsCrit} argument of
+class \emph{InputsCrit} and a \code{CalibOptions} of class \emph{CalibOptions}
+\item a \code{InputsModel} argument of class \emph{GRiwrmInputsModel} must be followed
+by a \code{RunOptions} argument of class \emph{GRiwrmRunOptions}, a \code{InputsCrit}
+argument of class \emph{GRiwrmInputsCrit} and a \code{CalibOptions} of class
+\emph{GRiwrmCalibOptions}
 }
 
 See the vignettes for examples.
