@@ -207,38 +207,23 @@ compatible with <strong>airGR</strong> will be the one below:</p>
 (reservoir inflows) while <code>AUBE_R3</code> will propagate positive
 flows downstream (reservoir releases).</p>
 <p>The configuration on the lake Seine is similar:</p>
-<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png':</span></span>
-<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 --&gt;|6km| SEINE_P7\n  SEINE_P7 --&gt;|32km| SEINE_R8\n  SEINE_P7 --&gt; SEINE(SEINE)\n  SEINE--&gt; SEINE_R8\n  SEINE_R8 --&gt;|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n  style SEINE fill:#ccf\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png'</span></span></code></pre>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_true-1.png" width="700"></p>
 <p>which can be translated as:</p>
 <p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_model-1.png" width="700"></p>
 <p>The Pannecière lake is an inline reservoir:</p>
-<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png':</span></span>
-<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 --&gt;|0km| P\nP --&gt; |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'</span></span></code></pre>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_true-1.png" width="700"></p>
 <p>We can keep the same structure to model it. <code>PANNEC_R</code>
 corresponds to the flow released by the Pannecière lake, it is acting as
 an upstream node which means that the flow simulated at
 <code>CHAUM_07</code> is no longer routed to downstream.</p>
-<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':</span></span>
-<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --&gt; |0km| PANNEC_R\nPANNEC_R --&gt; |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'</span></span></code></pre>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png" width="700"></p>
 <p>The Marne lake can be mapped as:</p>
 <p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_true-1.png" width="700"></p>
 <p>And can be modeled as:</p>
 <p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_model-1.png" width="700"></p>
 <p>Hence the topological connection to the reservoirs is described in
 the model as below:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reservoir_connections</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
 <span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"seine_data"</span>, <span class="st">"network_reservoir_connections.txt"</span>, package <span class="op">=</span> <span class="st">"seinebasin"</span><span class="op">)</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">";"</span>, header <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -254,7 +239,7 @@ the model as below:</p>
 <span><span class="co">#&gt; 7  SEINE_P7  73766 MERY-_22</span></span>
 <span><span class="co">#&gt; 8  SEINE_R8  41766 MERY-_22</span></span></code></pre></div>
 <p>Reservoir connections are added to the GRiwrm object:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">reservoir_connections</span><span class="op">$</span><span class="va">length</span> <span class="op">&lt;-</span> <span class="va">reservoir_connections</span><span class="op">$</span><span class="va">length</span> <span class="op">/</span> <span class="fl">1000</span></span>
 <span><span class="va">reservoir_connections</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="va">reservoir_connections</span><span class="op">$</span><span class="va">area</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
@@ -266,13 +251,8 @@ the model as below:</p>
 <span><span class="va">seine_nodes2</span><span class="op">$</span><span class="va">down</span><span class="op">[</span><span class="va">seine_nodes2</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"CHAUM_07"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"PANNEC_R"</span></span>
 <span><span class="va">seine_nodes2</span><span class="op">$</span><span class="va">length</span><span class="op">[</span><span class="va">seine_nodes2</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"CHAUM_07"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="va">griwrm2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">seine_nodes2</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqdV11vGjEQ_CsnKpQXI90H3w-VSHKlJ1GITIiUupV1Cr7kWiARXNJKSf57Hc5j9txcovYFjdlh7Z2dXYnHxtXtUjWGjWbzMd_kxdB7PCpu1FodDb2jjbovtunq6Nl7bja_bb5trrfp3Y034S84X8pzPppOpR8IgO8mMD8_Tb5Kvy0AEDge8dZc-l0BgMDJ59Hii_R7AsAGFvP5pfT7AuBwxzjm0h8IAATGi2QykYEvABAYJfPLlgwCAYBAfKa_kEFbACDwZTY95zLoCwAEJrPFRSyDgQCwgdF8nsjQFwAIXCTn_FKGHQFweC4f67pCAWC14kmsRY0EANHqWNcVCgASmMxkGAgAW0fMdcFhKACsJPwkmcuwLQAQmM7G-s4gEgCHQKLrCnoCwF4-W_CJDCMBQEXUEnUEgL188mmmRe0KAATORlw_xu8IAPuLxXHckmehAKgGeCQA7OUjPo01MRIWuaG-DfWrIa67ZdHhbdNpfCK5ALB-jJOXJD0BUA3wvgD47oyP12p9fPK6fe_n-skjTXGGqaT1u6Chyc5oGZoPGlruDFpJsyxU40xdyRoEoMGjzgwaWruGhkE0hdIK9v515rOkBX4IHgbAGVdT6cDqZmzkDG9Ji6y8MK4zyu_Ii3kuae12TbMw3e6lTjYIZC612TA7zgowtE4NDToa4YKwnrd_RMkLayWBZUpexz_Qyl3gLI-S1gtqaDia7kfWmGYdOIvFKDc4OLPcAc6aMTV0a7Lh6DrT8QiOhlZzJ7aN61-n99g971jELiJTKWiYc3c9meaHNVayG8p0q1fDw4Qbk3Siupk268t0tV2zR7DMTLHha7SrVbrbeWTTMbKnGFlGjKwcRvYKI8uDkQ3ByBZgZNQZmWdGhpbRyVzc7YqtStfj9P5aLSvvRAsYkYWROWRk2BiRmJHCGek4I_ZnxOOMGJkRtzJiSUZ86CWbQm3XapmnhX</span></span>
-<span><span class="co">#&gt; [... truncated]</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqdV11vGjEQ_CsnKpQXI90H3w-VSHKlJ1GITIiUupV1Cr7kWiARXNJKSf57Hc5j9txcovYFjdlh7Z2dXYnHxtXtUjWGjWbzMd_kxdB7PCpu1FodDb2jjbovtunq6Nl7bja_bb5trrfp3Y034S84X8pzPppOpR8IgO8mMD8_Tb5Kvy0AEDge8dZc-l0BgMDJ59Hii_R7AsAGFvP5pfT7AuBwxzjm0h8IAATGi2QykYEvABAYJfPLlgwCAYBAfKa_kEFbACDwZTY95zLoCwAEJrPFRSyDgQCwgdF8nsjQFwAIXCTn_FKGHQFweC4f67pCAWC14kmsRY0EANHqWNcVCgASmMxkGAgAW0fMdcFhKACsJPwkmcuwLQAQmM7G-s4gEgCHQKLrCnoCwF4-W_CJDCMBQEXUEnUEgL188mmmRe0KAATORlw_xu8IAPuLxXHckmehAKgGeCQA7OUjPo01MRIWuaG-DfWrIa67ZdHhbdNpfCK5ALB-jJOXJD0BUA3wvgD47oyP12p9fPK6fe_n-skjTXGGqaT1u6Chyc5oGZoPGlruDFpJsyxU40xdyRoEoMGjzgwaWruGhkE0hdIK9v515rOkBX4IHgbAGVdT6cDqZmzkDG9Ji6y8MK4zyu_Ii3kuae12TbMw3e6lTjYIZC612TA7zgowtE4NDToa4YKwnrd_RMkLayWBZUpexz_Qyl3gLI-S1gtqaDia7kfWmGYdOIvFKDc4OLPcAc6aMTV0a7Lh6DrT8QiOhlZzJ7aN61-n99g971jELiJTKWiYc3c9meaHNVayG8p0q1fDw4Qbk3Siupk268t0tV2zR7DMTLHha7SrVbrbeWTTMbKnGFlGjKwcRvYKI8uDkQ3ByBZgZNQZmWdGhpbRyVzc7YqtStfj9P5aLSvvRAsYkYWROWRk2BiRmJHCGek4I_ZnxOOMGJkRtzJiSUZ86</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm2</span><span class="op">)</span></span></code></pre></div>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/griwrm2-1.png" width="700"></p>
 </div>
 </div>
 <div class="section level3">
@@ -280,7 +260,7 @@ the model as below:</p>
 </h3>
 <p>Description of the files, the columns and the type of connection
 (inlet / outlet) are defined in the list below:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lCfgReservoirs</span> <span class="op">&lt;-</span> <span class="fu">jsonlite</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/read_json.html" class="external-link">read_json</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"seine_data"</span>, <span class="st">"config_reservoirs.json"</span>, package <span class="op">=</span> <span class="st">"seinebasin"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lCfgReservoirs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
@@ -322,7 +302,7 @@ the model as below:</p>
 <span><span class="co">#&gt;   .. .. ..$ type: chr "out"</span></span></code></pre></div>
 <p>Then, we load observation data for each reservoir and each
 connection:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">seinebasin</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">QNAT</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Qreservoirs</span><span class="op">)</span></span></code></pre></div>
@@ -330,7 +310,7 @@ connection:</p>
 <div class="section level3">
 <h3 id="create-the-inputsmodel-object">Create the InputsModel object<a class="anchor" aria-label="anchor" href="#create-the-inputsmodel-object"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">InputsModel2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm2</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span>, <span class="va">Qreservoirs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin TRANN_01...</span></span>
 <span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin STDIZ_04...</span></span>
@@ -364,7 +344,7 @@ connection:</p>
 <div class="section level4">
 <h4 id="load-calibration-parameters">Load calibration parameters<a class="anchor" aria-label="anchor" href="#load-calibration-parameters"></a>
 </h4>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load RunOptions</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"_cache/V02.RData"</span><span class="op">)</span></span>
 <span><span class="co"># Load calibrated parameters with Michel's method</span></span>
@@ -376,7 +356,7 @@ connection:</p>
 <p>A lag parameter is now mandatory for these sub-basins. As no
 calibration is possible at that stage an arbitrary one will be used (1
 m/s).</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ParamMichel</span><span class="op">$</span><span class="va">STDIZ_04</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">ParamMichel</span><span class="op">$</span><span class="va">STDIZ_04</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -384,7 +364,7 @@ m/s).</p>
 </h4>
 <p>We can now run the model, using the parameters previously
 obtained:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel2</span>,</span>
 <span>  IndPeriod_Run <span class="op">=</span> <span class="va">IndPeriod_Run</span></span>
@@ -481,7 +461,7 @@ obtained:</p>
 <div class="section level4">
 <h4 id="load-observed-flows">Load observed flows<a class="anchor" aria-label="anchor" href="#load-observed-flows"></a>
 </h4>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">QOBS</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -489,7 +469,7 @@ obtained:</p>
 </h4>
 <p>We can compare these simulated flows with influenced discharge
 measurements:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ReduceOutputsModel</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">OutputsModels</span>, <span class="va">IndPeriod</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">items</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">OutputsModels</span><span class="op">)</span></span>
 <span>  <span class="va">OutputsModelsOut</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">items</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
@@ -525,7 +505,7 @@ measurements:</p>
 <div class="section level3">
 <h3 id="save-data-for-next-vignettes">Save data for next vignettes<a class="anchor" aria-label="anchor" href="#save-data-for-next-vignettes"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span><span class="va">griwrm2</span>, <span class="va">ReduceOutputsModel</span>, file <span class="op">=</span> <span class="st">"_cache/V04.RData"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
