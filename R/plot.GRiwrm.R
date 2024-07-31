@@ -49,13 +49,17 @@ plot.GRiwrm <- function(x,
   x <- sortGRiwrm4plot(x)
   nodes <- unlist(sapply(unique(x$donor), plotGriwrmCluster, x = x, with_donors = with_donors))
   g2 <- x[!is.na(x$down),]
-  links <- paste(
-    sprintf("id_%1$s", g2$id),
-    "-->|",
-    round(g2$length, digits = 0),
-    "km|",
-    sprintf("id_%1$s", g2$down)
-  )
+  if (nrow(g2) > 0) {
+    links <- paste(
+      sprintf("id_%1$s", g2$id),
+      "-->|",
+      round(g2$length, digits = 0),
+      "km|",
+      sprintf("id_%1$s", g2$down)
+    )
+  } else {
+    links <- ""
+  }
   x$nodeclass <- sapply(x$id, getNodeClass, griwrm = x)
   node_class <- lapply(unique(x$nodeclass), function(nc) {
     x$id[x$nodeclass == nc]
