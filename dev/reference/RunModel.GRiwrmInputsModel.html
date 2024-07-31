@@ -160,8 +160,14 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An object of class <em>GRiwrmOutputsModel</em>. This object is a <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of <em>OutputsModel</em> objects produced by <a href="RunModel.InputsModel.html">RunModel.InputsModel</a> for each node of the semi-distributed model.</p>
-    </div>
+    <p>An object of class <em>GRiwrmOutputsModel</em>.
+This object is a <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of <em>OutputsModel</em> objects produced by <a href="RunModel.InputsModel.html">RunModel.InputsModel</a>
+for each node of the semi-distributed model.</p>
+<p>It also contains the following attributes (see <a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a>):</p><ul><li><p>"Qm3s": a <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> containing the dates of simulation and one column by node
+with the simulated flows in cubic meters per seconds (See <a href="plot.Qm3s.html">plot.Qm3s</a>)</p></li>
+<li><p>"GRiwrm":  a copy of the <em>GRiwrm</em> object produced by <a href="CreateGRiwrm.html">CreateGRiwrm</a> and used for the simulation</p></li>
+<li><p>"TimeStep":  time step of the simulation in seconds</p></li>
+</ul></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="CreateGRiwrm.html">CreateGRiwrm()</a></code>, <code><a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm()</a></code>, <code><a href="CreateRunOptions.html">CreateRunOptions()</a></code></p></div>
@@ -545,7 +551,7 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">df54001</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DatesR"</span>, <span class="st">"54001 with irrigation"</span>, <span class="st">"54001 natural flow"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df54001</span> <span class="op">&lt;-</span> <span class="fu"><a href="as.Qm3s.html">as.Qm3s</a></span><span class="op">(</span><span class="va">df54001</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">df54001</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">70</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">12</span>, col <span class="op">=</span> <span class="st">"green"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">12</span>, col <span class="op">=</span> <span class="st">"green"</span>, lty <span class="op">=</span> <span class="st">"dotted"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="RunModel.GRiwrmInputsModel-7.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></span>
 </code></pre></div>

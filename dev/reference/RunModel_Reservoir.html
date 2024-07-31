@@ -161,8 +161,16 @@ of the reservoir and (2) the celerity in m/s of the upstream inflows.</p></dd>
     <div id="value">
     <h2>Value</h2>
     <p>An <em>OutputsModel</em> object like the one return by <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a> but
-completed with an item <code>Vsim</code> representing the water volume time series in m3.</p>
-    </div>
+completed with the items:</p><ul><li><p><code>Vsim</code>: representing the water volume time series in m3</p></li>
+<li><p><code>Qsim_m3</code>: flow released by the reservoir in cubic meters by time step
+(see Details)</p></li>
+<li><p><code>Qdiv_m3</code>: only present in case of Diversion in the node, diverted flow in
+cubic meters per time step. The latter differs from the flows time series provided
+in argument <code>Qinf</code> of <a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm</a> by the limitation due to an
+empty reservoir</p></li>
+<li><p><code>Qover_m3</code>: only present in case of Diversion in the node, diverted volumes
+that cannot be operated due to an empty reservoir</p></li>
+</ul></div>
     <div id="details">
     <h2>Details</h2>
     <p>The simulated flow corresponds to the released flow except when the reservoir

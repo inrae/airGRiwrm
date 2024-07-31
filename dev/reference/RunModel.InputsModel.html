@@ -168,18 +168,16 @@
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>[list] see <code><a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">RunModel_GR4J</a></code> or <code><a href="https://rdrr.io/pkg/airGR/man/RunModel_CemaNeigeGR4J.html" class="external-link">RunModel_CemaNeigeGR4J</a></code> for details.</p>
-<p>If <code>InputsModel</code> parameter has been created for using a semi-distributed (SD) lag model (See <code><a href="https://rdrr.io/pkg/airGR/man/CreateInputsModel.html" class="external-link">CreateInputsModel</a></code>), the list value contains an extra item named <code>QsimDown</code> which is a numeric series of simulated discharge [mm/time step] related to the run-off contribution of the downstream sub-catchment.</p>
-    </div>
-    <div id="details">
-    <h2>Details</h2>
-    <p>This function calls <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a> (See <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a> for further details).</p>
-<p>The list produced by the function (See Value section of <a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">airGR::RunModel_GR4J</a>)
-is here completed by:</p><ul><li><p>an item <code>$Qsim_m3</code> storing the simulated discharge series in m3/s</p></li>
-<li><p>an item <code>$Qover_m3</code> storing the volumes of over abstraction which occurs
-when <code>RunModel_Lag</code> warns for negative simulated flows. The latter reflects the volume
-that was planned to be drawn from the sub-basin but could not be drawn because
-of the lack of water.</p></li>
+    <p>[object of class <em>OutputsModel</em>] returned by <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a>
+(See Value section of <a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">airGR::RunModel_GR4J</a>) completed by new items:</p><ul><li><p><code>Qsim_m3</code>: simulated flow in cubic meters per time step</p></li>
+<li><p><code>Qover_m3</code> volumes of over abstractions which occurs when <code>RunModel_Lag</code> warns
+for negative simulated flows</p></li>
+<li><p><code>Qnat</code>: only present in case of Diversion in the node, simulated flow in mm
+per time step before application of the Diversion</p></li>
+<li><p><code>Qdiv_m3</code>: only present in case of Diversion in the node, simulated diverted flow in
+cubic meters per time step. The latter differs from the flows time series provided
+in argument <code>Qinf</code> of <a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm</a> by the limitation of diversion
+applied by the minimum flow threshold <code>Qmin</code> to keep flowing in the river</p></li>
 </ul></div>
 
   </div>
