@@ -8,8 +8,6 @@ extractParam(x)
 }
 \arguments{
 \item{x}{A \emph{GRiwrmOutputsModel} object returned by \link{Calibration.GRiwrmInputsModel}}
-
-\item{...}{Not used, only present for S3 class compatibility}
 }
 \value{
 A named \link{list} of \link{numeric} \link{vector} containing the calibrated parameters
