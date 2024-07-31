@@ -1,7 +1,7 @@
 #' Plot simulated reservoir volume, inflows and released flows time series on a reservoir node
 #'
 #' @param x Object returned by [RunModel_Reservoir]
-#' @param Qobs [numeric] time series of observed flow (for the same time steps than simulated) \[m3/time step\]
+#' @param Qobs (optional) [numeric] time series of observed released flow \[m3/time step\]
 #' @param ... Further arguments passed to [plot.Qm3s]
 #'
 #' @return Function used for side effect.

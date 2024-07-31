@@ -4,7 +4,7 @@
 \alias{plot.GRiwrmOutputsModel}
 \title{Function which creates screen plots giving an overview of the model outputs in the GRiwrm network}
 \usage{
-\method{plot}{GRiwrmOutputsModel}(x, Qobs = NULL, ...)
+\method{plot}{GRiwrmOutputsModel}(x, Qobs = NULL, unit = "m3/s", ...)
 }
 \arguments{
 \item{x}{[object of class \emph{GRiwrmOutputsModel}] see \link{RunModel.GRiwrmInputsModel} for details}
@@ -12,6 +12,8 @@
 \item{Qobs}{(optional) \link{matrix} time series of observed flows
 (for the same time steps than simulated) (mm/time step) with one column
 by hydrological model output named with the node ID (See \link{CreateGRiwrm} for details)}
+
+\item{unit}{(optional) \link{character} flows unit ("m3/s" or "mm")}
 
 \item{...}{Further arguments for \link[airGR:plot.OutputsModel]{airGR::plot.OutputsModel} and \link{plot}}
 }
