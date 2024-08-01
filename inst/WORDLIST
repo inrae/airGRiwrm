@@ -28,6 +28,7 @@ CreateGRiwrm
 CreateInputsCrit
 CreateInputsModel
 CreateRunOptions
+CreateSupervisor
 DOI
 Dau
 De
@@ -148,6 +149,7 @@ et
 evapotranspiration
 frac
 getNodeRanking
+getSD
 github
 gitlab
 hal
@@ -183,6 +185,7 @@ septembre
 ses
 streamflow
 streamflows
+subgraphs
 sv
 th
 timeseries
