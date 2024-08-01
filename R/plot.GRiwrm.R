@@ -183,17 +183,19 @@ getNodeClass <- function(id, griwrm) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' diagram <- "flowchart LR\n  A --> B"
 #' mermaid_gen_link(diagram)
 #' f <- mermaid(diagram)
 #' f
-#' \dontrun{
+#'
 #' # For displaying the diagram in Rmarkdown document
 #' knitr::include_graphics(mermaid(diagram))
-#' }
 #'
 #' # Clean temporary folder
 #' unlink(f)
+#' }
+#'
 mermaid <- function(diagram,
                     format = "png",
                     theme = "default",
