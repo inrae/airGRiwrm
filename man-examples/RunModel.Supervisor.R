@@ -28,7 +28,9 @@ griwrm <- CreateGRiwrm(nodes,
                  list(id = "gauge_id",
                       down = "downstream_id",
                       length = "distance_downstream"))
+\dontrun{
 plot(griwrm)
+}
 
 # Format meteorological inputs for CreateInputs
 BasinsObs <- Severn$BasinsObs

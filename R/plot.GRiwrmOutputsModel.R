@@ -1,5 +1,9 @@
 #' Function which creates screen plots giving an overview of the model outputs in the GRiwrm network
 #'
+#' @details
+#' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
+#' and [RunModel.Supervisor].
+#'
 #' @param x \[object of class *GRiwrmOutputsModel*\] see [RunModel.GRiwrmInputsModel] for details
 #' @param Qobs (optional) [matrix] time series of observed flows
 #'        (for the same time steps than simulated) (mm/time step) with one column
@@ -12,7 +16,6 @@
 #' @importFrom graphics plot par title
 #' @export
 #'
-#' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
 plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, unit = "m3/s", ...) {
 

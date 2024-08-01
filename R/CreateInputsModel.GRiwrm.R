@@ -57,17 +57,20 @@
 #' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
 #' a time step defined in `DatesR`).
 #'
+#' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
+#' and [RunModel.Supervisor].
+#'
 #' For example of use of Direct Injection nodes, see vignettes
 #' "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".
 #'
-#' For example of use of Diversion nodes, see example below and vignette
+#' For example of use of Diversion nodes, see example in
+#' [RunModel.GRiwrmInputsModel] topic and vignette
 #' "V06_Modelling_regulated_diversion".
 #'
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
 #' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateRunOptions()], [RunModel.GRiwrmInputsModel()]
-#' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
 CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      Precip = NULL,

@@ -63,7 +63,7 @@ will give its parameters to an ungauged node (See \code{Ungauged} model below).
 
 The "model" column should be filled by one of the following:
 \itemize{
-\item One of the hydrological models available in the \emph{airGR} package defined by its
+\item One of the hydrological models available in the \strong{airGR} package defined by its
 \code{RunModel} function (i.e.: \code{RunModel_GR4J}, \code{RunModel_GR5HCemaneige}...)
 \item \code{RunModel_Reservoir} for simulating a reservoir (See: \link{RunModel_Reservoir})
 \item \code{Ungauged} for an ungauged node. The sub-basin inherits hydrological model and
@@ -95,7 +95,9 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
 griwrm_basic <- CreateGRiwrm(db)
 griwrm_basic
 # Network diagram with direct flow node in red, intermediate sub-basin in green
+\dontrun{
 plot(griwrm_basic)
+}
 
 ###################################################
 # GR4J semi-distributed model of the Severn River #
@@ -111,7 +113,9 @@ rename_columns <- list(id = "gauge_id",
 griwrm_severn <- CreateGRiwrm(nodes, rename_columns)
 griwrm_severn
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
+\dontrun{
 plot(griwrm_severn)
+}
 
 ####################################################################
 # Severn network with an ungauged station at nodes 54029 and 54001 #
@@ -125,7 +129,9 @@ nodes_ungauged$donor[nodes_ungauged$id == "54001"] <- "54095"
 griwrm_ungauged <- CreateGRiwrm(nodes_ungauged, rename_columns)
 griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
+\dontrun{
 plot(griwrm_ungauged)
+}
 
 ###########################################################
 # Severn network with a Diversion on the node "54029"     #
@@ -143,11 +149,16 @@ nodes_div <- rbind(
 )
 griwrm_div <- CreateGRiwrm(nodes_div, rename_columns)
 # Network diagram figures Diversion node by a red frame and a red arrow
+\dontrun{
 plot(griwrm_div, orientation = "TB")
+}
 
-# It's also possible to custom the diagram's look with mermaid instructions
-# See https://mermaid.js.org/config/directives.html and
-# https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
-plot(griwrm_div,
-     header = "\%\%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}\%\%")
+# It's also possible to custom the diagram's look with mermaid directives
+# (See details in plot.GRiwrm help topic)
+\dontrun{
+plot(
+  griwrm_div,
+  header = "\%\%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}\%\%"
+)
+}
 }

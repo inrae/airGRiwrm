@@ -1,5 +1,13 @@
 #' Plot of a diagram representing the network structure of a GRiwrm object
 #'
+#' @details
+#' `header` parameter allows to add any mermaid code injected before the `graph`
+#' instruction. It is notably useful for injecting directives that impact the
+#' format of the graph. See https://mermaid.js.org/config/directives.html for
+#' more details on directives and
+#  https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
+#' for a complete list of available directives.
+#'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
 #' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
 #' @param orientation [character] orientation of the graph. Possible values are
@@ -7,7 +15,7 @@
 #' @param with_donors [logical] for drawing boxes around ungauged nodes and their donors
 #' @param box_colors [list] containing the color used for the different types of nodes
 #' @param defaultClassDef [character] default style apply to all boxes
-#' @param header mermaid script to add before the generated script (init configuration)
+#' @param header mermaid script to add before the generated script (see Details)
 #' @param footer mermaid script to add after the generated script
 #' @param ... further parameters passed to [mermaid]
 #'

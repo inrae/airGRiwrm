@@ -31,7 +31,7 @@
 
 \item{defaultClassDef}{\link{character} default style apply to all boxes}
 
-\item{header}{mermaid script to add before the generated script (init configuration)}
+\item{header}{mermaid script to add before the generated script (see Details)}
 
 \item{footer}{mermaid script to add after the generated script}
 
@@ -42,6 +42,13 @@ Mermaid code of the diagram if display is \code{FALSE}, otherwise the function r
 }
 \description{
 Plot of a diagram representing the network structure of a GRiwrm object
+}
+\details{
+\code{header} parameter allows to add any mermaid code injected before the \code{graph}
+instruction. It is notably useful for injecting directives that impact the
+format of the graph. See https://mermaid.js.org/config/directives.html for
+more details on directives and
+for a complete list of available directives.
 }
 \examples{
 library(airGRiwrm)
@@ -60,7 +67,9 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
 griwrm_basic <- CreateGRiwrm(db)
 griwrm_basic
 # Network diagram with direct flow node in red, intermediate sub-basin in green
+\dontrun{
 plot(griwrm_basic)
+}
 
 ###################################################
 # GR4J semi-distributed model of the Severn River #
@@ -76,7 +85,9 @@ rename_columns <- list(id = "gauge_id",
 griwrm_severn <- CreateGRiwrm(nodes, rename_columns)
 griwrm_severn
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
+\dontrun{
 plot(griwrm_severn)
+}
 
 ####################################################################
 # Severn network with an ungauged station at nodes 54029 and 54001 #
@@ -90,7 +101,9 @@ nodes_ungauged$donor[nodes_ungauged$id == "54001"] <- "54095"
 griwrm_ungauged <- CreateGRiwrm(nodes_ungauged, rename_columns)
 griwrm_ungauged
 # Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color
+\dontrun{
 plot(griwrm_ungauged)
+}
 
 ###########################################################
 # Severn network with a Diversion on the node "54029"     #
@@ -108,13 +121,18 @@ nodes_div <- rbind(
 )
 griwrm_div <- CreateGRiwrm(nodes_div, rename_columns)
 # Network diagram figures Diversion node by a red frame and a red arrow
+\dontrun{
 plot(griwrm_div, orientation = "TB")
+}
 
-# It's also possible to custom the diagram's look with mermaid instructions
-# See https://mermaid.js.org/config/directives.html and
-# https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
-plot(griwrm_div,
-     header = "\%\%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}\%\%")
+# It's also possible to custom the diagram's look with mermaid directives
+# (See details in plot.GRiwrm help topic)
+\dontrun{
+plot(
+  griwrm_div,
+  header = "\%\%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}\%\%"
+)
+}
 }
 \seealso{
 \code{\link[=CreateGRiwrm]{CreateGRiwrm()}}

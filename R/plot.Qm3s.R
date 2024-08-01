@@ -4,6 +4,9 @@
 #' of class "Qm3s" which can be directly called by `plot`. It can also be called
 #' as a function `plot.Qm3s` if the first parameter has the good format.
 #'
+#' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
+#' and [RunModel.Supervisor].
+#'
 #' @param x [data.frame] with a first column with [POSIXt] dates and followings
 #'        columns with flows at each node of the network
 #' @param type [character] plot type (See [plot.default]), default "l"
@@ -20,8 +23,6 @@
 #' @param ... Further arguments to pass to the [matplot] functions
 #'
 #' @return Screen plot window.
-#'
-#' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
 #' @export plot.Qm3s
 #' @export

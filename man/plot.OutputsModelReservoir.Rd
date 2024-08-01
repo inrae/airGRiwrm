@@ -37,7 +37,9 @@ db <- data.frame(id = c(BasinInfo$BasinCode, "Reservoir"),
                  model = c("RunModel_GR4J", "RunModel_Reservoir"),
                  stringsAsFactors = FALSE)
 griwrm <- CreateGRiwrm(db)
+\dontrun{
 plot(griwrm)
+}
 
 # Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one
 # column by sub-basin and node IDs as column names)
