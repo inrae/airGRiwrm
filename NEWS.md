@@ -4,7 +4,7 @@ Breaking changes:
 -----------------
 
 * CreateSupervisor [Breaking change]: Only allow to apply a command on DirectInjection and Diversion nodes (#101)
-* CreateInputsmodel [Breaking change]: do not allow to use `Qobs` on nodes other than Direct Injection and Diversion (#99)
+* CreateInputsModel [Breaking change]: do not allow to use `Qobs` on nodes other than Direct Injection and Diversion (#99)
 
 New features:
 -------------
@@ -25,7 +25,7 @@ New features:
 * plot.GRiwrm: use web service instead of DiagrammeR::mermaid (#150)
 * plot.GRiwrm: sketch ungauged cluster with subgraphs (#151)
 * Implementation of non gauged station with donor other than a downstream gauged station (#92)
-* CreateInputsCrit: allow apriori node not only at upstream (#156)
+* CreateInputsCrit: allow a priori node not only at upstream (#156)
 * Allow Diversion on Reservoir (#146)
 * CreateInputsModel: deprecate `Qobs` parameter and use `Qinf` instead (#120)
 * CreateInputsModel: Specify the error message: "'Qobs' column names must be included in 'id's of the GRiwrm object" (#152)
