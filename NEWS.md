@@ -4,7 +4,7 @@ Breaking changes:
 -----------------
 
 * CreateSupervisor [Breaking change]: Only allow to apply a command on DirectInjection and Diversion nodes (#101)
-* CreateInputsmodel [Breaking change]: do not allow to use `Qobs` on nodes other than Direct Injection and Diversion (#99)
+* CreateInputsModel [Breaking change]: do not allow to use `Qobs` on nodes other than Direct Injection and Diversion (#99)
 
 New features:
 -------------
@@ -25,7 +25,7 @@ New features:
 * plot.GRiwrm: use web service instead of DiagrammeR::mermaid (#150)
 * plot.GRiwrm: sketch ungauged cluster with subgraphs (#151)
 * Implementation of non gauged station with donor other than a downstream gauged station (#92)
-* CreateInputsCrit: allow apriori node not only at upstream (#156)
+* CreateInputsCrit: allow a priori node not only at upstream (#156)
 * Allow Diversion on Reservoir (#146)
 * CreateInputsModel: deprecate `Qobs` parameter and use `Qinf` instead (#120)
 * CreateInputsModel: Specify the error message: "'Qobs' column names must be included in 'id's of the GRiwrm object" (#152)
@@ -58,8 +58,8 @@ Bug fixes:
 * Ungauged node: Diversions are not handled correctly in Calibration (#127)
 * Calibration: crash with a diverted ungauged node (#128)
 * Ungauged nodes: X4 transformation not handled with CemaNeige models (#135)
-* Crash with Hysteresis in Cemaneige (#134)
-* Ungauged nodes: crash with a reservoir and several upstrem nodes (#136)
+* Crash with Hysteresis in CemaNeige (#134)
+* Ungauged nodes: crash with a reservoir and several upstream nodes (#136)
 * Ungauged node: Diversion to Reservoir crashes Calibration (#130)
 * Wrong calibration node order with multiple ungauged node clusters (#149)
 * CreateGRiwrm: several Diversions on the same node do not raise error (#125)
@@ -67,8 +67,9 @@ Bug fixes:
 * Wrong sorting for calibration of ungauged nodes (#155)
 * Donor defined on gauged model node turns the node into ungauged at Calibration (#157)
 * Calibration: crash when transferring from upstream donor to upstream receiver (#158)
-* plot.GRirwm crashes with a single node (#153)
+* plot.GRiwrm crashes with a single node (#153)
 * CreateInputsModel: Don't allow ungauged donor (#131)
+* Rename internal function `RunModel.SD` (#166)
 
 Documentation:
 --------------
