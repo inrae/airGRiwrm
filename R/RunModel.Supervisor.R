@@ -117,7 +117,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
           Param = Param[[id]]
         )
       } else {
-        x$OutputsModel[[id]] <- RunModel.SD(
+        x$OutputsModel[[id]] <- RunModel_Routing(
           x$InputsModel[[id]],
           RunOptions = RunOptions[[id]],
           Param = Param[[id]],

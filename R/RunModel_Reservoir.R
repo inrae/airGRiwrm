@@ -81,7 +81,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
 
   # Compute inflows with RunModel_Lag
   if (ncol(InputsModel$Qupstream) > 0) {
-    OutputsModel <- RunModel.SD(InputsModel,
+    OutputsModel <- RunModel_Routing(InputsModel,
                                 RunOptions,
                                 Param = celerity)
     names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
