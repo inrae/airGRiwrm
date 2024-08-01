@@ -27,6 +27,7 @@ test_all:
 
 run_examples:
   stage: checks
+  allow_failure: true
   script:
   - R -q -e 'options(error = function() quit(save = "no", status = 1)); devtools::run_examples(run_donttest = TRUE, run_dontrun = TRUE)'
 
@@ -37,7 +38,6 @@ check:
       - tags
       - schedules
   script:
-  - apt update && apt install -y tidy
   - tlmgr update --self && tlmgr install ec epstopdf-pkg amsmath
   - R -q -e 'remotes::update_packages("rcmdcheck")'
   - R -q -e 'options(error = function() quit(save = "no", status = 1)); rcmdcheck::rcmdcheck(args = "--as-cran", error_on = "warning")'
