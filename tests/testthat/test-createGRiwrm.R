@@ -134,4 +134,8 @@ test_that("Donor node can't be Ungauged nor DirectInjection nor Reservoir", {
   n$model[n$id == "54032"] <- "RunModel_Reservoir"
   expect_error(CreateGRiwrm(n),
                regexp = "must be an hydrological model")
+  n$donor[n$id == "54001"] <- NA
+  n$donor[n$id == "54032"] <- "54032"
+  expect_message(CreateGRiwrm(n),
+                 regexp = "'54001' automatically gets the node '54057' as parameter donor")
 })

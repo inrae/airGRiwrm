@@ -59,6 +59,8 @@ test_that("Calibrated parameters remains unchanged", {
 
 })
 
+skip_on_cran()
+
 test_that("Calibration with regularization is OK", {
   InputsCrit <- CreateInputsCrit(
     InputsModel = InputsModel,
@@ -95,8 +97,6 @@ test_that("Calibration with regularization is OK", {
     )
   })
 })
-
-skip_on_cran()
 
 test_that("Calibration with Diversion works", {
   n_div <- rbind(nodes,
