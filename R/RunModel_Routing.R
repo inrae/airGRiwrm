@@ -7,7 +7,7 @@
 #' @return `OutputsModel` object. See [airGR::RunModel_Lag]
 #' @noRd
 #'
-RunModel.SD <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
+RunModel_Routing <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
   if (is.null(QcontribDown)) {
     QcontribDown <- list(
       Qsim = rep(0, length(RunOptions$IndPeriod_Run))
