@@ -179,7 +179,7 @@
 
 
 <dt id="arg-header">header<a class="anchor" aria-label="anchor" href="#arg-header"></a></dt>
-<dd><p>mermaid script to add before the generated script (init configuration)</p></dd>
+<dd><p>mermaid script to add before the generated script (see Details)</p></dd>
 
 
 <dt id="arg-footer">footer<a class="anchor" aria-label="anchor" href="#arg-footer"></a></dt>
@@ -193,6 +193,14 @@
     <div id="value">
     <h2>Value</h2>
     <p>Mermaid code of the diagram if display is <code>FALSE</code>, otherwise the function returns the diagram itself.</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p><code>header</code> parameter allows to add any mermaid code injected before the <code>graph</code>
+instruction. It is notably useful for injecting directives that impact the
+format of the graph. See https://mermaid.js.org/config/directives.html for
+more details on directives and
+for a complete list of available directives.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -220,8 +228,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 GaugingDown        &lt;NA&gt;     NA  360 RunModel_GR4J GaugingDown</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   Reservoir GaugingDown    150   NA          &lt;NA&gt;   Reservoir</span>
 <span class="r-in"><span><span class="co"># Network diagram with direct flow node in red, intermediate sub-basin in green</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_basic</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.GRiwrm-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###################################################</span></span></span>
 <span class="r-in"><span><span class="co"># GR4J semi-distributed model of the Severn River #</span></span></span>
@@ -258,8 +267,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span>
 <span class="r-in"><span><span class="co"># Network diagram with upstream basin nodes in blue, intermediate sub-basin in green</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_severn</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.GRiwrm-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">####################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Severn network with an ungauged station at nodes 54029 and 54001 #</span></span></span>
@@ -282,8 +292,9 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span>
 <span class="r-in"><span><span class="co"># Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_ungauged</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.GRiwrm-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Severn network with a Diversion on the node "54029"     #</span></span></span>
@@ -302,15 +313,18 @@
 <span class="r-in"><span><span class="va">griwrm_div</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes_div</span>, <span class="va">rename_columns</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Ungauged node 'Reservoir' automatically gets the node '54001' as parameter donor</span>
 <span class="r-in"><span><span class="co"># Network diagram figures Diversion node by a red frame and a red arrow</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_div</span>, orientation <span class="op">=</span> <span class="st">"TB"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.GRiwrm-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># It's also possible to custom the diagram's look with mermaid instructions</span></span></span>
-<span class="r-in"><span><span class="co"># See https://mermaid.js.org/config/directives.html and</span></span></span>
-<span class="r-in"><span><span class="co"># https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_div</span>,</span></span>
-<span class="r-in"><span>     header <span class="op">=</span> <span class="st">"%%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}%%"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.GRiwrm-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># It's also possible to custom the diagram's look with mermaid directives</span></span></span>
+<span class="r-in"><span><span class="co"># (See details in plot.GRiwrm help topic)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">griwrm_div</span>,</span></span>
+<span class="r-in"><span>  header <span class="op">=</span> <span class="st">"%%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}%%"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
