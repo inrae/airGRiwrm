@@ -1,10 +1,38 @@
-# airGRiwrm development version
+# airGRiwrm 0.7.0
+
+Breaking changes:
+-----------------
+
+* CreateSupervisor [Breaking change]: Only allow to apply a command on DirectInjection and Diversion nodes (#101)
+* CreateInputsmodel [Breaking change]: do not allow to use `Qobs` on nodes other than Direct Injection and Diversion (#99)
 
 New features:
 -------------
 
 * Handle simple in-line reservoir inside the model (#51)
 * Use of non gauged stations in the network (#42)
+* RunModel.Supervision: handle NA values on injected flows (#94)
+* Add checks on Supervisor functions (#102)
+* Get `plot.Qm3s` available as a function (#104)
+* Implementation of "Diversion" node (#95)
+* CreateInputsModel: downgrade error on "`Qobs` only for nodes Direct Injection and Diversion" to warning (#109)
+* Diversion: Remove error "The downstream node of a Diversion node must be different than the downstream node of the node is attached to" (#111)
+* Ungauged node: allow to define donor manually (#129)
+* Ungauged node - CreateGRiwrm: Search donor through Diversion if not available by natural network (#132)
+* Highlight the water deficit at a node due to too much withdrawals (#144)
+* Integration of reservoirs as nodes in the network (#90)
+* Handle direct withdrawal in reservoirs (#147)
+* plot.GRiwrm: use web service instead of DiagrammeR::mermaid (#150)
+* plot.GRiwrm: sketch ungauged cluster with subgraphs (#151)
+* Implementation of non gauged station with donor other than a downstream gauged station (#92)
+* CreateInputsCrit: allow apriori node not only at upstream (#156)
+* Allow Diversion on Reservoir (#146)
+* CreateInputsModel: deprecate `Qobs` parameter and use `Qinf` instead (#120)
+* CreateInputsModel: Specify the error message: "'Qobs' column names must be included in 'id's of the GRiwrm object" (#152)
+* `plot.GRiwrmOutputsModel`: handle other units than mm / time step (#105)
+* Feature request: function for getting parameters from `GRiwrmOutputsCalib` (#86)
+* Speed up RunModel_Lag for RunModel.Supervisor (#164)
+* plot.GRiwrm: allow to use optional parameters of `mermaid` function (#160)
 
 Bug fixes:
 ----------
@@ -14,11 +42,49 @@ Bug fixes:
 * ConvertMeteoSD: crash with upstream nodes with no area (#89)
 * Regularisation: check if current node and a priori node use the same model (#93)
 * Regularisation: taking into account X4 transformation (#88)
+* RunModel.Supervisor doesn't work with Diversion node (#106)
+* Allow to use node with model RunModel_Lag (#107)
+* Calibration does not work when upstream catchments are both gauged and ungauged (#108)
+* Ungauged node: incorrect definition of donor with Reservoir and bug with Diversion nodes (#110)
+* Ungauged node: crash with upstream Diversion node (#113)
+* Ungauged node: crash on diversion to node outside the sub-network (#112)
+* Ungauged node: difference of ErrorCrit between Calibration and RunModel (#115)
+* getSD_Ids crashes on upstream nodes with Diversion (#116)
+* CreateSupervisor: wrong definition of allowed nodes for command (#117)
+* Calibration: Diversion is not handled on upstream nodes (#122)
+* Calibration: crash with ungauged node and multiple Diversions (#123)
+* CreateInputsModel: wrong area of sub-basin with upstream Reservoir, Lag or Direct Injection nodes (#124)
+* RunModel.Supervisor: error with Diversion node (#126)
+* Ungauged node: Diversions are not handled correctly in Calibration (#127)
+* Calibration: crash with a diverted ungauged node (#128)
+* Ungauged nodes: X4 transformation not handled with CemaNeige models (#135)
+* Crash with Hysteresis in Cemaneige (#134)
+* Ungauged nodes: crash with a reservoir and several upstrem nodes (#136)
+* Ungauged node: Diversion to Reservoir crashes Calibration (#130)
+* Wrong calibration node order with multiple ungauged node clusters (#149)
+* CreateGRiwrm: several Diversions on the same node do not raise error (#125)
+* Reservoir output plot color palette issue (#154)
+* Wrong sorting for calibration of ungauged nodes (#155)
+* Donor defined on gauged model node turns the node into ungauged at Calibration (#157)
+* Calibration: crash when transferring from upstream donor to upstream receiver (#158)
+* plot.GRirwm crashes with a single node (#153)
+* CreateInputsModel: Don't allow ungauged donor (#131)
+
+Documentation:
+--------------
+
+* Improve Supervisor documentation (#100)
+* Update package citation reference (#119)
+* Add a main page in the package documentation (#77)
+* Improve RunModel documentation (#133)
 
 Internal changes:
 -----------------
 
 * Check failed on release version (#78)
+* Transfer documentation to github pages (#148)
+* Publish documentation package on github with github workflow (#162)
+* CI: add check with version "dev" of airGR (#84)
 
 
 # airGRiwrm 0.6.2
