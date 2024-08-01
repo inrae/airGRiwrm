@@ -3,8 +3,8 @@ library(airGRiwrm)
 #########################################
 # Network of 2 nodes distant of 150 km: #
 #########################################
-# - an upstream reservoir modelled as a direct flow injection (no model)
-# - a gauging station downstream a catchment of 360 km² modelled with GR4J
+# - an upstream reservoir modeled as a direct flow injection (no model)
+# - a gauging station downstream a catchment of 360 km² modeled with GR4J
 db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  length = c(150, NA),
                  down = c("GaugingDown", NA),

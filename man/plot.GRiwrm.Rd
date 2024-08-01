@@ -46,9 +46,9 @@ Plot of a diagram representing the network structure of a GRiwrm object
 \details{
 \code{header} parameter allows to add any mermaid code injected before the \code{graph}
 instruction. It is notably useful for injecting directives that impact the
-format of the graph. See https://mermaid.js.org/config/directives.html for
-more details on directives and
-for a complete list of available directives.
+format of the graph. See \href{https://mermaid.js.org/config/directives.html}{mermaid documentation on directives} for
+more details and also the
+\href{https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878}{complete list of available directives}.
 }
 \examples{
 library(airGRiwrm)
@@ -56,8 +56,8 @@ library(airGRiwrm)
 #########################################
 # Network of 2 nodes distant of 150 km: #
 #########################################
-# - an upstream reservoir modelled as a direct flow injection (no model)
-# - a gauging station downstream a catchment of 360 km² modelled with GR4J
+# - an upstream reservoir modeled as a direct flow injection (no model)
+# - a gauging station downstream a catchment of 360 km² modeled with GR4J
 db <- data.frame(id = c("Reservoir", "GaugingDown"),
                  length = c(150, NA),
                  down = c("GaugingDown", NA),

@@ -71,7 +71,7 @@ plot.Qm3s <- function(x,
   }
 }
 
-#' Coerce [data.frame]or content of a [data.frame] into a *Qm3s* object ready
+#' Coerce [data.frame] or content of a [data.frame] into a *Qm3s* object ready
 #' for plotting
 #'
 #' @param ... A [data.frame] for a single argument, or the arguments of function [data.frame]

@@ -1,12 +1,12 @@
 ---
-title: "Severn_04: Modelling a regulated withdrawal (closed-loop control)"
+title: "Severn_04: Modeling a regulated withdrawal (closed-loop control)"
 author: "David Dorchies"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Severn_04: Modelling a regulated withdrawal (closed-loop control)}
+  %\VignetteIndexEntry{Severn_04: Modeling a regulated withdrawal (closed-loop control)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: airGRiwrm.bib

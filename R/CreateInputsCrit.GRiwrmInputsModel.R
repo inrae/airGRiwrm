@@ -46,12 +46,12 @@ CreateInputsCrit.GRiwrmInputsModel <- function(InputsModel,
     }
     lapply(names(AprioriIds), function(id) {
       if (!id %in% names(InputsModel)) {
-        stop("'Each item of names(AprioriIds) must be an id of a modelled node:",
-             " the id \"", id ,"\" is not in the list of the modelled nodes")
+        stop("'Each item of names(AprioriIds) must be an id of a modeled node:",
+             " the id \"", id ,"\" is not in the list of the modeled nodes")
       }
       if (!AprioriIds[id] %in% names(InputsModel)) {
-        stop("'Each item of AprioriIds must be an id of a modelled node:",
-             " the id \"", AprioriIds[id] ,"\" is not in the list of the modelled nodes")
+        stop("'Each item of AprioriIds must be an id of a modeled node:",
+             " the id \"", AprioriIds[id] ,"\" is not in the list of the modeled nodes")
       }
       if (!AprioriIds[id] %in% names(InputsModel)[1:which(id == names(InputsModel))]) {
         stop("'AprioriIds': the node \"", AprioriIds[id],

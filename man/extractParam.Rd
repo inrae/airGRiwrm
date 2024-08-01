@@ -11,7 +11,7 @@ extractParam(x)
 }
 \value{
 A named \link{list} of \link{numeric} \link{vector} containing the calibrated parameters
-of each modelled node.
+of each modeled node.
 }
 \description{
 Extract \link{list} of parameters from the output of \link{Calibration.GRiwrmInputsModel}

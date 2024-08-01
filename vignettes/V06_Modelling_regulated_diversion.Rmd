@@ -1,8 +1,8 @@
 ---
-title: "Severn_06: Modelling a regulated diversion"
+title: "Severn_06: Modeling a regulated diversion"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Severn_06: Modelling a regulated diversion}
+  %\VignetteIndexEntry{Severn_06: Modeling a regulated diversion}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

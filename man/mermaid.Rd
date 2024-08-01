@@ -29,7 +29,7 @@ mermaid_gen_link(
 
 \item{format}{Image format (either \code{"jpg"}, or \code{"png"}, or \code{"svg"})}
 
-\item{theme}{Mermaid theme (See https://mermaid.js.org/config/theming.html#available-themes)}
+\item{theme}{Mermaid theme (See \href{https://mermaid.js.org/config/theming.html#available-themes}{available themes in Mermaid documentation})}
 
 \item{dir.dest}{Destination folder for the downloaded image. This parameter is
 ignored if \code{file.dest} contains a folder path.}

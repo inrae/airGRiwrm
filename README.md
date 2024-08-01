@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# airGRiwrm: airGR based Integrated Water Resource Management Modelling <img src="man/figures/logo.png" align="right" width="20%"/>
+# airGRiwrm: airGR based Integrated Water Resource Management Modeling <img src="man/figures/logo.png" align="right" width="20%"/>
 
 <!-- badges: start -->
 

@@ -4,7 +4,7 @@
 \name{airGRiwrm-package}
 \alias{airGRiwrm}
 \alias{airGRiwrm-package}
-\title{airGR based Integrated Water Resource Management Modelling}
+\title{airGR based Integrated Water Resource Management Modeling}
 \description{
 The R-package \strong{airGRiwrm} is an extension of the \strong{airGR} R-package
 for semi-distributed hydrological models.
@@ -42,7 +42,7 @@ Build and evaluate climate change adaptation with a parsimonious integrated
 agro-hydrological model over a catchment in northeastern France (No. EGU23-12160).
 Presented at the EGU23, Copernicus Meetings. https://doi.org/10.5194/egusphere-egu23-12160
 \item Soutif-Bellenger, M., Thirel, G., Therond, O., Villerd, J., 2022.
-How much can we simplify irrigation in an integrated modelling purpose?
+How much can we simplify irrigation in an integrated modeling purpose?
 A case study in southern France (No. IAHS2022-32). Presented at the IAHS2022,
 Copernicus Meetings. https://meetingorganizer.copernicus.org/IAHS2022/IAHS2022-32.html.
 \item Santos, L., Thirel, G., Perrin, C., 2022. Impact of water withdrawals and

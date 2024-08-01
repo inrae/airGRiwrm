@@ -33,7 +33,7 @@ especially regarding low flows. These upper basins are actually heavily
 influenced by impoundments and inter-basin transfers [@higgsHydrologicalChangesRiver1988].
 
 So, to cope with these influences, in this vignette, we use direct injection of
-observed influenced flows instead of modelling natural flow with an hydrological model.
+observed influenced flows instead of modeling natural flow with an hydrological model.
 
 We use observation on the Avon at Evesham (Gauging station '54002') and we
 choose to do the same on the Severn at Bewdley (Gauging station '54001') as if

@@ -4,7 +4,7 @@
 #'
 #' @template param_x
 #' @param FixedParam a [numeric] [vector] as for [airGR::CreateCalibOptions],
-#' or a [list] giving the values of non-optimised parameters (see details)
+#' or a [list] giving the values of non-optimized parameters (see details)
 #' @param ... arguments passed to [airGR::CreateCalibOptions], see details
 #'
 #' @details See [airGR::CreateCalibOptions] documentation for a complete list of arguments.

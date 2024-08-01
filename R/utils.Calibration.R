@@ -268,7 +268,7 @@ transferGRparams <- function(InputsModel, Param, donor, receiver, default_param 
 #' @param x A *GRiwrmOutputsModel* object returned by [Calibration.GRiwrmInputsModel]
 #'
 #' @return A named [list] of [numeric] [vector] containing the calibrated parameters
-#' of each modelled node.
+#' of each modeled node.
 #'
 #' @seealso [Calibration], [RunModel.GRiwrmInputsModel], [RunModel.Supervisor]
 #'

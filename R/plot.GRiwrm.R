@@ -3,10 +3,9 @@
 #' @details
 #' `header` parameter allows to add any mermaid code injected before the `graph`
 #' instruction. It is notably useful for injecting directives that impact the
-#' format of the graph. See https://mermaid.js.org/config/directives.html for
-#' more details on directives and
-#  https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878
-#' for a complete list of available directives.
+#' format of the graph. See [mermaid documentation on directives](https://mermaid.js.org/config/directives.html) for
+#' more details and also the
+#' [complete list of available directives](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878).
 #'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
 #' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
@@ -164,7 +163,7 @@ getNodeClass <- function(id, griwrm) {
 #' in mermaid script), the functions raises no error (see `mermaid` returned value).
 #'
 #' @param diagram Diagram in mermaid markdown-like language or file (as a connection or file name) containing a diagram specification
-#' @param theme Mermaid theme (See https://mermaid.js.org/config/theming.html#available-themes)
+#' @param theme Mermaid theme (See [available themes in Mermaid documentation](https://mermaid.js.org/config/theming.html#available-themes))
 #' @param format Image format (either `"jpg"`, or `"png"`, or `"svg"`)
 #' @param dir.dest Destination folder for the downloaded image. This parameter is
 #' ignored if `file.dest` contains a folder path.

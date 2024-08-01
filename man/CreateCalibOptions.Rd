@@ -26,7 +26,7 @@ CreateCalibOptions(x, FixedParam = NULL, ...)
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
 \item{FixedParam}{a \link{numeric} \link{vector} as for \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions},
-or a \link{list} giving the values of non-optimised parameters (see details)}
+or a \link{list} giving the values of non-optimized parameters (see details)}
 
 \item{...}{arguments passed to \link[airGR:CreateCalibOptions]{airGR::CreateCalibOptions}, see details}
 }
