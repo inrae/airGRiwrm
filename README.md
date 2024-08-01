@@ -20,8 +20,9 @@ status](https://gitlab.irstea.fr/in-wop/airGRiwrm/badges/dev/pipeline.svg)](http
 semi-distributive hydrological model on an anthropized catchment.
 
 This package is developed by the [mixed research unit G-EAU,
-Montpellier, France](https://g-eau.fr) and the [HYDRO team of the INRAE
-HYCAR research unit, Antony, France](https://webgr.inrae.fr/en/home/).
+Montpellier, France](https://g-eau.fr/index.php/en/) and the [HYDRO team
+of the INRAE HYCAR research unit, Antony,
+France](https://webgr.inrae.fr/eng).
 
 ## Installation
 
@@ -37,7 +38,7 @@ devtools::install_github("inrae/airGRiwrm", "dev")
 ## Get started
 
 Visit the website dedicated to the package at
-<https://inrae.github.io/airGRiwrm> for tutorials, usage examples and
+<https://inrae.github.io/airGRiwrm/> for tutorials, usage examples and
 documentation.
 
 ## Acknowledgement
