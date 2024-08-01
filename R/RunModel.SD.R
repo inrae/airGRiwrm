@@ -19,7 +19,7 @@ RunModel.SD <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
     class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
     x$BasinAreas[length(x$BasinAreas)] <- 1E-6
   }
-  OutputsModel <- RunModel_Lag4Supervisor(x,
+  OutputsModel <- RunModel_Lag_enhanced(x,
                                           RunOptions = RunOptions,
                                           Param = Param[1],
                                           QcontribDown = QcontribDown)
@@ -37,8 +37,47 @@ RunModel.SD <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
   return(OutputsModel)
 }
 
-RunModel_Lag4Supervisor <- function(InputsModel, RunOptions, Param, QcontribDown) {
+RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) {
   NParam <- 1
+
+## argument check
+  if (!inherits(InputsModel, "InputsModel")) {
+    stop("'InputsModel' must be of class 'InputsModel'")
+  }
+  if (!inherits(InputsModel, "SD")) {
+    stop("'InputsModel' must be of class 'SD'")
+  }
+  if (!inherits(RunOptions, "RunOptions")) {
+    stop("'RunOptions' must be of class 'RunOptions'")
+  }
+  if (!is.vector(Param) | !is.numeric(Param)) {
+    stop("'Param' must be a numeric vector")
+  }
+  if (sum(!is.na(Param)) != NParam) {
+    stop(paste("'Param' must be a vector of length", NParam, "and contain no NA"))
+  }
+  if (inherits(QcontribDown, "OutputsModel")) {
+    if (is.null(QcontribDown$Qsim)) {
+      stop("'QcontribDown' should contain a key 'Qsim' containing the output of the runoff of the downstream subcatchment")
+    }
+    if (length(QcontribDown$Qsim) != length(RunOptions$IndPeriod_Run)) {
+      stop("Time series Qsim in 'QcontribDown' should have the same length as 'RunOptions$IndPeriod_Run'")
+    }
+    if (!identical(RunOptions$IndPeriod_WarmUp, 0L) && !identical(RunOptions$Outputs_Sim, RunOptions$Outputs_Cal)) {
+      # This test is not necessary during calibration but usefull in other cases because
+      # WarmUpQsim is then used for downstream sub-basins because of the delay in Qupstream
+      if (is.null(QcontribDown$RunOptions$WarmUpQsim) ||
+          length(QcontribDown$RunOptions$WarmUpQsim) != length(RunOptions$IndPeriod_WarmUp)) {
+        stop("Time series WarmUpQsim in 'QcontribDown' should have the same length as 'RunOptions$IndPeriod_WarmUp'")
+      }
+    }
+  } else if (is.vector(QcontribDown) && is.numeric(QcontribDown)) {
+    if (length(QcontribDown) != length(RunOptions$IndPeriod_Run)) {
+      stop("'QcontribDown' should have the same length as 'RunOptions$IndPeriod_Run'")
+    }
+  } else {
+    stop("'QcontribDown' must be a numeric vector or a 'OutputsModel' object")
+  }
 
   # data set up
   NbUpBasins <- length(InputsModel$LengthHydro)
