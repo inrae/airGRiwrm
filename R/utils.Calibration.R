@@ -204,7 +204,7 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
 #'
 #' The transfer takes care of:
 #' - the presence/absence of hydraulic routing parameters between the donor and the receiver
-#' - the transformationof the X4 parameters of GR models
+#' - the transformation of the X4 parameters of GR models
 #'
 #' @param InputsModel A *GRiwrmInputsModel* object (See [CreateInputsModel.GRiwrm])
 #' @param Param [numeric] vector of GR model parameters

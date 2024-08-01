@@ -31,6 +31,6 @@ module configuration.
 The transfer takes care of:
 \itemize{
 \item the presence/absence of hydraulic routing parameters between the donor and the receiver
-\item the transformationof the X4 parameters of GR models
+\item the transformation of the X4 parameters of GR models
 }
 }

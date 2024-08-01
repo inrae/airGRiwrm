@@ -11,7 +11,7 @@
 #' transfers.
 #' It allows to automatically transfer hydrological model parameters for ungauged
 #' locations in the catchment.
-#' Local human influences such as water transfers, releases and withdrawalad can
+#' Local human influences such as water transfers, releases and withdrawals can
 #' be injected in the network.
 #' The model also handles reservoirs by simulating volume time series from releases
 #' time series provided by the user.
