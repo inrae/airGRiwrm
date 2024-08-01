@@ -172,18 +172,23 @@ checkNetworkConsistency <- function(db) {
       nodeError(node, "The 'down' id ", node$down, " is not found in the 'id' column")
     }
   })
-  lapply(which(!is.na(db$donor)), function(i) {
-    node <- db[i, ]
-    if (!(node$donor %in% db$id)) {
+  db3 <- db2[!is.na(db2$model), ]
+  # db3 only GR and Reservoir nodes (no Diversion, no DirectInjection)
+  lapply(which(!is.na(db3$donor)), function(i) {
+    node <- db3[i, ]
+    if (!(node$donor %in% db2$id)) {
       nodeError(node, "The 'donor' id ", node$donor, " is not found in the 'id' column")
     }
-    donor_model <- db$model[db$id == node$donor]
+    donor_model <- db2$model[db2$id == node$donor]
     if (is.na(donor_model) || donor_model %in% c("RunModel_Reservoir", "Ungauged")) {
-      nodeError(node, "The 'donor' node ", node$donor, " must be an hydrological model",
-                " (Found model = '", donor_model, "')")
+      if (!(node$model == "RunModel_Reservoir" &&
+            !is.na(donor_model) && donor_model == "RunModel_Reservoir")) {
+        # This error is for GR and RunModel_Reservoir that are in an ungauged cluster
+        nodeError(node, "The 'donor' node ", node$donor, " must be an hydrological model",
+                  " (Found model = '", donor_model, "')")
+      }
     }
   })
-  db3 <- db2[!is.na(db2$model), ]
   sapply(db$id[getDiversionRows(db)], function(x) {
     i <- which(db$id == x & db$model == "Diversion")[1]
     if (length(which(db3$id == x)) != 1) {
