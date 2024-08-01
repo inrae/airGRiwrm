@@ -27,6 +27,7 @@ Imports:
     jsonlite,
     png,
     rlang,
+    stats,
     utils,
     zlib
 Suggests:
