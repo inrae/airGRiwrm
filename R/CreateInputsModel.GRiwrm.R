@@ -41,6 +41,7 @@
 #'        inputs, default=5
 #' @param IsHyst [logical] boolean indicating if the hysteresis version of
 #'        CemaNeige is used. See details of [airGR::CreateRunOptions].
+#' @param FUN_REGUL List of functions for local regulation (See details)
 #' @param ... used for compatibility with S3 methods
 #'
 #' @details Meteorological data are needed for the nodes of the network that
@@ -66,6 +67,26 @@
 #' For example of use of Diversion nodes, see example in
 #' [RunModel.GRiwrmInputsModel] topic and vignette
 #' "V06_Modelling_regulated_diversion".
+#'
+#' ## The `FUN_REGUL` parameter
+#'
+#' `FUN_REGUL` argument is a named [list] of function that modify the node
+#' `InputsModel` before sending it to the node's model.
+#' This feature is useful for modifying data such as `InputsModel$Qdiv` or
+#' `InputsModel$Qrelease` giving simulated flows already available from upstream
+#' nodes.
+#' Each item of the list has a name corresponding to the node on which the
+#' function is applied. Each function must follow this interface:
+#' `function(InputsModel, RunOptions, OutputsModel, env)` where the arguments are:
+#' - `InputsModel`, the *InputsModel* object of the current node
+#' - `RunOptions`, the *RunOptions* object of the current node
+#' - `OutputsModel`, the *GRiwrmOutputsModel* object of the upstream and sibling
+#' nodes that have been already computed when the computation of the current
+#' node occurs
+#' - `env`, the [environment] of the [RunModel.GRiwrmInputsModel] function
+#'
+#' The functions embedded in `FUN_REGUL` should all return the argument
+#' `InputsModel` after calculation.
 #'
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
 #' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
