@@ -18,15 +18,15 @@
 #'
 #' The "model" column should be filled by one of the following:
 #'
-#' * One of the hydrological models available in the *airGR* package defined by its
+#' - One of the hydrological models available in the **airGR** package defined by its
 #' `RunModel` function (i.e.: `RunModel_GR4J`, `RunModel_GR5HCemaneige`...)
-#' * `RunModel_Reservoir` for simulating a reservoir (See: [RunModel_Reservoir])
-#' * `Ungauged` for an ungauged node. The sub-basin inherits hydrological model and
+#' - `RunModel_Reservoir` for simulating a reservoir (See: [RunModel_Reservoir])
+#' - `Ungauged` for an ungauged node. The sub-basin inherits hydrological model and
 #' parameters from a "donor" sub-basin. If not defined by the user in the column `donor`,
 #' the donor is automatically set to the first gauged node at downstream
-#' * `NA` for injecting (or abstracting) a flow time series at the location of the node
+#' - `NA` for injecting (or abstracting) a flow time series at the location of the node
 #' (direct flow injection)
-#' * `Diversion` for abstracting a flow time series from an existing node transfer it
+#' - `Diversion` for abstracting a flow time series from an existing node transfer it
 #' to another node. As a `Diversion` is attached to an existing node, this node is
 #' then described with 2 lines: one for the hydrological model and another one for the
 #' diversion
@@ -166,17 +166,29 @@ checkNetworkConsistency <- function(db) {
     stop("At least one node must be a network downstream node",
       " specified by 'down = NA'")
   }
-  sapply(db$down[!is.na(db$down)], function(x) {
-    if (!(x %in% db$id)) {
-      stop("The 'down' id ", x, " is not found in the 'id' column")
-    }
-  })
-  sapply(db$donor[!is.na(db$donor)], function(x) {
-    if (!(x %in% db$id)) {
-      stop("The 'donor' id ", x, " is not found in the 'id' column")
+  lapply(which(!is.na(db$down)), function(i) {
+    node <- db[i, ]
+    if (!(node$down %in% db$id)) {
+      nodeError(node, "The 'down' id ", node$down, " is not found in the 'id' column")
     }
   })
   db3 <- db2[!is.na(db2$model), ]
+  # db3 only GR and Reservoir nodes (no Diversion, no DirectInjection)
+  lapply(which(!is.na(db3$donor)), function(i) {
+    node <- db3[i, ]
+    if (!(node$donor %in% db2$id)) {
+      nodeError(node, "The 'donor' id ", node$donor, " is not found in the 'id' column")
+    }
+    donor_model <- db2$model[db2$id == node$donor]
+    if (is.na(donor_model) || donor_model %in% c("RunModel_Reservoir", "Ungauged")) {
+      if (!(node$model == "RunModel_Reservoir" &&
+            !is.na(donor_model) && donor_model == "RunModel_Reservoir")) {
+        # This error is for GR and RunModel_Reservoir that are in an ungauged cluster
+        nodeError(node, "The 'donor' node ", node$donor, " must be an hydrological model",
+                  " (Found model = '", donor_model, "')")
+      }
+    }
+  })
   sapply(db$id[getDiversionRows(db)], function(x) {
     i <- which(db$id == x & db$model == "Diversion")[1]
     if (length(which(db3$id == x)) != 1) {
@@ -223,8 +235,8 @@ displayNodeDetails <- function(node) {
         sep = "\n")
 }
 
-nodeError <- function(node, s) {
-  stop(displayNodeDetails(node), "\n", s)
+nodeError <- function(node, ...) {
+  stop(displayNodeDetails(node), "\n", ...)
 }
 
 #' Get the Id of the nearest gauged model at downstream

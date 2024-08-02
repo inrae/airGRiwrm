@@ -17,11 +17,11 @@ nodes2 <- rbind(nodes,
                 ))
 griwrm2 <- CreateGRiwrm(nodes2)
 
-# Add Qobs for the 2 new nodes and create InputsModel
-Qobs <- matrix(data = rep(0, 2*length(DatesR)), ncol = 2)
-colnames(Qobs) <- c("R1", "R2")
+# Add Qinf for the 2 new nodes and create InputsModel
+Qinf <- matrix(data = rep(0, 2*length(DatesR)), ncol = 2)
+colnames(Qinf) <- c("R1", "R2")
 InputsModel <-
-  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qobs)
+  CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qinf)
 
 test_that("RunModel.Supervisor with two regulations that cancel each other out should returns same results as RunModel.GRiwrmInputsModel", {
   # Create Supervisor
@@ -91,9 +91,9 @@ test_that("RunModel.Supervisor with diversion node should not produce NAs", {
                                            area = NA))
   nodes_div <- nodes_div[order(nodes_div$model), ]
   g_div <- CreateGRiwrm(nodes_div)
-  Qobs2 <- matrix(data = rep(0, length(DatesR)), ncol = 1)
-  colnames(Qobs2) <- "54001"
-  e <- setupRunModel(griwrm = g_div, runRunModel = FALSE, Qobs2 = Qobs2)
+  Qinf <- matrix(data = rep(0, length(DatesR)), ncol = 1)
+  colnames(Qinf) <- "54001"
+  e <- setupRunModel(griwrm = g_div, runRunModel = FALSE, Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   sv <- CreateSupervisor(InputsModel, TimeStep = 1L)
   logicFunFactory <- function(sv) {

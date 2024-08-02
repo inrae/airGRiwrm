@@ -21,7 +21,7 @@
 #' Parameter regularization consists of defining a priori parameters which are
 #' used in a composed criterion based on the formula proposed by
 #' Lavenne et al. (2019) (See [airGR::CreateInputsCrit_Lavenne]).
-#' The parameter `AprioriIds` allows to define which neighbour sub-catchment is
+#' The parameter `AprioriIds` allows to define which neighbor sub-catchment is
 #' used for providing a priori parameters.
 #' Its format is as follows:
 #' `AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)`

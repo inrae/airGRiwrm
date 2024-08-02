@@ -21,7 +21,7 @@ test_that("Calibration with Runmodel_Reservoir works!", {
 
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
-                     Qobs2 = Qobs_rsrvr)
+                     Qinf = Qinf_rsrvr)
   for (x in ls(e)) assign(x, get(x, e))
 
   InputsCrit <- CreateInputsCrit(InputsModel,
@@ -64,14 +64,14 @@ test_that("Calibration with Runmodel_Reservoir works!", {
   expect_gt(OC[["54001"]]$CritFinal, 0.96)
 })
 
-expect_dam <- function(nodes, Qobs2) {
+expect_dam <- function(nodes, Qinf) {
   g <- CreateGRiwrm(nodes)
 
   expect_equal(g$donor[g$id == "54095" & g$model != "Diversion"], "54001")
 
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
-                     Qobs2 = Qobs2)
+                     Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
 
   InputsCrit <- CreateInputsCrit(InputsModel,
@@ -93,13 +93,13 @@ expect_dam <- function(nodes, Qobs2) {
 
 test_that("Calibration with ungauged node and reservoir in the middle works",{
   n_rsrvr$model[n_rsrvr$id == "54095"] <- "Ungauged"
-  expect_dam(n_rsrvr, Qobs_rsrvr)
+  expect_dam(n_rsrvr, Qinf_rsrvr)
 })
 
 test_that("Calibration with ungauged node and reservoir filled by a diversion works",{
-  Qobs2 <- cbind(Qobs_rsrvr, rep(0, nrow(Qobs_rsrvr)))
-  colnames(Qobs2) <- c("Dam", "54095")
-  expect_dam(n_derived_rsrvr, Qobs2)
+  Qinf <- cbind(Qinf_rsrvr, rep(0, nrow(Qinf_rsrvr)))
+  colnames(Qinf) <- c("Dam", "54095")
+  expect_dam(n_derived_rsrvr, Qinf)
 })
 
 test_that("Diversion on a reservoir works #146", {
@@ -122,11 +122,11 @@ test_that("Diversion on a reservoir works #146", {
       model = "Diversion"
     )
   )
-  Qobs2 <- Qrelease * 0.1
+  Qinf <- Qrelease * 0.1
   g <- CreateGRiwrm(nodes)
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
-                     Qobs2 = Qobs2,
+                     Qinf = Qinf,
                      Qrelease = Qrelease)
   for (x in ls(e)) assign(x, get(x, e))
 
@@ -149,11 +149,11 @@ test_that("Withdrawal on a reservoir works #147", {
     )
   )
   Qrelease <- data.frame(Dam = rep(1E6, length(DatesR)))
-  Qobs2 <- data.frame(Irrigation = rep(-1E6, length(DatesR)))
+  Qinf <- data.frame(Irrigation = rep(-1E6, length(DatesR)))
   g <- CreateGRiwrm(nodes)
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
-                     Qobs2 = Qobs2,
+                     Qinf = Qinf,
                      Qrelease = Qrelease)
   for (x in ls(e)) assign(x, get(x, e))
   Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(20E6, 1)))
@@ -166,10 +166,10 @@ test_that("Withdrawal on a reservoir works #147", {
 
   nodes$model[nodes$id == "54095"] <- NA
   g <- CreateGRiwrm(nodes)
-  Qobs2 <- cbind(Qobs2, "54095" = Qobs[, "54095"])
+  Qinf <- cbind(Qinf, "54095" = Qobs[, "54095"])
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
-                     Qobs2 = Qobs2,
+                     Qinf = Qinf,
                      Qrelease = Qrelease)
   for (x in ls(e)) assign(x, get(x, e))
   OM <- RunModel(InputsModel,
@@ -193,12 +193,12 @@ test_that("Reservoir with downstream ungauged node works", {
   g <- CreateGRiwrm(g)
   Qrelease <- data.frame(Dam = rep(0, length(DatesR)),
                          Dam2 = rep(0, length(DatesR)))
-  Qobs2 <- matrix(0, ncol = 1, nrow = length(DatesR))
-  colnames(Qobs2) <- "54001"
+  Qinf <- matrix(0, ncol = 1, nrow = length(DatesR))
+  colnames(Qinf) <- "54001"
   e <- setupRunModel(griwrm = g,
                      runRunModel = FALSE,
                      Qrelease = Qrelease,
-                     Qobs2 = Qobs2)
+                     Qinf = Qinf)
   for (x in ls(e)) assign(x, get(x, e))
   InputsCrit <- CreateInputsCrit(InputsModel,
                                  ErrorCrit_KGE2,

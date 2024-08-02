@@ -17,6 +17,9 @@
 #' With a \emph{GRiwrmInputsModel} object, all arguments are applied on each
 #' sub-catchments of the network.
 #'
+#' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
+#' and [RunModel.Supervisor].
+#'
 #' @return Depending on the class of `InputsModel` argument (respectively
 #' \emph{InputsModel} and \emph{GRiwrmInputsModel} object), the returned value is respectively:
 #' - a `RunOptions` object (See [airGR::CreateRunOptions])
@@ -25,7 +28,6 @@
 #' @rdname CreateRunOptions
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [RunModel.GRiwrmInputsModel()]
-#' @example man-examples/RunModel.GRiwrmInputsModel.R
 CreateRunOptions <- function(x, ...) {
   UseMethod("CreateRunOptions", x)
 }

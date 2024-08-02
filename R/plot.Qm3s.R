@@ -4,6 +4,9 @@
 #' of class "Qm3s" which can be directly called by `plot`. It can also be called
 #' as a function `plot.Qm3s` if the first parameter has the good format.
 #'
+#' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
+#' and [RunModel.Supervisor].
+#'
 #' @param x [data.frame] with a first column with [POSIXt] dates and followings
 #'        columns with flows at each node of the network
 #' @param type [character] plot type (See [plot.default]), default "l"
@@ -16,11 +19,10 @@
 #' @param legend.cex [character] `cex` parameter for the text of the legend (See [par])
 #' @param legend.x,legend.y Legend position, see `x` and `y` parameters in [graphics::legend]
 #' @param lty [character] or [numeric] The line type (See [par])
+#' @param mgp The margin line for the axis title, axis labels and axis line (See [par])
 #' @param ... Further arguments to pass to the [matplot] functions
 #'
 #' @return Screen plot window.
-#'
-#' @example man-examples/RunModel.GRiwrmInputsModel.R
 #'
 #' @export plot.Qm3s
 #' @export
@@ -36,6 +38,7 @@ plot.Qm3s <- function(x,
                       legend.x = "topright",
                       legend.y = NULL,
                       lty = 1,
+                      mgp = c(2.5, 1, 0),
                       ...) {
 
   stopifnot(is.data.frame(x),
@@ -54,7 +57,9 @@ plot.Qm3s <- function(x,
     xlab = xlab,
     ylab = ylab,
     main = main,
-    col = col, ...
+    col = col,
+    mgp = mgp,
+    ...
   )
   if (!is.null(legend)) {
     legend(x = legend.x,
@@ -66,7 +71,7 @@ plot.Qm3s <- function(x,
   }
 }
 
-#' Coerce [data.frame]or content of a [data.frame] into a *Qm3s* object ready
+#' Coerce [data.frame] or content of a [data.frame] into a *Qm3s* object ready
 #' for plotting
 #'
 #' @param ... A [data.frame] for a single argument, or the arguments of function [data.frame]

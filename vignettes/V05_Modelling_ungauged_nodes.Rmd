@@ -1,8 +1,8 @@
 ---
-title: "Severn_05: Modelling ungauged stations"
+title: "Severn_05: Modeling ungauged stations"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Severn_05: Modelling ungauged stations}
+  %\VignetteIndexEntry{Severn_05: Modeling ungauged stations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: airGRiwrm.bib
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 library(airGRiwrm)
 ```
 
-## Why modelling ungauged station in the semi-distributed model?
+## Why modeling ungauged station in the semi-distributed model?
 
 Ungauged nodes in the semi-distributed model can be used to reach two different goals:
 
@@ -35,19 +35,12 @@ semi-distributed model.
 
 ## Presentation of the study case
 
-Using the study case of the vignette #1 and #2, we considere this time that nodes `54001` and
+Using the study case of the vignette #1 and #2, we consider this time that nodes `54001` and
 `54029` are ungauged. We simulate the streamflow at these locations by sharing
 hydrological parameters of the gauged node `54032`.
 
 ```{r network, echo = FALSE}
-mmd <- function(x, ...) {
-  # For avoiding crash of R CMD build in console mode
-  if (Sys.getenv("RSTUDIO") == "1") {
-    DiagrammeR::mermaid(x, ...)
-  }
-}
-
-mmd("
+plot.mermaid("
 graph LR
 id95[54095]
 id01[54001]
@@ -76,12 +69,12 @@ class id95,54002 UpGau
 ")
 ```
 
-Hydrological parameters at the ungauged nodes will be the same as the one at the gauged node `54032` except for the unit hydrogram parameter which depend on the area of the sub-basin. @lobligeoisMieuxConnaitreDistribution2014 provides the following conversion formula for this parameter:
+Hydrological parameters at the ungauged nodes will be the same as the one at the gauged node `54032` except for the unit hydrograph parameter which depend on the area of the sub-basin. @lobligeoisMieuxConnaitreDistribution2014 provides the following conversion formula for this parameter:
 
 $$
 x_{4i} = \left( \dfrac{S_i}{S_{BV}} \right) ^ {0.3} X_4
 $$
-With $X_4$ the unit hydrogram parameter for the entire basin at `54032` which as an area of $S_{BV}$; $S_i$ the area and $x_{4i}$ the parameter for the sub-basin $i$.
+With $X_4$ the unit hydrograph parameter for the entire basin at `54032` which as an area of $S_{BV}$; $S_i$ the area and $x_{4i}$ the parameter for the sub-basin $i$.
 
 ## Using ungauged stations in the airGRiwrm model
 
@@ -161,7 +154,7 @@ Hydrological parameters for sub-basins
 
 ## Run the model with the optimized model parameters
 
-The hydrologic model uses parameters herited from the calibration of the gauged sub-basin `54032` for the ungauged nodes `54001` and `54029`:
+The hydrological model uses parameters herited from the calibration of the gauged sub-basin `54032` for the ungauged nodes `54001` and `54029`:
 
 ```{r param}
 ParamV05 <- sapply(griwrmV05$id, function(x) {OC_U[[x]]$Param})
@@ -184,7 +177,7 @@ OutputsModels <- RunModel(
 )
 ```
 
-and plot the comparison of the modelled and the observed flows including on the so-called "ungauged" stations :
+and plot the comparison of the modeled and the observed flows including on the so-called "ungauged" stations :
 
 ```{r plot, fig.height = 5, fig.width = 8}
 plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,], which = c("Regime", "CumFreq"))

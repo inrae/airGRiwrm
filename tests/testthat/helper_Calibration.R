@@ -1,5 +1,5 @@
 runCalibration <- function(nodes = NULL,
-                           Qobs2 = NULL,
+                           Qinf = NULL,
                            InputsCrit = NULL,
                            CalibOptions = NULL,
                            FUN_CRIT = ErrorCrit_KGE2,
@@ -14,7 +14,7 @@ runCalibration <- function(nodes = NULL,
   }
   e <- setupRunModel(griwrm = griwrm,
                      runRunModel = runRunModel,
-                     Qobs2 = Qobs2,
+                     Qinf = Qinf,
                      IsHyst = IsHyst)
   for (x in ls(e)) assign(x, get(x, e))
   rm(e)

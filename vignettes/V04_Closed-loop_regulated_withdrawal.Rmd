@@ -1,12 +1,12 @@
 ---
-title: "Severn_04: Modelling a regulated withdrawal (closed-loop control)"
+title: "Severn_04: Modeling a regulated withdrawal (closed-loop control)"
 author: "David Dorchies"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Severn_04: Modelling a regulated withdrawal (closed-loop control)}
+  %\VignetteIndexEntry{Severn_04: Modeling a regulated withdrawal (closed-loop control)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: airGRiwrm.bib
@@ -257,11 +257,11 @@ As for the previous model, we need to set up an `GRiwrmInputsModel` object conta
 ```{r}
 # Flow time series are needed for all direct injection nodes in the network
 # even if they may be overwritten after by a controller
-QobsIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)),
+QinfIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)),
                         Irrigation2 = rep(0, length(DatesR)))
 
 # Creation of the GRiwrmInputsModel object
-IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QobsIrrig)
+IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QinfIrrig)
 ```
 
 # Implementation of the regulation controller

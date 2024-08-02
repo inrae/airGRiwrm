@@ -16,6 +16,7 @@
   legend.x = "topright",
   legend.y = NULL,
   lty = 1,
+  mgp = c(2.5, 1, 0),
   ...
 )
 }
@@ -42,6 +43,8 @@ to hide the legend}
 
 \item{lty}{\link{character} or \link{numeric} The line type (See \link{par})}
 
+\item{mgp}{The margin line for the axis title, axis labels and axis line (See \link{par})}
+
 \item{...}{Further arguments to pass to the \link{matplot} functions}
 }
 \value{
@@ -52,216 +55,7 @@ This function plot time series of flow rate in m3/s. It's a method for object
 of class "Qm3s" which can be directly called by \code{plot}. It can also be called
 as a function \code{plot.Qm3s} if the first parameter has the good format.
 }
-\examples{
-###################################################################
-# Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #
-# Simulation of a reservoir with a purpose of low-flow mitigation #
-###################################################################
-
-## ---- preparation of the InputsModel object
-
-## loading package and catchment data
-library(airGRiwrm)
-data(L0123001)
-
-## ---- specifications of the reservoir
-
-## the reservoir withdraws 1 m3/s when it's possible considering the flow observed in the basin
-Qupstream <- matrix(-sapply(BasinObs$Qls / 1000 - 1, function(x) {
-  min(1, max(0, x, na.rm = TRUE))
-}), ncol = 1)
-
-## except between July and September when the reservoir releases 3 m3/s for low-flow mitigation
-month <- as.numeric(format(BasinObs$DatesR, "\%m"))
-Qupstream[month >= 7 & month <= 9] <- 3
-Qupstream <- Qupstream * 86400 ## Conversion in m3/day
-
-## the reservoir is not an upstream subcachment: its areas is NA
-BasinAreas <- c(NA, BasinInfo$BasinArea)
-
-## delay time between the reservoir and the catchment outlet is 2 days and the distance is 150 km
-LengthHydro <- 150
-## with a delay of 2 days for 150 km, the flow velocity is 75 km per day
-Velocity <- (LengthHydro * 1e3 / 2) / (24 * 60 * 60) ## Conversion km/day -> m/s
-
-# This example is a network of 2 nodes which can be describe like this:
-db <- data.frame(id = c("Reservoir", "GaugingDown"),
-                 length = c(LengthHydro, NA),
-                 down = c("GaugingDown", NA),
-                 area = c(NA, BasinInfo$BasinArea),
-                 model = c(NA, "RunModel_GR4J"),
-                 stringsAsFactors = FALSE)
-
-# Create GRiwrm object from the data.frame
-griwrm <- CreateGRiwrm(db)
-plot(griwrm)
-
-# Formatting observations for the hydrological models
-# Each input data should be a matrix or a data.frame with the good id in the name of the column
-Precip <- matrix(BasinObs$P, ncol = 1)
-colnames(Precip) <- "GaugingDown"
-PotEvap <- matrix(BasinObs$E, ncol = 1)
-colnames(PotEvap) <- "GaugingDown"
-
-# Observed flows contain flows that are directly injected in the model
-Qobs = matrix(Qupstream, ncol = 1)
-colnames(Qobs) <- "Reservoir"
-
-# Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)
-InputsModels <- CreateInputsModel(griwrm,
-                            DatesR = BasinObs$DatesR,
-                            Precip = Precip,
-                            PotEvap = PotEvap,
-                            Qobs = Qobs)
-str(InputsModels)
-
-## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
-
-# Creation of the GRiwmRunOptions object
-RunOptions <- CreateRunOptions(InputsModels,
-                                IndPeriod_Run = Ind_Run)
-str(RunOptions)
-
-# Parameters of the SD models should be encapsulated in a named list
-ParamGR4J <- c(X1 = 257.238, X2 = 1.012, X3 = 88.235, X4 = 2.208)
-Param <- list(`GaugingDown` = c(Velocity, ParamGR4J))
-
-# RunModel for the whole network
-OutputsModels <- RunModel(InputsModels,
-                          RunOptions = RunOptions,
-                          Param = Param)
-str(OutputsModels)
-
-# Compare regimes of the simulation with reservoir and observation of natural flow
-plot(OutputsModels,
-     data.frame(GaugingDown = BasinObs$Qmm[Ind_Run]),
-     which = "Regime")
-
-# Plot together simulated flows (m3/s) of the reservoir and the gauging station
-plot(attr(OutputsModels, "Qm3s"))
-
-
-########################################################
-# Run the Severn example provided with this package    #
-# A natural catchment composed with 6 gauging stations #
-########################################################
-
-data(Severn)
-nodes <- Severn$BasinsInfo
-nodes$model <- "RunModel_GR4J"
-# Mismatch column names are renamed to stick with GRiwrm requirements
-rename_columns <- list(id = "gauge_id",
-                       down = "downstream_id",
-                       length = "distance_downstream")
-g_severn <- CreateGRiwrm(nodes, rename_columns)
-
-# Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
-plot(g_severn)
-
-# Format CAMEL-GB meteorological dataset for airGRiwrm inputs
-BasinsObs <- Severn$BasinsObs
-DatesR <- BasinsObs[[1]]$DatesR
-PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-
-# Precipitation and Potential Evaporation are related to the whole catchment
-# at each gauging station. We need to compute them for intermediate catchments
-# for use in a semi-distributed model
-Precip <- ConvertMeteoSD(g_severn, PrecipTot)
-PotEvap <- ConvertMeteoSD(g_severn, PotEvapTot)
-
-# CreateInputsModel object
-IM_severn <- CreateInputsModel(g_severn, DatesR, Precip, PotEvap)
-
-# GRiwrmRunOptions object
-# Run period is set aside the one-year warm-up period
-IndPeriod_Run <- seq(
-  which(IM_severn[[1]]$DatesR == (IM_severn[[1]]$DatesR[1] + 365*24*60*60)),
-  length(IM_severn[[1]]$DatesR) # Until the end of the time series
-)
-IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
-
-RO_severn <- CreateRunOptions(
-  IM_severn,
-  IndPeriod_WarmUp = IndPeriod_WarmUp,
-  IndPeriod_Run = IndPeriod_Run
-)
-
-# Load parameters of the model from Calibration in vignette V02
-P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
-
-# Run the simulation
-OM_severn <- RunModel(IM_severn,
-                          RunOptions = RO_severn,
-                          Param = P_severn)
-
-# Plot results of simulated flows in m3/s
-Qm3s <- attr(OM_severn, "Qm3s")
-plot(Qm3s[1:150, ])
-
-
-##################################################################
-# An example of water withdrawal for irrigation with restriction #
-# modeled with a Diversion node on the Severn river              #
-##################################################################
-
-# A diversion is added at gauging station "54001"
-nodes_div <- nodes[,  c("gauge_id", "downstream_id", "distance_downstream", "area", "model")]
-names(nodes_div) <- c("id", "down", "length", "area", "model")
-nodes_div <- rbind(nodes_div,
-                   data.frame(id = "54001", # location of the diversion
-                              down = NA,    # the abstracted flow goes outside
-                              length = NA,  # down=NA, so length=NA
-                              area = NA,    # no area, diverted flow is in m3/day
-                              model = "Diversion"))
-
-g_div <- CreateGRiwrm(nodes_div)
-# The node "54001" is surrounded in red to show the diverted node
-plot(g_div)
-
-# Computation of the irrigation withdraw objective
-irrigMonthlyPlanning <- c(0.0, 0.0, 1.2, 2.4, 3.2, 3.6, 3.6, 2.8, 1.8, 0.0, 0.0, 0.0)
-names(irrigMonthlyPlanning) <- month.abb
-irrigMonthlyPlanning
-DatesR_month <- as.numeric(format(DatesR, "\%m"))
-# Withdrawn flow calculated for each day is negative
-Qirrig <- matrix(-irrigMonthlyPlanning[DatesR_month] * 86400, ncol = 1)
-colnames(Qirrig) <- "54001"
-
-# Minimum flow to remain downstream the diversion is 12 m3/s
-Qmin <- matrix(12 * 86400, nrow = length(DatesR), ncol = 1)
-colnames(Qmin) = "54001"
-
-# Creation of GRimwrInputsModel object
-IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qirrig, Qmin = Qmin)
-
-# RunOptions and parameters are unchanged, we can directly run the simulation
-OM_div <- RunModel(IM_div,
-                   RunOptions = RO_severn,
-                   Param = P_severn)
-
-# Retrieve diverted flow at "54001" and convert it from m3/day to m3/s
-Qdiv_m3s <- OM_div$`54001`$Qdiv_m3 / 86400
-
-# Plot the diverted flow for the year 2003
-Ind_Plot <- which(
-  OM_div[[1]]$DatesR >= as.POSIXct("2003-01-01", tz = "UTC") &
-  OM_div[[1]]$DatesR <= as.POSIXct("2003-12-31", tz = "UTC")
-)
-dfQdiv <- as.Qm3s(DatesR = OM_div[[1]]$DatesR[Ind_Plot],
-                     Diverted_flow = Qdiv_m3s[Ind_Plot])
-
-oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
-plot(dfQdiv)
-
-# Plot natural and influenced flow at station "54001"
-df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
-                 attr(OM_severn, "Qm3s")[Ind_Plot, "54001"])
-names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
-df54001 <- as.Qm3s(df54001)
-plot(df54001, ylim = c(0,70))
-abline(h = 12, col = "green")
-par(oldpar)
+\details{
+For examples of use see topics \link{RunModel.GRiwrmInputsModel}, \link{RunModel_Reservoir},
+and \link{RunModel.Supervisor}.
 }

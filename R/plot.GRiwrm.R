@@ -1,4 +1,11 @@
-#' Display of a diagram representing the network structure of a GRiwrm object
+#' Plot of a diagram representing the network structure of a GRiwrm object
+#'
+#' @details
+#' `header` parameter allows to add any mermaid code injected before the `graph`
+#' instruction. It is notably useful for injecting directives that impact the
+#' format of the graph. See [mermaid documentation on directives](https://mermaid.js.org/config/directives.html) for
+#' more details and also the
+#' [complete list of available directives](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878).
 #'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
 #' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
@@ -7,12 +14,9 @@
 #' @param with_donors [logical] for drawing boxes around ungauged nodes and their donors
 #' @param box_colors [list] containing the color used for the different types of nodes
 #' @param defaultClassDef [character] default style apply to all boxes
-#' @param header mermaid script to add before the generated script (init configuration)
+#' @param header mermaid script to add before the generated script (see Details)
 #' @param footer mermaid script to add after the generated script
 #' @param ... further parameters passed to [mermaid]
-#'
-#' @details This function only works inside RStudio because the HTMLwidget produced by DiagrammeR
-#' is not handled on some platforms
 #'
 #' @return Mermaid code of the diagram if display is `FALSE`, otherwise the function returns the diagram itself.
 #'
@@ -49,13 +53,17 @@ plot.GRiwrm <- function(x,
   x <- sortGRiwrm4plot(x)
   nodes <- unlist(sapply(unique(x$donor), plotGriwrmCluster, x = x, with_donors = with_donors))
   g2 <- x[!is.na(x$down),]
-  links <- paste(
-    sprintf("id_%1$s", g2$id),
-    "-->|",
-    round(g2$length, digits = 0),
-    "km|",
-    sprintf("id_%1$s", g2$down)
-  )
+  if (nrow(g2) > 0) {
+    links <- paste(
+      sprintf("id_%1$s", g2$id),
+      "-->|",
+      round(g2$length, digits = 0),
+      "km|",
+      sprintf("id_%1$s", g2$down)
+    )
+  } else {
+    links <- ""
+  }
   x$nodeclass <- sapply(x$id, getNodeClass, griwrm = x)
   node_class <- lapply(unique(x$nodeclass), function(nc) {
     x$id[x$nodeclass == nc]
@@ -155,7 +163,7 @@ getNodeClass <- function(id, griwrm) {
 #' in mermaid script), the functions raises no error (see `mermaid` returned value).
 #'
 #' @param diagram Diagram in mermaid markdown-like language or file (as a connection or file name) containing a diagram specification
-#' @param theme Mermaid theme (See https://mermaid.js.org/config/theming.html#available-themes)
+#' @param theme Mermaid theme (See [available themes in Mermaid documentation](https://mermaid.js.org/config/theming.html#available-themes))
 #' @param format Image format (either `"jpg"`, or `"png"`, or `"svg"`)
 #' @param dir.dest Destination folder for the downloaded image. This parameter is
 #' ignored if `file.dest` contains a folder path.
@@ -174,17 +182,19 @@ getNodeClass <- function(id, griwrm) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' diagram <- "flowchart LR\n  A --> B"
 #' mermaid_gen_link(diagram)
 #' f <- mermaid(diagram)
 #' f
-#' \dontrun{
+#'
 #' # For displaying the diagram in Rmarkdown document
 #' knitr::include_graphics(mermaid(diagram))
-#' }
 #'
 #' # Clean temporary folder
 #' unlink(f)
+#' }
+#'
 mermaid <- function(diagram,
                     format = "png",
                     theme = "default",
@@ -257,7 +267,6 @@ mermaid_gen_link <- function(diagram, theme = "default", format = "png", server 
 #' @source From https://stackoverflow.com/a/28729601/5300212
 #' @param path Path of the file
 #' @param add [logical] Add the image to the existing plot
-#' @param pic output of
 #'
 #' @return Nothing, used to side effect.
 #' @noRd

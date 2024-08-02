@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.Qm3s.R
 \name{as.Qm3s}
 \alias{as.Qm3s}
-\title{Coerce \link{data.frame}or content of a \link{data.frame} into a \emph{Qm3s} object ready
+\title{Coerce \link{data.frame} or content of a \link{data.frame} into a \emph{Qm3s} object ready
 for plotting}
 \usage{
 as.Qm3s(...)
@@ -14,6 +14,6 @@ as.Qm3s(...)
 A \link{data.frame} of class \emph{Qm3s}
 }
 \description{
-Coerce \link{data.frame}or content of a \link{data.frame} into a \emph{Qm3s} object ready
+Coerce \link{data.frame} or content of a \link{data.frame} into a \emph{Qm3s} object ready
 for plotting
 }

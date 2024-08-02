@@ -39,7 +39,9 @@ db <- data.frame(id = c("Reservoir", "GaugingDown"),
 
 # Create GRiwrm object from the data.frame
 griwrm <- CreateGRiwrm(db)
+\dontrun{
 plot(griwrm)
+}
 
 # Formatting observations for the hydrological models
 # Each input data should be a matrix or a data.frame with the good id in the name of the column
@@ -49,15 +51,15 @@ PotEvap <- matrix(BasinObs$E, ncol = 1)
 colnames(PotEvap) <- "GaugingDown"
 
 # Observed flows contain flows that are directly injected in the model
-Qobs = matrix(Qupstream, ncol = 1)
-colnames(Qobs) <- "Reservoir"
+Qinf = matrix(Qupstream, ncol = 1)
+colnames(Qinf) <- "Reservoir"
 
 # Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)
 InputsModels <- CreateInputsModel(griwrm,
                             DatesR = BasinObs$DatesR,
                             Precip = Precip,
                             PotEvap = PotEvap,
-                            Qobs = Qobs)
+                            Qinf = Qinf)
 str(InputsModels)
 
 ## run period selection
@@ -103,7 +105,9 @@ rename_columns <- list(id = "gauge_id",
 g_severn <- CreateGRiwrm(nodes, rename_columns)
 
 # Network diagram with upstream basin nodes in blue, intermediate sub-basin in green
+\dontrun{
 plot(g_severn)
+}
 
 # Format CAMEL-GB meteorological dataset for airGRiwrm inputs
 BasinsObs <- Severn$BasinsObs
@@ -164,7 +168,9 @@ nodes_div <- rbind(nodes_div,
 
 g_div <- CreateGRiwrm(nodes_div)
 # The node "54001" is surrounded in red to show the diverted node
+\dontrun{
 plot(g_div)
+}
 
 # Computation of the irrigation withdraw objective
 irrigMonthlyPlanning <- c(0.0, 0.0, 1.2, 2.4, 3.2, 3.6, 3.6, 2.8, 1.8, 0.0, 0.0, 0.0)
@@ -180,7 +186,7 @@ Qmin <- matrix(12 * 86400, nrow = length(DatesR), ncol = 1)
 colnames(Qmin) = "54001"
 
 # Creation of GRimwrInputsModel object
-IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qirrig, Qmin = Qmin)
+IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qirrig, Qmin = Qmin)
 
 # RunOptions and parameters are unchanged, we can directly run the simulation
 OM_div <- RunModel(IM_div,
@@ -207,5 +213,5 @@ df54001 <- cbind(attr(OM_div, "Qm3s")[Ind_Plot, c("DatesR", "54001")],
 names(df54001) <- c("DatesR", "54001 with irrigation", "54001 natural flow")
 df54001 <- as.Qm3s(df54001)
 plot(df54001, ylim = c(0,70))
-abline(h = 12, col = "green")
+abline(h = 12, col = "green", lty = "dotted")
 par(oldpar)

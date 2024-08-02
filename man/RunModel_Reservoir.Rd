@@ -16,12 +16,23 @@ of the reservoir and (2) the celerity in m/s of the upstream inflows.}
 }
 \value{
 An \emph{OutputsModel} object like the one return by \link[airGR:RunModel]{airGR::RunModel} but
-completed with an item \code{Vsim} representing the water volume time series in m3.
+completed with the items:
+\itemize{
+\item \code{Vsim}: representing the water volume time series in m3
+\item \code{Qsim_m3}: flow released by the reservoir in cubic meters by time step
+(see Details)
+\item \code{Qdiv_m3}: only present in case of Diversion in the node, diverted flow in
+cubic meters per time step. The latter differs from the flows time series provided
+in argument \code{Qinf} of \link{CreateInputsModel.GRiwrm} by the limitation due to an
+empty reservoir
+\item \code{Qover_m3}: only present in case of Diversion in the node, diverted volumes
+that cannot be operated due to an empty reservoir
+}
 }
 \description{
 The reservoir model is a model combining a lag model and the calculation of
 the water storage time series according to the released flow time series
-from the \code{Qobs} parameter of \link{CreateInputsModel.GRiwrm}.
+from the \code{Qrelease} parameter of \link{CreateInputsModel.GRiwrm}.
 }
 \details{
 The simulated flow corresponds to the released flow except when the reservoir
@@ -72,7 +83,9 @@ db <- data.frame(id = c(BasinInfo$BasinCode, "Reservoir"),
                  model = c("RunModel_GR4J", "RunModel_Reservoir"),
                  stringsAsFactors = FALSE)
 griwrm <- CreateGRiwrm(db)
+\dontrun{
 plot(griwrm)
+}
 
 # Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one
 # column by sub-basin and node IDs as column names)
@@ -131,7 +144,8 @@ OC <- Calibration(
 )
 
 # Model parameters
-Param <- lapply(OC, "[[", "ParamFinalR")
+Param <- extractParam(OC)
+str(Param)
 
 # Running simulation
 OutputsModel <- RunModel(InputsModel, RunOptions, Param)
@@ -143,7 +157,7 @@ plot(OutputsModel, Qobs = Qobs)
 # N.B. "Observed releases" should be considered as "Target releases" here
 
 # The plot for the reservoir can also be plotted alone
-plot(OutputsModel$Reservoir)
+plot(OutputsModel$Reservoir, Qobs = Qobs[, "Reservoir"])
 
 #######################################################
 # Daily time step simulation of a reservoir tracking  #

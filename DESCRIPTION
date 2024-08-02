@@ -10,7 +10,7 @@ Authors@R: c(
     person("Guillaume", "Thirel", role = "ctb",
            comment = c(ORCID = "0000-0002-1444-1830"))
   )
-Description: Semi-distributed Precipitation-Runoff Modelling based on
+Description: Semi-distributed Precipitation-Runoff Modeling based on
     'airGR' package models integrating human infrastructures and their
     managements.
 License: AGPL-3
@@ -27,6 +27,7 @@ Imports:
     jsonlite,
     png,
     rlang,
+    stats,
     utils,
     zlib
 Suggests:
@@ -42,4 +43,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

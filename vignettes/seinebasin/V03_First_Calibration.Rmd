@@ -59,7 +59,7 @@ OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 Now that the model is calibrated, we can run it with the optimized parameter values:
 
 ```{r RunModel}
-ParamMichel <- sapply(griwrm$id, function(x) {OutputsCalib[[x]]$Param})
+ParamMichel <- extractParam(OutputsCalib)
 
 OutputsModels <- RunModel(
   InputsModel,

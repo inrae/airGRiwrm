@@ -53,11 +53,13 @@ test_that("Calibrated parameters remains unchanged", {
     CalibOptions = CalibOptions
   )
 
-  ParamFinalR <- lapply(OutputsCalib, "[[", "ParamFinalR")
+  ParamFinalR <- extractParam(OutputsCalib)
 
-  lapply(names(ParamFinalR), function(id) expect_equal(ParamFinalR[[id]], ParamMichel[[id]]))
+  lapply(names(ParamFinalR), function(id) expect_equal(ParamFinalR[[!!id]], ParamMichel[[id]]))
 
 })
+
+skip_on_cran()
 
 test_that("Calibration with regularization is OK", {
   InputsCrit <- CreateInputsCrit(
@@ -79,7 +81,7 @@ test_that("Calibration with regularization is OK", {
     CalibOptions = CalibOptions
   )
 
-  ParamLavenne <- lapply(OC, "[[", "ParamFinalR")
+  ParamLavenne <- extractParam(OC)
   expect_equal(OC[["54095"]]$CritFinal, ErrorCrit(
     InputsCrit[["54095"]],
     RunModel(InputsModel, RunOptions, ParamLavenne)[["54095"]]
@@ -96,8 +98,6 @@ test_that("Calibration with regularization is OK", {
   })
 })
 
-skip_on_cran()
-
 test_that("Calibration with Diversion works", {
   n_div <- rbind(nodes,
                  data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
@@ -105,7 +105,7 @@ test_that("Calibration with Diversion works", {
   Qmin = matrix(1E5, nrow = length(DatesR), ncol = 1)
   colnames(Qmin) = "54029"
   Qdiv <- -Qmin
-  IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qobs = Qdiv, Qmin = Qmin)
+  IM_div <- CreateInputsModel(g_div, DatesR, Precip, PotEvap, Qinf = Qdiv, Qmin = Qmin)
   RO_div <- setupRunOptions(IM_div)$RunOptions
   P_div <- ParamMichel
   P_div$`54002` <- c(1, ParamMichel$`54002`)
@@ -152,7 +152,7 @@ test_that("Derivation and normal connection should return same calibration", {
                               DatesR,
                               Precip[, meteoIds],
                               PotEvap[, meteoIds],
-                              Qobs = Qinf,
+                              Qinf = Qinf,
                               Qmin = Qmin)
 
   # Copy area of upstream node to downstream node in order to get
@@ -175,7 +175,7 @@ test_that("Derivation and normal connection should return same calibration", {
   )
   ParamRef <- ParamMichel[names(IM_2ol)]
   ParamRef[["54095"]] <- c(1, ParamRef[["54095"]])
-  ParamFinalR <- lapply(OC_2ol, "[[", "ParamFinalR")
+  ParamFinalR <- extractParam(OC_2ol)
   lapply(names(ParamFinalR), function(id) expect_equal(OC_2ol[[id]]$CritFinal,
                                                        OutputsCalib[[id]]$CritFinal,
                                                        tolerance = 1E-5))

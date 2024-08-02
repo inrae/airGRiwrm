@@ -1,7 +1,7 @@
 #' Plot simulated reservoir volume, inflows and released flows time series on a reservoir node
 #'
 #' @param x Object returned by [RunModel_Reservoir]
-#' @param Qobs [numeric] time series of observed flow (for the same time steps than simulated) \[m3/time step\]
+#' @param Qobs (optional) [numeric] time series of observed released flow \[m3/time step\]
 #' @param ... Further arguments passed to [plot.Qm3s]
 #'
 #' @return Function used for side effect.
@@ -9,6 +9,14 @@
 #'
 #' @example man-examples/RunModel_Reservoir.R
 plot.OutputsModelReservoir <- function(x, Qobs = NULL, ...) {
+
+  # Argument checks
+  if (!is.null(Qobs)) {
+    stopifnot(is.numeric(Qobs),
+              length(Qobs) == length(x$Qsim_m3))
+
+  }
+
   oldpar <- par(mfrow=c(2,1),
                 mar = c(2,3.3,1.2,0.5),
                 mgp = c(2,1,0))

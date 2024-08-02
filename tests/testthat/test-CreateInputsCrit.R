@@ -124,7 +124,7 @@ test_that("Lavenne criterion: not upstream a priori nodes are allow if processed
   expect_equal(attr(IC156$`54029`, "AprioriId"), c("54029" = "54095"))
   e <- runCalibration(
     nodes = nodes,
-    Qobs2 = NULL,
+    Qinf = NULL,
     InputsCrit = IC156,
     CalibOptions = NULL,
     FUN_CRIT = ErrorCrit_KGE2,
@@ -155,7 +155,7 @@ test_that("Lavenne criterion: redefined calibration order works #157", {
   )
   e <- runCalibration(
     nodes = nodes,
-    Qobs2 = NULL,
+    Qinf = NULL,
     InputsCrit = IC157,
     CalibOptions = NULL,
     FUN_CRIT = ErrorCrit_KGE2,

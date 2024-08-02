@@ -25,6 +25,12 @@ test_all:
   script:
   - R -q -e 'options(error = function() quit(save = "no", status = 1)); testthat::test_local(stop_on_failure = TRUE, stop_on_warning = TRUE)'
 
+run_examples:
+  stage: checks
+  allow_failure: true
+  script:
+  - R -q -e 'options(error = function() quit(save = "no", status = 1)); devtools::run_examples(run_donttest = TRUE, run_dontrun = TRUE)'
+
 check:
   stage: checks
   except:
@@ -42,35 +48,10 @@ check:
     refs:
       - schedules
   before_script:
-    ##
-    ## Optionally, if you will be using any Git commands, set the user name and
-    ## and email.
-    ##
     - git config --global user.email "gitlab@inrae.fr"
     - git config --global user.name "Gitlab CI"
     - git remote add github ${GITHUB_CLONE} || git remote set-url github ${GITHUB_CLONE}
     - git fetch
-
-website:
-  extends:
-    - .github
-  only:
-    refs:
-      - master
-      - dev
-  script:
-    - R -e 'install.packages("pkgdown")'
-    - Rscript dev/update_mermaid.R
-    - sed -i 's/`function`/function/g' man/CreateRunOptions.Rd
-    - sed -i 's/`function`/function/g' man/CreateCalibOptions.Rd
-    - R -e 'remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")'
-    - test "$CI_COMMIT_BRANCH" -eq "master" && PKGDOWN_DEV_MODE="release" || PKGDOWN_DEV_MODE="devel"
-    - R -e 'pkgdown::build_site()'
-    - git branch -D gh-pages || echo "Branch gh-pages not existing"
-    - git checkout -b gh-pages
-    - git add -f docs
-    - git commit -m "Publish doc on github"
-    - git push --force github HEAD:refs/heads/gh-pages
 
 github_master_dev:
   extends:
