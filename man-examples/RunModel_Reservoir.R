@@ -113,7 +113,7 @@ plot(Vobj, type = "l", col = "red", lty = 2)
 # global GRiwrm OutputsModel as arguments and returns a modified
 # InputsModel used by RunModel_Reservoir afterward
 fun_factory_Regulation_Reservoir <- function(Vini, Vobj, Qmin, Qmax, Vmax) {
-  function(InputsModel, RunOptions, OutputsModel) {
+  function(InputsModel, RunOptions, OutputsModel, env) {
     # Release flow time series initialisation
     Qrelease <- rep(0, length(InputsModel$DatesR))
     # Build inflows time series from upstream Qsim (warmup & run)

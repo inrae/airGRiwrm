@@ -68,12 +68,12 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 # This release will be modified by the Supervisor
 # We initiate it with the natural flow for having a good initialization of the
 # model at the first time step of the running period
-Qinf <- data.frame(
+Qrelease <- data.frame(
   Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
 )
 
 # InputsModel object
-IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qinf)
+IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qrelease = Qrelease)
 
 # Initialization of the Supervisor
 sv <- CreateSupervisor(IM_severn)
