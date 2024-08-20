@@ -81,7 +81,8 @@ updateParameters4Ungauged <- function(GaugedId,
   ### Set the reduced network of the basin containing ungauged nodes ###
   # Select nodes identified with the current node as donor gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
-  donorIds <- griwrm$id[!is.na(griwrm$donor) & griwrm$donor == GaugedId]
+  g2 <- griwrm[getDiversionRows(griwrm, TRUE), ] # Remove duplicated by Diversions
+  donorIds <- g2$id[!is.na(g2$donor) & g2$donor == GaugedId]
   # Remove receiver nodes that haven't GaugedId as downstream node
   donorIds <- c(
     GaugedId,
