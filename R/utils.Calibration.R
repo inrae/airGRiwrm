@@ -82,6 +82,11 @@ updateParameters4Ungauged <- function(GaugedId,
   # Select nodes identified with the current node as donor gauged node
   griwrm <- attr(InputsModel, "GRiwrm")
   donorIds <- griwrm$id[!is.na(griwrm$donor) & griwrm$donor == GaugedId]
+  # Remove receiver nodes that haven't GaugedId as downstream node
+  donorIds <- c(
+    GaugedId,
+    donorIds[sapply(donorIds, function(x) isNodeDownstream(griwrm, x, GaugedId))]
+  )
   gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
   # Add upstream nodes for routing upstream flows
   upNodes <- griwrm %>%
