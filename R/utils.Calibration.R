@@ -216,13 +216,17 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
 #' @param donor [character] id of the node which gives its parameters
 #' @param receiver [character] id of the node which receives the parameters from the donor
 #' @param default_param [numeric] vector of GR model parameters if parameters are missing from the donor
+#' @param verbose [logical] Add information message on donor and receiver
 #'
 #' @return A [numeric] [vector] with transferred parameters
 #' @export
 #'
-transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL) {
+transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL, verbose = FALSE) {
   missing_params <- setdiff(InputsModel[[receiver]]$model$indexParamUngauged,
                             InputsModel[[donor]]$model$indexParamUngauged)
+  if (verbose) {
+    message("Tranfering parameters from node '", donor, "' to node '", receiver, "'")
+  }
   if (length(missing_params) > 0) {
     if (is.null(default_param)) {
       stop("Missing parameters in transfer between nodes '",
