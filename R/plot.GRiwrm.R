@@ -144,7 +144,8 @@ getNodeClass <- function(id, griwrm) {
   }  else if (props$Reservoir) {
     nc <- "Reservoir"
   }  else {
-    nc <- paste0(props$position, props$calibration)
+    nc <- paste0(props$position,
+                 ifelse(props$gauged, "Gauged", "Ungauged"))
   }
   if (props$Diversion) nc <- paste0(nc, "Diversion")
   return(nc)

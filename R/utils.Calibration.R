@@ -56,7 +56,6 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
   return(obj)
 }
 
-
 #' Set a reduced GRiwrm network for calibration of a sub-network with ungauged
 #' hydrological nodes
 #'
@@ -78,26 +77,7 @@ updateParameters4Ungauged <- function(GaugedId,
                                       OutputsModel,
                                       useUpstreamQsim) {
 
-  ### Set the reduced network of the basin containing ungauged nodes ###
-  # Select nodes identified with the current node as donor gauged node
-  griwrm <- attr(InputsModel, "GRiwrm")
-  g2 <- griwrm[getDiversionRows(griwrm, TRUE), ] # Remove duplicated by Diversions
-  donorIds <- g2$id[!is.na(g2$donor) & g2$donor == GaugedId]
-  # Remove receiver nodes that haven't GaugedId as downstream node
-  donorIds <- c(
-    GaugedId,
-    donorIds[sapply(donorIds, function(x) isNodeDownstream(griwrm, x, GaugedId))]
-  )
-  gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
-  # Add upstream nodes for routing upstream flows
-  upNodes <- griwrm %>%
-    dplyr::filter(.data$down %in% gDonor$id,
-                  !.data$id %in% gDonor$id) %>%
-    dplyr::mutate(model = ifelse(!is.na(.data$model), NA, .data$model))
-  upIds <- upNodes$id
-  g <- rbind(upNodes, gDonor)
-  # Set downstream nodes
-  g$down[!g$down %in% g$id] <- NA
+  g <- getUngaugedCluster(attr(InputsModel, "GRiwrm"), GaugedId)
 
   ### Modify InputsModel for the reduced network ###
   # Remove nodes outside of reduced network
@@ -111,6 +91,7 @@ updateParameters4Ungauged <- function(GaugedId,
   # Update griwrm
   attr(InputsModel, "GRiwrm") <- g
   # Update Qupstream already modeled in the reduced network upstream nodes
+  upIds <- attr(g, "upIds")
   idIM <- unique(g$down[g$id %in% upIds])
   for (id in idIM) {
     if (useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {

@@ -51,12 +51,12 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
                                       OutputsModel,
                                       useUpstreamQsim)
       IM <- l$InputsModel
-      message("Calibration.GRiwrmInputsModel: Processing sub-basins ",
-              paste(names(IM), collapse = ", "), " with ", id, " as gauged donor...")
+      message("Calibration.GRiwrmInputsModel: Processing sub-basins '",
+              paste(names(IM), collapse = "', '"), "' with '", id, "' as gauged donor...")
       IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
     } else {
-      message("Calibration.GRiwrmInputsModel: Processing sub-basin ", id, "...")
+      message("Calibration.GRiwrmInputsModel: Processing sub-basin '", id, "'...")
       if (useUpstreamQsim && any(IM$UpstreamIsModeled)) {
         # Update InputsModel$Qupstream with simulated upstream flows
         IM <- UpdateQsimUpstream(IM, RunOptions[[id]], OutputsModel)
