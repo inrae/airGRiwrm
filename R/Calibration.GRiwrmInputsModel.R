@@ -36,14 +36,13 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 
   for (id in gaugedIds) {
     IM <- InputsModel[[id]]
-    message("Calibration.GRiwrmInputsModel: Processing sub-basin ", id, "...")
 
     if (inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
       IC <- getInputsCrit_Lavenne(id, OutputsModel, InputsCrit)
     } else {
       IC <- InputsCrit[[id]]
     }
-    hasUngauged <- IM$hasUngauged
+    hasUngauged <- IM$hasUngaugedNodes
     if (hasUngauged) {
       l  <- updateParameters4Ungauged(id,
                                       InputsModel,
@@ -52,9 +51,12 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
                                       OutputsModel,
                                       useUpstreamQsim)
       IM <- l$InputsModel
+      message("Calibration.GRiwrmInputsModel: Processing sub-basins '",
+              paste(names(IM), collapse = "', '"), "' with '", id, "' as gauged donor...")
       IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
     } else {
+      message("Calibration.GRiwrmInputsModel: Processing sub-basin '", id, "'...")
       if (useUpstreamQsim && any(IM$UpstreamIsModeled)) {
         # Update InputsModel$Qupstream with simulated upstream flows
         IM <- UpdateQsimUpstream(IM, RunOptions[[id]], OutputsModel)
@@ -74,7 +76,8 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
                                        OutputsCalib[[IM$gaugedId]]$ParamFinalR,
                                        IM$gaugedId,
                                        id,
-                                       CalibOptions[[id]]$FixedParam)
+                                       CalibOptions[[id]]$FixedParam,
+                                       verbose = TRUE)
       )
       class(OutputsCalib[[id]]) <- c("OutputsCalib", class(OutputsCalib[[id]]))
     } else {
@@ -99,7 +102,8 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
             ParamFinalR = transferGRparams(InputsModel,
                                            OutputsCalib[[id]]$ParamFinalR,
                                            id,
-                                           uId)
+                                           uId,
+                                           verbose = TRUE)
           )
           class(OutputsCalib[[uId]]) <- class(OutputsCalib[[id]])
         } else {

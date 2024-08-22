@@ -8,7 +8,7 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
   }
   np <- getAllNodesProperties(attr(x, "GRiwrm"))
   np <- np[!np$DirectInjection, ]
-  gaugedIds <- np$id[np$calibration == "Gauged"]
+  gaugedIds <- np$id[np$gauged]
 
   if (!is.null(FixedParam)) {
     if (!(is.list(FixedParam) || is.numeric(FixedParam))) {
@@ -50,7 +50,7 @@ CreateCalibOptions.GRiwrmInputsModel <- function(x, FixedParam = NULL, ...) {
     if (!is.null(FixedParam)) {
       FP <- FixedParam[[id]]
     }
-    if (np$calibration[np$id == id] == "Gauged") {
+    if (np$gauged[np$id == id]) {
       CalibOptions[[IM$id]] <- CreateCalibOptions(
         IM,
         FixedParam = FP,

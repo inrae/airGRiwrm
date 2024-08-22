@@ -56,7 +56,6 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
   return(obj)
 }
 
-
 #' Set a reduced GRiwrm network for calibration of a sub-network with ungauged
 #' hydrological nodes
 #'
@@ -78,20 +77,7 @@ updateParameters4Ungauged <- function(GaugedId,
                                       OutputsModel,
                                       useUpstreamQsim) {
 
-  ### Set the reduced network of the basin containing ungauged nodes ###
-  # Select nodes identified with the current node as donor gauged node
-  griwrm <- attr(InputsModel, "GRiwrm")
-  donorIds <- griwrm$id[!is.na(griwrm$donor) & griwrm$donor == GaugedId]
-  gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
-  # Add upstream nodes for routing upstream flows
-  upNodes <- griwrm %>%
-    dplyr::filter(.data$down %in% gDonor$id,
-                  !.data$id %in% gDonor$id) %>%
-    dplyr::mutate(model = ifelse(!is.na(.data$model), NA, .data$model))
-  upIds <- upNodes$id
-  g <- rbind(upNodes, gDonor)
-  # Set downstream nodes
-  g$down[!g$down %in% g$id] <- NA
+  g <- getUngaugedCluster(attr(InputsModel, "GRiwrm"), GaugedId)
 
   ### Modify InputsModel for the reduced network ###
   # Remove nodes outside of reduced network
@@ -105,6 +91,7 @@ updateParameters4Ungauged <- function(GaugedId,
   # Update griwrm
   attr(InputsModel, "GRiwrm") <- g
   # Update Qupstream already modeled in the reduced network upstream nodes
+  upIds <- attr(g, "upIds")
   idIM <- unique(g$down[g$id %in% upIds])
   for (id in idIM) {
     if (useUpstreamQsim && any(InputsModel[[id]]$UpstreamIsModeled)) {
@@ -211,13 +198,17 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
 #' @param donor [character] id of the node which gives its parameters
 #' @param receiver [character] id of the node which receives the parameters from the donor
 #' @param default_param [numeric] vector of GR model parameters if parameters are missing from the donor
+#' @param verbose [logical] Add information message on donor and receiver
 #'
 #' @return A [numeric] [vector] with transferred parameters
 #' @export
 #'
-transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL) {
+transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL, verbose = FALSE) {
   missing_params <- setdiff(InputsModel[[receiver]]$model$indexParamUngauged,
                             InputsModel[[donor]]$model$indexParamUngauged)
+  if (verbose) {
+    message("Tranfering parameters from node '", donor, "' to node '", receiver, "'")
+  }
   if (length(missing_params) > 0) {
     if (is.null(default_param)) {
       stop("Missing parameters in transfer between nodes '",
