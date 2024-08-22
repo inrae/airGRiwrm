@@ -68,7 +68,7 @@ test_that("Derivated ungauged node without downstream node should have derivated
   nodes <- rbind(nodes,
                  data.frame(id = "54001", down = "54032", length = 45, area = NA, model = "Diversion"))
   g <- CreateGRiwrm(nodes)
-  expect_equal(g$donor, rep("54032", 4))
+  expect_equal(g$donor, c("54032", "54032", NA, "54032"))
 })
 
 test_that("Reservoir between ungauged and gauged node should have the first downstream node as donor", {

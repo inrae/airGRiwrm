@@ -28,7 +28,7 @@ getAllNodesProperties(griwrm)
 \item "RunOff" (\link{logical}): is the node contains an hydrological model?
 }
 
-\code{getAllNodeProperties} returns a \link{data.frame} constituted from the list returned
+\code{getAllNodesProperties} returns a \link{data.frame} constituted from the list returned
 by \code{getNodeProperties} for all nodes.
 }
 \description{

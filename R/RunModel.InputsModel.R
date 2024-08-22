@@ -45,7 +45,7 @@ RunModel.InputsModel <- function(x = NULL,
 
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
-    OutputsModel <- RunModel.SD(x, RunOptions, Param)
+    OutputsModel <- RunModel_Routing(x, RunOptions, Param)
   } else if ((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)

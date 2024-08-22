@@ -53,7 +53,8 @@ test_that("Impossible case detected: ungauged node with diversion to an upstream
                                            length = 20,
                                            model = "Diversion",
                                            area = NA))
-  expect_error(CreateGRiwrm(nodes_div))
+  expect_error(CreateGRiwrm(nodes_div),
+               regexp = "'54001' is located in the cluster")
 })
 
 test_that("donor of ungauged cluster is processed before sibling ungauged nodes (#155)", {

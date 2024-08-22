@@ -16,7 +16,7 @@
 #' - "Upstream" ([logical]): is the node an upstream node?
 #' - "RunOff" ([logical]): is the node contains an hydrological model?
 #'
-#' `getAllNodeProperties` returns a [data.frame] constituted from the list returned
+#' `getAllNodesProperties` returns a [data.frame] constituted from the list returned
 #' by `getNodeProperties` for all nodes.
 #'
 #' @details
@@ -50,10 +50,23 @@ getNodeProperties <- function(id, griwrm) {
     Reservoir = !is.na(model) && model == "RunModel_Reservoir",
     airGR = grepl("RunModel_", donor_model)
   )
+  p$gauged <- isNodeGauged(id, griwrm)
   if (p$DirectInjection) {
     p$calibration <- "NA"
   } else {
-    p$calibration <- ifelse(isNodeGauged(id, griwrm), "Gauged", "Ungauged")
+    if (p$gauged) {
+      if (p$Reservoir) {
+        p$calibration <- "Reservoir"
+      } else {
+        p$calibration <- "Gauged"
+      }
+    } else {
+      if (is.na(griwrm$donor[id]) || isNodeDownstream(griwrm, id, griwrm$donor[id])) {
+        p$calibration <- "Ungauged"
+      } else {
+        p$calibration <- "Receiver"
+      }
+    }
   }
   p$Upstream <- p$position == "Upstream"
   p$RunOff <- !p$DirectInjection && !p$Reservoir && donor_model != "RunModel_Lag"

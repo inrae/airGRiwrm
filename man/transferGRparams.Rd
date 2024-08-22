@@ -4,7 +4,14 @@
 \alias{transferGRparams}
 \title{Transfer GR parameters from one donor sub-basin to a receiver sub-basin}
 \usage{
-transferGRparams(InputsModel, Param, donor, receiver, default_param = NULL)
+transferGRparams(
+  InputsModel,
+  Param,
+  donor,
+  receiver,
+  default_param = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{InputsModel}{A \emph{GRiwrmInputsModel} object (See \link{CreateInputsModel.GRiwrm})}
@@ -16,6 +23,8 @@ transferGRparams(InputsModel, Param, donor, receiver, default_param = NULL)
 \item{receiver}{\link{character} id of the node which receives the parameters from the donor}
 
 \item{default_param}{\link{numeric} vector of GR model parameters if parameters are missing from the donor}
+
+\item{verbose}{\link{logical} Add information message on donor and receiver}
 }
 \value{
 A \link{numeric} \link{vector} with transferred parameters

@@ -136,3 +136,37 @@ isNodeUpstream.GRiwrm <- function(x, current_node, candidate_node) {
 isNodeUpstream.GRiwrmInputsModel <- function(x, current_node, candidate_node) {
   isNodeUpstream(attr(x, "GRiwrm"), current_node, candidate_node)
 }
+
+#' Extract sub-network for calibration with ungauged nodes
+#'
+#' @inheritParams getNodeProperties
+#' @param GaugedId [character], the Id of the downstream gauged node in the
+#' ungauged cluster of sub-basins
+#'
+#' @return A [data.frame] of selected rows in `griwrm`.
+#' @noRd
+#'
+getUngaugedCluster <- function(griwrm, GaugedId) {
+  ### Set the reduced network of the basin containing ungauged nodes ###
+  # Select nodes identified with the current node as donor gauged node
+  g2 <- griwrm[getDiversionRows(griwrm, TRUE), ] # Remove duplicated by Diversions
+  donorIds <- g2$id[!is.na(g2$donor) & g2$donor == GaugedId]
+  # Remove receiver nodes that haven't GaugedId as downstream node
+  donorIds <- c(
+    GaugedId,
+    donorIds[sapply(donorIds, function(x) isNodeDownstream(griwrm, x, GaugedId))]
+  )
+  gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
+  # Add upstream nodes for routing upstream flows
+  upNodes <- griwrm %>%
+    dplyr::filter(.data$down %in% gDonor$id,
+                  !.data$id %in% gDonor$id) %>%
+    dplyr::mutate(model = ifelse(!is.na(.data$model), NA, .data$model))
+  upIds <- upNodes$id
+  g <- rbind(upNodes, gDonor)
+  class(g) <- c("GRiwrm", class(g))
+  attr(g, "upIds") <- upIds
+  # Set downstream nodes
+  g$down[!g$down %in% g$id] <- NA
+  return(g)
+}

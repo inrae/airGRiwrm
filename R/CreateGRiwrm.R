@@ -105,6 +105,7 @@ CreateGRiwrm <- function(db,
 
   # Set automatic downstream donors for ungauged nodes
   griwrm$donor <- setDonor(griwrm)
+  checkUngaugedCluster(griwrm)
 
   griwrm <- sort(griwrm)
 
@@ -291,7 +292,7 @@ setDonor <- function(griwrm) {
     }
     id <- griwrm$id[i]
     model <- griwrm$model[i]
-    if (is.na(model)) {
+    if (is.na(model) || model == "Diversion") {
       return(as.character(NA))
     }
     if (model == "RunModel_Reservoir" && is.na(griwrm$down[i])){
@@ -339,4 +340,23 @@ refineReservoirDonor <- function(i, griwrm) {
   }
   # No upstream ungauged nodes: Reservoir is its own donor!
   return(griwrm$id[i])
+}
+
+checkUngaugedCluster <- function(griwrm) {
+  # Check presence of gauged nodes inside an ungauged cluster
+  clusters <- table(griwrm$donor)
+  clusters <- names(clusters[clusters > 1])
+  lapply(clusters, function(gaugedId) {
+    g <- getUngaugedCluster(griwrm, gaugedId)
+    p <- getAllNodesProperties(griwrm)
+    upstreamIdsInCluster <- unique(g$id[!g$id %in% g$down])
+    lapply(g$id, function(id) {
+      if (id != gaugedId) {
+        if (p$calibration[p$id == id] == "Gauged" && !id %in% upstreamIdsInCluster) {
+          stop("The gauged node '", id, "' is located in the cluster of the ungauged",
+               " nodes calibrated with the node '", gaugedId, "'")
+        }
+      }
+    })
+  })
 }
