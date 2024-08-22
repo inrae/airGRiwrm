@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="airGR Integrated Water Resource Management">
-<meta property="og:description" content="Semi-distributed Precipitation-Runoff Modelling based on airGR package models integrating human infrastructures and their managements.">
+<meta property="og:description" content="Semi-distributed Precipitation-Runoff Modeling based on airGR package models integrating human infrastructures and their managements.">
 <meta property="og:image" content="https://inrae.github.io/airGRiwrm/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -72,7 +72,13 @@
       <a href="articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -154,13 +160,12 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="airgriwrm-airgr-based-integrated-water-resource-management-r-package">
-<img src="reference/figures/logo.png" align="right" height="80px">airGRiwrm: airGR based Integrated Water Resource Management R package<a class="anchor" aria-label="anchor" href="#airgriwrm-airgr-based-integrated-water-resource-management-r-package"></a>
+<div class="page-header"><h1 id="airgriwrm-airgr-based-integrated-water-resource-management-modeling-">airGRiwrm: airGR based Integrated Water Resource Management Modeling <img src="reference/figures/logo.png" align="right" width="20%"><a class="anchor" aria-label="anchor" href="#airgriwrm-airgr-based-integrated-water-resource-management-modeling-"></a>
 </h1></div>
 <!-- badges: start -->
 
 <p><strong>airGRiwrm</strong> is an extension of the <strong>airGR</strong> R package for managing semi-distributive hydrological model on an anthropized catchment.</p>
-<p>This package is developed as part of the IN-WOP project (<a href="http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop" class="external-link uri">http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop</a>) by the mixed research unit G-EAU (<a href="https://g-eau.fr" class="external-link uri">https://g-eau.fr</a>) and the HYDRO team of the INRAE HYCAR research unit (<a href="https://webgr.inrae.fr/en/home/" class="external-link uri">https://webgr.inrae.fr/en/home/</a>).</p>
+<p>This package is developed by the <a href="https://g-eau.fr/index.php/en/" class="external-link">mixed research unit G-EAU, Montpellier, France</a> and the <a href="https://webgr.inrae.fr/eng" class="external-link">HYDRO team of the INRAE HYCAR research unit, Antony, France</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -175,15 +180,18 @@
 <div class="section level2">
 <h2 id="get-started">Get started<a class="anchor" aria-label="anchor" href="#get-started"></a>
 </h2>
-<p>Visit the website dedicated to the package at <a href="https://airgriwrm.g-eau.fr" class="external-link uri">https://airgriwrm.g-eau.fr</a> for tutorials, usage examples and documentation.</p>
+<p>Visit the website dedicated to the package at <a href="https://inrae.github.io/airGRiwrm/" class="uri">https://inrae.github.io/airGRiwrm/</a> for tutorials, usage examples and documentation.</p>
 </div>
 <div class="section level2">
 <h2 id="acknowledgement">Acknowledgement<a class="anchor" aria-label="anchor" href="#acknowledgement"></a>
 </h2>
+<p>This package has been developped as part of the IN-WOP European project (2019-2023) and the Talanoa-Water PRIMA project (2021-2025).</p>
 <p>The authors would like to thank the European Commission and the French National Research Agency (ANR) for funding in the frame of the collaborative international consortium <a href="http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop" class="external-link">IN-WOP</a> financed under the 2018 Joint call of the WaterWorks2017 ERA-NET Cofund. This ERA-NET is an integral part of the activities developed by the Water JPI.</p>
-<div style="display: flex; justify-content: space-between;">
-<img src="reference/figures/logo_water_jpi.png" alt="Water JPI"><img src="reference/figures/logo_water_works_2017.png" alt="Water Works 2017"><img src="reference/figures/logo_european_commission.jpg" alt="European Commission"><img src="reference/figures/logo_2018_joint_call.png" alt="2018 Joint call">
-</div>
+<p style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;">
+<img src="reference/figures/logo_water_jpi.png" alt="Water JPI"><img src="reference/figures/logo_water_works_2017.png" alt="Water Works 2017"><img src="reference/figures/logo_european_commission.jpg" alt="European Commission"><img src="reference/figures/logo_2018_joint_call.png" alt="2018 Joint call"></p>
+<p>Talanoa-Water is part of the PRIMA Programme supported by the European Union. The PRIMA programme is supported under Horizon 2020 the European Union’s Framework Programme for Research and Innovation. Grant Agreement number: 2023</p>
+<p style="display: flex; justify-content: space-between;">
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Horizon_2020_Logo.png" alt="Logo H2020" width="25%"><img src="reference/figures/logo_prima.png" alt="Logo PRIMA" width="25%"></p>
 </div>
 </div>
   </div>

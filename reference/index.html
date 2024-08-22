@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -134,7 +140,7 @@
         </td>
         <td><p>Conversion of meteorological data from basin scale to sub-basin scale</p></td>
       </tr><tr><td>
-          <p><code><a href="CreateCalibOptions.html">CreateCalibOptions.GRiwrmInputsModel</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.InputsModel</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.character</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.function</a></code> </p>
+          <p><code><a href="CreateCalibOptions.html">CreateCalibOptions.GRiwrmInputsModel</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.InputsModel</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.character</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.function</a></code> <code><a href="CreateCalibOptions.html">CreateCalibOptions.RunModel_Reservoir</a></code> </p>
         </td>
         <td><p>Creation of the CalibOptions object</p></td>
       </tr><tr><td>
@@ -182,41 +188,77 @@
         </td>
         <td><p>RunModel function for both <strong>airGR</strong> InputsModel and GRiwrmInputsModel object</p></td>
       </tr><tr><td>
-          <p><code><a href="RunModel.SD.html">RunModel(<i>&lt;SD&gt;</i>)</a></code> </p>
-        </td>
-        <td><p>Run a semi-distributed model from rainfall-runoff model outputs</p></td>
-      </tr><tr><td>
           <p><code><a href="RunModel.Supervisor.html">RunModel(<i>&lt;Supervisor&gt;</i>)</a></code> </p>
         </td>
         <td><p>RunModel function for a GRiwrmInputsModel object</p></td>
+      </tr><tr><td>
+          <p><code><a href="RunModel_Reservoir.html">RunModel_Reservoir()</a></code> </p>
+        </td>
+        <td><p>Run with a reservoir model</p></td>
       </tr><tr><td>
           <p><code><a href="Severn.html">Severn</a></code> </p>
         </td>
         <td><p>Catchment attributes and hydro-meteorological timeseries for some gauging stations on the Severn River</p></td>
       </tr><tr><td>
+          <p><code><a href="as.Qm3s.html">as.Qm3s()</a></code> </p>
+        </td>
+        <td><p>Coerce <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> or content of a <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> into a <em>Qm3s</em> object ready for plotting</p></td>
+      </tr><tr><td>
+          <p><code><a href="extractParam.html">extractParam()</a></code> </p>
+        </td>
+        <td><p>Extract calibrated parameters</p></td>
+      </tr><tr><td>
           <p><code><a href="getNoSD_Ids.html">getNoSD_Ids()</a></code> </p>
         </td>
         <td><p>Function to obtain the ID of sub-basins not using SD model</p></td>
+      </tr><tr><td>
+          <p><code><a href="getNodeProperties.html">getNodeProperties()</a></code> <code><a href="getNodeProperties.html">getAllNodesProperties()</a></code> </p>
+        </td>
+        <td><p>Properties of GRiwrm nodes</p></td>
+      </tr><tr><td>
+          <p><code><a href="getNodeRanking.html">getNodeRanking()</a></code> </p>
+        </td>
+        <td><p>Sorting of the nodes from upstream to downstream for RunModel and Calibration</p></td>
       </tr><tr><td>
           <p><code><a href="getSD_Ids.html">getSD_Ids()</a></code> </p>
         </td>
         <td><p>Function to obtain the ID of sub-basins using SD model</p></td>
       </tr><tr><td>
-          <p><code><a href="isNodeDownstream.html">isNodeDownstream()</a></code> </p>
+          <p><code><a href="isNodeDownstream.html">isNodeDownstream()</a></code> <code><a href="isNodeDownstream.html">isNodeUpstream()</a></code> </p>
         </td>
-        <td><p>Check if a node is downstream another one</p></td>
+        <td><p>Check if a node is downstream or upstream another one</p></td>
+      </tr><tr><td>
+          <p><code><a href="mermaid.html">mermaid()</a></code> <code><a href="mermaid.html">mermaid_gen_link()</a></code> <code><a href="mermaid.html">plot(<i>&lt;mermaid&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Plot a mermaid diagram</p></td>
       </tr><tr><td>
           <p><code><a href="plot.GRiwrm.html">plot(<i>&lt;GRiwrm&gt;</i>)</a></code> </p>
         </td>
-        <td><p>Display of a diagram representing the network structure of a GRiwrm object</p></td>
+        <td><p>Plot of a diagram representing the network structure of a GRiwrm object</p></td>
       </tr><tr><td>
           <p><code><a href="plot.GRiwrmOutputsModel.html">plot(<i>&lt;GRiwrmOutputsModel&gt;</i>)</a></code> </p>
         </td>
         <td><p>Function which creates screen plots giving an overview of the model outputs in the GRiwrm network</p></td>
       </tr><tr><td>
+          <p><code><a href="plot.OutputsModelReservoir.html">plot(<i>&lt;OutputsModelReservoir&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Plot simulated reservoir volume, inflows and released flows time series on a reservoir node</p></td>
+      </tr><tr><td>
           <p><code><a href="plot.Qm3s.html">plot(<i>&lt;Qm3s&gt;</i>)</a></code> </p>
         </td>
         <td><p>Plot of a <code>Qm3s</code> object (time series of simulated flows)</p></td>
+      </tr><tr><td>
+          <p><code><a href="reduceGRiwrm.html">reduceGRiwrm()</a></code> </p>
+        </td>
+        <td><p>Reduce the size of a GRiwrm by selecting the subset of nodes corresponding to a downstream node</p></td>
+      </tr><tr><td>
+          <p><code><a href="sort.GRiwrm.html">sort(<i>&lt;GRiwrm&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Sort a GRiwrm network in upstream-downstream order ready for Calibration</p></td>
+      </tr><tr><td>
+          <p><code><a href="transferGRparams.html">transferGRparams()</a></code> </p>
+        </td>
+        <td><p>Transfer GR parameters from one donor sub-basin to a receiver sub-basin</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

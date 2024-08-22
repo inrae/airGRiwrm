@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -70,7 +70,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -158,7 +164,7 @@ semi-distributed model network</h1>
 Dorchies</h4>
             
       
-
+      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/V02_Calibration_SD_model.Rmd" class="external-link"><code>vignettes/V02_Calibration_SD_model.Rmd</code></a></small>
       <div class="hidden name"><code>V02_Calibration_SD_model.Rmd</code></div>
 
     </div>
@@ -217,7 +223,6 @@ vignette:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
 <span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span> <span class="op">&lt;-</span> <span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span></span>
 <span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span>
 <span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span>
@@ -228,103 +233,179 @@ vignette:</p>
 <span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
 <span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
 <span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54095...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54002...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54029...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54001...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54032...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54057...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54001...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54032...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54057...</span></span></code></pre>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; List of 6</span></span>
-<span><span class="co">#&gt;  $ 54095:List of 7</span></span>
-<span><span class="co">#&gt;   ..$ DatesR    : POSIXlt[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
-<span><span class="co">#&gt;   ..$ Precip    : num [1:11536] 4.01 0.57 2 0.37 0.01 0.3 0.12 0 0.12 0.07 ...</span></span>
-<span><span class="co">#&gt;   ..$ PotEvap   : num [1:11536] 0.59 1.64 1.42 0.31 0.59 0.73 0.59 0.66 0.57 0.61 ...</span></span>
-<span><span class="co">#&gt;   ..$ id        : chr "54095"</span></span>
-<span><span class="co">#&gt;   ..$ down      : chr "54001"</span></span>
-<span><span class="co">#&gt;   ..$ BasinAreas: num 3723</span></span>
-<span><span class="co">#&gt;   ..$ FUN_MOD   : chr "RunModel_GR4J"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:3] "InputsModel" "daily" "GR"</span></span>
-<span><span class="co">#&gt;  $ 54002:List of 7</span></span>
-<span><span class="co">#&gt;   ..$ DatesR    : POSIXlt[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
-<span><span class="co">#&gt;   ..$ Precip    : num [1:11536] 1.58 0.47 1.35 1.92 0.06 0 0.01 0 0.08 0.34 ...</span></span>
-<span><span class="co">#&gt;   ..$ PotEvap   : num [1:11536] 0.61 1.7 1.61 0.3 0.44 0.69 0.52 0.71 0.73 0.57 ...</span></span>
-<span><span class="co">#&gt;   ..$ id        : chr "54002"</span></span>
-<span><span class="co">#&gt;   ..$ down      : chr "54057"</span></span>
-<span><span class="co">#&gt;   ..$ BasinAreas: num 2208</span></span>
-<span><span class="co">#&gt;   ..$ FUN_MOD   : chr "RunModel_GR4J"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:3] "InputsModel" "daily" "GR"</span></span>
-<span><span class="co">#&gt;  $ 54029:List of 7</span></span>
-<span><span class="co">#&gt;   ..$ DatesR    : POSIXlt[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
-<span><span class="co">#&gt;   ..$ Precip    : num [1:11536] 2.38 0.33 2.16 0.38 0.01 0.12 0.08 0.05 0.05 0.29 ...</span></span>
-<span><span class="co">#&gt;   ..$ PotEvap   : num [1:11536] 0.58 1.64 1.49 0.23 0.56 0.72 0.63 0.72 0.62 0.64 ...</span></span>
-<span><span class="co">#&gt;   ..$ id        : chr "54029"</span></span>
-<span><span class="co">#&gt;   ..$ down      : chr "54032"</span></span>
-<span><span class="co">#&gt;   ..$ BasinAreas: num 1484</span></span>
-<span><span class="co">#&gt;   ..$ FUN_MOD   : chr "RunModel_GR4J"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:3] "InputsModel" "daily" "GR"</span></span>
-<span><span class="co">#&gt;  $ 54001:List of 11</span></span>
-<span><span class="co">#&gt;   ..$ DatesR          : POSIXlt[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
-<span><span class="co">#&gt;   ..$ Precip          : num [1:11536] 1.3 0.427 2.642 0.441 0.01 ...</span></span>
-<span><span class="co">#&gt;   ..$ PotEvap         : num [1:11536] 0.59 1.711 1.563 0.239 0.519 ...</span></span>
-<span><span class="co">#&gt;   ..$ Qupstream       : num [1:11536, 1] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ 54095:List of 14</span></span>
+<span><span class="co">#&gt;   ..$ DatesR           : POSIXlt[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
+<span><span class="co">#&gt;   ..$ Precip           : num [1:11536] 4.01 0.57 2 0.37 0.01 0.3 0.12 0 0.12 0.07 ...</span></span>
+<span><span class="co">#&gt;   ..$ PotEvap          : num [1:11536] 0.59 1.64 1.42 0.31 0.59 0.73 0.59 0.66 0.57 0.61 ...</span></span>
+<span><span class="co">#&gt;   ..$ id               : chr "54095"</span></span>
+<span><span class="co">#&gt;   ..$ down             : chr "54001"</span></span>
+<span><span class="co">#&gt;   ..$ BasinAreas       : num 3723</span></span>
+<span><span class="co">#&gt;   ..$ FUN_MOD          : chr "RunModel_GR4J"</span></span>
+<span><span class="co">#&gt;   ..$ inUngaugedCluster: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReceiver       : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ gaugedId         : chr "54095"</span></span>
+<span><span class="co">#&gt;   ..$ hasUngaugedNodes : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ model            :List of 4</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:4] 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 4</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ hasDiversion     : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReservoir      : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:4] "RunModel_GR4J" "InputsModel" "daily" "GR"</span></span>
+<span><span class="co">#&gt;  $ 54002:List of 14</span></span>
+<span><span class="co">#&gt;   ..$ DatesR           : POSIXlt[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
+<span><span class="co">#&gt;   ..$ Precip           : num [1:11536] 1.58 0.47 1.35 1.92 0.06 0 0.01 0 0.08 0.34 ...</span></span>
+<span><span class="co">#&gt;   ..$ PotEvap          : num [1:11536] 0.61 1.7 1.61 0.3 0.44 0.69 0.52 0.71 0.73 0.57 ...</span></span>
+<span><span class="co">#&gt;   ..$ id               : chr "54002"</span></span>
+<span><span class="co">#&gt;   ..$ down             : chr "54057"</span></span>
+<span><span class="co">#&gt;   ..$ BasinAreas       : num 2208</span></span>
+<span><span class="co">#&gt;   ..$ FUN_MOD          : chr "RunModel_GR4J"</span></span>
+<span><span class="co">#&gt;   ..$ inUngaugedCluster: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReceiver       : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ gaugedId         : chr "54002"</span></span>
+<span><span class="co">#&gt;   ..$ hasUngaugedNodes : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ model            :List of 4</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:4] 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 4</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ hasDiversion     : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReservoir      : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:4] "RunModel_GR4J" "InputsModel" "daily" "GR"</span></span>
+<span><span class="co">#&gt;  $ 54029:List of 14</span></span>
+<span><span class="co">#&gt;   ..$ DatesR           : POSIXlt[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
+<span><span class="co">#&gt;   ..$ Precip           : num [1:11536] 2.38 0.33 2.16 0.38 0.01 0.12 0.08 0.05 0.05 0.29 ...</span></span>
+<span><span class="co">#&gt;   ..$ PotEvap          : num [1:11536] 0.58 1.64 1.49 0.23 0.56 0.72 0.63 0.72 0.62 0.64 ...</span></span>
+<span><span class="co">#&gt;   ..$ id               : chr "54029"</span></span>
+<span><span class="co">#&gt;   ..$ down             : chr "54032"</span></span>
+<span><span class="co">#&gt;   ..$ BasinAreas       : num 1484</span></span>
+<span><span class="co">#&gt;   ..$ FUN_MOD          : chr "RunModel_GR4J"</span></span>
+<span><span class="co">#&gt;   ..$ inUngaugedCluster: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReceiver       : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ gaugedId         : chr "54029"</span></span>
+<span><span class="co">#&gt;   ..$ hasUngaugedNodes : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ model            :List of 4</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:4] 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 4</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ hasDiversion     : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReservoir      : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:4] "RunModel_GR4J" "InputsModel" "daily" "GR"</span></span>
+<span><span class="co">#&gt;  $ 54001:List of 19</span></span>
+<span><span class="co">#&gt;   ..$ DatesR           : POSIXlt[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
+<span><span class="co">#&gt;   ..$ Precip           : num [1:11536] 1.3 0.427 2.642 0.441 0.01 ...</span></span>
+<span><span class="co">#&gt;   ..$ PotEvap          : num [1:11536] 0.59 1.711 1.563 0.239 0.519 ...</span></span>
+<span><span class="co">#&gt;   ..$ Qupstream        : num [1:11536, 1] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. .. ..$ : NULL</span></span>
 <span><span class="co">#&gt;   .. .. ..$ : chr "54095"</span></span>
-<span><span class="co">#&gt;   ..$ LengthHydro     : Named num 42</span></span>
+<span><span class="co">#&gt;   ..$ LengthHydro      : Named num 42</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "names")= chr "54095"</span></span>
-<span><span class="co">#&gt;   ..$ BasinAreas      : Named num [1:2] 3723 607</span></span>
+<span><span class="co">#&gt;   ..$ BasinAreas       : Named num [1:2] 3723 607</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54095" "54001"</span></span>
-<span><span class="co">#&gt;   ..$ id              : chr "54001"</span></span>
-<span><span class="co">#&gt;   ..$ down            : chr "54032"</span></span>
-<span><span class="co">#&gt;   ..$ UpstreamNodes   : chr "54095"</span></span>
-<span><span class="co">#&gt;   ..$ UpstreamIsRunoff: logi TRUE</span></span>
-<span><span class="co">#&gt;   ..$ FUN_MOD         : chr "RunModel_GR4J"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:4] "InputsModel" "daily" "GR" "SD"</span></span>
-<span><span class="co">#&gt;  $ 54032:List of 11</span></span>
-<span><span class="co">#&gt;   ..$ DatesR          : POSIXlt[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
-<span><span class="co">#&gt;   ..$ Precip          : num [1:11536] 1.737 0.469 2.187 1.229 0.01 ...</span></span>
-<span><span class="co">#&gt;   ..$ PotEvap         : num [1:11536] 0.604 1.599 1.565 0.203 0.543 ...</span></span>
-<span><span class="co">#&gt;   ..$ Qupstream       : num [1:11536, 1:2] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ id               : chr "54001"</span></span>
+<span><span class="co">#&gt;   ..$ down             : chr "54032"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamNodes    : chr "54095"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamIsModeled: Named logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr "54095"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamVarQ     : Named chr "Qsim_m3"</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr "54095"</span></span>
+<span><span class="co">#&gt;   ..$ FUN_MOD          : chr "RunModel_GR4J"</span></span>
+<span><span class="co">#&gt;   ..$ inUngaugedCluster: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReceiver       : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ gaugedId         : chr "54001"</span></span>
+<span><span class="co">#&gt;   ..$ hasUngaugedNodes : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ model            :List of 4</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 5</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ hasDiversion     : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReservoir      : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:5] "RunModel_GR4J" "InputsModel" "daily" "GR" ...</span></span>
+<span><span class="co">#&gt;  $ 54032:List of 19</span></span>
+<span><span class="co">#&gt;   ..$ DatesR           : POSIXlt[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
+<span><span class="co">#&gt;   ..$ Precip           : num [1:11536] 1.737 0.469 2.187 1.229 0.01 ...</span></span>
+<span><span class="co">#&gt;   ..$ PotEvap          : num [1:11536] 0.604 1.599 1.565 0.203 0.543 ...</span></span>
+<span><span class="co">#&gt;   ..$ Qupstream        : num [1:11536, 1:2] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. .. ..$ : NULL</span></span>
-<span><span class="co">#&gt;   .. .. ..$ : chr [1:2] "54001" "54029"</span></span>
-<span><span class="co">#&gt;   ..$ LengthHydro     : Named num [1:2] 45 32</span></span>
-<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54001" "54029"</span></span>
-<span><span class="co">#&gt;   ..$ BasinAreas      : Named num [1:3] 4330 1484 1051</span></span>
-<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:3] "54001" "54029" "54032"</span></span>
-<span><span class="co">#&gt;   ..$ id              : chr "54032"</span></span>
-<span><span class="co">#&gt;   ..$ down            : chr "54057"</span></span>
-<span><span class="co">#&gt;   ..$ UpstreamNodes   : chr [1:2] "54001" "54029"</span></span>
-<span><span class="co">#&gt;   ..$ UpstreamIsRunoff: logi [1:2] TRUE TRUE</span></span>
-<span><span class="co">#&gt;   ..$ FUN_MOD         : chr "RunModel_GR4J"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:4] "InputsModel" "daily" "GR" "SD"</span></span>
-<span><span class="co">#&gt;  $ 54057:List of 11</span></span>
-<span><span class="co">#&gt;   ..$ DatesR          : POSIXlt[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
-<span><span class="co">#&gt;   ..$ Precip          : num [1:11536] 1.523 0.179 1.536 1.545 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ PotEvap         : num [1:11536] 0.536 1.599 1.576 0.31 0.437 ...</span></span>
-<span><span class="co">#&gt;   ..$ Qupstream       : num [1:11536, 1:2] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   .. .. ..$ : chr [1:2] "54029" "54001"</span></span>
+<span><span class="co">#&gt;   ..$ LengthHydro      : Named num [1:2] 32 45</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54029" "54001"</span></span>
+<span><span class="co">#&gt;   ..$ BasinAreas       : Named num [1:3] 1484 4330 1051</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:3] "54029" "54001" "54032"</span></span>
+<span><span class="co">#&gt;   ..$ id               : chr "54032"</span></span>
+<span><span class="co">#&gt;   ..$ down             : chr "54057"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamNodes    : chr [1:2] "54029" "54001"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamIsModeled: Named logi [1:2] TRUE TRUE</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54029" "54001"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamVarQ     : Named chr [1:2] "Qsim_m3" "Qsim_m3"</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54029" "54001"</span></span>
+<span><span class="co">#&gt;   ..$ FUN_MOD          : chr "RunModel_GR4J"</span></span>
+<span><span class="co">#&gt;   ..$ inUngaugedCluster: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReceiver       : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ gaugedId         : chr "54032"</span></span>
+<span><span class="co">#&gt;   ..$ hasUngaugedNodes : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ model            :List of 4</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 5</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ hasDiversion     : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReservoir      : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:5] "RunModel_GR4J" "InputsModel" "daily" "GR" ...</span></span>
+<span><span class="co">#&gt;  $ 54057:List of 19</span></span>
+<span><span class="co">#&gt;   ..$ DatesR           : POSIXlt[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
+<span><span class="co">#&gt;   ..$ Precip           : num [1:11536] 1.523 0.179 1.536 1.545 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ PotEvap          : num [1:11536] 0.536 1.599 1.576 0.31 0.437 ...</span></span>
+<span><span class="co">#&gt;   ..$ Qupstream        : num [1:11536, 1:2] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "dimnames")=List of 2</span></span>
 <span><span class="co">#&gt;   .. .. ..$ : NULL</span></span>
-<span><span class="co">#&gt;   .. .. ..$ : chr [1:2] "54032" "54002"</span></span>
-<span><span class="co">#&gt;   ..$ LengthHydro     : Named num [1:2] 15 43</span></span>
-<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54032" "54002"</span></span>
-<span><span class="co">#&gt;   ..$ BasinAreas      : Named num [1:3] 6865 2208 813</span></span>
-<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:3] "54032" "54002" "54057"</span></span>
-<span><span class="co">#&gt;   ..$ id              : chr "54057"</span></span>
-<span><span class="co">#&gt;   ..$ down            : chr NA</span></span>
-<span><span class="co">#&gt;   ..$ UpstreamNodes   : chr [1:2] "54032" "54002"</span></span>
-<span><span class="co">#&gt;   ..$ UpstreamIsRunoff: logi [1:2] TRUE TRUE</span></span>
-<span><span class="co">#&gt;   ..$ FUN_MOD         : chr "RunModel_GR4J"</span></span>
-<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:4] "InputsModel" "daily" "GR" "SD"</span></span>
+<span><span class="co">#&gt;   .. .. ..$ : chr [1:2] "54002" "54032"</span></span>
+<span><span class="co">#&gt;   ..$ LengthHydro      : Named num [1:2] 43 15</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54002" "54032"</span></span>
+<span><span class="co">#&gt;   ..$ BasinAreas       : Named num [1:3] 2208 6865 813</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:3] "54002" "54032" "54057"</span></span>
+<span><span class="co">#&gt;   ..$ id               : chr "54057"</span></span>
+<span><span class="co">#&gt;   ..$ down             : chr NA</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamNodes    : chr [1:2] "54002" "54032"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamIsModeled: Named logi [1:2] TRUE TRUE</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54002" "54032"</span></span>
+<span><span class="co">#&gt;   ..$ UpstreamVarQ     : Named chr [1:2] "Qsim_m3" "Qsim_m3"</span></span>
+<span><span class="co">#&gt;   .. ..- attr(*, "names")= chr [1:2] "54002" "54032"</span></span>
+<span><span class="co">#&gt;   ..$ FUN_MOD          : chr "RunModel_GR4J"</span></span>
+<span><span class="co">#&gt;   ..$ inUngaugedCluster: logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReceiver       : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ gaugedId         : chr "54057"</span></span>
+<span><span class="co">#&gt;   ..$ hasUngaugedNodes : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ model            :List of 4</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 5</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ hasDiversion     : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..$ isReservoir      : logi FALSE</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "class")= chr [1:5] "RunModel_GR4J" "InputsModel" "daily" "GR" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "GRiwrmInputsModel" "list"</span></span>
-<span><span class="co">#&gt;  - attr(*, "GRiwrm")=Classes 'GRiwrm' and 'data.frame':  6 obs. of  5 variables:</span></span>
-<span><span class="co">#&gt;   ..$ id    : chr [1:6] "54057" "54032" "54001" "54095" ...</span></span>
-<span><span class="co">#&gt;   ..$ down  : chr [1:6] NA "54057" "54032" "54001" ...</span></span>
-<span><span class="co">#&gt;   ..$ length: num [1:6] NA 15 45 42 43 32</span></span>
+<span><span class="co">#&gt;  - attr(*, "GRiwrm")=Classes 'GRiwrm' and 'data.frame':  6 obs. of  6 variables:</span></span>
+<span><span class="co">#&gt;   ..$ id    : chr [1:6] "54095" "54002" "54029" "54001" ...</span></span>
+<span><span class="co">#&gt;   ..$ down  : chr [1:6] "54001" "54057" "54032" "54032" ...</span></span>
+<span><span class="co">#&gt;   ..$ length: num [1:6] 42 43 32 45 15 NA</span></span>
+<span><span class="co">#&gt;   ..$ area  : num [1:6] 3723 2208 1484 4330 6865 ...</span></span>
 <span><span class="co">#&gt;   ..$ model : chr [1:6] "RunModel_GR4J" "RunModel_GR4J" "RunModel_GR4J" "RunModel_GR4J" ...</span></span>
-<span><span class="co">#&gt;   ..$ area  : num [1:6] 9885 6865 4330 3723 2208 ...</span></span>
+<span><span class="co">#&gt;   ..$ donor : chr [1:6] "54095" "54002" "54029" "54001" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "TimeStep")= num 86400</span></span></code></pre>
 </div>
 </div>
@@ -463,6 +544,12 @@ for the De Lavenne regularization)</li>
 <span><span class="co">#&gt;   ..- attr(*, "AprioriId")= Named chr "54095"</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "names")= chr "54001"</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "AprCelerity")= num 1</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "model")=List of 5</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 5</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   .. ..$ X4Ratio           : num 0.58</span></span>
 <span><span class="co">#&gt;  $ 54032:List of 8</span></span>
 <span><span class="co">#&gt;   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  </span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"</span></span>
@@ -478,6 +565,12 @@ for the De Lavenne regularization)</li>
 <span><span class="co">#&gt;   ..- attr(*, "AprioriId")= Named chr "54001"</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "names")= chr "54032"</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "AprCelerity")= num 1</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "model")=List of 5</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 5</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   .. ..$ X4Ratio           : num 1.18</span></span>
 <span><span class="co">#&gt;  $ 54057:List of 8</span></span>
 <span><span class="co">#&gt;   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  </span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"</span></span>
@@ -493,6 +586,12 @@ for the De Lavenne regularization)</li>
 <span><span class="co">#&gt;   ..- attr(*, "AprioriId")= Named chr "54032"</span></span>
 <span><span class="co">#&gt;   .. ..- attr(*, "names")= chr "54057"</span></span>
 <span><span class="co">#&gt;   ..- attr(*, "AprCelerity")= num 1</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "model")=List of 5</span></span>
+<span><span class="co">#&gt;   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5</span></span>
+<span><span class="co">#&gt;   .. ..$ hasX4             : logi TRUE</span></span>
+<span><span class="co">#&gt;   .. ..$ iX4               : num 5</span></span>
+<span><span class="co">#&gt;   .. ..$ IsHyst            : logi FALSE</span></span>
+<span><span class="co">#&gt;   .. ..$ X4Ratio           : num 0.926</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr [1:2] "GRiwrmInputsCrit" "list"</span></span></code></pre>
 <div class="section level3">
 <h3 id="griwrmcaliboptions-object">GRiwrmCalibOptions object<a class="anchor" aria-label="anchor" href="#griwrmcaliboptions-object"></a>
@@ -515,7 +614,7 @@ downstream nodes.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsCalib</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54095...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  247.151,   -0.020,   83.096,    2.384</span></span>
@@ -524,7 +623,7 @@ downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (37 iterations, 377 runs)</span></span>
 <span><span class="co">#&gt;       Param =  305.633,    0.061,   48.777,    2.733</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54002...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54002'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  432.681,   -0.020,   20.697,    1.944</span></span>
@@ -533,7 +632,7 @@ downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (18 iterations, 209 runs)</span></span>
 <span><span class="co">#&gt;       Param =  389.753,    0.085,   17.870,    2.098</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9370</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54029...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54029'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  247.151,   -0.020,   42.098,    1.944</span></span>
@@ -542,82 +641,83 @@ downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (32 iterations, 333 runs)</span></span>
 <span><span class="co">#&gt;       Param =  214.204,   -0.119,   46.754,    2.022</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9696</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54001...</span></span>
+<span><span class="co">#&gt; A priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.587</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9579 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0023 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54001'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.250,  247.151,   -2.376,   20.697,    2.384</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9421</span></span>
-<span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (26 iterations, 480 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.230,  317.348,   -2.942,   14.296,    2.559</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9426</span></span>
-<span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54032...</span></span>
-<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9520</span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9601 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9997 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0268 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
-<span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.250,  432.681,   -2.376,   83.096,    2.384</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9531</span></span>
+<span><span class="co">#&gt;       Param =    1.250,  247.151,   -2.376,   20.697,    1.417</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9424</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
 <span><span class="co">#&gt;   Calibration completed (24 iterations, 460 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.280, 1199.908,   -1.175,   23.336,    2.364</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9598</span></span>
+<span><span class="co">#&gt;       Param =    1.210,  301.871,   -3.005,   15.029,    1.622</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9429</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54057...</span></span>
-<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9668</span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9677 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0078 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0006 </span></span>
+<span><span class="co">#&gt; A priori parameters from node 54001: 1.21, 301.871, -3.005, 15.029, 1.913</span></span>
+<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9521</span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9608 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9985 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0274 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   20.697,    2.384</span></span>
+<span><span class="co">#&gt;       Param =    1.250,  432.681,   -2.376,   83.096,    1.944</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9539</span></span>
+<span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
+<span><span class="co">#&gt;   Calibration completed (30 iterations, 521 runs)</span></span>
+<span><span class="co">#&gt;       Param =    1.200, 1164.445,   -1.222,   24.047,    1.837</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9603</span></span>
+<span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
+<span><span class="co">#&gt; A priori parameters from node 54032: 1.2, 1164.445, -1.222, 24.047, 1.7</span></span>
+<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9673</span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9683 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0078 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
+<span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
+<span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
+<span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   20.697,    1.944</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9582</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (24 iterations, 462 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.280, 1199.908,   -1.175,   23.336,    2.364</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9642</span></span>
+<span><span class="co">#&gt;   Calibration completed (29 iterations, 512 runs)</span></span>
+<span><span class="co">#&gt;       Param =    1.200, 1164.445,   -1.222,   24.047,    1.700</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9645</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])</span></span></code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ParamMichel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">OutputsCalib</span>, <span class="st">"[["</span>, <span class="st">"ParamFinalR"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="run-the-model-with-the-optimized-model-parameters">Run the model with the optimized model parameters<a class="anchor" aria-label="anchor" href="#run-the-model-with-the-optimized-model-parameters"></a>
 </h2>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel</span>,</span>
 <span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span>
-<span>  Param <span class="op">=</span> <span class="va">ParamMichel</span></span>
+<span>  Param <span class="op">=</span> <span class="fu"><a href="../reference/extractParam.html">extractParam</a></span><span class="op">(</span><span class="va">OutputsCalib</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54095...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54002...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54029...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54001...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54032...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54057...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54095...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54002...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54029...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54001...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54032...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54057...</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="plot-the-results-for-each-basin">Plot the results for each basin<a class="anchor" aria-label="anchor" href="#plot-the-results-for-each-basin"></a>
 </h2>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-2.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-3.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-4.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-5.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-6.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-1.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-2.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-3.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-4.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-5.png" width="70%" style="display: block; margin: auto;"><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-5-6.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The resulting flows of each node in m<sup>3</sup>/s are directly
 available and can be plotted with these commands:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Qm3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">OutputsModels</span>, <span class="st">"Qm3s"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Qm3s</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">150</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-7-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="V02_Calibration_SD_model_files/figure-html/unnamed-chunk-6-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
   </div>
 

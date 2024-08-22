@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -119,7 +125,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Creation of the InputsCrit object required to the <code>ErrorCrit</code> functions</h1>
-
+    <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateInputsCrit.GRiwrmInputsModel.R" class="external-link"><code>R/CreateInputsCrit.GRiwrmInputsModel.R</code></a>, <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateInputsCrit.InputsModel.R" class="external-link"><code>R/CreateInputsCrit.InputsModel.R</code></a>, <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateInputsCrit.R" class="external-link"><code>R/CreateInputsCrit.R</code></a></small>
     <div class="hidden name"><code>CreateInputsCrit.Rd</code></div>
     </div>
 
@@ -193,12 +199,31 @@
 <p><code>Obs</code> argument is equivalent to the same argument in <a href="https://rdrr.io/pkg/airGR/man/CreateInputsCrit.html" class="external-link">airGR::CreateInputsCrit</a> except that it must be a <a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a> or a <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> if <code>InputsModel</code> is a <em>GRiwrmInputsModel</em> object.
 Then, each column of the <a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a> or <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> represents the observations of one of the simulated node with the name of the columns representing the id of each node.</p>
 <p>With a <em>GRiwrmInputsModel</em> object, all arguments are applied on each sub-catchments of the network.</p>
-<p>Parameter regularization consists of defining a priori parameters which are used in a composed criterion based on the formula proposed by Lavenne et al. (2019) (See <a href="https://rdrr.io/pkg/airGR/man/CreateInputsCrit_Lavenne.html" class="external-link">airGR::CreateInputsCrit_Lavenne</a>).
-The parameter <code>AprioriIds</code> allows to define which upstream sub-catchment is used for providing a priori parameters. Its format is as follows: <code>AprioriIds &lt;- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)</code> where the quoted strings are the ids of the sub-catchments. See vignettes for more details. The parameter <code>AprCelerity</code> is a default value used as a priori for the parameter 'Celerity' in case of an upstream catchment (without celerity parameter) is used as a priori catchment.</p>
+<p>Parameter regularization consists of defining a priori parameters which are
+used in a composed criterion based on the formula proposed by
+Lavenne et al. (2019) (See <a href="https://rdrr.io/pkg/airGR/man/CreateInputsCrit_Lavenne.html" class="external-link">airGR::CreateInputsCrit_Lavenne</a>).
+The parameter <code>AprioriIds</code> allows to define which neighbor sub-catchment is
+used for providing a priori parameters.
+Its format is as follows:
+<code>AprioriIds &lt;- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)</code>
+where the quoted strings are the ids of the sub-catchments.
+The node providing a priori parameters must be calibrated before the
+current one.
+The sequence order of calibration can be checked with <a href="getNodeRanking.html">getNodeRanking</a>.
+If the latter is not adequate, this order can be forced by setting the node providing
+a priori parameters as donor of the current node in <a href="CreateGRiwrm.html">CreateGRiwrm</a>.
+See vignettes for more details.
+The parameter <code>AprCelerity</code> is a default value used as a priori for the
+parameter 'Celerity' in case of an upstream catchment (without celerity parameter)
+is used as a priori catchment.</p>
     </div>
     <div id="references">
     <h2>References</h2>
     <p>De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. <a href="https://doi.org/10.1029/2018WR024266" class="external-link">doi:10.1029/2018WR024266</a></p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="CreateGRiwrm.html">CreateGRiwrm()</a></code>, <code><a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm()</a></code>, <code><a href="CreateRunOptions.html">CreateRunOptions()</a></code>, <code><a href="CreateCalibOptions.html">CreateCalibOptions()</a></code>, <code><a href="Calibration.html">Calibration()</a></code></p></div>
     </div>
 
   </div>

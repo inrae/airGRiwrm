@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Severn_04: Simulation of a regulated withdrawal (closed-loop control) • airGRiwrm</title>
+<title>Severn_04: Modeling a regulated withdrawal (closed-loop control) • airGRiwrm</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Severn_04: Simulation of a regulated withdrawal (closed-loop control)">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Severn_04: Modeling a regulated withdrawal (closed-loop control)">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -70,7 +70,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -149,19 +155,16 @@
 
 
 
-      </header><link href="V04_Closed-loop_regulated_withdrawal_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="V04_Closed-loop_regulated_withdrawal_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="V04_Closed-loop_regulated_withdrawal_files/d3-3.3.8/d3.min.js"></script><script src="V04_Closed-loop_regulated_withdrawal_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="V04_Closed-loop_regulated_withdrawal_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="V04_Closed-loop_regulated_withdrawal_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="V04_Closed-loop_regulated_withdrawal_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="V04_Closed-loop_regulated_withdrawal_files/chromatography-0.1/chromatography.js"></script><script src="V04_Closed-loop_regulated_withdrawal_files/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Severn_04: Simulation of a regulated withdrawal
+      <h1 data-toc-skip>Severn_04: Modeling a regulated withdrawal
 (closed-loop control)</h1>
                         <h4 data-toc-skip class="author">David
 Dorchies</h4>
             
       
-
+      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/V04_Closed-loop_regulated_withdrawal.Rmd" class="external-link"><code>vignettes/V04_Closed-loop_regulated_withdrawal.Rmd</code></a></small>
       <div class="hidden name"><code>V04_Closed-loop_regulated_withdrawal.Rmd</code></div>
 
     </div>
@@ -181,30 +184,16 @@ Dorchies</h4>
 <h2 id="presentation-of-the-case-study">Presentation of the case study<a class="anchor" aria-label="anchor" href="#presentation-of-the-case-study"></a>
 </h2>
 <p>Starting from the network and the calibration set in the vignette
-“V03_Open-loop_influenced_flow”, we add 2 intake points for
-irrigation.</p>
-<p>The following code chunk resumes the procedure of the vignette
-“V03_Open-loop_influenced_flow”:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
-<span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span> <span class="op">&lt;-</span> <span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span></span>
-<span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span>
-<span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">griwrmV03</span> <span class="op">&lt;-</span> <span class="va">griwrm</span></span>
-<span><span class="va">griwrmV03</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54002"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span><span class="va">griwrmV03</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54095"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span><span class="va">griwrmV03</span></span>
-<span><span class="co">#&gt;      id  down length         model    area</span></span>
-<span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA RunModel_GR4J 9885.46</span></span>
-<span><span class="co">#&gt; 2 54032 54057     15 RunModel_GR4J 6864.88</span></span>
-<span><span class="co">#&gt; 3 54001 54032     45 RunModel_GR4J 4329.90</span></span>
-<span><span class="co">#&gt; 4 54095 54001     42          &lt;NA&gt; 3722.68</span></span>
-<span><span class="co">#&gt; 5 54002 54057     43          &lt;NA&gt; 2207.95</span></span>
-<span><span class="co">#&gt; 6 54029 54032     32 RunModel_GR4J 1483.65</span></span></code></pre></div>
+“V02_Calibration_SD_model”, we add 2 intake points for irrigation.</p>
 <div class="section level3">
 <h3 id="network-configuration">Network configuration<a class="anchor" aria-label="anchor" href="#network-configuration"></a>
 </h3>
+<p>The following code chunk resumes the procedure of the vignette
+“V02_Calibration_SD_model”:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
+<span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span></code></pre></div>
 <p>The intake points are located:</p>
 <ul>
 <li>on the Severn at 35 km upstream Bewdley (Gauging station
@@ -212,25 +201,39 @@ irrigation.</p>
 <li>on the Severn at 10 km upstream Saxons Lode (Gauging station
 ‘54032’).</li>
 </ul>
-<p>We have to add this 2 nodes in the <code>GRiwrm</code> object that
-describes the network:</p>
+<p>We have to add this 2 nodes in the network:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">griwrmV04</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
-<span>  <span class="va">griwrmV03</span>,</span>
+<code class="sourceCode R"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span></span>
+<span>  <span class="va">nodes</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>    id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Irrigation1"</span>, <span class="st">"Irrigation2"</span><span class="op">)</span>,</span>
-<span>    down <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54001"</span>, <span class="st">"54032"</span><span class="op">)</span>,</span>
-<span>    length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">35</span>, <span class="fl">10</span><span class="op">)</span>,</span>
+<span>    gauge_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Irrigation1"</span>, <span class="st">"Irrigation2"</span><span class="op">)</span>,</span>
+<span>    downstream_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54001"</span>, <span class="st">"54032"</span><span class="op">)</span>,</span>
+<span>    distance_downstream <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">35</span>, <span class="fl">10</span><span class="op">)</span>,</span>
 <span>    model <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>    area <span class="op">=</span> <span class="cn">NA</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nodes</span></span>
+<span><span class="co">#&gt;      gauge_id downstream_id distance_downstream    area         model</span></span>
+<span><span class="co">#&gt; 1       54057          &lt;NA&gt;                  NA 9885.46 RunModel_GR4J</span></span>
+<span><span class="co">#&gt; 2       54032         54057                  15 6864.88 RunModel_GR4J</span></span>
+<span><span class="co">#&gt; 3       54001         54032                  45 4329.90 RunModel_GR4J</span></span>
+<span><span class="co">#&gt; 4       54095         54001                  42 3722.68 RunModel_GR4J</span></span>
+<span><span class="co">#&gt; 5       54002         54057                  43 2207.95 RunModel_GR4J</span></span>
+<span><span class="co">#&gt; 6       54029         54032                  32 1483.65 RunModel_GR4J</span></span>
+<span><span class="co">#&gt; 7 Irrigation1         54001                  35      NA          &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 8 Irrigation2         54032                  10      NA          &lt;NA&gt;</span></span></code></pre></div>
+<p>And we create the <code>GRiwrm</code> object from this new
+network:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">griwrmV04</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV04</span><span class="op">)</span></span></code></pre></div>
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:70%;height:391.68px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"graph LR\n54032 -->| 15 km| 54057\n54001 -->| 45 km| 54032\n54095 -->| 42 km| 54001\n54002 -->| 43 km| 54057\n54029 -->| 32 km| 54032\nIrrigation1 -->| 35 km| 54001\nIrrigation2 -->| 10 km| 54032\nstyle 54057 fill:#cfc\nstyle 54032 fill:#cfc\nstyle 54001 fill:#cfc\nstyle 54095 fill:#fcc\nstyle 54002 fill:#fcc\nstyle Irrigation1 fill:#fcc\nstyle Irrigation2 fill:#fcc"},"evals":[],"jsHooks":[]}</script><p>Blue-grey nodes figure upstream basins (rainfall-runoff modeling
-only) and green nodes figure intermediate basins, coupling
-rainfall-runoff and hydraulic routing modeling. Nodes in red color are
-direct injection points (positive or negative flow) in the model.</p>
+<p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/griwm-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p>Blue nodes figure upstream basins (rainfall-runoff modeling only) and
+green nodes figure intermediate basins, coupling rainfall-runoff and
+hydraulic routing modeling. Nodes in red color are direct injection
+points (positive or negative flow) in the model.</p>
 <p>It’s important to notice that even if the points “Irrigation1” and
 “Irrigation2” are physically located on a single branch of the Severn
 river as well as gauging stations “54095”, “54001” and “54032”, nodes
@@ -251,15 +254,15 @@ deficit <span class="citation">(Burt et al. 1997)</span> with 80% of
 success. Below is the calculation of the 8<sup>th</sup> decile of
 monthly water needed given meteorological data of catchments “54001” and
 “54032” (unit mm/day) :</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Formatting climatic data for CreateInputsModel (See vignette V01_Structure_SD_model for details)</span></span>
 <span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span>
 <span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="va">BasinsObs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span></span>
 <span><span class="va">PrecipTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">precipitation</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">PotEvapTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">peti</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">discharge_spec</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
-<span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
+<span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
+<span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculation of the water need at the sub-basin scale</span></span>
 <span><span class="va">dailyWaterNeed</span> <span class="op">&lt;-</span> <span class="va">PotEvap</span> <span class="op">-</span> <span class="va">Precip</span></span>
@@ -272,22 +275,22 @@ monthly water needed given meteorological data of catchments “54001” and
 <span><span class="va">monthlyWaterNeed</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="va">month</span><span class="op">)</span>,<span class="op">]</span></span>
 <span><span class="va">monthlyWaterNeed</span></span>
 <span><span class="co">#&gt;       month     54001     54032</span></span>
-<span><span class="co">#&gt; 26        1 0.2461030 0.2402094</span></span>
-<span><span class="co">#&gt; 1504      2 0.6113069 0.6344439</span></span>
-<span><span class="co">#&gt; 2805      3 1.2618297 1.2614348</span></span>
-<span><span class="co">#&gt; 3746      4 2.2313069 2.2577337</span></span>
-<span><span class="co">#&gt; 4722      5 3.0402614 3.0623767</span></span>
-<span><span class="co">#&gt; 5717      6 3.4823525 3.5131655</span></span>
-<span><span class="co">#&gt; 6723      7 3.5218297 3.5620813</span></span>
-<span><span class="co">#&gt; 7645      8 2.6643525 2.7238046</span></span>
-<span><span class="co">#&gt; 8638      9 1.7737071 1.8118807</span></span>
-<span><span class="co">#&gt; 9589     10 0.8392158 0.8595388</span></span>
-<span><span class="co">#&gt; 10555    11 0.2700000 0.2482285</span></span>
-<span><span class="co">#&gt; 11492    12 0.1458536 0.1619457</span></span></code></pre></div>
+<span><span class="co">#&gt; 25        1 0.2400000 0.2365627</span></span>
+<span><span class="co">#&gt; 1721      2 0.5918416 0.6188486</span></span>
+<span><span class="co">#&gt; 2804      3 1.2376475 1.2384480</span></span>
+<span><span class="co">#&gt; 3745      4 2.1809664 2.2036046</span></span>
+<span><span class="co">#&gt; 4721      5 3.0230456 3.0555408</span></span>
+<span><span class="co">#&gt; 5716      6 3.4775922 3.5096402</span></span>
+<span><span class="co">#&gt; 6722      7 3.5305228 3.5769480</span></span>
+<span><span class="co">#&gt; 7644      8 2.6925228 2.7331421</span></span>
+<span><span class="co">#&gt; 8637      9 1.8323644 1.8489218</span></span>
+<span><span class="co">#&gt; 9588     10 0.8626301 0.8867260</span></span>
+<span><span class="co">#&gt; 10554    11 0.2707842 0.2497664</span></span>
+<span><span class="co">#&gt; 11491    12 0.1488753 0.1665834</span></span></code></pre></div>
 <p>We restrict the irrigation season between March and September As a
 consequence, the crop requirement can be expressed in m<sup>3</sup>/s as
 follows:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irrigationObjective</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span></span>
 <span><span class="co"># Conversion in m3/day</span></span>
 <span><span class="va">irrigationObjective</span><span class="op">$</span><span class="st">"54001"</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="st">"54001"</span> <span class="op">*</span> <span class="fl">15</span> <span class="op">*</span> <span class="fl">1E3</span></span>
@@ -299,40 +302,40 @@ follows:</p>
 <span><span class="va">irrigationObjective</span><span class="op">$</span><span class="va">total</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">irrigationObjective</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="va">irrigationObjective</span></span>
 <span><span class="co">#&gt;       month 54001 54032 total</span></span>
-<span><span class="co">#&gt; 26        1   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 1504      2   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 2805      3   0.2   0.4   0.6</span></span>
-<span><span class="co">#&gt; 3746      4   0.4   0.8   1.2</span></span>
-<span><span class="co">#&gt; 4722      5   0.5   1.1   1.6</span></span>
-<span><span class="co">#&gt; 5717      6   0.6   1.2   1.8</span></span>
-<span><span class="co">#&gt; 6723      7   0.6   1.2   1.8</span></span>
-<span><span class="co">#&gt; 7645      8   0.5   0.9   1.4</span></span>
-<span><span class="co">#&gt; 8638      9   0.3   0.6   0.9</span></span>
-<span><span class="co">#&gt; 9589     10   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 10555    11   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 11492    12   0.0   0.0   0.0</span></span></code></pre></div>
+<span><span class="co">#&gt; 25        1   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 1721      2   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 2804      3   0.2   0.4   0.6</span></span>
+<span><span class="co">#&gt; 3745      4   0.4   0.8   1.2</span></span>
+<span><span class="co">#&gt; 4721      5   0.5   1.1   1.6</span></span>
+<span><span class="co">#&gt; 5716      6   0.6   1.2   1.8</span></span>
+<span><span class="co">#&gt; 6722      7   0.6   1.2   1.8</span></span>
+<span><span class="co">#&gt; 7644      8   0.5   0.9   1.4</span></span>
+<span><span class="co">#&gt; 8637      9   0.3   0.6   0.9</span></span>
+<span><span class="co">#&gt; 9588     10   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 10554    11   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 11491    12   0.0   0.0   0.0</span></span></code></pre></div>
 <p>We assume that the efficiency of the irrigation systems is equal to
 50% as proposed by <span class="citation">Seckler, Molden, and
 Sakthivadivel (2003)</span>. as a consequence, the flow demand at intake
 for each irrigation system is as follows (unit: m<sup>3</sup>/s):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Application of the 50% irrigation system efficiency on the water demand</span></span>
 <span><span class="va">irrigationObjective</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">irrigationObjective</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="op">/</span> <span class="fl">0.5</span></span>
 <span><span class="co"># Display result in m3/s</span></span>
 <span><span class="va">irrigationObjective</span></span>
 <span><span class="co">#&gt;       month 54001 54032 total</span></span>
-<span><span class="co">#&gt; 26        1   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 1504      2   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 2805      3   0.4   0.8   1.2</span></span>
-<span><span class="co">#&gt; 3746      4   0.8   1.6   2.4</span></span>
-<span><span class="co">#&gt; 4722      5   1.0   2.2   3.2</span></span>
-<span><span class="co">#&gt; 5717      6   1.2   2.4   3.6</span></span>
-<span><span class="co">#&gt; 6723      7   1.2   2.4   3.6</span></span>
-<span><span class="co">#&gt; 7645      8   1.0   1.8   2.8</span></span>
-<span><span class="co">#&gt; 8638      9   0.6   1.2   1.8</span></span>
-<span><span class="co">#&gt; 9589     10   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 10555    11   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 11492    12   0.0   0.0   0.0</span></span></code></pre></div>
+<span><span class="co">#&gt; 25        1   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 1721      2   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 2804      3   0.4   0.8   1.2</span></span>
+<span><span class="co">#&gt; 3745      4   0.8   1.6   2.4</span></span>
+<span><span class="co">#&gt; 4721      5   1.0   2.2   3.2</span></span>
+<span><span class="co">#&gt; 5716      6   1.2   2.4   3.6</span></span>
+<span><span class="co">#&gt; 6722      7   1.2   2.4   3.6</span></span>
+<span><span class="co">#&gt; 7644      8   1.0   1.8   2.8</span></span>
+<span><span class="co">#&gt; 8637      9   0.6   1.2   1.8</span></span>
+<span><span class="co">#&gt; 9588     10   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 10554    11   0.0   0.0   0.0</span></span>
+<span><span class="co">#&gt; 11491    12   0.0   0.0   0.0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="restriction-of-irrigation-in-case-of-water-scarcity">Restriction of irrigation in case of water scarcity<a class="anchor" aria-label="anchor" href="#restriction-of-irrigation-in-case-of-water-scarcity"></a>
@@ -345,14 +348,14 @@ Indicator (EFI) supporting Good Ecological Status (GES) <span class="citation">(
 consists in limiting the proportion of available flow for abstraction in
 function of the current flow regime (Reference taken for a river that is
 highly sensitive to abstraction classified “ASB3”).</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">restriction_rule</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>quantile_natural_flow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.05</span>, <span class="fl">.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span><span class="op">)</span>,</span>
 <span>                               abstraction_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.15</span>, <span class="fl">0.20</span>, <span class="fl">0.24</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>The control of the abstraction will be done at the gauging station
 downstream all the abstraction locations (node “54032”). So we need the
 flow corresponding to the quantiles of natural flow and flow available
 for abstraction in each case.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">quant_m3s32</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span></span>
 <span>  <span class="va">Qobs</span><span class="op">[</span>,<span class="st">"54032"</span><span class="op">]</span> <span class="op">*</span> <span class="va">griwrmV04</span><span class="op">[</span><span class="va">griwrmV04</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54032"</span>, <span class="st">"area"</span><span class="op">]</span> <span class="op">/</span> <span class="fl">86.4</span>,</span>
 <span>  <span class="va">restriction_rule</span><span class="op">$</span><span class="va">quantile_natural_flow</span>,</span>
@@ -377,7 +380,7 @@ for abstraction in each case.</p>
 <p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>The water availability or abstraction restriction depending on the
 natural flow is calculated with the function below:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A function to enclose the parameters in the function (See: http://adv-r.had.co.nz/Functional-programming.html#closures)</span></span>
 <span><span class="va">getAvailableAbstractionEnclosed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">restriction_rule_m3s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">Qnat</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">approx</a></span><span class="op">(</span><span class="va">restriction_rule_m3s</span><span class="op">$</span><span class="va">threshold_natural_flow</span>,</span>
@@ -448,7 +451,7 @@ the function that returns the largest integers not greater than
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math></p>
 <p>The rotation of restriction days between the 2 irrigation perimeters
 is operated as follows:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">restriction_rotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">7</span>,<span class="fl">6</span>,<span class="fl">4</span>,<span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">6</span>,<span class="fl">7</span>,<span class="fl">5</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
 <span>  <span class="va">rbind</span>,</span>
@@ -476,18 +479,20 @@ is operated as follows:</p>
 <p>As for the previous model, we need to set up an
 <code>GRiwrmInputsModel</code> object containing all the model
 inputs:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># A flow is needed for all direct injection nodes in the network</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Flow time series are needed for all direct injection nodes in the network</span></span>
 <span><span class="co"># even if they may be overwritten after by a controller</span></span>
-<span><span class="co"># The Qobs matrix is completed with 2 new columns for the new nodes</span></span>
-<span><span class="va">QobsIrrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">Qobs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54002"</span>, <span class="st">"54095"</span><span class="op">)</span><span class="op">]</span>, Irrigation1 <span class="op">=</span> <span class="fl">0</span>, Irrigation2 <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">QinfIrrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Irrigation1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                        Irrigation2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Creation of the GRiwrmInputsModel object</span></span>
-<span><span class="va">IM_Irrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span>, <span class="va">QobsIrrig</span><span class="op">)</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54001...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54029...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54032...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54057...</span></span></code></pre></div>
+<span><span class="va">IM_Irrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span>, <span class="va">QinfIrrig</span><span class="op">)</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54001...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54032...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54057...</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="implementation-of-the-regulation-controller">Implementation of the regulation controller<a class="anchor" aria-label="anchor" href="#implementation-of-the-regulation-controller"></a>
@@ -499,7 +504,7 @@ inputs:</p>
 contain one or more <code>Controller</code>. This supervisor will work
 with a cycle of 7 days: the measurement are taken on the last 7 days and
 decisions are taken for each time step for the next seven days.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sv</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateSupervisor.html">CreateSupervisor</a></span><span class="op">(</span><span class="va">IM_Irrig</span>, TimeStep <span class="op">=</span> <span class="fl">7L</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -527,7 +532,7 @@ point</li>
 <li>Return the abstracted flow for the next week taking into account
 restriction days</li>
 </ol>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fIrrigationFactory</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">supervisor</span>,</span>
 <span>                               <span class="va">irrigationObjective</span>,</span>
 <span>                               <span class="va">restriction_rule_m3s</span>,</span>
@@ -538,7 +543,7 @@ restriction days</li>
 <span>    <span class="va">month</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">supervisor</span><span class="op">$</span><span class="va">ts.date</span>, <span class="st">"%m"</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="va">irrigationObjective</span><span class="op">[</span><span class="va">month</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="co"># m3/s</span></span>
 <span>    <span class="va">meanU</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">U</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="kw">if</span><span class="op">(</span><span class="va">meanU</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="va">meanU</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>      <span class="co"># calculate the naturalized flow from the measured flow and the abstracted flow of the previous week</span></span>
 <span>      <span class="va">lastU</span> <span class="op">&lt;-</span> <span class="va">supervisor</span><span class="op">$</span><span class="va">controllers</span><span class="op">[[</span><span class="va">supervisor</span><span class="op">$</span><span class="va">controller.id</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">U</span> <span class="co"># m3/day</span></span>
 <span>      <span class="va">Qnat</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">Y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">lastU</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">86400</span> <span class="co"># m3/s</span></span>
@@ -566,17 +571,17 @@ function.</p>
 <p>Creating <code>fIrrigation</code> by calling
 <code>fIrrigationFactory</code> with the arguments currently in memory
 saves these variables in the environment of the function:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fIrrigation</span> <span class="op">&lt;-</span> <span class="fu">fIrrigationFactory</span><span class="op">(</span>supervisor <span class="op">=</span> <span class="va">sv</span>,</span>
 <span>                                  irrigationObjective <span class="op">=</span> <span class="va">irrigationObjective</span>,</span>
 <span>                                  restriction_rule_m3s <span class="op">=</span> <span class="va">restriction_rule_m3s</span>,</span>
 <span>                                  restriction_rotation <span class="op">=</span> <span class="va">restriction_rotation</span><span class="op">)</span></span></code></pre></div>
 <p>You can see what data are available in the environment of the
 function with:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="va">fIrrigation</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
-<span><span class="co">#&gt;  $ supervisor          :Classes 'Supervisor', 'environment' &lt;environment: 0x564272d276b8&gt; </span></span>
+<span><span class="co">#&gt;  $ supervisor          :Classes 'Supervisor', 'environment' &lt;environment: 0x5646711c3ea0&gt; </span></span>
 <span><span class="co">#&gt;  $ irrigationObjective :'data.frame':    12 obs. of  4 variables:</span></span>
 <span><span class="co">#&gt;   ..$ month: num [1:12] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
 <span><span class="co">#&gt;   ..$ 54001: num [1:12] 0 0 0.4 0.8 1 1.2 1.2 1 0.6 0 ...</span></span>
@@ -615,13 +620,13 @@ controller</li>
 <li>the location of the control commands</li>
 <li>the logic control function</li>
 </ul>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/CreateController.html">CreateController</a></span><span class="op">(</span><span class="va">sv</span>,</span>
 <span>                 ctrl.id <span class="op">=</span> <span class="st">"Irrigation"</span>,</span>
 <span>                 Y <span class="op">=</span> <span class="st">"54032"</span>,</span>
 <span>                 U <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Irrigation1"</span>, <span class="st">"Irrigation2"</span><span class="op">)</span>,</span>
 <span>                 FUN <span class="op">=</span> <span class="va">fIrrigation</span><span class="op">)</span></span>
-<span><span class="co">#&gt; The controller has been added to the supervisor</span></span></code></pre></div>
+<span><span class="co">#&gt; The controller 'Irrigation' has been added to the supervisor</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -629,8 +634,8 @@ controller</li>
 </h2>
 <p>First we need to create a <code>GRiwrmRunOptions</code> object and
 load the parameters calibrated in the vignette
-“V03_Open-loop_influenced_flow”:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+“V02_Calibration_SD_model”:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">IndPeriod_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">DatesR</span> <span class="op">==</span> <span class="op">(</span><span class="va">DatesR</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">365</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span>, <span class="co"># Set aside warm-up period</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span> <span class="co"># Until the end of the time series</span></span>
@@ -639,21 +644,23 @@ load the parameters calibrated in the vignette
 <span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span><span class="va">IM_Irrig</span>,</span>
 <span>                               IndPeriod_WarmUp <span class="op">=</span> <span class="va">IndPeriod_WarmUp</span>,</span>
 <span>                               IndPeriod_Run <span class="op">=</span> <span class="va">IndPeriod_Run</span><span class="op">)</span></span>
-<span><span class="va">ParamV03</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"vignettes"</span>, <span class="st">"ParamV03.RDS"</span>, package <span class="op">=</span> <span class="st">"airGRiwrm"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ParamV02</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"vignettes"</span>, <span class="st">"ParamV02.RDS"</span>, package <span class="op">=</span> <span class="st">"airGRiwrm"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>For running a model with a supervision, you only need to substitute
 <code>InputsModel</code> by a <code>Supervisor</code> in the
 <code>RunModel</code> function call.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">OM_Irrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">sv</span>, RunOptions <span class="op">=</span> <span class="va">RunOptions</span>, Param <span class="op">=</span> <span class="va">ParamV03</span><span class="op">)</span></span></code></pre></div>
-<p>Simulated flows can be extracted and plot as follows:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">OM_Irrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">sv</span>, RunOptions <span class="op">=</span> <span class="va">RunOptions</span>, Param <span class="op">=</span> <span class="va">ParamV02</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Processing: 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%</span></span></code></pre></div>
+<p>Simulated flows during irrigation season can be extracted and plot as
+follows:</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Qm3s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">OM_Irrig</span>, <span class="st">"Qm3s"</span><span class="op">)</span></span>
-<span><span class="va">Qm3s</span> <span class="op">&lt;-</span> <span class="va">Qm3s</span><span class="op">[</span><span class="va">Qm3s</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">&gt;</span> <span class="st">"2003-05-25"</span> <span class="op">&amp;</span> <span class="va">Qm3s</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">&lt;</span> <span class="st">"2003-10-05"</span>,<span class="op">]</span></span>
+<span><span class="va">Qm3s</span> <span class="op">&lt;-</span> <span class="va">Qm3s</span><span class="op">[</span><span class="va">Qm3s</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">&gt;</span> <span class="st">"2003-02-25"</span> <span class="op">&amp;</span> <span class="va">Qm3s</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">&lt;</span> <span class="st">"2003-10-05"</span>,<span class="op">]</span></span>
 <span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.5</span>,<span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Qm3s</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DatesR"</span>, <span class="st">"54095"</span>, <span class="st">"54001"</span>, <span class="st">"54032"</span><span class="op">)</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">""</span>, xlab <span class="op">=</span> <span class="st">""</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Qm3s</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DatesR"</span>, <span class="st">"54095"</span>, <span class="st">"54001"</span>, <span class="st">"54032"</span><span class="op">)</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">""</span>, xlab <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Qm3s</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DatesR"</span>, <span class="st">"Irrigation1"</span>, <span class="st">"Irrigation2"</span><span class="op">)</span><span class="op">]</span>, main <span class="op">=</span> <span class="st">""</span>, xlab <span class="op">=</span> <span class="st">""</span>, legend.x <span class="op">=</span> <span class="st">"bottomright"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-15-1.png" width="70%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></code></pre></div>
 <p>We can observe that the irrigation points are alternatively closed
 some days a week when the flow at node “54032” becomes low.</p>

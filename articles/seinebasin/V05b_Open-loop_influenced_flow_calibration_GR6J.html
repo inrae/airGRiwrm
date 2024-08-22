@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -70,7 +70,13 @@
       <a href="../../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -149,10 +155,7 @@
 
 
 
-      </header><link href="V05b_Open-loop_influenced_flow_calibration_GR6J_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/d3-3.3.8/d3.min.js"></script><script src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="V05b_Open-loop_influenced_flow_calibration_GR6J_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="V05b_Open-loop_influenced_flow_calibration_GR6J_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/chromatography-0.1/chromatography.js"></script><script src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Seine_05b: Calibration of an open-loop
@@ -161,7 +164,7 @@ influenced flow semi-distributed GR6J model network</h1>
 Dorchies</h4>
             
       
-
+      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J.Rmd" class="external-link"><code>vignettes/seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J.Rmd</code></a></small>
       <div class="hidden name"><code>V05b_Open-loop_influenced_flow_calibration_GR6J.Rmd</code></div>
 
     </div>
@@ -197,8 +200,8 @@ Marne system:</p>
 <span><span class="va">griwrm3</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR6J"</span></span>
 <span><span class="va">griwrm3</span><span class="op">[</span><span class="va">griwrm3</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"NOISI_17"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"down"</span>, <span class="st">"length"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="cn">NA</span> <span class="co"># Downstream station instead of PARIS_05</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">)</span></span></code></pre></div>
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:700px;height:432.632880098888px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"graph LR\nSTDIZ_04 -->| 86 km| CHALO_21\nMONTR_18 -->| 38 km| NOISI_17\nLOUVE_19 -->| 86 km| CHALO_21\nCHALO_21 -->| 238 km| NOISI_17\nVITRY_25 -->| 38 km| CHALO_21\nMARNE_P23 -->| 3 km| STDIZ_04\nMARNE_P28 -->| 82 km| CHALO_21\nMARNE_R25 -->| 57 km| CHALO_21\nstyle CHALO_21 fill:#cfc\nstyle NOISI_17 fill:#cfc\nstyle STDIZ_04 fill:#cfc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_R25 fill:#fcc"},"evals":[],"jsHooks":[]}</script><p>We can now generate the new <code>GRiwrmInputsModel</code>
+<p><img src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/figure-html/griwrm3-1.png" width="700"></p>
+<p>We can now generate the new <code>GRiwrmInputsModel</code>
 object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">seinebasin</span><span class="op">)</span></span>
@@ -213,12 +216,12 @@ object:</p>
 <span>                                  <span class="va">Precip</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">iEnd</span>, <span class="va">id_GR_nodes</span><span class="op">]</span>,</span>
 <span>                                  <span class="va">PotEvap</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">iEnd</span>, <span class="va">id_GR_nodes</span><span class="op">]</span>,</span>
 <span>                                  <span class="va">QresMarne</span><span class="op">)</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin STDIZ_04...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin MONTR_18...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin LOUVE_19...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin VITRY_25...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin CHALO_21...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin NOISI_17...</span></span></code></pre></div>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin STDIZ_04...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin MONTR_18...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin LOUVE_19...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin VITRY_25...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin CHALO_21...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin NOISI_17...</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="griwmrunoptions-object">GriwmRunOptions object<a class="anchor" aria-label="anchor" href="#griwmrunoptions-object"></a>
@@ -303,7 +306,7 @@ period before the run period:</p>
 performed:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsCalib</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">InputsModel3</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin STDIZ_04...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 'STDIZ_04'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (2187 runs)</span></span>
 <span><span class="co">#&gt;       Param =    5.000,   36.598,   -0.521,   60.340,    2.345,    0.220,   20.086</span></span>
@@ -312,7 +315,7 @@ performed:</p>
 <span><span class="co">#&gt;   Calibration completed (211 iterations, 5129 runs)</span></span>
 <span><span class="co">#&gt;       Param =   19.990,  162.474,   -0.050,   38.741,    3.693,    0.109,    4.721</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9195</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin MONTR_18...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 'MONTR_18'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (729 runs)</span></span>
 <span><span class="co">#&gt;       Param =   90.017,   -0.521,   60.340,    2.345,    0.220,   20.086</span></span>
@@ -321,7 +324,7 @@ performed:</p>
 <span><span class="co">#&gt;   Calibration completed (79 iterations, 1699 runs)</span></span>
 <span><span class="co">#&gt;       Param =  175.611,   -0.318,   46.474,    2.412,    0.272,    6.006</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.8382</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin LOUVE_19...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 'LOUVE_19'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (729 runs)</span></span>
 <span><span class="co">#&gt;       Param =   49.402,   -0.521,   60.340,    2.345,    0.020,   20.086</span></span>
@@ -330,7 +333,7 @@ performed:</p>
 <span><span class="co">#&gt;   Calibration completed (33 iterations, 1099 runs)</span></span>
 <span><span class="co">#&gt;       Param =   58.518,   -0.521,   94.421,    2.221,    0.026,   14.515</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9290</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin VITRY_25...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 'VITRY_25'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (729 runs)</span></span>
 <span><span class="co">#&gt;       Param =   36.598,   -0.521,  148.413,    2.345,    0.020,   20.086</span></span>
@@ -339,24 +342,24 @@ performed:</p>
 <span><span class="co">#&gt;   Calibration completed (56 iterations, 1394 runs)</span></span>
 <span><span class="co">#&gt;       Param =   33.665,   -0.521,  163.534,    3.691,    0.043,   16.471</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9473</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin CHALO_21...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 'CHALO_21'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (2187 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,   90.017,   -1.175,  148.413,    1.369,    0.020,  148.413</span></span>
-<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9181</span></span>
+<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9192</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (93 iterations, 3462 runs)</span></span>
-<span><span class="co">#&gt;       Param =    0.409,  616.307,   -1.175,  478.348,    2.344,    0.026,    3.882</span></span>
-<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9560</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin NOISI_17...</span></span>
+<span><span class="co">#&gt;   Calibration completed (122 iterations, 3870 runs)</span></span>
+<span><span class="co">#&gt;       Param =    0.409,  622.269,   -1.159,  471.683,    2.359,    0.020,    3.372</span></span>
+<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9569</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 'NOISI_17'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (2187 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,   90.017,   -1.175,  148.413,    2.345,    0.220,  148.413</span></span>
-<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.8476</span></span>
+<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.8478</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (84 iterations, 3358 runs)</span></span>
-<span><span class="co">#&gt;       Param =    1.146,  828.119,   -1.175,  171.034,    2.219,    0.217,   36.077</span></span>
-<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9489</span></span></code></pre></div>
+<span><span class="co">#&gt;   Calibration completed (78 iterations, 3268 runs)</span></span>
+<span><span class="co">#&gt;       Param =    1.145,  836.088,   -1.175,  165.935,    2.208,    0.220,   36.049</span></span>
+<span><span class="co">#&gt;       Crit. KGE2[Q]      = 0.9493</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="run-model-with-michel-calibration">Run model with Michel calibration<a class="anchor" aria-label="anchor" href="#run-model-with-michel-calibration"></a>
@@ -364,27 +367,21 @@ performed:</p>
 <p>Now that the model is calibrated, we can run it with the optimized
 parameter values:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Param5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OutputsCalib</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">Param5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/extractParam.html">extractParam</a></span><span class="op">(</span><span class="va">OutputsCalib</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">OutputsModels3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/RunModel.html">RunModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel3</span>,</span>
 <span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span>
 <span>  Param <span class="op">=</span> <span class="va">Param5</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin STDIZ_04...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin STDIZ_04...</span></span>
 <span><span class="co">#&gt; Warning in RunModel_Lag(InputsModel, RunOptions, Param[1], OutputsModel): 115</span></span>
 <span><span class="co">#&gt; time steps with negative flow, set to zero.</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin MONTR_18...</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin LOUVE_19...</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin VITRY_25...</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin CHALO_21...</span></span>
-<span><span class="co">#&gt; Warning in RunModel_Lag(InputsModel, RunOptions, Param[1], OutputsModel): 11</span></span>
-<span><span class="co">#&gt; time steps with negative flow, set to zero.</span></span>
-<span><span class="co">#&gt; Warning in RunModel_Lag(InputsModel, RunOptions, Param[1], OutputsModel): 3</span></span>
-<span><span class="co">#&gt; time steps with NA values</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin NOISI_17...</span></span>
-<span><span class="co">#&gt; Warning in RunModel_Lag(InputsModel, RunOptions, Param[1], OutputsModel): 6</span></span>
-<span><span class="co">#&gt; time steps with NA values</span></span></code></pre></div>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin MONTR_18...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin LOUVE_19...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin VITRY_25...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin CHALO_21...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin NOISI_17...</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="comparison-with-simulated-flows">Comparison with simulated flows<a class="anchor" aria-label="anchor" href="#comparison-with-simulated-flows"></a>
 </h3>

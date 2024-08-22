@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -119,7 +125,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Creation of the CalibOptions object</h1>
-
+    <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateCalibOptions.GRiwrmInputsModel.R" class="external-link"><code>R/CreateCalibOptions.GRiwrmInputsModel.R</code></a>, <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateCalibOptions.R" class="external-link"><code>R/CreateCalibOptions.R</code></a></small>
     <div class="hidden name"><code>CreateCalibOptions.Rd</code></div>
     </div>
 
@@ -129,18 +135,21 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'GRiwrmInputsModel'</span></span>
-<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, FixedParam <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, FixedParam <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'InputsModel'</span></span>
-<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, FixedParam <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'character'</span></span>
-<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, FixedParam <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'function'</span></span>
-<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, FixedParam <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'RunModel_Reservoir'</span></span>
+<span><span class="fu">CreateCalibOptions</span><span class="op">(</span><span class="va">x</span>, FixedParam <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -149,6 +158,11 @@
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>For a single catchment, it can be an object of class <em>InputsModel</em> or a <a href="https://rdrr.io/r/base/function.html" class="external-link">function</a> or a <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> corresponding to <code>FUN_MOD</code> (compliant with <strong>airGR</strong> call). For a network, it should be an object of class <em>GRiwrmInputsModel</em>. See <a href="CreateInputsModel.html">CreateInputsModel</a> for details</p></dd>
+
+
+<dt id="arg-fixedparam">FixedParam<a class="anchor" aria-label="anchor" href="#arg-fixedparam"></a></dt>
+<dd><p>a <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> as for <a href="https://rdrr.io/pkg/airGR/man/CreateCalibOptions.html" class="external-link">airGR::CreateCalibOptions</a>,
+or a <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> giving the values of non-optimized parameters (see details)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -163,7 +177,21 @@
     <div id="details">
     <h2>Details</h2>
     <p>See <a href="https://rdrr.io/pkg/airGR/man/CreateCalibOptions.html" class="external-link">airGR::CreateCalibOptions</a> documentation for a complete list of arguments.</p>
-<p>With a <em>GRiwrmInputsModel</em> object, all arguments are applied on each sub-catchments of the network.</p>
+<p>With a <em>GRiwrmInputsModel</em> object, all arguments are applied on each sub-catchments of the network
+with some adaptation depending on the model used on each node.</p>
+<p>If the argument <code>FixedParam</code> is a <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a>, it is applied to each node of
+the network. Parameters are adapted depending on the use of the routing model
+and the CemaNeige model on each node. If <code>FixedParam</code> is a <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a>,
+each item of the list will be applied on corresponding nodes. Use the id "*" for applying
+a setting on the remaining nodes. Example for applying one setting for all the
+nodes except the id "54057":</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>FixedParam <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">*</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0.25</span>, <span class="cn">NA</span>, <span class="dv">10</span>, <span class="cn">NA</span>),</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                   <span class="st">`</span><span class="at">54057</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">0.25</span>, <span class="cn">NA</span>, <span class="dv">10</span>, <span class="cn">NA</span>))</span></code></pre><p></p></div>
+<p>The argument <code>IsHyst</code> is ignored since it should be defined previously with <a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm</a>.</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="CreateGRiwrm.html">CreateGRiwrm()</a></code>, <code><a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm()</a></code>, <code><a href="CreateRunOptions.html">CreateRunOptions()</a></code>, <code><a href="CreateInputsCrit.html">CreateInputsCrit()</a></code>, <code><a href="Calibration.html">Calibration()</a></code></p></div>
     </div>
 
   </div>

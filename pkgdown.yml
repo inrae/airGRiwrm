@@ -11,10 +11,12 @@ articles:
   V03_Open-loop_influenced_flow: V03_Open-loop_influenced_flow.html
   V04_Closed-loop_regulated_withdrawal: V04_Closed-loop_regulated_withdrawal.html
   seinebasin/V04_Open-loop_influenced_flow: seinebasin/V04_Open-loop_influenced_flow.html
+  V05_Modelling_ungauged_nodes: V05_Modelling_ungauged_nodes.html
   seinebasin/V05_Open-loop_influenced_flow_calibration: seinebasin/V05_Open-loop_influenced_flow_calibration.html
   seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J: seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J.html
+  V06_Modelling_regulated_diversion: V06_Modelling_regulated_diversion.html
   seinebasin/V06_Naturalised_flow_simulation: seinebasin/V06_Naturalised_flow_simulation.html
-last_built: 2024-07-28T10:03Z
+last_built: 2024-08-22T07:48Z
 urls:
   reference: https://inrae.github.io/airGRiwrm/reference
   article: https://inrae.github.io/airGRiwrm/articles

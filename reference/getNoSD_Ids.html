@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -119,7 +125,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Function to obtain the ID of sub-basins not using SD model</h1>
-
+    <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/utils.GRiwrm.R" class="external-link"><code>R/utils.GRiwrm.R</code></a></small>
     <div class="hidden name"><code>getNoSD_Ids.Rd</code></div>
     </div>
 
@@ -128,7 +134,7 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getNoSD_Ids</span><span class="op">(</span><span class="va">InputsModel</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">getNoSD_Ids</span><span class="op">(</span><span class="va">InputsModel</span>, include_diversion <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -137,6 +143,10 @@
 
 <dl><dt id="arg-inputsmodel">InputsModel<a class="anchor" aria-label="anchor" href="#arg-inputsmodel"></a></dt>
 <dd><p>[<code>GRiwrmInputsModel</code> object]</p></dd>
+
+
+<dt id="arg-include-diversion">include_diversion<a class="anchor" aria-label="anchor" href="#arg-include-diversion"></a></dt>
+<dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> for including diversion nodes</p></dd>
 
 </dl></div>
     <div id="value">

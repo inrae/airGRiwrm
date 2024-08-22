@@ -5,6 +5,8 @@
 <url><loc>https://inrae.github.io/airGRiwrm/articles/V02_Calibration_SD_model.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/articles/V03_Open-loop_influenced_flow.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/articles/V04_Closed-loop_regulated_withdrawal.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/articles/V05_Modelling_ungauged_nodes.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/articles/V06_Modelling_regulated_diversion.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/articles/airGRiwrm.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/articles/index.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/articles/seinebasin/V01_First_network.html</loc></url>
@@ -30,16 +32,26 @@
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.GR.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.GRiwrmInputsModel.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.InputsModel.html</loc></url>
-<url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.SD.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.Supervisor.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel_Reservoir.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/Severn.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/airGRiwrm-package.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/as.Qm3s.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/extractParam.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/getNoSD_Ids.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/getNodeProperties.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/getNodeRanking.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/getSD_Ids.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/index.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/isNodeDownstream.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/mermaid.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/plot.GRiwrm.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/plot.GRiwrmOutputsModel.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/plot.OutputsModelReservoir.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/plot.Qm3s.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/reduceGRiwrm.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/sort.GRiwrm.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/transferGRparams.html</loc></url>
 </urlset>
 

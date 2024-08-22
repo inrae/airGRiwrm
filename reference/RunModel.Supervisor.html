@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -119,7 +125,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>RunModel function for a GRiwrmInputsModel object</h1>
-
+    <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/RunModel.Supervisor.R" class="external-link"><code>R/RunModel.Supervisor.R</code></a></small>
     <div class="hidden name"><code>RunModel.Supervisor.Rd</code></div>
     </div>
 
@@ -157,6 +163,154 @@
     <p><em>GRiwrmOutputsModel</em> object which is a list of <em>OutputsModel</em> objects (See <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a>) for each node of the semi-distributed model</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">###############################################################################</span></span></span>
+<span class="r-in"><span><span class="co"># An example of reservoir management on an hypothetical dam at station "54095"</span></span></span>
+<span class="r-in"><span><span class="co"># on the Severn river build to support low-flows at "54057"</span></span></span>
+<span class="r-in"><span><span class="co">###############################################################################</span></span></span>
+<span class="r-in"><span><span class="co"># A minimum flow of 50 m3/s is maintained at the dam location and an extra-release</span></span></span>
+<span class="r-in"><span><span class="co"># is provided when the flow at the downstream station "54057" cross a minimum</span></span></span>
+<span class="r-in"><span><span class="co"># threshold of 65 m3/s. The dam has a storage capacity of 650 millions m3</span></span></span>
+<span class="r-in"><span><span class="co">###############################################################################</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load Severn network information</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Insert a dam downstream the location the gauging station 54095</span></span></span>
+<span class="r-in"><span><span class="co"># The dam is a direct injection node</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span><span class="op">$</span><span class="va">downstream_id</span><span class="op">[</span><span class="va">nodes</span><span class="op">$</span><span class="va">gauge_id</span> <span class="op">==</span> <span class="st">"54095"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"Dam"</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span><span class="op">[</span><span class="va">nodes</span><span class="op">$</span><span class="va">gauge_id</span> <span class="op">==</span> <span class="st">"54095"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">nodes</span>,</span></span>
+<span class="r-in"><span>               <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>gauge_id <span class="op">=</span> <span class="st">"Dam"</span>,</span></span>
+<span class="r-in"><span>                          downstream_id <span class="op">=</span> <span class="st">"54001"</span>,</span></span>
+<span class="r-in"><span>                          distance_downstream <span class="op">=</span> <span class="fl">42</span>,</span></span>
+<span class="r-in"><span>                          area <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>                          model <span class="op">=</span> <span class="st">"RunModel_Reservoir"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>,</span></span>
+<span class="r-in"><span>                 <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>,</span></span>
+<span class="r-in"><span>                      down <span class="op">=</span> <span class="st">"downstream_id"</span>,</span></span>
+<span class="r-in"><span>                      length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Ungauged node 'Dam' automatically gets the node '54001' as parameter donor</span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Format meteorological inputs for CreateInputs</span></span></span>
+<span class="r-in"><span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span></span>
+<span class="r-in"><span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="va">BasinsObs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span></span></span>
+<span class="r-in"><span><span class="va">PrecipTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">precipitation</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">PotEvapTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">peti</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PrecipTot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create a release flow time series for the dam</span></span></span>
+<span class="r-in"><span><span class="co"># This release will be modified by the Supervisor</span></span></span>
+<span class="r-in"><span><span class="co"># We initiate it with the natural flow for having a good initialization of the</span></span></span>
+<span class="r-in"><span><span class="co"># model at the first time step of the running period</span></span></span>
+<span class="r-in"><span><span class="va">Qinf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Dam <span class="op">=</span> <span class="va">BasinsObs</span><span class="op">$</span><span class="va">`54095`</span><span class="op">$</span><span class="va">discharge_spec</span> <span class="op">*</span> <span class="va">griwrm</span><span class="op">$</span><span class="va">area</span><span class="op">[</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54095"</span><span class="op">]</span> <span class="op">*</span> <span class="fl">1E3</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># InputsModel object</span></span></span>
+<span class="r-in"><span><span class="va">IM_severn</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span>, <span class="va">Qinf</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Use of the `Qinf` parameter for reservoir releases is deprecated, please use `Qrelease` instead.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Processing `Qrelease &lt;- cbind(Qrelease, Qinf[, c("Dam"])`...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin Dam...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54001...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54032...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54057...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Initialization of the Supervisor</span></span></span>
+<span class="r-in"><span><span class="va">sv</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateSupervisor.html">CreateSupervisor</a></span><span class="op">(</span><span class="va">IM_severn</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Dam management is modeled by a controller</span></span></span>
+<span class="r-in"><span><span class="co"># This controller releases a minimum flow Qmin and provides</span></span></span>
+<span class="r-in"><span><span class="co"># extra release if flow measured somewhere is below Qthreshold</span></span></span>
+<span class="r-in"><span><span class="co"># Flow is expressed in m3 / time step</span></span></span>
+<span class="r-in"><span><span class="co"># Y[1] = runoff flow at gauging station 54095 filling the reservoir</span></span></span>
+<span class="r-in"><span><span class="co"># Y[2] = flow at gauging station 54057, location of the low-flow objective</span></span></span>
+<span class="r-in"><span><span class="co"># The returned value is the release calculated at the reservoir</span></span></span>
+<span class="r-in"><span><span class="co"># We need to enclose the Supervisor variable and other parameters in</span></span></span>
+<span class="r-in"><span><span class="co"># the environment of the function with a function returning the logic function</span></span></span>
+<span class="r-in"><span><span class="va">factoryDamLogic</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">sv</span>, <span class="va">Qmin</span>, <span class="va">Qthreshold</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="kw">function</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="co"># Estimate natural flow at low-flow support location</span></span></span>
+<span class="r-in"><span>    <span class="va">Qnat</span> <span class="op">&lt;-</span> <span class="va">Y</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="va">Y</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span></span></span>
+<span class="r-in"><span>    <span class="co"># The release is the max between: low-flow support and minimum flow</span></span></span>
+<span class="r-in"><span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">Qthreshold</span> <span class="op">-</span> <span class="va">Qnat</span>, <span class="va">Qmin</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">U</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># And define a final function enclosing logic and parameters together</span></span></span>
+<span class="r-in"><span><span class="va">funDamLogic</span> <span class="op">&lt;-</span> <span class="fu">factoryDamLogic</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  sv <span class="op">=</span> <span class="va">sv</span>, <span class="co"># The Supervisor which store the released flow</span></span></span>
+<span class="r-in"><span>  Qmin <span class="op">=</span> <span class="fl">50</span> <span class="op">*</span> <span class="fl">86400</span>, <span class="co"># Min flow to maintain downstream the reservoir (m3/day)</span></span></span>
+<span class="r-in"><span>  Qthreshold <span class="op">=</span> <span class="fl">65</span> <span class="op">*</span> <span class="fl">86400</span> <span class="co"># Min flow threshold to support at station 54057 (m3/day)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="CreateController.html">CreateController</a></span><span class="op">(</span><span class="va">sv</span>, <span class="st">"DamRelease"</span>, Y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54057"</span>, <span class="st">"Dam"</span><span class="op">)</span>, U <span class="op">=</span> <span class="st">"Dam"</span>, FUN <span class="op">=</span> <span class="va">funDamLogic</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The controller 'DamRelease' has been added to the supervisor</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># GRiwrmRunOptions object simulation of the hydrological year 2002-2003</span></span></span>
+<span class="r-in"><span><span class="va">IndPeriod_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">DatesR</span> <span class="op">&gt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2002-11-01"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span> <span class="op">&amp;</span></span></span>
+<span class="r-in"><span>  <span class="va">DatesR</span> <span class="op">&lt;=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="st">"2003-11-01"</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">IndPeriod_WarmUp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq.int</a></span><span class="op">(</span><span class="va">IndPeriod_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">366</span>, <span class="va">IndPeriod_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">RO_severn</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">IM_severn</span>,</span></span>
+<span class="r-in"><span>  IndPeriod_WarmUp <span class="op">=</span> <span class="va">IndPeriod_WarmUp</span>,</span></span>
+<span class="r-in"><span>  IndPeriod_Run <span class="op">=</span> <span class="va">IndPeriod_Run</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Load parameters of the model from Calibration in vignette V02</span></span></span>
+<span class="r-in"><span><span class="va">P_severn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"vignettes"</span>, <span class="st">"ParamV02.RDS"</span>, package <span class="op">=</span> <span class="st">"airGRiwrm"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Set the reservoir parameters: maximum storage capacity and celerity of inflows</span></span></span>
+<span class="r-in"><span><span class="co"># As the distance between the upstream node "54095" and the dam is 0 km, the celerity</span></span></span>
+<span class="r-in"><span><span class="co"># doesn't have any effect. However it must be positive.</span></span></span>
+<span class="r-in"><span><span class="va">P_severn</span><span class="op">$</span><span class="va">Dam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Vmax <span class="op">=</span> <span class="fl">650E6</span>, celerity <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The Supervisor is used instead of InputsModel for running the model</span></span></span>
+<span class="r-in"><span><span class="va">OM_dam</span> <span class="op">&lt;-</span> <span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">sv</span>,</span></span>
+<span class="r-in"><span>                   RunOptions <span class="op">=</span> <span class="va">RO_severn</span>,</span></span>
+<span class="r-in"><span>                   Param <span class="op">=</span> <span class="va">P_severn</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing: 0%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  10%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  20%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  30%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  40%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  50%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  60%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  70%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  80%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  90%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  100%</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plotting the time series of flows and reservoir storage</span></span></span>
+<span class="r-in"><span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3.3</span>,<span class="fl">1.2</span>,<span class="fl">0.5</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              mgp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">OM_dam</span>, <span class="st">"Qm3s"</span><span class="op">)</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"DatesR"</span>, <span class="st">"54095"</span>, <span class="st">"Dam"</span>, <span class="st">"54057"</span><span class="op">)</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">200</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Vres</span> <span class="op">&lt;-</span> <span class="fu"><a href="as.Qm3s.html">as.Qm3s</a></span><span class="op">(</span>DatesR <span class="op">=</span> <span class="va">OM_dam</span><span class="op">$</span><span class="va">Dam</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
+<span class="r-in"><span>                   <span class="st">"Simulated volume"</span> <span class="op">=</span> <span class="va">OM_dam</span><span class="op">$</span><span class="va">Dam</span><span class="op">$</span><span class="va">Vsim</span> <span class="op">/</span> <span class="fl">1E6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Vres</span>,</span></span>
+<span class="r-in"><span>     main <span class="op">=</span> <span class="st">"Simulated reservoir storage"</span>,</span></span>
+<span class="r-in"><span>     ylab <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="st">"Storage (Mm"</span> <span class="op">^</span> <span class="st">"3"</span> <span class="op">*</span> <span class="st">")"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="RunModel.Supervisor-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

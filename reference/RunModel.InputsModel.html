@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -119,7 +125,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Wrapper for <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a> for one sub-basin</h1>
-
+    <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/RunModel.InputsModel.R" class="external-link"><code>R/RunModel.InputsModel.R</code></a></small>
     <div class="hidden name"><code>RunModel.InputsModel.Rd</code></div>
     </div>
 
@@ -129,7 +135,7 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'InputsModel'</span></span>
-<span><span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">RunOptions</span>, <span class="va">Param</span>, FUN_MOD <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span>x <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">RunOptions</span>, <span class="va">Param</span>, FUN_MOD <span class="op">=</span> <span class="cn">NULL</span>, InputsModel <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -152,20 +158,27 @@
 <dd><p>[function] hydrological model function (e.g. <code><a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">RunModel_GR4J</a></code>, <code><a href="https://rdrr.io/pkg/airGR/man/RunModel_CemaNeigeGR4J.html" class="external-link">RunModel_CemaNeigeGR4J</a></code>)</p></dd>
 
 
+<dt id="arg-inputsmodel">InputsModel<a class="anchor" aria-label="anchor" href="#arg-inputsmodel"></a></dt>
+<dd><p>[object of class <em>InputsModel</em>] see <code><a href="https://rdrr.io/pkg/airGR/man/CreateInputsModel.html" class="external-link">CreateInputsModel</a></code> for details</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Further arguments for compatibility with S3 methods</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>[list] see <code><a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">RunModel_GR4J</a></code> or <code><a href="https://rdrr.io/pkg/airGR/man/RunModel_CemaNeigeGR4J.html" class="external-link">RunModel_CemaNeigeGR4J</a></code> for details.</p>
-<p>If <code>InputsModel</code> parameter has been created for using a semi-distributed (SD) lag model (See <code><a href="https://rdrr.io/pkg/airGR/man/CreateInputsModel.html" class="external-link">CreateInputsModel</a></code>), the list value contains an extra item named <code>QsimDown</code> which is a numeric series of simulated discharge [mm/time step] related to the run-off contribution of the downstream sub-catchment.</p>
-    </div>
-    <div id="details">
-    <h2>Details</h2>
-    <p>This function calls <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a> (See <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a> for further details).</p>
-<p>The list produced by the function (See Value section of <a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">airGR::RunModel_GR4J</a>) is here completed by an item <em>$Qsim_m3</em> storing the simulated discharge series in m3/s.</p>
-    </div>
+    <p>[object of class <em>OutputsModel</em>] returned by <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a>
+(See Value section of <a href="https://rdrr.io/pkg/airGR/man/RunModel_GR4J.html" class="external-link">airGR::RunModel_GR4J</a>) completed by new items:</p><ul><li><p><code>Qsim_m3</code>: simulated flow in cubic meters per time step</p></li>
+<li><p><code>Qover_m3</code> volumes of over abstractions which occurs when <code>RunModel_Lag</code> warns
+for negative simulated flows</p></li>
+<li><p><code>Qnat</code>: only present in case of Diversion in the node, simulated flow in mm
+per time step before application of the Diversion</p></li>
+<li><p><code>Qdiv_m3</code>: only present in case of Diversion in the node, simulated diverted flow in
+cubic meters per time step. The latter differs from the flows time series provided
+in argument <code>Qinf</code> of <a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm</a> by the limitation of diversion
+applied by the minimum flow threshold <code>Qmin</code> to keep flowing in the river</p></li>
+</ul></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

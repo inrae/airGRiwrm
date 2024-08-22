@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -70,7 +70,13 @@
       <a href="../../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -149,10 +155,7 @@
 
 
 
-      </header><link href="V01_First_network_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="V01_First_network_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="V01_First_network_files/d3-3.3.8/d3.min.js"></script><script src="V01_First_network_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="V01_First_network_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="V01_First_network_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="V01_First_network_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="V01_First_network_files/chromatography-0.1/chromatography.js"></script><script src="V01_First_network_files/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Seine_01: Structuration of a semi-distributed
@@ -161,7 +164,7 @@ GR4J model network</h1>
 Dorchies</h4>
             
       
-
+      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/seinebasin/V01_First_network.Rmd" class="external-link"><code>vignettes/seinebasin/V01_First_network.Rmd</code></a></small>
       <div class="hidden name"><code>V01_First_network.Rmd</code></div>
 
     </div>
@@ -279,39 +282,38 @@ the dataframe and assign the variable classes.</p>
 <span>                            down <span class="op">=</span> <span class="st">"id_aval"</span>,</span>
 <span>                            length <span class="op">=</span> <span class="st">"distance_aval"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">griwrm</span></span></code></pre></div>
-<pre><code><span><span class="co">##          id     down  length         model     area</span></span>
-<span><span class="co">## 1  TRANN_01 ARCIS_24  68.100 RunModel_GR4J  1557.06</span></span>
-<span><span class="co">## 2  GURGY_02 COURL_23  83.612 RunModel_GR4J  3819.77</span></span>
-<span><span class="co">## 3  BRIEN_03 COURL_23  84.653 RunModel_GR4J  2979.77</span></span>
-<span><span class="co">## 4  STDIZ_04 CHALO_21  85.570 RunModel_GR4J  2347.53</span></span>
-<span><span class="co">## 5  PARIS_05     &lt;NA&gt;      NA RunModel_GR4J 43824.66</span></span>
-<span><span class="co">## 6  BAR-S_06 MERY-_22  79.766 RunModel_GR4J  2340.37</span></span>
-<span><span class="co">## 7  CHAUM_07 GURGY_02 153.074 RunModel_GR4J   216.50</span></span>
-<span><span class="co">## 8  CUSSY_08 GURGY_02  91.378 RunModel_GR4J   247.99</span></span>
-<span><span class="co">## 9  STGER_09 GURGY_02  94.152 RunModel_GR4J   402.74</span></span>
-<span><span class="co">## 10 GUILL_10 CHABL_12  66.026 RunModel_GR4J   488.71</span></span>
-<span><span class="co">## 11 AISY-_11 BRIEN_03 102.428 RunModel_GR4J  1349.51</span></span>
-<span><span class="co">## 12 CHABL_12 COURL_23 111.781 RunModel_GR4J  1116.27</span></span>
-<span><span class="co">## 13 NOGEN_13 MONTE_15  63.215 RunModel_GR4J  9182.39</span></span>
-<span><span class="co">## 14 EPISY_14 ALFOR_16  89.196 RunModel_GR4J  3916.71</span></span>
-<span><span class="co">## 15 MONTE_15 ALFOR_16  94.475 RunModel_GR4J 21199.39</span></span>
-<span><span class="co">## 16 ALFOR_16 PARIS_05   9.263 RunModel_GR4J 30784.71</span></span>
-<span><span class="co">## 17 NOISI_17 PARIS_05  39.384 RunModel_GR4J 12547.72</span></span>
-<span><span class="co">## 18 MONTR_18 NOISI_17  37.915 RunModel_GR4J  1184.81</span></span>
-<span><span class="co">## 19 LOUVE_19 CHALO_21  86.165 RunModel_GR4J   461.74</span></span>
-<span><span class="co">## 20 LASSI_20 ARCIS_24  43.618 RunModel_GR4J   876.53</span></span>
-<span><span class="co">## 21 CHALO_21 NOISI_17 237.937 RunModel_GR4J  6291.55</span></span>
-<span><span class="co">## 22 MERY-_22 NOGEN_13  49.933 RunModel_GR4J  3899.62</span></span>
-<span><span class="co">## 23 COURL_23 MONTE_15  26.159 RunModel_GR4J 10687.35</span></span>
-<span><span class="co">## 24 ARCIS_24 NOGEN_13  70.926 RunModel_GR4J  3594.60</span></span>
-<span><span class="co">## 25 VITRY_25 CHALO_21  38.047 RunModel_GR4J  2109.14</span></span></code></pre>
+<pre><code><span><span class="co">##          id     down  length     area         model    donor</span></span>
+<span><span class="co">## 1  TRANN_01 ARCIS_24  68.100  1557.06 RunModel_GR4J TRANN_01</span></span>
+<span><span class="co">## 4  STDIZ_04 CHALO_21  85.570  2347.53 RunModel_GR4J STDIZ_04</span></span>
+<span><span class="co">## 6  BAR-S_06 MERY-_22  79.766  2340.37 RunModel_GR4J BAR-S_06</span></span>
+<span><span class="co">## 7  CHAUM_07 GURGY_02 153.074   216.50 RunModel_GR4J CHAUM_07</span></span>
+<span><span class="co">## 8  CUSSY_08 GURGY_02  91.378   247.99 RunModel_GR4J CUSSY_08</span></span>
+<span><span class="co">## 9  STGER_09 GURGY_02  94.152   402.74 RunModel_GR4J STGER_09</span></span>
+<span><span class="co">## 10 GUILL_10 CHABL_12  66.026   488.71 RunModel_GR4J GUILL_10</span></span>
+<span><span class="co">## 11 AISY-_11 BRIEN_03 102.428  1349.51 RunModel_GR4J AISY-_11</span></span>
+<span><span class="co">## 14 EPISY_14 ALFOR_16  89.196  3916.71 RunModel_GR4J EPISY_14</span></span>
+<span><span class="co">## 18 MONTR_18 NOISI_17  37.915  1184.81 RunModel_GR4J MONTR_18</span></span>
+<span><span class="co">## 19 LOUVE_19 CHALO_21  86.165   461.74 RunModel_GR4J LOUVE_19</span></span>
+<span><span class="co">## 20 LASSI_20 ARCIS_24  43.618   876.53 RunModel_GR4J LASSI_20</span></span>
+<span><span class="co">## 25 VITRY_25 CHALO_21  38.047  2109.14 RunModel_GR4J VITRY_25</span></span>
+<span><span class="co">## 2  GURGY_02 COURL_23  83.612  3819.77 RunModel_GR4J GURGY_02</span></span>
+<span><span class="co">## 3  BRIEN_03 COURL_23  84.653  2979.77 RunModel_GR4J BRIEN_03</span></span>
+<span><span class="co">## 12 CHABL_12 COURL_23 111.781  1116.27 RunModel_GR4J CHABL_12</span></span>
+<span><span class="co">## 21 CHALO_21 NOISI_17 237.937  6291.55 RunModel_GR4J CHALO_21</span></span>
+<span><span class="co">## 22 MERY-_22 NOGEN_13  49.933  3899.62 RunModel_GR4J MERY-_22</span></span>
+<span><span class="co">## 24 ARCIS_24 NOGEN_13  70.926  3594.60 RunModel_GR4J ARCIS_24</span></span>
+<span><span class="co">## 13 NOGEN_13 MONTE_15  63.215  9182.39 RunModel_GR4J NOGEN_13</span></span>
+<span><span class="co">## 17 NOISI_17 PARIS_05  39.384 12547.72 RunModel_GR4J NOISI_17</span></span>
+<span><span class="co">## 23 COURL_23 MONTE_15  26.159 10687.35 RunModel_GR4J COURL_23</span></span>
+<span><span class="co">## 15 MONTE_15 ALFOR_16  94.475 21199.39 RunModel_GR4J MONTE_15</span></span>
+<span><span class="co">## 16 ALFOR_16 PARIS_05   9.263 30784.71 RunModel_GR4J ALFOR_16</span></span>
+<span><span class="co">## 5  PARIS_05     &lt;NA&gt;      NA 43824.66 RunModel_GR4J PARIS_05</span></span></code></pre>
 <p>The diagram of the network structure is represented below with in
 blue the upstream nodes with a GR4J model and in green the intermediate
 nodes with an SD (GR4J + LAG) model.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></code></pre></div>
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:768px;height:672px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"graph LR\nTRANN_01 -->| 68 km| ARCIS_24\nGURGY_02 -->| 84 km| COURL_23\nBRIEN_03 -->| 85 km| COURL_23\nSTDIZ_04 -->| 86 km| CHALO_21\nBAR-S_06 -->| 80 km| MERY-_22\nCHAUM_07 -->| 153 km| GURGY_02\nCUSSY_08 -->| 91 km| GURGY_02\nSTGER_09 -->| 94 km| GURGY_02\nGUILL_10 -->| 66 km| CHABL_12\nAISY-_11 -->| 102 km| BRIEN_03\nCHABL_12 -->| 112 km| COURL_23\nNOGEN_13 -->| 63 km| MONTE_15\nEPISY_14 -->| 89 km| ALFOR_16\nMONTE_15 -->| 94 km| ALFOR_16\nALFOR_16 -->| 9 km| PARIS_05\nNOISI_17 -->| 39 km| PARIS_05\nMONTR_18 -->| 38 km| NOISI_17\nLOUVE_19 -->| 86 km| CHALO_21\nLASSI_20 -->| 44 km| ARCIS_24\nCHALO_21 -->| 238 km| NOISI_17\nMERY-_22 -->| 50 km| NOGEN_13\nCOURL_23 -->| 26 km| MONTE_15\nARCIS_24 -->| 71 km| NOGEN_13\nVITRY_25 -->| 38 km| CHALO_21\nstyle ARCIS_24 fill:#cfc\nstyle COURL_23 fill:#cfc\nstyle CHALO_21 fill:#cfc\nstyle MERY-_22 fill:#cfc\nstyle GURGY_02 fill:#cfc\nstyle CHABL_12 fill:#cfc\nstyle BRIEN_03 fill:#cfc\nstyle MONTE_15 fill:#cfc\nstyle ALFOR_16 fill:#cfc\nstyle PARIS_05 fill:#cfc\nstyle NOISI_17 fill:#cfc\nstyle NOGEN_13 fill:#cfc\n"},"evals":[],"jsHooks":[]}</script>
+<p><img src="V01_First_network_files/figure-html/plot-1.png" width="768"></p>
 </div>
 <div class="section level3">
 <h3 id="observation-time-series">Observation time series<a class="anchor" aria-label="anchor" href="#observation-time-series"></a>
@@ -336,38 +338,38 @@ the list, which is ordered from upstream to downstream.</p>
 order to handle the GRiwrm object that describes the basin diagram:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin TRANN_01...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin STDIZ_04...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin BAR-S_06...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin CHAUM_07...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin CUSSY_08...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin STGER_09...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin GUILL_10...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin AISY-_11...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin EPISY_14...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin MONTR_18...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin LOUVE_19...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin LASSI_20...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin VITRY_25...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin MERY-_22...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin GURGY_02...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin CHABL_12...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin BRIEN_03...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin ARCIS_24...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin CHALO_21...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin COURL_23...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin NOISI_17...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin NOGEN_13...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin MONTE_15...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin ALFOR_16...</span></span></code></pre>
-<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Treating sub-basin PARIS_05...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin TRANN_01...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin STDIZ_04...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin BAR-S_06...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin CHAUM_07...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin CUSSY_08...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin STGER_09...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin GUILL_10...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin AISY-_11...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin EPISY_14...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin MONTR_18...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin LOUVE_19...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin LASSI_20...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin VITRY_25...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin GURGY_02...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin BRIEN_03...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin CHABL_12...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin CHALO_21...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin MERY-_22...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin ARCIS_24...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin NOGEN_13...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin NOISI_17...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin COURL_23...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin MONTE_15...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin ALFOR_16...</span></span></code></pre>
+<pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin PARIS_05...</span></span></code></pre>
 </div>
 <div class="section level3">
 <h3 id="save-data-for-next-vignettes">Save data for next vignettes<a class="anchor" aria-label="anchor" href="#save-data-for-next-vignettes"></a>
 </h3>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"_cache"</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">InputsModel</span>, file <span class="op">=</span> <span class="st">"_cache/V01.RData"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span><span class="va">seine_nodes</span>, <span class="va">griwrm</span>, <span class="va">InputsModel</span>, file <span class="op">=</span> <span class="st">"_cache/V01.RData"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

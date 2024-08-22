@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -70,7 +70,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -149,10 +155,7 @@
 
 
 
-      </header><link href="V01_Structure_SD_model_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="V01_Structure_SD_model_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="V01_Structure_SD_model_files/d3-3.3.8/d3.min.js"></script><script src="V01_Structure_SD_model_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="V01_Structure_SD_model_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="V01_Structure_SD_model_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="V01_Structure_SD_model_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="V01_Structure_SD_model_files/chromatography-0.1/chromatography.js"></script><script src="V01_Structure_SD_model_files/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Severn_01: Set up of a semi-distributed GR model
@@ -161,7 +164,7 @@ network</h1>
 Dorchies</h4>
             
       
-
+      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/V01_Structure_SD_model.Rmd" class="external-link"><code>vignettes/V01_Structure_SD_model.Rmd</code></a></small>
       <div class="hidden name"><code>V01_Structure_SD_model.Rmd</code></div>
 
     </div>
@@ -243,7 +246,6 @@ model is used (otherwise set to <code>NA</code>).</li>
 this information for the tutorial example:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span> <span class="op">&lt;-</span> <span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span> <span class="co">#je ne comprends pas cette ligne, elle semble inutile</span></span>
 <span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span></code></pre></div>
 <p>The network description consists in a <code>GRiwrm</code> object that
 lists the nodes and describes the network diagram. It is a
@@ -272,20 +274,19 @@ used.</li>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">griwrm</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt;      id  down length         model    area</span></span>
-<span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA RunModel_GR4J 9885.46</span></span>
-<span><span class="co">#&gt; 2 54032 54057     15 RunModel_GR4J 6864.88</span></span>
-<span><span class="co">#&gt; 3 54001 54032     45 RunModel_GR4J 4329.90</span></span>
-<span><span class="co">#&gt; 4 54095 54001     42 RunModel_GR4J 3722.68</span></span>
-<span><span class="co">#&gt; 5 54002 54057     43 RunModel_GR4J 2207.95</span></span>
-<span><span class="co">#&gt; 6 54029 54032     32 RunModel_GR4J 1483.65</span></span></code></pre>
+<pre><code><span><span class="co">#&gt;      id  down length    area         model donor</span></span>
+<span><span class="co">#&gt; 4 54095 54001     42 3722.68 RunModel_GR4J 54095</span></span>
+<span><span class="co">#&gt; 5 54002 54057     43 2207.95 RunModel_GR4J 54002</span></span>
+<span><span class="co">#&gt; 6 54029 54032     32 1483.65 RunModel_GR4J 54029</span></span>
+<span><span class="co">#&gt; 3 54001 54032     45 4329.90 RunModel_GR4J 54001</span></span>
+<span><span class="co">#&gt; 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span></span>
+<span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span></span></code></pre>
 <p>The diagram of the network structure is represented below with in
 blue the upstream nodes with a GR4J model and in green the intermediate
 nodes with an SD (GR4J + LAG) model.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></code></pre></div>
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:70%;height:391.68px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"graph LR\n54032 -->| 15 km| 54057\n54001 -->| 45 km| 54032\n54095 -->| 42 km| 54001\n54002 -->| 43 km| 54057\n54029 -->| 32 km| 54032\nstyle 54057 fill:#cfc\nstyle 54032 fill:#cfc\nstyle 54001 fill:#cfc\n"},"evals":[],"jsHooks":[]}</script>
+<p><img src="V01_Structure_SD_model_files/figure-html/diagram-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="observation-time-series">Observation time series<a class="anchor" aria-label="anchor" href="#observation-time-series"></a>
@@ -298,32 +299,32 @@ data per sub-catchment.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">BasinsObs</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; List of 6</span></span>
 <span><span class="co">#&gt;  $ 54001:'data.frame':   11536 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
+<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 3.63 0.55 2.09 0.38 0.01 0.25 0.1 0 0.11 0.08 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.59 1.65 1.44 0.3 0.58 0.73 0.59 0.66 0.58 0.62 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.77 0.77 0.76 0.74 0.72 0.69 0.64 0.6 0.59 0.54 ...</span></span>
 <span><span class="co">#&gt;  $ 54002:'data.frame':   11536 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
+<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 1.58 0.47 1.35 1.92 0.06 0 0.01 0 0.08 0.34 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.61 1.7 1.61 0.3 0.44 0.69 0.52 0.71 0.73 0.57 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.62 0.63 0.56 0.52 0.52 0.54 0.5 0.48 0.46 0.45 ...</span></span>
 <span><span class="co">#&gt;  $ 54029:'data.frame':   11536 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
+<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 2.38 0.33 2.16 0.38 0.01 0.12 0.08 0.05 0.05 0.29 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.58 1.64 1.49 0.23 0.56 0.72 0.63 0.72 0.62 0.64 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.79 0.79 0.73 0.7 0.68 0.63 0.61 0.59 0.57 0.57 ...</span></span>
 <span><span class="co">#&gt;  $ 54032:'data.frame':   11536 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
+<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 3.07 0.49 2.12 0.51 0.01 0.19 0.08 0.01 0.08 0.14 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.59 1.64 1.47 0.27 0.57 0.72 0.61 0.68 0.6 0.63 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.84 0.83 0.81 0.79 0.78 0.73 0.65 0.61 0.6 0.57 ...</span></span>
 <span><span class="co">#&gt;  $ 54057:'data.frame':   11536 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
+<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 2.61 0.46 1.9 0.91 0.02 0.13 0.06 0.01 0.08 0.22 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.59 1.65 1.51 0.28 0.53 0.71 0.59 0.69 0.64 0.62 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.66 0.67 0.64 0.64 0.63 0.61 0.56 0.52 0.51 0.5 ...</span></span>
 <span><span class="co">#&gt;  $ 54095:'data.frame':   11536 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-02-29 23:00:00" "1984-03-01 23:00:00" ...</span></span>
+<span><span class="co">#&gt;   ..$ DatesR        : POSIXct[1:11536], format: "1984-03-01" "1984-03-02" ...</span></span>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 4.01 0.57 2 0.37 0.01 0.3 0.12 0 0.12 0.07 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.59 1.64 1.42 0.31 0.59 0.73 0.59 0.66 0.57 0.61 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.9 0.9 0.94 0.87 0.86 0.81 0.76 0.73 0.7 0.69 ...</span></span></code></pre>
@@ -353,12 +354,12 @@ extended in order to handle the <code>GRiwrm</code> object that
 describes the basin diagram:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54095...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54002...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54029...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54001...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54032...</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54057...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54001...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54032...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54057...</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -374,7 +375,7 @@ Software</em> 94 (August): 166–71. <a href="https://doi.org/10.1016/j.envsoft.
 Coxon, G., N. Addor, J. P. Bloomfield, J. Freer, M. Fry, J. Hannaford,
 N. J. K. Howden, et al. 2020. <span>“Catchment Attributes and
 Hydro-Meteorological Timeseries for 671 Catchments Across <span>Great
-Britain</span> (<span>CAMELS</span>-<span>GB</span>).”</span> <span>NERC
+Britain</span> (<span>CAMELS-GB</span>).”</span> <span>NERC
 Environmental Information Data Centre</span>. <a href="https://doi.org/10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9" class="external-link">https://doi.org/10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9</a>.
 </div>
 </div>

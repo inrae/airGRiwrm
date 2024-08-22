@@ -38,7 +38,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -70,7 +70,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -149,10 +155,7 @@
 
 
 
-      </header><link href="V03_Open-loop_influenced_flow_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
-<script src="V03_Open-loop_influenced_flow_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><script src="V03_Open-loop_influenced_flow_files/d3-3.3.8/d3.min.js"></script><script src="V03_Open-loop_influenced_flow_files/dagre-0.4.0/dagre-d3.min.js"></script><link href="V03_Open-loop_influenced_flow_files/mermaid-0.3.0/dist/mermaid.css" rel="stylesheet">
-<script src="V03_Open-loop_influenced_flow_files/mermaid-0.3.0/dist/mermaid.slim.min.js"></script><link href="V03_Open-loop_influenced_flow_files/DiagrammeR-styles-0.2/styles.css" rel="stylesheet">
-<script src="V03_Open-loop_influenced_flow_files/chromatography-0.1/chromatography.js"></script><script src="V03_Open-loop_influenced_flow_files/DiagrammeR-binding-1.0.11/DiagrammeR.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Severn_03: Calibration of an open-loop
@@ -161,7 +164,7 @@ influenced flow model network</h1>
 Dorchies</h4>
             
       
-
+      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/V03_Open-loop_influenced_flow.Rmd" class="external-link"><code>vignettes/V03_Open-loop_influenced_flow.Rmd</code></a></small>
       <div class="hidden name"><code>V03_Open-loop_influenced_flow.Rmd</code></div>
 
     </div>
@@ -186,10 +189,16 @@ and on the Severn at Buildwas (Gauging station ‘54095’) are not fully
 satisfactory, especially regarding low flows. These upper basins are
 actually heavily influenced by impoundments and inter-basin transfers
 <span class="citation">(Higgs and Petts 1988)</span>.</p>
-<p>To cope with these influences, in this vignette, we will not try to
-simulate the basin functioning with an hydrological model but we will
-rather directly inject in the model the observed flows at these
-nodes.</p>
+<p>So, to cope with these influences, in this vignette, we use direct
+injection of observed influenced flows instead of modeling natural flow
+with an hydrological model.</p>
+<p>We use observation on the Avon at Evesham (Gauging station ‘54002’)
+and we choose to do the same on the Severn at Bewdley (Gauging station
+‘54001’) as if the observed flow at these locations would be the
+observed release of a dam.</p>
+<p>Please note that the flow on the Severn at Buildwas (Gauging station
+‘54095’) is still simulated but its flows is no longer routed to
+downstream.</p>
 </div>
 <div class="section level3">
 <h3 id="conversion-of-a-gauging-station-into-a-release-spot">Conversion of a gauging station into a release spot<a class="anchor" aria-label="anchor" href="#conversion-of-a-gauging-station-into-a-release-spot"></a>
@@ -203,24 +212,22 @@ chunk resumes all the necessary steps:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
 <span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span> <span class="op">&lt;-</span> <span class="va">nodes</span><span class="op">$</span><span class="va">distance_downstream</span></span>
-<span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span>
-<span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span></code></pre></div>
 <p>To notify the SD model that the provided flows on a node should be
 directly used instead of an hydrological model, one only needs to
 declare its model as <code>NA</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">griwrmV03</span> <span class="op">&lt;-</span> <span class="va">griwrm</span></span>
-<span><span class="va">griwrmV03</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54002"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
-<span><span class="va">griwrmV03</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54095"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<code class="sourceCode R"><span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="va">nodes</span><span class="op">$</span><span class="va">gauge_id</span> <span class="op">==</span> <span class="st">"54002"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="va">nodes</span><span class="op">$</span><span class="va">gauge_id</span> <span class="op">==</span> <span class="st">"54001"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">griwrmV03</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">griwrmV03</span></span>
-<span><span class="co">#&gt;      id  down length         model    area</span></span>
-<span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA RunModel_GR4J 9885.46</span></span>
-<span><span class="co">#&gt; 2 54032 54057     15 RunModel_GR4J 6864.88</span></span>
-<span><span class="co">#&gt; 3 54001 54032     45 RunModel_GR4J 4329.90</span></span>
-<span><span class="co">#&gt; 4 54095 54001     42          &lt;NA&gt; 3722.68</span></span>
-<span><span class="co">#&gt; 5 54002 54057     43          &lt;NA&gt; 2207.95</span></span>
-<span><span class="co">#&gt; 6 54029 54032     32 RunModel_GR4J 1483.65</span></span></code></pre></div>
+<span><span class="co">#&gt;      id  down length    area         model donor</span></span>
+<span><span class="co">#&gt; 4 54095 54001     42 3722.68 RunModel_GR4J 54095</span></span>
+<span><span class="co">#&gt; 6 54029 54032     32 1483.65 RunModel_GR4J 54029</span></span>
+<span><span class="co">#&gt; 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span></span>
+<span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span></span>
+<span><span class="co">#&gt; 3 54001 54032     45 4329.90          &lt;NA&gt; 54001</span></span>
+<span><span class="co">#&gt; 5 54002 54057     43 2207.95          &lt;NA&gt; 54002</span></span></code></pre></div>
 <p>Here, we keep the area of this basin which means that the discharge
 will be provided in mm per time step. If the discharge is provided in
 m<sup>3</sup>/s, then the area should be set to <code>NA</code> and
@@ -234,8 +241,7 @@ model)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV03</span><span class="op">)</span></span></code></pre></div>
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ac96cb3ee4656e2e9ec3" style="width:70%;height:391.68px;"></div>
-<script type="application/json" data-for="htmlwidget-ac96cb3ee4656e2e9ec3">{"x":{"diagram":"graph LR\n54032 -->| 15 km| 54057\n54001 -->| 45 km| 54032\n54095 -->| 42 km| 54001\n54002 -->| 43 km| 54057\n54029 -->| 32 km| 54032\nstyle 54057 fill:#cfc\nstyle 54032 fill:#cfc\nstyle 54001 fill:#cfc\nstyle 54095 fill:#fcc\nstyle 54002 fill:#fcc"},"evals":[],"jsHooks":[]}</script>
+<p><img src="V03_Open-loop_influenced_flow_files/figure-html/diagram-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="generation-of-the-griwrminputsmodel-object">Generation of the GRiwrmInputsModel object<a class="anchor" aria-label="anchor" href="#generation-of-the-griwrminputsmodel-object"></a>
@@ -248,21 +254,21 @@ formatting procedure:</p>
 <span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="va">BasinsObs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span></span>
 <span><span class="va">PrecipTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">precipitation</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">PotEvapTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">peti</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
-<span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
+<span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV03</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
+<span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV03</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
 <span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">discharge_spec</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>This time, we need to provide observed flows as inputs for the nodes
 ‘54002’ and ‘54095’:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">QobsInputs</span> <span class="op">&lt;-</span> <span class="va">Qobs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54002"</span>, <span class="st">"54095"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">QobsInputs</span> <span class="op">&lt;-</span> <span class="va">Qobs</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54001"</span>, <span class="st">"54002"</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <p>Then, the <code>GRiwrmInputsModel</code> object can be generated
 taking into account the new <code>GRiwrm</code> object:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">IM_OL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrmV03</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span>, <span class="va">QobsInputs</span><span class="op">)</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54001...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54029...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54032...</span></span>
-<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Treating sub-basin 54057...</span></span></code></pre></div>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54032...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54057...</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -284,7 +290,7 @@ here but only where an upstream simulated catchment is available.</p>
 <span><span class="va">InputsCrit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsCrit.html">CreateInputsCrit</a></span><span class="op">(</span><span class="va">IM_OL</span>,</span>
 <span>                               FUN_CRIT <span class="op">=</span> <span class="va">ErrorCrit_KGE2</span>,</span>
 <span>                               RunOptions <span class="op">=</span> <span class="va">RunOptions</span>, Obs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span>,</span>
-<span>                               AprioriIds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54057"</span> <span class="op">=</span> <span class="st">"54032"</span>, <span class="st">"54032"</span> <span class="op">=</span> <span class="st">"54001"</span><span class="op">)</span>,</span>
+<span>                               AprioriIds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54057"</span> <span class="op">=</span> <span class="st">"54032"</span>, <span class="st">"54032"</span> <span class="op">=</span> <span class="st">"54029"</span><span class="op">)</span>,</span>
 <span>                               transfo <span class="op">=</span> <span class="st">"sqrt"</span>, k <span class="op">=</span> <span class="fl">0.15</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">CalibOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateCalibOptions.html">CreateCalibOptions</a></span><span class="op">(</span><span class="va">IM_OL</span><span class="op">)</span></span></code></pre></div>
@@ -294,16 +300,16 @@ to downstream nodes.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OC_OL</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">IM_OL</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54001...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
-<span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
-<span><span class="co">#&gt;       Param =    5.000,  247.151,   -2.376,   20.697,    2.384</span></span>
-<span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9678</span></span>
+<span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
+<span><span class="co">#&gt;       Param =  247.151,   -0.020,   83.096,    2.384</span></span>
+<span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9507</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (35 iterations, 565 runs)</span></span>
-<span><span class="co">#&gt;       Param =   19.990,  125.533, -232.703,   10.750,    3.689</span></span>
-<span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9867</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54029...</span></span>
+<span><span class="co">#&gt;   Calibration completed (37 iterations, 377 runs)</span></span>
+<span><span class="co">#&gt;       Param =  305.633,    0.061,   48.777,    2.733</span></span>
+<span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54029'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  247.151,   -0.020,   42.098,    1.944</span></span>
@@ -312,37 +318,39 @@ to downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (32 iterations, 333 runs)</span></span>
 <span><span class="co">#&gt;       Param =  214.204,   -0.119,   46.754,    2.022</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9696</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54032...</span></span>
-<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9867</span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9930 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9955 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0103 </span></span>
+<span><span class="co">#&gt; A priori parameters from node 54029: 1, 214.204, -0.119, 46.754, 1.823</span></span>
+<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9696</span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9697 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9975 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9989 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
-<span><span class="co">#&gt;       Param =    5.000,  432.681,   -0.649,   83.096,    2.384</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.8693</span></span>
+<span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.020,   42.098,    1.944</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9861</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (58 iterations, 791 runs)</span></span>
-<span><span class="co">#&gt;       Param =   19.970,   68.441,  -10.461,  413.135,    3.743</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9515</span></span>
+<span><span class="co">#&gt;   Calibration completed (17 iterations, 395 runs)</span></span>
+<span><span class="co">#&gt;       Param =    1.110,  395.440,    0.000,   60.340,    1.788</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9876</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Treating sub-basin 54057...</span></span>
-<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9851</span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9858 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0007 </span></span>
-<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9956 </span></span>
+<span><span class="co">#&gt; A priori parameters from node 54032: 1.11, 395.44, 0, 60.34, 1.655</span></span>
+<span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9913</span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9916 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0020 </span></span>
+<span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0010 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
-<span><span class="co">#&gt;       Param =    5.000,  169.017,   -0.649,   42.098,    2.384</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.8659</span></span>
+<span><span class="co">#&gt;       Param =    1.250,  247.151,   -0.020,   42.098,    1.944</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9786</span></span>
 <span><span class="co">#&gt; Steepest-descent local search in progress</span></span>
-<span><span class="co">#&gt;   Calibration completed (45 iterations, 659 runs)</span></span>
-<span><span class="co">#&gt;       Param =   19.970,   66.811,  -11.089,  297.797,    3.727</span></span>
-<span><span class="co">#&gt;       Crit. Composite    = 0.9712</span></span>
+<span><span class="co">#&gt;   Calibration completed (23 iterations, 452 runs)</span></span>
+<span><span class="co">#&gt;       Param =    1.120,  230.442,   -0.242,   42.521,    1.710</span></span>
+<span><span class="co">#&gt;       Crit. Composite    = 0.9797</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])</span></span>
-<span><span class="va">ParamV03</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OC_OL</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ParamV03</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrmV03</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OC_OL</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="run-of-the-model-with-this-newly-calibrated-parameters">Run of the model with this newly calibrated parameters<a class="anchor" aria-label="anchor" href="#run-of-the-model-with-this-newly-calibrated-parameters"></a>
@@ -353,10 +361,10 @@ to downstream nodes.</p>
 <span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span>
 <span>  Param <span class="op">=</span> <span class="va">ParamV03</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54001...</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54029...</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54032...</span></span>
-<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Treating sub-basin 54057...</span></span></code></pre></div>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54095...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54029...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54032...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54057...</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plotting-of-the-results">Plotting of the results<a class="anchor" aria-label="anchor" href="#plotting-of-the-results"></a>

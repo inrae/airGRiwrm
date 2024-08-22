@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.6.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.7.0</span>
       </span>
     </div>
 
@@ -46,7 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Simulation of a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
+    </li>
+    <li>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
+    </li>
+    <li>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -119,7 +125,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Creation of the RunOptions object</h1>
-
+    <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateRunOptions.GRiwrmInputsModel.R" class="external-link"><code>R/CreateRunOptions.GRiwrmInputsModel.R</code></a>, <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateRunOptions.R" class="external-link"><code>R/CreateRunOptions.R</code></a></small>
     <div class="hidden name"><code>CreateRunOptions.Rd</code></div>
     </div>
 
@@ -137,10 +143,10 @@
 <span><span class="fu">CreateRunOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'character'</span></span>
-<span><span class="fu">CreateRunOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">CreateRunOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">InputsModel</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'function'</span></span>
-<span><span class="fu">CreateRunOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">CreateRunOptions</span><span class="op">(</span><span class="va">x</span>, <span class="va">InputsModel</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -158,222 +164,35 @@
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>arguments passed to <a href="https://rdrr.io/pkg/airGR/man/CreateRunOptions.html" class="external-link">airGR::CreateRunOptions</a>, see details</p></dd>
 
+
+<dt id="arg-inputsmodel">InputsModel<a class="anchor" aria-label="anchor" href="#arg-inputsmodel"></a></dt>
+<dd><p>object of class <em>InputsModel</em> (only used to be consistent
+with the original <a href="https://rdrr.io/pkg/airGR/man/CreateRunOptions.html" class="external-link">airGR::CreateRunOptions</a> which has <code>FUN_MOD</code> as first
+parameter)
+see <a href="https://rdrr.io/pkg/airGR/man/CreateInputsModel.html" class="external-link">airGR::CreateInputsModel</a> for details</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>Depending on the class of <code>InputsModel</code> argument (respectively <em>InputsModel</em> and <em>GRiwrmInputsModel</em> object), the returned value is respectively:</p><ul><li><p>a <code>RunOptions</code> object (See <a href="https://rdrr.io/pkg/airGR/man/CreateRunOptions.html" class="external-link">airGR::CreateRunOptions</a>)</p></li>
+    <p>Depending on the class of <code>InputsModel</code> argument (respectively
+<em>InputsModel</em> and <em>GRiwrmInputsModel</em> object), the returned value is respectively:</p><ul><li><p>a <code>RunOptions</code> object (See <a href="https://rdrr.io/pkg/airGR/man/CreateRunOptions.html" class="external-link">airGR::CreateRunOptions</a>)</p></li>
 <li><p>a <code>GRiwrmRunOptions</code> object which is a <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of <code>RunOptions</code> objects with one item per modeled sub-catchment</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
     <p>See <a href="https://rdrr.io/pkg/airGR/man/CreateRunOptions.html" class="external-link">airGR::CreateRunOptions</a> documentation for a complete list of arguments.</p>
-<p>If <code>InputsModel</code> argument is a <em>GRiwrmInputsModel</em> object, <code>IniStates</code> must be a list of <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> object of class <em>IniStates</em> with one item per modeled sub-catchment.</p>
-<p>With a <em>GRiwrmInputsModel</em> object, all arguments are applied on each sub-catchments of the network.</p>
+<p>If <code>x</code> argument is a <em>GRiwrmInputsModel</em> object, <code>IniStates</code> must be a
+list of <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> object of class <em>IniStates</em> with one item per modeled sub-catchment.</p>
+<p>With a <em>GRiwrmInputsModel</em> object, all arguments are applied on each
+sub-catchments of the network.</p>
+<p>For examples of use see topics <a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel</a>, <a href="RunModel_Reservoir.html">RunModel_Reservoir</a>,
+and <a href="RunModel.Supervisor.html">RunModel.Supervisor</a>.</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="CreateGRiwrm.html">CreateGRiwrm()</a></code>, <code><a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm()</a></code>, <code><a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel()</a></code></p></div>
     </div>
 
-    <div id="ref-examples">
-    <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">###################################################################</span></span></span>
-<span class="r-in"><span><span class="co"># Run the `airGR::RunModel_Lag` example in the GRiwrm fashion way #</span></span></span>
-<span class="r-in"><span><span class="co"># Simulation of a reservoir with a purpose of low-flow mitigation #</span></span></span>
-<span class="r-in"><span><span class="co">###################################################################</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## ---- preparation of the InputsModel object</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## loading package and catchment data</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">L0123001</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## ---- specifications of the reservoir</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## the reservoir withdraws 1 m3/s when it's possible considering the flow observed in the basin</span></span></span>
-<span class="r-in"><span><span class="va">Qupstream</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">Qls</span> <span class="op">/</span> <span class="fl">1000</span> <span class="op">-</span> <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## except between July and September when the reservoir releases 3 m3/s for low-flow mitigation</span></span></span>
-<span class="r-in"><span><span class="va">month</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, <span class="st">"%m"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">Qupstream</span><span class="op">[</span><span class="va">month</span> <span class="op">&gt;=</span> <span class="fl">7</span> <span class="op">&amp;</span> <span class="va">month</span> <span class="op">&lt;=</span> <span class="fl">9</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">3</span></span></span>
-<span class="r-in"><span><span class="va">Qupstream</span> <span class="op">&lt;-</span> <span class="va">Qupstream</span> <span class="op">*</span> <span class="fl">86400</span> <span class="co">## Conversion in m3/day</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## the reservoir is not an upstream subcachment: its areas is NA</span></span></span>
-<span class="r-in"><span><span class="va">BasinAreas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">BasinInfo</span><span class="op">$</span><span class="va">BasinArea</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## delay time between the reservoir and the catchment outlet is 2 days and the distance is 150 km</span></span></span>
-<span class="r-in"><span><span class="va">LengthHydro</span> <span class="op">&lt;-</span> <span class="fl">150</span></span></span>
-<span class="r-in"><span><span class="co">## with a delay of 2 days for 150 km, the flow velocity is 75 km per day</span></span></span>
-<span class="r-in"><span><span class="va">Velocity</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">LengthHydro</span> <span class="op">*</span> <span class="fl">1e3</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="fl">24</span> <span class="op">*</span> <span class="fl">60</span> <span class="op">*</span> <span class="fl">60</span><span class="op">)</span> <span class="co">## Conversion km/day -&gt; m/s</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># This example is a network of 2 nodes which can be describe like this:</span></span></span>
-<span class="r-in"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reservoir"</span>, <span class="st">"GaugingDown"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">LengthHydro</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 down <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GaugingDown"</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 area <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="va">BasinInfo</span><span class="op">$</span><span class="va">BasinArea</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"RunModel_GR4J"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Create GRiwrm object from the data.frame</span></span></span>
-<span class="r-in"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Classes ‘GRiwrm’ and 'data.frame':	2 obs. of  5 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ id    : chr  "Reservoir" "GaugingDown"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ down  : chr  "GaugingDown" NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ length: num  150 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ model : chr  NA "RunModel_GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ area  : num  NA 360</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Formatting observations for the hydrological models</span></span></span>
-<span class="r-in"><span><span class="co"># Each input data should be a matrix or a data.frame with the good id in the name of the column</span></span></span>
-<span class="r-in"><span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">P</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">Precip</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"GaugingDown"</span></span></span>
-<span class="r-in"><span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">E</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">PotEvap</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"GaugingDown"</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Observed flows contain flows that are directly injected in the model</span></span></span>
-<span class="r-in"><span><span class="va">Qobs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="va">Qupstream</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">Qobs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="st">"Reservoir"</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Creation of the GRiwrmInputsModel object (= a named list of InputsModel objects)</span></span></span>
-<span class="r-in"><span><span class="va">InputsModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>,</span></span>
-<span class="r-in"><span>                            DatesR <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
-<span class="r-in"><span>                            Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
-<span class="r-in"><span>                            PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
-<span class="r-in"><span>                            Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Treating sub-basin GaugingDown...</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">InputsModels</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ GaugingDown:List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ DatesR          : POSIXlt[1:10593], format: "1984-01-01" "1984-01-02" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Precip          : num [1:10593] 4.1 15.9 0.8 0 0 0 0 0 2.9 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ PotEvap         : num [1:10593] 0.2 0.2 0.3 0.3 0.1 0.3 0.4 0.4 0.5 0.5 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Qupstream       : num [1:10593, 1] -86400 -86400 -86400 -86400 -86400 -86400 -86400 -86400 -86400 -86400 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "dimnames")=List of 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : chr "Reservoir"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ LengthHydro     : Named num 150</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr "Reservoir"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ BasinAreas      : Named num [1:2] NA 360</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:2] "Reservoir" "GaugingDown"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id              : chr "GaugingDown"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ down            : chr NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ UpstreamNodes   : chr "Reservoir"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ UpstreamIsRunoff: logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FUN_MOD         : chr "RunModel_GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "class")= chr [1:4] "InputsModel" "daily" "GR" "SD"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "GRiwrmInputsModel" "list"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "GRiwrm")=Classes ‘GRiwrm’ and 'data.frame':	2 obs. of  5 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ id    : chr [1:2] "Reservoir" "GaugingDown"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ down  : chr [1:2] "GaugingDown" NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ length: num [1:2] 150 NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ model : chr [1:2] NA "RunModel_GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ area  : num [1:2] NA 360</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "TimeStep")= num 86400</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## run period selection</span></span></span>
-<span class="r-in"><span><span class="va">Ind_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span><span class="op">==</span><span class="st">"1990-01-01"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>               <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span><span class="op">==</span><span class="st">"1999-12-31"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Creation of the GriwmRunOptions object</span></span></span>
-<span class="r-in"><span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu">CreateRunOptions</span><span class="op">(</span><span class="va">InputsModels</span>,</span></span>
-<span class="r-in"><span>                                IndPeriod_Run <span class="op">=</span> <span class="va">Ind_Run</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>model warm up period not defined: default configuration used</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span>   the year preceding the run period is used </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">RunOptions</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ GaugingDown:List of 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ IndPeriod_WarmUp: int [1:365] 1828 1829 1830 1831 1832 1833 1834 1835 1836 1837 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ IndPeriod_Run   : int [1:3652] 2193 2194 2195 2196 2197 2198 2199 2200 2201 2202 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ IniStates       : num [1:67] 0 0 0 0 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ IniResLevels    : num [1:4] 0.3 0.5 NA NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Outputs_Cal     : chr [1:2] "Qsim" "Param"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Outputs_Sim     : Named chr [1:24] "DatesR" "PotEvap" "Precip" "Prod" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:24] "" "GR1" "GR2" "GR3" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FortranOutputs  :List of 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ GR: chr [1:18] "PotEvap" "Precip" "Prod" "Pn" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ CN: NULL</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FeatFUN_MOD     :List of 12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ CodeMod     : chr "GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ NameMod     : chr "GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ NbParam     : num 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TimeUnit    : chr "daily"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ Id          : logi NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ Class       : chr [1:2] "daily" "GR"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ Pkg         : chr "airGR"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ NameFunMod  : chr "RunModel_GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TimeStep    : num 86400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ TimeStepMean: int 86400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ CodeModHydro: chr "GR4J"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ IsSD        : logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "class")= chr [1:3] "RunOptions" "daily" "GR"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "list" "GRiwrmRunOptions"</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Parameters of the SD models should be encapsulated in a named list</span></span></span>
-<span class="r-in"><span><span class="va">ParamGR4J</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>X1 <span class="op">=</span> <span class="fl">257.238</span>, X2 <span class="op">=</span> <span class="fl">1.012</span>, X3 <span class="op">=</span> <span class="fl">88.235</span>, X4 <span class="op">=</span> <span class="fl">2.208</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">Param</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`GaugingDown` <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">Velocity</span>, <span class="va">ParamGR4J</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># RunModel for the whole network</span></span></span>
-<span class="r-in"><span><span class="va">OutputsModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">InputsModels</span>,</span></span>
-<span class="r-in"><span>                          RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span></span>
-<span class="r-in"><span>                          Param <span class="op">=</span> <span class="va">Param</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> RunModel.GRiwrmInputsModel: Treating sub-basin GaugingDown...</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">OutputsModels</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ GaugingDown:List of 23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ DatesR    : POSIXlt[1:3652], format: "1990-01-01" "1990-01-02" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ PotEvap   : num [1:3652] 0.3 0.4 0.4 0.3 0.1 0.1 0.1 0.2 0.2 0.3 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Precip    : num [1:3652] 0 9.3 3.2 7.3 0 0 0 0 0.1 0.2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Prod      : num [1:3652] 196 199 199 201 200 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Pn        : num [1:3652] 0 8.9 2.8 7 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Ps        : num [1:3652] 0 3.65 1.12 2.75 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AE        : num [1:3652] 0.2833 0.4 0.4 0.3 0.0952 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Perc      : num [1:3652] 0.645 0.696 0.703 0.74 0.725 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ PR        : num [1:3652] 0.645 5.946 2.383 4.992 0.725 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Q9        : num [1:3652] 1.78 1.52 3.86 3.17 3.45 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Q1        : num [1:3652] 0.2 0.195 0.271 0.387 0.365 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Rout      : num [1:3652] 53.9 53.6 55.3 56.1 56.9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Exch      : num [1:3652] 0.181 0.18 0.176 0.197 0.207 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AExch1    : num [1:3652] 0.181 0.18 0.176 0.197 0.207 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AExch2    : num [1:3652] 0.181 0.18 0.176 0.197 0.207 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AExch     : num [1:3652] 0.362 0.36 0.353 0.393 0.414 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QR        : num [1:3652] 2.05 1.99 2.36 2.55 2.78 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QD        : num [1:3652] 0.381 0.375 0.447 0.584 0.572 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Qsim      : num [1:3652] 2.43 2.37 2.56 2.9 3.11 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ RunOptions:List of 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WarmUpQsim   : num [1:365] 0.539 0.575 0.807 0.731 0.674 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ Param        : Named num [1:5] 0.868 257.238 1.012 88.235 2.208</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..- attr(*, "names")= chr [1:5] "" "" "" "" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WarmUpQsim_m3: num [1:365] NA NA NA NA NA NA NA NA NA NA ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ StateEnd  :List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ Store          :List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ Prod: num 189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ Rout: num 48.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ Exp : num NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ Int : num NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ UH             :List of 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ UH1: num [1:20] 0.514 0.54 0.148 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ UH2: num [1:40] 0.056306 0.057176 0.042254 0.012188 0.000578 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ CemaNeigeLayers:List of 4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ G      : num NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ eTG    : num NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ Gthr   : num NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ Glocmax: num NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ SD             :List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. .. ..$ : num [1:3] -86400 -86400 -86400</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "class")= chr [1:3] "IniStates" "daily" "GR"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Qsim_m3   : num [1:3652] 875333 851839 922461 1042434 1119947 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QsimDown  : num [1:3652] 2.43 2.37 2.8 3.14 3.35 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..- attr(*, "class")= chr [1:4] "OutputsModel" "daily" "GR" "SD"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "class")= chr [1:2] "GRiwrmOutputsModel" "list"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "Qm3s")=Classes ‘Qm3s’ and 'data.frame':	3652 obs. of  3 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ DatesR     : POSIXct[1:3652], format: "1990-01-01" "1990-01-02" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Reservoir  : num [1:3652] -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ GaugingDown: num [1:3652] 10.13 9.86 10.68 12.07 12.96 ...</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Compare Simulation with reservoir and observation of natural flow</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>GaugingDown <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">Qmm</span><span class="op">[</span><span class="va">Ind_Run</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="CreateRunOptions-1.png" alt="" width="700" height="433"></span>
-</code></pre></div>
-    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
