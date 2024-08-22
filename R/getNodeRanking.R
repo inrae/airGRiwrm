@@ -36,7 +36,8 @@ getNodeRanking <- function(griwrm) {
       upId <- upIds[1]
       #Browse the ungauged sub-network until the donor
       upDonor <- unique(g$donor[g$id == upId])
-      g2 <- g[g$donor == upDonor, ]
+      cluster_nodes <- g$id[!is.na(g$donor) & g$donor == upDonor]
+      g2 <- g[g$id %in% cluster_nodes, ]
       # Check if upstream nodes have already been processed
       immediate_upstream_nodes <- g$id[!is.na(g$down) & g$down %in% g2$id]
       immediate_upstream_nodes <- immediate_upstream_nodes[!immediate_upstream_nodes %in% g2$id]

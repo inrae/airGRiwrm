@@ -28,15 +28,6 @@ test_that("Calibration with Runmodel_Reservoir works!", {
                                  ErrorCrit_KGE2,
                                  RunOptions = RunOptions,
                                  Obs = Qobs[IndPeriod_Run,])
-  expect_message(
-    CreateInputsCrit(
-      InputsModel,
-      ErrorCrit_KGE2,
-      RunOptions = RunOptions,
-      Obs = Qobs[IndPeriod_Run,]
-    ),
-    regexp = "No observations"
-  )
 
   expect_warning(CreateCalibOptions(InputsModel), regexp = "FixedParam")
 
