@@ -71,13 +71,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modelling a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
     </li>
     <li>
-      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modelling ungauged stations</a>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
     </li>
     <li>
-      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modelling a regulated diversion</a>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -615,7 +615,7 @@ downstream nodes.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsCalib</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54095...</span></span></code></pre>
+<pre><code><span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  247.151,   -0.020,   83.096,    2.384</span></span>
@@ -624,7 +624,7 @@ downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (37 iterations, 377 runs)</span></span>
 <span><span class="co">#&gt;       Param =  305.633,    0.061,   48.777,    2.733</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54002...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54002'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  432.681,   -0.020,   20.697,    1.944</span></span>
@@ -633,7 +633,7 @@ downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (18 iterations, 209 runs)</span></span>
 <span><span class="co">#&gt;       Param =  389.753,    0.085,   17.870,    2.098</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9370</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54029...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54029'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  247.151,   -0.020,   42.098,    1.944</span></span>
@@ -642,13 +642,13 @@ downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (32 iterations, 333 runs)</span></span>
 <span><span class="co">#&gt;       Param =  214.204,   -0.119,   46.754,    2.022</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9696</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54001...</span></span>
 <span><span class="co">#&gt; A priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.587</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9579 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0023 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54001'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  247.151,   -2.376,   20.697,    1.417</span></span>
@@ -658,13 +658,13 @@ downstream nodes.</p>
 <span><span class="co">#&gt;       Param =    1.210,  301.871,   -3.005,   15.029,    1.622</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9429</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54032...</span></span>
 <span><span class="co">#&gt; A priori parameters from node 54001: 1.21, 301.871, -3.005, 15.029, 1.913</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9521</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9608 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9985 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0274 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -2.376,   83.096,    1.944</span></span>
@@ -674,13 +674,13 @@ downstream nodes.</p>
 <span><span class="co">#&gt;       Param =    1.200, 1164.445,   -1.222,   24.047,    1.837</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9603</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54057...</span></span>
 <span><span class="co">#&gt; A priori parameters from node 54032: 1.2, 1164.445, -1.222, 24.047, 1.7</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9673</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9683 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0078 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   20.697,    1.944</span></span>

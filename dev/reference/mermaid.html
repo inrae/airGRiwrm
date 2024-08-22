@@ -46,13 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modelling a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
     </li>
     <li>
-      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modelling ungauged stations</a>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
     </li>
     <li>
-      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modelling a regulated diversion</a>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -167,7 +167,7 @@
 
 
 <dt id="arg-theme">theme<a class="anchor" aria-label="anchor" href="#arg-theme"></a></dt>
-<dd><p>Mermaid theme (See https://mermaid.js.org/config/theming.html#available-themes)</p></dd>
+<dd><p>Mermaid theme (See <a href="https://mermaid.js.org/config/theming.html#available-themes" class="external-link">available themes in Mermaid documentation</a>)</p></dd>
 
 
 <dt id="arg-dir-dest">dir.dest<a class="anchor" aria-label="anchor" href="#arg-dir-dest"></a></dt>
@@ -220,19 +220,19 @@ in mermaid script), the functions raises no error (see <code>mermaid</code> retu
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">diagram</span> <span class="op">&lt;-</span> <span class="st">"flowchart LR\n  A --&gt; B"</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="va">diagram</span> <span class="op">&lt;-</span> <span class="st">"flowchart LR\n  A --&gt; B"</span></span></span>
 <span class="r-in"><span><span class="fu">mermaid_gen_link</span><span class="op">(</span><span class="va">diagram</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://mermaid.ink/img/pako:eNqrVkrOT0lVslJKy8kvT85ILCpR8AmKyVNQcFTQ1bVTcFLSUcpNLcpNzExRsqpWKslIzQUpTklNSyzNKVGqrQUAjIcUfg?type=png"</span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">mermaid</span><span class="op">(</span><span class="va">diagram</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">f</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpDPaurE/a0a48ce294b1a6f989506ce145809601.png"</span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For displaying the diagram in Rmarkdown document</span></span></span>
 <span class="r-in"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu">mermaid</span><span class="op">(</span><span class="va">diagram</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Clean temporary folder</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="st">"flowchart LR</span></span></span>
 <span class="r-in"><span><span class="st">A -&gt; B"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mermaid"</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span></span></span>

@@ -48,13 +48,13 @@ from the Qrelease parameter of CreateInputsModel.GRiwrm."><meta property="og:ima
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modelling a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
     </li>
     <li>
-      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modelling ungauged stations</a>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
     </li>
     <li>
-      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modelling a regulated diversion</a>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -265,8 +265,6 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-in"><span>                               <span class="va">ErrorCrit_KGE2</span>,</span></span>
 <span class="r-in"><span>                               RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span></span>
 <span class="r-in"><span>                               Obs <span class="op">=</span> <span class="va">Qobs</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No observations found for node "Reservoir"</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> You must fix the parameters of this node in CreateCalibOptions</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># preparation of CalibOptions object</span></span></span>
 <span class="r-in"><span><span class="va">CalibOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateCalibOptions.html">CreateCalibOptions</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">)</span></span></span>
@@ -284,7 +282,7 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-in"><span>  InputsCrit <span class="op">=</span> <span class="va">InputsCrit</span>,</span></span>
 <span class="r-in"><span>  CalibOptions <span class="op">=</span> <span class="va">CalibOptions</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calibration.GRiwrmInputsModel: Processing sub-basin L0123001...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calibration.GRiwrmInputsModel: Processing sub-basin 'L0123001'...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Grid-Screening in progress (</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 0%</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>  20%</span>
@@ -299,7 +297,7 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 	 Calibration completed (28 iterations, 291 runs)</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 	     Param =  147.886,    0.347,   58.983,    2.345</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 	     Crit. KGE2[Q]      = 0.8548</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Calibration.GRiwrmInputsModel: Processing sub-basin Reservoir...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Calibration.GRiwrmInputsModel: Processing sub-basin 'Reservoir'...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Parameters already fixed - no need for calibration</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 	     Param = 30000000.000,    0.500</span>
 <span class="r-in"><span></span></span>

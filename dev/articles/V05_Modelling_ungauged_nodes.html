@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Severn_05: Modelling ungauged stations • airGRiwrm</title>
+<title>Severn_05: Modeling ungauged stations • airGRiwrm</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Severn_05: Modelling ungauged stations">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Severn_05: Modeling ungauged stations">
 <meta name="robots" content="noindex">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -71,13 +71,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modelling a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
     </li>
     <li>
-      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modelling ungauged stations</a>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
     </li>
     <li>
-      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modelling a regulated diversion</a>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     </li>
@@ -159,7 +159,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Severn_05: Modelling ungauged stations</h1>
+      <h1 data-toc-skip>Severn_05: Modeling ungauged stations</h1>
             
       
       <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/V05_Modelling_ungauged_nodes.Rmd" class="external-link"><code>vignettes/V05_Modelling_ungauged_nodes.Rmd</code></a></small>
@@ -179,7 +179,7 @@
 <span><span class="co">#&gt;     Calibration, CreateCalibOptions, CreateInputsCrit,</span></span>
 <span><span class="co">#&gt;     CreateInputsModel, CreateRunOptions, RunModel</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="why-modelling-ungauged-station-in-the-semi-distributed-model">Why modelling ungauged station in the semi-distributed model?<a class="anchor" aria-label="anchor" href="#why-modelling-ungauged-station-in-the-semi-distributed-model"></a>
+<h3 id="why-modeling-ungauged-station-in-the-semi-distributed-model">Why modeling ungauged station in the semi-distributed model?<a class="anchor" aria-label="anchor" href="#why-modeling-ungauged-station-in-the-semi-distributed-model"></a>
 </h3>
 <p>Ungauged nodes in the semi-distributed model can be used to reach two
 different goals:</p>
@@ -198,20 +198,20 @@ model.</p>
 <div class="section level3">
 <h3 id="presentation-of-the-study-case">Presentation of the study case<a class="anchor" aria-label="anchor" href="#presentation-of-the-study-case"></a>
 </h3>
-<p>Using the study case of the vignette #1 and #2, we considere this
-time that nodes <code>54001</code> and <code>54029</code> are ungauged.
-We simulate the streamflow at these locations by sharing hydrological
+<p>Using the study case of the vignette #1 and #2, we consider this time
+that nodes <code>54001</code> and <code>54029</code> are ungauged. We
+simulate the streamflow at these locations by sharing hydrological
 parameters of the gauged node <code>54032</code>.</p>
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/network-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Hydrological parameters at the ungauged nodes will be the same as the
-one at the gauged node <code>54032</code> except for the unit hydrogram
+one at the gauged node <code>54032</code> except for the unit hydrograph
 parameter which depend on the area of the sub-basin. <span class="citation">Florent Lobligeois (2014)</span> provides the following
 conversion formula for this parameter:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mn>4</mn><mi>i</mi></mrow></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><msub><mi>S</mi><mi>i</mi></msub><msub><mi>S</mi><mrow><mi>B</mi><mi>V</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>0.3</mn></msup><msub><mi>X</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">
 x_{4i} = \left( \dfrac{S_i}{S_{BV}} \right) ^ {0.3} X_4
 </annotation></semantics></math> With
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>4</mn></msub><annotation encoding="application/x-tex">X_4</annotation></semantics></math>
-the unit hydrogram parameter for the entire basin at <code>54032</code>
+the unit hydrograph parameter for the entire basin at <code>54032</code>
 which as an area of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mrow><mi>B</mi><mi>V</mi></mrow></msub><annotation encoding="application/x-tex">S_{BV}</annotation></semantics></math>;
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mi>i</mi></msub><annotation encoding="application/x-tex">S_i</annotation></semantics></math>
@@ -308,7 +308,7 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OC_U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">IM_U</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54095...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  247.151,   -0.020,   83.096,    2.384</span></span>
@@ -317,7 +317,7 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <span><span class="co">#&gt;   Calibration completed (37 iterations, 377 runs)</span></span>
 <span><span class="co">#&gt;       Param =  305.633,    0.061,   48.777,    2.733</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54002...</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54002'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (81 runs)</span></span>
 <span><span class="co">#&gt;       Param =  432.681,   -0.020,   20.697,    1.944</span></span>
@@ -326,13 +326,13 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <span><span class="co">#&gt;   Calibration completed (18 iterations, 209 runs)</span></span>
 <span><span class="co">#&gt;       Param =  389.753,    0.085,   17.870,    2.098</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9370</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54032...</span></span>
 <span><span class="co">#&gt; A priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.871</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9579 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0023 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basins '54001', '54029', '54032' with '54032' as gauged donor...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   20.697,    1.944</span></span>
@@ -342,13 +342,15 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <span><span class="co">#&gt;       Param =    1.125,  386.196,   -0.611,   31.536,    1.803</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9650</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin 54057...</span></span>
+<span><span class="co">#&gt; Tranfering parameters from node '54032' to node '54001'</span></span>
+<span><span class="co">#&gt; Tranfering parameters from node '54032' to node '54029'</span></span>
 <span><span class="co">#&gt; A priori parameters from node 54032: 1.125, 386.196, -0.611, 31.536, 1.669</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9660</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9664 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0013 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0050 </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   42.098,    1.944</span></span>
@@ -363,8 +365,8 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <div class="section level3">
 <h3 id="run-the-model-with-the-optimized-model-parameters">Run the model with the optimized model parameters<a class="anchor" aria-label="anchor" href="#run-the-model-with-the-optimized-model-parameters"></a>
 </h3>
-<p>The hydrologic model uses parameters herited from the calibration of
-the gauged sub-basin <code>54032</code> for the ungauged nodes
+<p>The hydrological model uses parameters herited from the calibration
+of the gauged sub-basin <code>54032</code> for the ungauged nodes
 <code>54001</code> and <code>54029</code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ParamV05</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrmV05</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OC_U</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span>
@@ -448,7 +450,7 @@ the gauged sub-basin <code>54032</code> for the ungauged nodes
 <span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54029...</span></span>
 <span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54032...</span></span>
 <span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54057...</span></span></code></pre></div>
-<p>and plot the comparison of the modelled and the observed flows
+<p>and plot the comparison of the modeled and the observed flows
 including on the so-called “ungauged” stations :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Regime"</span>, <span class="st">"CumFreq"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

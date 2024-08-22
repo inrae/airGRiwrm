@@ -47,13 +47,13 @@ to ungauged nodes and"><meta property="og:image" content="https://inrae.github.i
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modelling a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
     </li>
     <li>
-      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modelling ungauged stations</a>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
     </li>
     <li>
-      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modelling a regulated diversion</a>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -136,7 +136,14 @@ to ungauged nodes and</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transferGRparams</span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">Param</span>, <span class="va">donor</span>, <span class="va">receiver</span>, default_param <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">transferGRparams</span><span class="op">(</span></span>
+<span>  <span class="va">InputsModel</span>,</span>
+<span>  <span class="va">Param</span>,</span>
+<span>  <span class="va">donor</span>,</span>
+<span>  <span class="va">receiver</span>,</span>
+<span>  default_param <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -162,6 +169,10 @@ to ungauged nodes and</p>
 <dt id="arg-default-param">default_param<a class="anchor" aria-label="anchor" href="#arg-default-param"></a></dt>
 <dd><p><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> vector of GR model parameters if parameters are missing from the donor</p></dd>
 
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p><a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> Add information message on donor and receiver</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -172,7 +183,7 @@ to ungauged nodes and</p>
     <p><code>donor</code> and <code>receiver</code> nodes should have the same GR model with the same snow
 module configuration.</p>
 <p>The transfer takes care of:</p><ul><li><p>the presence/absence of hydraulic routing parameters between the donor and the receiver</p></li>
-<li><p>the transformationof the X4 parameters of GR models</p></li>
+<li><p>the transformation of the X4 parameters of GR models</p></li>
 </ul></div>
 
   </div>

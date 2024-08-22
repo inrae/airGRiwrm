@@ -46,13 +46,13 @@
       <a href="../articles/V03_Open-loop_influenced_flow.html">Severn_03: Calibration of an open-loop influenced flow model network</a>
     </li>
     <li>
-      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modelling a regulated withdrawal (closed-loop control)</a>
+      <a href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a>
     </li>
     <li>
-      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modelling ungauged stations</a>
+      <a href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a>
     </li>
     <li>
-      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modelling a regulated diversion</a>
+      <a href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a>
     </li>
     <li class="divider">
     <li class="dropdown-header">Example of a large network on the Seine River (France)</li>
@@ -223,31 +223,32 @@ another "donor" node.</p>
 <span class="r-in"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="va">rename_columns</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu">getNodeProperties</span><span class="op">(</span><span class="st">"54001"</span>, <span class="va">griwrm</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ position       : chr "Intermediate"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ DirectInjection: logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Diversion      : logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Reservoir      : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ airGR          : logi TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ gauged         : logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ calibration    : chr "Gauged"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Upstream       : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ RunOff         : logi TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">getAllNodesProperties</span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>          id     position DirectInjection Diversion Reservoir airGR calibration</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54095 54095     Upstream           FALSE     FALSE     FALSE  TRUE      Gauged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54002 54002     Upstream           FALSE     FALSE     FALSE  TRUE      Gauged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54001 54001 Intermediate           FALSE      TRUE     FALSE  TRUE      Gauged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54029 54029 Intermediate           FALSE     FALSE     FALSE  TRUE      Gauged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54032 54032 Intermediate           FALSE     FALSE     FALSE  TRUE      Gauged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54057 54057 Intermediate           FALSE     FALSE     FALSE  TRUE      Gauged</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>       Upstream RunOff</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54095     TRUE   TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54002     TRUE   TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54001    FALSE   TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54029    FALSE   TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54032    FALSE   TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54057    FALSE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          id     position DirectInjection Diversion Reservoir airGR gauged</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54095 54095     Upstream           FALSE     FALSE     FALSE  TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54002 54002     Upstream           FALSE     FALSE     FALSE  TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54001 54001 Intermediate           FALSE      TRUE     FALSE  TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54029 54029 Intermediate           FALSE     FALSE     FALSE  TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54032 54032 Intermediate           FALSE     FALSE     FALSE  TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54057 54057 Intermediate           FALSE     FALSE     FALSE  TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       calibration Upstream RunOff</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54095      Gauged     TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54002      Gauged     TRUE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54001      Gauged    FALSE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54029      Gauged    FALSE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54032      Gauged    FALSE   TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 54057      Gauged    FALSE   TRUE</span>
 </code></pre></div>
     </div>
   </div>
