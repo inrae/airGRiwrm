@@ -37,8 +37,9 @@ node (\link{NA} for the most downstream node)
 node location in km2
 \item \code{model} (\link{character}): hydrological model to use (\link{NA} for using observed
 flow instead of a runoff model output)
-\item \code{donor} (\link{character}): node used as "donor" for the the model and the
-calibration parameters.
+\item \code{donor} (\link{character}): node used as model and calibration parameter "donor" for
+ungauged nodes. For other types of nodes, if the donor is different than the
+id, it indicates that the node is embedded in an ungauged node cluster.
 }
 }
 \description{
@@ -68,7 +69,9 @@ The "model" column should be filled by one of the following:
 \item \code{RunModel_Reservoir} for simulating a reservoir (See: \link{RunModel_Reservoir})
 \item \code{Ungauged} for an ungauged node. The sub-basin inherits hydrological model and
 parameters from a "donor" sub-basin. If not defined by the user in the column \code{donor},
-the donor is automatically set to the first gauged node at downstream
+the donor is automatically set to the first gauged node at downstream.
+This set of sub-basins with the same donor downstream then forms an ungauged
+node cluster that will be calibrated at once.
 \item \code{NA} for injecting (or abstracting) a flow time series at the location of the node
 (direct flow injection)
 \item \code{Diversion} for abstracting a flow time series from an existing node transfer it
