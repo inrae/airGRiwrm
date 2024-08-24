@@ -40,12 +40,12 @@ test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
 
 test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
   g <- getGriwrmDerivedReservoirUngauged(TRUE, inconsistent = TRUE)
-  expect_error(getNodeRanking(g), regexp = "Inconstancy")
+  expect_equal(getNodeRanking(g), c("54095", "Dam", "54029", "54001", "54032"))
   g <- getGriwrmDerivedReservoirUngauged(TRUE, inconsistent = FALSE)
   expect_equal(getNodeRanking(g), c("54095", "Dam", "54029", "54001", "54032"))
 })
 
-test_that("Impossible case detected: ungauged node with diversion to an upstream node of the donor", {
+test_that("Warning case detected: ungauged node cluster with diversion to a gauged upstream node of the donor", {
   nodes_div <- nodes
   nodes_div$model[nodes_div$id == "54029"] <- "Ungauged"
   nodes_div <- rbind(nodes_div, data.frame(id = "54029",
@@ -53,7 +53,7 @@ test_that("Impossible case detected: ungauged node with diversion to an upstream
                                            length = 20,
                                            model = "Diversion",
                                            area = NA))
-  expect_error(CreateGRiwrm(nodes_div),
+  expect_warning(CreateGRiwrm(nodes_div),
                regexp = "'54001' is located in the cluster")
 })
 

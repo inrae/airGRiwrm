@@ -352,3 +352,15 @@ test_that("Ungauged upstream node with upstream donor works", {
   expect_equal(OutputsCalib$`54095`$ParamFinalR[1:3],
                OutputsCalib$`54029`$ParamFinalR[1:3])
 })
+
+test_that("Gauged node inside ungauged cluster must only work if parameters are fixed",  {
+  ngiuc <- loadSevernNodes()
+  ngiuc <- ngiuc[ngiuc$id %in% c("54001", "54032", "54057"),]
+  ngiuc$model[ngiuc$id == "54032"] <- "RunModel_Lag"
+  ngiuc$donor <- as.character(NA)
+  ngiuc$model[ngiuc$id == "54001"] <- "Ungauged"
+  ngiuc$donor[ngiuc$id == "54001"] <- "54057"
+  expect_warning(CreateGRiwrm(ngiuc),
+                 regexp = "'54032' is located in the cluster")
+
+})
