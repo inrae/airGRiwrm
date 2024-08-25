@@ -10,52 +10,62 @@ getNodeRanking <- function(griwrm) {
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
-  # Remove upstream nodes without model (direct flow connections)
-  g <- griwrm[!is.na(griwrm$model), ]
   r <- c()
-  o_r <- r
   oupIds <- character(0)
+  g <- griwrm # GRiwrm with remaining nodes to rank
   while (nrow(g) > 0) {
-    # Search for gauged ids or ungauged with upstream/sibling donor
-    repeat {
-      upIds <- unique(g$id[!g$id %in% g$down & (g$id == g$donor | !g$donor %in% g$id)])
-      r <- c(r, upIds)
-      g <- g[!g$id %in% upIds, ]
-      if (identical(r, o_r)) break
-      o_r <- r
-    }
+    l <- getNodeRankingSub(g)
+    r <- c(r, l$r)
+    g <- l$g
     #Search for ungauged ids
-    upIds <- unique(g$id[!g$id %in% g$down & g$id != g$donor])
+    upIds <- unique(g$id[!is.na(g$donor) & !g$id %in% g$down & g$id != g$donor])
     if (!identical(oupIds, character(0)) && identical(upIds, oupIds)) {
       stop("Inconstancy detected in GRiwrm object: impossible to reach donor of ungauged node(s): '",
            paste(upIds, collapse = "', '"),
            "'")
     }
     oupIds <- upIds
-    while (length(upIds) > 0) {
-      upId <- upIds[1]
-      #Browse the ungauged sub-network until the donor
-      upDonor <- unique(g$donor[g$id == upId])
-      cluster_nodes <- g$id[!is.na(g$donor) & g$donor == upDonor]
-      g2 <- g[g$id %in% cluster_nodes, ]
-      # Check if upstream nodes have already been processed
-      immediate_upstream_nodes <- g$id[!is.na(g$down) & g$down %in% g2$id]
-      immediate_upstream_nodes <- immediate_upstream_nodes[!immediate_upstream_nodes %in% g2$id]
-      if (all(immediate_upstream_nodes %in% r) &&
-          (upDonor %in% r || isNodeDownstream(g2, upId, upDonor))) {
-        areNodesUpstreamDonor <- sapply(g2$id, function(id) isNodeDownstream(g2, id, upDonor))
-        g2 <- g2[upDonor %in% r | g2$id == upDonor | areNodesUpstreamDonor, ]
-        g2$donor <- g2$id
-        ungaugedIds <- getNodeRanking(g2)
-        r <- c(r, ungaugedIds)
-        g <- g[!g$id %in% ungaugedIds, ]
-        upIds <- upIds[!upIds %in% ungaugedIds]
-      } else {
-        upIds <- upIds[upIds != upId]
+    upDonors <- unique(g$donor[!is.na(g$donor) & g$id %in% upIds])
+    for (upDonor in upDonors) {
+      g_cluster <- getUngaugedCluster(griwrm, upDonor)
+      upIds_cluster <- attr(g_cluster, "upIds")
+      if (any(upIds_cluster %in% g$id)) {
+        warning("Ungauged node cluster '", upDonor,
+                "': there are nodes located upstream that can't be calibrated: '",
+                paste(upIds_cluster[upIds_cluster %in% g$id], collapse = "', '"),
+                "'")
       }
+      l <- getNodeRankingSub(g_cluster, donor = upDonor)
+      if (nrow(l$g) > 0) stop("Error when ranking nodes in ungauged node cluster '",
+                              upDonor, "', these nodes can't be ranked: '",
+                              paste(l$g$id, collapse = "', '"), "'")
+      r <- c(r, l$r)
+      g <- g <- g[!g$id %in% l$r, ]
     }
   }
   return(r)
+}
+
+getNodeRankingSub <- function(griwrm, donor = NA) {
+  r <- c()
+  o_r <- r
+  # Remove upstream nodes without model (direct flow connections)
+  g <- griwrm[!is.na(griwrm$model), ]
+  # Search for gauged ids or ungauged with upstream/sibling donor
+  repeat {
+    upIds <- unique(
+      g$id[!g$id %in% g$down & (
+        (is.na(donor) & !is.na(g$donor) &
+          (g$id == g$donor | !g$donor %in% g$id))
+        | (!is.na(donor) & !is.na(g$donor) & g$donor == donor)
+      )]
+    )
+    r <- c(r, upIds)
+    g <- g[!g$id %in% upIds, ]
+    if (identical(r, o_r)) break
+    o_r <- r
+  }
+  return(list(r = r, g = g))
 }
 
 

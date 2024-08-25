@@ -287,6 +287,7 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
 }
 
 setDonor <- function(griwrm) {
+  oDonors <- griwrm$donor
   griwrm$donor <- sapply(seq(nrow(griwrm)), function(i) {
     if (!is.na(griwrm$donor[i])) {
       # Donor set by user
@@ -306,19 +307,29 @@ setDonor <- function(griwrm) {
     if (gaugedId == FALSE) {
       stop("No Gauged node found downstream the node '", id, "'")
     }
-    if (id != gaugedId) {
-      if (model == "Ungauged") {
-        message("Ungauged node '", id, "' automatically gets the node '",
-                gaugedId, "' as parameter donor")
-      } else {
-        message("Node '", id, "' is included in the ungauged node cluster '",
-                gaugedId, "'")
-      }
-    }
     return(gaugedId)
   })
-  d <- sapply(seq(nrow(griwrm)), FUN = refineDonor, g = griwrm)
-  return(d)
+  donors <- sapply(
+    seq(nrow(griwrm)),
+    FUN = function(i, g) {
+      d <- refineDonor(i, g)
+      if (!is.na(d) && (is.na(oDonors[i]) || d != oDonors[i]) && d != g$id[i]) {
+        if (g$model[i] == "Ungauged") {
+          message("Ungauged node '", g$id[i], "' automatically gets the node '",
+                  d, "' as parameter donor")
+        } else if (g$model[i] == "RunModel_Reservoir") {
+          message("Node '", g$id[i], "' is included in the ungauged node cluster '",
+                  d, "'")
+
+        } else {
+          warning("Node '", g$id[i], "' is included in the ungauged node cluster '",
+                  d, "': it should have fixed parameters at Calibration")
+        }
+      }
+      return(d)
+    },
+    g = griwrm)
+  return(donors)
 }
 
 #' Correct donor for gauged nodes inside ungauged node clusters
@@ -331,11 +342,11 @@ setDonor <- function(griwrm) {
 refineDonor <- function(i, g) {
   if (is.na(g$model[i]) || g$model[i] == "Diversion") return(as.character(NA))
   if (g$model[i] == "Ungauged") return(g$donor[i])
-  g <- g[!is.na(g$model), ] # Remove DirectInjections which are not concerned here
   id <- g$id[i]
+  if (is.na(g$donor[i])) g$donor[i] <- id
   # Search if the gauged node is in an ungauged node cluster
   # Search all ungauged nodes upstream
-  g2 <- g[g$model != "Diversion", ] # Remove duplicates for node search
+  g2 <- g[!is.na(g$model) & g$model != "Diversion", ] # Remove duplicates for node search
   upstreamUngaugedNodes <- sapply(g2$id, function(id2) {
     if (g2$model[g2$id == id2] == "Ungauged" && isNodeUpstream(g, id, id2)) {
       id2
@@ -365,6 +376,6 @@ refineDonor <- function(i, g) {
     }
   }
 
-  # No upstream ungauged nodes: Reservoir is its own donor!
-  return(g$id[i])
+  # No need to change the pre-defined donor (maybe forced for de Lavenne #157)
+  return(g$donor[i])
 }
