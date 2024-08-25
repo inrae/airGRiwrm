@@ -39,9 +39,7 @@ test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
 })
 
 test_that("Check ranking with Ungauged node, reservoir, and Diversion #130", {
-  g <- getGriwrmDerivedReservoirUngauged(TRUE, inconsistent = TRUE)
-  expect_equal(getNodeRanking(g), c("54095", "Dam", "54029", "54001", "54032"))
-  g <- getGriwrmDerivedReservoirUngauged(TRUE, inconsistent = FALSE)
+  g <- getGriwrmDerivedReservoirUngauged(TRUE)
   expect_equal(getNodeRanking(g), c("54095", "Dam", "54029", "54001", "54032"))
 })
 
@@ -54,7 +52,7 @@ test_that("Warning case detected: ungauged node cluster with diversion to a gaug
                                            model = "Diversion",
                                            area = NA))
   expect_warning(CreateGRiwrm(nodes_div),
-               regexp = "'54001' is located in the cluster")
+               regexp = "Node '54001' is included in the ungauged node cluster '54032'")
 })
 
 test_that("donor of ungauged cluster is processed before sibling ungauged nodes (#155)", {
