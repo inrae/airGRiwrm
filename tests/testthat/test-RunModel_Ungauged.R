@@ -361,6 +361,6 @@ test_that("Gauged node inside ungauged cluster must only work if parameters are 
   ngiuc$model[ngiuc$id == "54001"] <- "Ungauged"
   ngiuc$donor[ngiuc$id == "54001"] <- "54057"
   expect_warning(CreateGRiwrm(ngiuc),
-                 regexp = "'54032' is located in the cluster")
+                 regexp = "Node '54032' is included in the ungauged node cluster '54057'")
 
 })

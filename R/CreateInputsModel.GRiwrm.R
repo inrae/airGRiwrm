@@ -452,7 +452,7 @@ getInputBV <- function(x, id, unset = NULL) {
 #' @noRd
 hasUngaugedNodes <- function(id, griwrm) {
   g <- griwrm[!is.na(griwrm$model), ]
-  idsWithCurrentAsDonor <- g$id[g$id != id & g$donor == id]
+  idsWithCurrentAsDonor <- g$id[g$id != id & !is.na(g$donor) & g$donor == id]
   if (length(idsWithCurrentAsDonor) == 0) return(FALSE)
   areNodesUpstream <- sapply(idsWithCurrentAsDonor,
                              function(x) isNodeUpstream(g, id, x))

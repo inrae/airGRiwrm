@@ -127,6 +127,7 @@ isNodeUpstream <- function(x, current_node, candidate_node) {
 #' @export
 #' @rdname isNodeDownstream
 isNodeUpstream.GRiwrm <- function(x, current_node, candidate_node) {
+  if (candidate_node == current_node) return (FALSE)
   g <- reduceGRiwrm(x, current_node)
   return(candidate_node %in% g$id)
 }

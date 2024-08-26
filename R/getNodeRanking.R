@@ -26,6 +26,14 @@ getNodeRanking <- function(griwrm) {
     }
     oupIds <- upIds
     upDonors <- unique(g$donor[!is.na(g$donor) & g$id %in% upIds])
+    if (length(upDonors) == 0) next
+    upDonorsRanks <- sapply(
+      upDonors,
+      function(x) {
+        length(which(sapply(upDonors, function(y) isNodeUpstream(g, x, y))))
+      }
+    )
+    upDonors <- names(sort(upDonorsRanks))
     for (upDonor in upDonors) {
       g_cluster <- getUngaugedCluster(griwrm, upDonor)
       upIds_cluster <- attr(g_cluster, "upIds")
