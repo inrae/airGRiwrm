@@ -298,11 +298,15 @@ setDonor <- function(griwrm) {
     if (is.na(model) || model == "Diversion") {
       return(as.character(NA))
     }
+    if (model == "RunModel_Reservoir") {
+      return(id)
+    }
     if (model != "Ungauged" &&
         (is.na(griwrm$down[i]) || !any(!is.na(griwrm$down) & griwrm$down == id))) {
       # Downstream or upstream gauged nodes can't be in ungauged node cluster
       return(id)
     }
+
     gaugedId <- getDonor(id, griwrm = griwrm)
     if (gaugedId == FALSE) {
       stop("No Gauged node found downstream the node '", id, "'")
