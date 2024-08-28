@@ -115,8 +115,9 @@ updateParameters4Ungauged <- function(GaugedId,
     }
   }
 
-  # Add class InputsModel for airGR::Calibration checks
-  class(InputsModel) <- c("InputsModel", class(InputsModel))
+  # Add class RunModel_Ungauged and InputsModel for preprocessind
+  # and processing airGR::Calibration
+  class(InputsModel) <- c("Ungauged", "InputsModel", class(InputsModel))
 
   ### Modify RunOptions for the reduced network ###
   RunOptions <- reduceGRiwrmObj4Ungauged(g, RunOptions)

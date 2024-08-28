@@ -366,6 +366,8 @@ test_that("Gauged node inside ungauged cluster must only work if parameters are 
   for (x in ls(e)) assign(x, get(x, e))
   rm(e)
   expect_error(Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions),
-               regexp = "")
-
+               regexp = "Node '54032' .* must have its parameters fixed")
+  CalibOptions[["54032"]]$FixedParam <- ParamMichel[["54032"]]
+  OC <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+  expect_equal(OC[["54032"]]$ParamFinalR, ParamMichel[["54032"]])
 })

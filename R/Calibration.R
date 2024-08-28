@@ -4,7 +4,8 @@
 #' function using the provided functions.
 #'
 #' This function can be used either for a catchment (with an \emph{InputsModel}
-#' object) or for a network (with a \emph{GRiwrmInputsModel} object)
+#' object), for a network (with a \emph{GRiwrmInputsModel} object), or for an
+#' ungauged node cluster (with a \emph{Ungauged} object).
 #'
 #' @param InputsModel \[object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}\] see [CreateInputsModel]
 #' @param RunOptions \[object of class \emph{RunOptions} or \emph{GRiwrmRunOptions}\] see [CreateRunOptions]
@@ -34,4 +35,11 @@
 #' @export
 Calibration <- function(InputsModel, ...) {
   UseMethod("Calibration", InputsModel)
+}
+
+#' @rdname Calibration
+#' @export
+Calibration.Ungauged <- function(InputsModel, ...) {
+  InputsModel$FUN_MOD <- "RunModel_Ungauged"
+  NextMethod()
 }
