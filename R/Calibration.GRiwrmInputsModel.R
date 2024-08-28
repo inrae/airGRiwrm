@@ -64,9 +64,9 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     }
 
     if (!is.null(IM$isReservoir) && IM$isReservoir & any(is.na(CalibOptions[[id]]$FixedParam))) {
-      stop("Parameters of `RunModel_Reservoir` nodes can't be calibrated",
-           "Fix these parameters by using the command:\n",
-           "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
+      stop("Parameters of node '", id, "' using `RunModel_Reservoir` can't be calibrated",
+           "Fix its parameters by using the command:\n",
+           "`CalibOptions[['", id, "']]$FixedParam <- c(Vmax, celerity)`")
     }
 
     if (!hasUngauged && IM$isReceiver) {

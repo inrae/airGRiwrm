@@ -82,9 +82,15 @@ updateParameters4Ungauged <- function(GaugedId,
   ### Modify InputsModel for the reduced network ###
   # Remove nodes outside of reduced network
   InputsModel <- reduceGRiwrmObj4Ungauged(g, InputsModel)
-  # Copy fixed parameters for Reservoirs
+  # Copy fixed parameters for Reservoirs or other models
   for (id in names(InputsModel)) {
-    if (InputsModel[[id]]$isReservoir) {
+    if (id != GaugedId && InputsModel[[id]]$gaugedId == id) {
+      if (any(is.na(CalibOptions[[id]]$FixedParam))) {
+        stop("Node '", id, "' located inside the ungauged node cluster '",
+             GaugedId, "' must have its parameters fixed.\n",
+             "Fix its parameters by assigning values to :",
+             " `CalibOptions[['", id, "']]$FixedParam`")
+      }
       InputsModel[[id]]$FixedParam <- CalibOptions[[id]]$FixedParam
     }
   }
@@ -164,11 +170,13 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
   donor <- RunOptions$id
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
-    if (IM$id == donor) return(Param)
-    if (IM$isReservoir) {
+    if (IM$id == donor) {
+      return(Param)
+    } else if (IM$gaugedId == donor) { # Ungauged nodes
+      return(transferGRparams(InputsModel, Param, donor, IM$id))
+    } else { # Nodes with fixed params (Reservoir or other model with fixed params)
       return(IM$FixedParam)
     }
-    return(transferGRparams(InputsModel, Param, donor, IM$id))
   })
   OM <- suppressMessages(
     RunModel.GRiwrmInputsModel(InputsModel, attr(RunOptions, "GRiwrmRunOptions"), P)

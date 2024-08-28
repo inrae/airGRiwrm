@@ -260,7 +260,12 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
 
   g2 <- griwrm[getDiversionRows(griwrm, TRUE), ]
   node <- g2[g2$id == id, ]
-  FUN_MOD <- g2$model[g2$id == node$donor]
+  if (node$model == "Ungauged") {
+    FUN_MOD <- g2$model[g2$id == node$donor]
+  } else {
+    FUN_MOD <- node$model
+  }
+
 
   # Set hydraulic parameters
   UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
@@ -347,13 +352,14 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
   featModel <- .GetFeatModel(InputsModel, IsHyst)
   # inUngaugedCluster: Ungauged node with downstream donor
   # including reservoirs between ungauged nodes and donor
-  InputsModel$inUngaugedCluster <- (node$model == "Ungauged" || np$Reservoir) &&
-                                   node$id != node$donor &&
+  InputsModel$inUngaugedCluster <- node$donor != id &&
                                    isNodeDownstream(griwrm, id, node$donor)
   # isReceiver: Ungauged node with not downstream donor
   InputsModel$isReceiver <- node$model == "Ungauged" &&
                             !isNodeDownstream(griwrm, id, node$donor)
-  InputsModel$gaugedId <- node$donor
+  InputsModel$gaugedId <- ifelse(node$model == "Ungauged",
+                                 node$donor,
+                                 id)
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
   InputsModel$model <-
     list(
