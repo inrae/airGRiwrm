@@ -176,8 +176,9 @@ node (<a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a> for 
 node location in km2</p></li>
 <li><p><code>model</code> (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>): hydrological model to use (<a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a> for using observed
 flow instead of a runoff model output)</p></li>
-<li><p><code>donor</code> (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>): node used as "donor" for the the model and the
-calibration parameters.</p></li>
+<li><p><code>donor</code> (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>): node used as model and calibration parameter "donor" for
+ungauged nodes. For other types of nodes, if the donor is different than the
+id, it indicates that the node is embedded in an ungauged node cluster.</p></li>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
@@ -198,7 +199,9 @@ will give its parameters to an ungauged node (See <code>Ungauged</code> model be
 <li><p><code>RunModel_Reservoir</code> for simulating a reservoir (See: <a href="RunModel_Reservoir.html">RunModel_Reservoir</a>)</p></li>
 <li><p><code>Ungauged</code> for an ungauged node. The sub-basin inherits hydrological model and
 parameters from a "donor" sub-basin. If not defined by the user in the column <code>donor</code>,
-the donor is automatically set to the first gauged node at downstream</p></li>
+the donor is automatically set to the first gauged node at downstream.
+This set of sub-basins with the same donor downstream then forms an ungauged
+node cluster that will be calibrated at once.</p></li>
 <li><p><code>NA</code> for injecting (or abstracting) a flow time series at the location of the node
 (direct flow injection)</p></li>
 <li><p><code>Diversion</code> for abstracting a flow time series from an existing node transfer it
@@ -228,7 +231,7 @@ diversion</p></li>
 <span class="r-in"><span><span class="va">griwrm_basic</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            id        down length area         model       donor</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 GaugingDown        &lt;NA&gt;     NA  360 RunModel_GR4J GaugingDown</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   Reservoir GaugingDown    150   NA          &lt;NA&gt;   Reservoir</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   Reservoir GaugingDown    150   NA          &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-in"><span><span class="co"># Network diagram with direct flow node in red, intermediate sub-basin in green</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_basic</span><span class="op">)</span></span></span>
@@ -313,7 +316,6 @@ diversion</p></li>
 <span class="r-in"><span>             area                <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>         , <span class="cn">NA</span>                  , <span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">griwrm_div</span> <span class="op">&lt;-</span> <span class="fu">CreateGRiwrm</span><span class="op">(</span><span class="va">nodes_div</span>, <span class="va">rename_columns</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Ungauged node 'Reservoir' automatically gets the node '54001' as parameter donor</span>
 <span class="r-in"><span><span class="co"># Network diagram figures Diversion node by a red frame and a red arrow</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_div</span>, orientation <span class="op">=</span> <span class="st">"TB"</span><span class="op">)</span></span></span>

@@ -231,10 +231,10 @@
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># preparation of CalibOptions object</span></span></span>
 <span class="r-in"><span><span class="va">CalibOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateCalibOptions.html">CreateCalibOptions</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The node Reservoir which uses `RunModel_Reservoir` must have its parameters fixed: </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The node 'Reservoir' which uses `RunModel_Reservoir` must have its parameters fixed: </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> You can either fix these parameters afterward by using the command:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> `CalibOptions[[id_of_reservoir_node]]$FixedParam &lt;- c(Vmax, celerity)`</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Or by calling `CreateCalibOptions(InputsModel, FixedParam = list(id_of_reservoir_node = c(Vmax, celerity)))`</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> `CalibOptions[['Reservoir']]$FixedParam &lt;- c(Vmax, celerity)`</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Or by calling `CreateCalibOptions(InputsModel, FixedParam = list('Reservoir' = c(Vmax, celerity)))`</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Parameters of RunModel_Reservoir must be fixed</span></span></span>
 <span class="r-in"><span><span class="va">CalibOptions</span><span class="op">[[</span><span class="st">"Reservoir"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">FixedParam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Vmax <span class="op">=</span> <span class="fl">30E6</span>, celerity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
