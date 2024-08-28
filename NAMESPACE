@@ -2,6 +2,7 @@
 
 S3method(Calibration,GRiwrmInputsModel)
 S3method(Calibration,InputsModel)
+S3method(Calibration,Ungauged)
 S3method(ConvertMeteoSD,GRiwrm)
 S3method(ConvertMeteoSD,character)
 S3method(ConvertMeteoSD,matrix)

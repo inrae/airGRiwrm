@@ -23,7 +23,9 @@
 #' - `RunModel_Reservoir` for simulating a reservoir (See: [RunModel_Reservoir])
 #' - `Ungauged` for an ungauged node. The sub-basin inherits hydrological model and
 #' parameters from a "donor" sub-basin. If not defined by the user in the column `donor`,
-#' the donor is automatically set to the first gauged node at downstream
+#' the donor is automatically set to the first gauged node at downstream.
+#' This set of sub-basins with the same donor downstream then forms an ungauged
+#' node cluster that will be calibrated at once.
 #' - `NA` for injecting (or abstracting) a flow time series at the location of the node
 #' (direct flow injection)
 #' - `Diversion` for abstracting a flow time series from an existing node transfer it
@@ -51,8 +53,9 @@
 #'  node location in km2
 #'  * `model` ([character]): hydrological model to use ([NA] for using observed
 #'  flow instead of a runoff model output)
-#'  * `donor` ([character]): node used as "donor" for the the model and the
-#'  calibration parameters.
+#'  * `donor` ([character]): node used as model and calibration parameter "donor" for
+#'  ungauged nodes. For other types of nodes, if the donor is different than the
+#'  id, it indicates that the node is embedded in an ungauged node cluster.
 #'
 #' @aliases GRiwrm
 #' @export
@@ -105,7 +108,6 @@ CreateGRiwrm <- function(db,
 
   # Set automatic downstream donors for ungauged nodes
   griwrm$donor <- setDonor(griwrm)
-  checkUngaugedCluster(griwrm)
 
   griwrm <- sort(griwrm)
 
@@ -248,22 +250,22 @@ nodeError <- function(node, ...) {
 #' @return [character] Id of the first node with a model of `FALSE` if not found
 #'
 #' @noRd
-getGaugedId <- function(id, griwrm) {
+getDonor <- function(id, griwrm) {
   if (isNodeGauged(id, griwrm, skip_reservoirs = TRUE)) {
     # Match with a gauged station!
     return(id)
   } else {
     # Otherwise we need to search downstream on the natural network
     g2 <- griwrm[getDiversionRows(griwrm, TRUE), ]
-    id_down <- g2$down[g2$id == id]
-    if (!is.na(id_down)) {
-      return(getGaugedId(id_down, griwrm))
+    node <- g2[g2$id == id, ]
+    if (!is.na(node$down)) {
+      return(getDonor(node$down, griwrm))
     } else if (length(getDiversionRows(griwrm)) > 0) {
       # Search on Diversion
       g3 <- griwrm[getDiversionRows(griwrm), ]
-      id_down <- g3$down[g3$id == id]
-      if (!is.na(id_down)) {
-        return(getGaugedId(id_down, griwrm))
+      node$down <- g3$down[g3$id == id]
+      if (!is.na(node$down)) {
+        return(getDonor(node$down, griwrm))
       }
     }
   }
@@ -285,6 +287,7 @@ getDiversionRows <- function(griwrm, inverse = FALSE) {
 }
 
 setDonor <- function(griwrm) {
+  oDonors <- griwrm$donor
   griwrm$donor <- sapply(seq(nrow(griwrm)), function(i) {
     if (!is.na(griwrm$donor[i])) {
       # Donor set by user
@@ -295,68 +298,88 @@ setDonor <- function(griwrm) {
     if (is.na(model) || model == "Diversion") {
       return(as.character(NA))
     }
-    if (model == "RunModel_Reservoir" && is.na(griwrm$down[i])){
-      # RunModel_Reservoir needs to be its own "donor" only if at downstream
-      # Otherwise we search the first gauged station downstream to allow
-      # calibration with ungauged upstream nodes
+    if (model == "RunModel_Reservoir") {
       return(id)
     }
-    gaugedId <- getGaugedId(id, griwrm = griwrm)
+    if (model != "Ungauged" &&
+        (is.na(griwrm$down[i]) || !any(!is.na(griwrm$down) & griwrm$down == id))) {
+      # Downstream or upstream gauged nodes can't be in ungauged node cluster
+      return(id)
+    }
+
+    gaugedId <- getDonor(id, griwrm = griwrm)
     if (gaugedId == FALSE) {
       stop("No Gauged node found downstream the node '", id, "'")
     }
-    if (id != gaugedId) {
-      message("Ungauged node '", id, "' automatically gets the node '", gaugedId, "' as parameter donor")
-    }
     return(gaugedId)
   })
-  d <- sapply(seq(nrow(griwrm)), refineReservoirDonor, griwrm = griwrm)
-  return(d)
+  donors <- sapply(
+    seq(nrow(griwrm)),
+    FUN = function(i, g) {
+      d <- refineDonor(i, g)
+      if (!is.na(d) && (is.na(oDonors[i]) || d != oDonors[i]) && d != g$id[i]) {
+        if (g$model[i] == "Ungauged") {
+          message("Ungauged node '", g$id[i], "' automatically gets the node '",
+                  d, "' as parameter donor")
+        } else if (g$model[i] == "RunModel_Reservoir") {
+          message("Node '", g$id[i], "' is included in the ungauged node cluster '",
+                  d, "'")
+
+        } else {
+          warning("Node '", g$id[i], "' is included in the ungauged node cluster '",
+                  d, "': it should have fixed parameters at Calibration")
+        }
+      }
+      return(d)
+    },
+    g = griwrm)
+  return(donors)
 }
 
-#' Correct donor for reservoir nodes in case they're not in ungauged node clusters
+#' Correct donor for gauged nodes inside ungauged node clusters
 #'
 #' @param i rown number to process in `griwrm`
 #' @param griwrm A *GRiwrm* object (See [CreateGRiwrm])
 #'
 #' @return [character] [vector] of donor ids
 #' @noRd
-refineReservoirDonor <- function(i, griwrm) {
-  id <- griwrm$id[i]
-  if (all(!is.na(griwrm$model[griwrm$id == id]) &
-          griwrm$model[griwrm$id == id] != "RunModel_Reservoir")) {
-    return(griwrm$donor[i])
-  }
-  upIds <- griwrm$id[!is.na(griwrm$down) & griwrm$down == griwrm$id[i]]
-  g_up <- griwrm[griwrm$id %in% upIds, ]
-  if (any(!is.na(g_up$model) & g_up$model == "Ungauged")) {
-    # Upstream ungauged nodes found: keep downstream donor
-    donor <- unique(g_up$donor[!is.na(g_up$model) & g_up$model == "Ungauged"])
-    if (length(donor) > 1) {
-      stop("Ungauged nodes located upstream the node '", id,
-           "' cannot have different donors")
+refineDonor <- function(i, g) {
+  if (is.na(g$model[i]) || g$model[i] == "Diversion") return(as.character(NA))
+  if (g$model[i] == "Ungauged") return(g$donor[i])
+  id <- g$id[i]
+  if (is.na(g$donor[i])) g$donor[i] <- id
+  # Search if the gauged node is in an ungauged node cluster
+  # Search all ungauged nodes upstream
+  g2 <- g[!is.na(g$model) & g$model != "Diversion", ] # Remove duplicates for node search
+  upstreamUngaugedNodes <- sapply(g2$id, function(id2) {
+    if (g2$model[g2$id == id2] == "Ungauged" && isNodeUpstream(g, id, id2)) {
+      id2
+    } else {
+      NULL
     }
-    if (isNodeDownstream(griwrm, id, donor)) return(donor)
-  }
-  # No upstream ungauged nodes: Reservoir is its own donor!
-  return(griwrm$id[i])
-}
-
-checkUngaugedCluster <- function(griwrm) {
-  # Check presence of gauged nodes inside an ungauged cluster
-  clusters <- table(griwrm$donor)
-  clusters <- names(clusters[clusters > 1])
-  lapply(clusters, function(gaugedId) {
-    g <- getUngaugedCluster(griwrm, gaugedId)
-    p <- getAllNodesProperties(griwrm)
-    upstreamIdsInCluster <- unique(g$id[!g$id %in% g$down])
-    lapply(g$id, function(id) {
-      if (id != gaugedId) {
-        if (p$calibration[p$id == id] == "Gauged" && !id %in% upstreamIdsInCluster) {
-          stop("The gauged node '", id, "' is located in the cluster of the ungauged",
-               " nodes calibrated with the node '", gaugedId, "'")
-        }
-      }
-    })
   })
+  upstreamUngaugedNodes <- unlist(
+    upstreamUngaugedNodes[!sapply(upstreamUngaugedNodes, is.null)]
+  )
+  if (!is.null(upstreamUngaugedNodes)) {
+    donors <- setNames(g2$donor, g2$id)
+    ungaugedDonors <- donors[upstreamUngaugedNodes]
+    ungaugedDonors <- setdiff(ungaugedDonors, id)
+    if (length(ungaugedDonors) > 0) {
+      # Search for donor at downstream (then we are in an ungauged node cluster!)
+      ungaugedDonors <- ungaugedDonors[sapply(ungaugedDonors, function(x) {
+        isNodeDownstream(g, id, x)
+      })]
+    }
+    if (length(ungaugedDonors) == 1) {
+      return(ungaugedDonors)
+    } else if (length(ungaugedDonors) > 1) {
+      warning("The node '", id, "' is embedded in several ungauged node clusters: '",
+           paste(ungaugedDonors, collapse = "', '"), "'\n",
+           "Calibration of both ungauged node clusters is impossible")
+    }
+  }
+
+  # No need to change the pre-defined donor (maybe forced for de Lavenne #157)
+  return(g$donor[i])
 }

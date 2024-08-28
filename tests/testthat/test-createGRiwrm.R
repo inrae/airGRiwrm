@@ -71,27 +71,11 @@ test_that("Derivated ungauged node without downstream node should have derivated
   expect_equal(g$donor, c("54032", "54032", NA, "54032"))
 })
 
-test_that("Reservoir between ungauged and gauged node should have the first downstream node as donor", {
+test_that("Reservoir between ungauged and gauged node should be in ungauged cluster", {
   # Reservoir between Ungauged and gauged nodes
   n_rsrvr$model[n_rsrvr$id == "54095"] <- "Ungauged"
   g <- CreateGRiwrm(n_rsrvr) # Network provided by helper_RunModel_Reservoir.R
   expect_equal(unique(g$donor), "54001")
-})
-
-test_that("Reservoir supplied by derivated ungauged node should have the first downstream gauged node as donor", {
-  # Reservoir between Ungauged and gauged nodes
-  g <- CreateGRiwrm(n_derived_rsrvr) # Network provided by helper_RunModel_Reservoir.R
-  expect_equal(g$donor[g$id == "Dam"], "54001")
-})
-
-test_that("Reservoir and Diversion on reservoir should have same donor", {
-  nodes <- n_rsrvr
-  nodes[nodes$id == "Dam", c("down", "length")] <- NA
-  nodes$model[nodes$id == "54095"] <- "Ungauged"
-  nodes <- rbind(nodes,
-                 data.frame(id = "Dam", down = "54001", length = 42, area = NA, model = "Diversion"))
-  g <- CreateGRiwrm(nodes)
-  expect_equal(g$donor[g$id == "Dam"], c("54001", "54001"))
 })
 
 test_that("Several Diversion on same node should raise error", {

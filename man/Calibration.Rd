@@ -5,6 +5,7 @@
 \alias{Calibration.GRiwrmInputsModel}
 \alias{Calibration.InputsModel}
 \alias{Calibration}
+\alias{Calibration.Ungauged}
 \title{Calibration of the parameters of one catchment or a network of sub-catchments}
 \usage{
 \method{Calibration}{GRiwrmInputsModel}(
@@ -19,6 +20,8 @@
 \method{Calibration}{InputsModel}(InputsModel, CalibOptions, ...)
 
 Calibration(InputsModel, ...)
+
+\method{Calibration}{Ungauged}(InputsModel, ...)
 }
 \arguments{
 \item{InputsModel}{[object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}] see \link{CreateInputsModel}}
@@ -48,7 +51,8 @@ function using the provided functions.
 }
 \details{
 This function can be used either for a catchment (with an \emph{InputsModel}
-object) or for a network (with a \emph{GRiwrmInputsModel} object)
+object), for a network (with a \emph{GRiwrmInputsModel} object), or for an
+ungauged node cluster (with a \emph{Ungauged} object).
 
 Argument classes should be consistent to the usage:
 \itemize{
