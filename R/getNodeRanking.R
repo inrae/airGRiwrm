@@ -1,5 +1,12 @@
 #' Sorting of the nodes from upstream to downstream for RunModel and Calibration
 #'
+#' @details
+#' The sort is done by searching upstream nodes in the networks recursively.
+#' Ungauged node clusters are processed by cluster and the algorithm tries to
+#' process ungauged nodes which receive their parameters from upstream or
+#' sibling node after their donor node.
+#' Use `options(debug = TRUE)` to get details on how the sort is performed.
+#'
 #' @param griwrm \[object of class `GRiwrm`\] see [CreateGRiwrm] for details
 #'
 #' @return A [character] [vector] containing ordered node ids
@@ -7,6 +14,7 @@
 #' @seealso [CreateGRiwrm()]
 #' @import dplyr
 getNodeRanking <- function(griwrm) {
+  dbg <- !is.null(getOption("debug")) && getOption("debug")
   if (!inherits(griwrm, "GRiwrm")) {
     stop("getNodeRanking: griwrm argument should be of class GRiwrm")
   }
@@ -33,10 +41,14 @@ getNodeRanking <- function(griwrm) {
         length(which(sapply(upDonors, function(y) isNodeUpstream(g, x, y))))
       }
     )
-    upDonors <- names(sort(upDonorsRanks))
+    if (dbg) message("getNodeRanking upDonors=", paste(upDonors, collapse = ", "))
+    if (dbg) message("getNodeRanking upDonorsRanks=", paste(upDonorsRanks, collapse = ", "))
+    upDonors <- upDonors[upDonorsRanks == 0]
     for (upDonor in upDonors) {
+      if (dbg) message("getNodeRanking upDonor=", upDonor)
       g_cluster <- getUngaugedCluster(griwrm, upDonor)
       upIds_cluster <- attr(g_cluster, "upIds")
+      if (dbg) message("getNodeRanking upIds_cluster=", paste(upIds_cluster, collapse = ", "))
       if (any(upIds_cluster %in% g$id)) {
         warning("Ungauged node cluster '", upDonor,
                 "': there are nodes located upstream that can't be calibrated: '",
@@ -55,6 +67,7 @@ getNodeRanking <- function(griwrm) {
 }
 
 getNodeRankingSub <- function(griwrm, donor = NA) {
+  dbg <- !is.null(getOption("debug")) && getOption("debug")
   r <- c()
   o_r <- r
   # Remove upstream nodes without model (direct flow connections)
@@ -68,6 +81,7 @@ getNodeRankingSub <- function(griwrm, donor = NA) {
         | (!is.na(donor) & !is.na(g$donor) & g$donor == donor)
       )]
     )
+    if (dbg) message("getNodeRankingSub upIds=", paste(upIds, collapse = ", "))
     r <- c(r, upIds)
     g <- g[!g$id %in% upIds, ]
     if (identical(r, o_r)) break
