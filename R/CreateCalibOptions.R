@@ -86,11 +86,11 @@ CreateCalibOptions.RunModel_Reservoir <- function(x, FixedParam = NULL, ...) {
     CalibOptions$FixedParam <- FixedParam
   } else {
     warning(
-      "The node ",  x$id, " which uses `RunModel_Reservoir` must have its parameters fixed: ",
+      "The node '",  x$id, "' which uses `RunModel_Reservoir` must have its parameters fixed: ",
       "\n",
       "You can either fix these parameters afterward by using the command:\n",
-      "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`\n",
-      "Or by calling `CreateCalibOptions(InputsModel, FixedParam = list(id_of_reservoir_node = c(Vmax, celerity)))`"
+      "`CalibOptions[['",  x$id, "']]$FixedParam <- c(Vmax, celerity)`\n",
+      "Or by calling `CreateCalibOptions(InputsModel, FixedParam = list('",  x$id, "' = c(Vmax, celerity)))`"
     )
   }
   return(CalibOptions)

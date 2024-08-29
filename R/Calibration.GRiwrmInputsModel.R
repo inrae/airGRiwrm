@@ -53,7 +53,6 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
       IM <- l$InputsModel
       message("Calibration.GRiwrmInputsModel: Processing sub-basins '",
               paste(names(IM), collapse = "', '"), "' with '", id, "' as gauged donor...")
-      IM$FUN_MOD <- "RunModel_Ungauged"
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
     } else {
       message("Calibration.GRiwrmInputsModel: Processing sub-basin '", id, "'...")
@@ -64,9 +63,9 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     }
 
     if (!is.null(IM$isReservoir) && IM$isReservoir & any(is.na(CalibOptions[[id]]$FixedParam))) {
-      stop("Parameters of `RunModel_Reservoir` nodes can't be calibrated",
-           "Fix these parameters by using the command:\n",
-           "`CalibOptions[[id_of_reservoir_node]]$FixedParam <- c(Vmax, celerity)`")
+      stop("Parameters of node '", id, "' using `RunModel_Reservoir` can't be calibrated",
+           "Fix its parameters by using the command:\n",
+           "`CalibOptions[['", id, "']]$FixedParam <- c(Vmax, celerity)`")
     }
 
     if (!hasUngauged && IM$isReceiver) {
@@ -92,11 +91,10 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     }
 
     if (hasUngauged) {
-      # Select nodes with model in the sub-network
-      g <- attr(IM, "GRiwrm")
-      Ids <- g$id[!is.na(g$donor) & g$donor == id & g$id != id]
+      Ids <- names(IM)
+      Ids <- Ids[Ids != id]
       for (uId in Ids) {
-        if (!IM[[uId]]$isReservoir) {
+        if (IM[[uId]]$gaugedId == id) {
           # Add OutputsCalib for ungauged nodes
           OutputsCalib[[uId]] <- list(
             ParamFinalR = transferGRparams(InputsModel,

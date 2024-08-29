@@ -4,7 +4,8 @@ runCalibration <- function(nodes = NULL,
                            CalibOptions = NULL,
                            FUN_CRIT = ErrorCrit_KGE2,
                            runRunModel = FALSE,
-                           IsHyst = FALSE) {
+                           IsHyst = FALSE,
+                           doCalibration = TRUE) {
   if (is.null(nodes)) {
     griwrm <- NULL
   } else if (inherits(nodes, "GRiwrm")) {
@@ -25,14 +26,16 @@ runCalibration <- function(nodes = NULL,
       InputsModel,
       FUN_CRIT = FUN_CRIT,
       RunOptions = RunOptions,
-      Obs = Qobs[IndPeriod_Run, np$id[np$RunOff & np$calibration == "Gauged"], drop = FALSE],
+      Obs = Qobs[IndPeriod_Run, np$id[np$calibration == "Gauged"], drop = FALSE],
     )
   }
 
   if (is.null(CalibOptions)) {
     CalibOptions <- CreateCalibOptions(InputsModel)
   }
-  OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
-  Param <- sapply(OutputsCalib, "[[", "ParamFinalR")
+  if (doCalibration) {
+    OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+    Param <- sapply(OutputsCalib, "[[", "ParamFinalR")
+  }
   return(environment())
 }
