@@ -149,6 +149,14 @@
     <h2>Value</h2>
     <p>A <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> containing ordered node ids</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The sort is done by searching upstream nodes in the networks recursively.
+Ungauged node clusters are processed by cluster and the algorithm tries to
+process ungauged nodes which receive their parameters from upstream or
+sibling node after their donor node.
+Use <code>options(debug = TRUE)</code> to get details on how the sort is performed.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="CreateGRiwrm.html">CreateGRiwrm()</a></code></p></div>
