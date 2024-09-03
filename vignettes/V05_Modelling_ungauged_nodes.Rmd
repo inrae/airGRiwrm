@@ -23,20 +23,23 @@ knitr::opts_chunk$set(
 library(airGRiwrm)
 ```
 
-## Why modeling ungauged station in the semi-distributed model?
+An *Ungauged* station is a virtual hydrometric station where no observed flows are 
+available for calibration.
 
-Ungauged nodes in the semi-distributed model can be used to reach two different goals:
+## Why modeling *Ungauged* station in a semi-distributed model?
+
+*Ungauged* nodes in a semi-distributed model can be used to reach two different goals:
 
 - increase spatial resolution of the rain fall to improve streamflow simulation [@lobligeoisWhenDoesHigher2014].
 - simulate streamflows in location of interest for management purpose
 
-This vignette introduces the implementation in airGRiwrm of the method developped by @lobligeoisMieuxConnaitreDistribution2014 for calibrating ungauged nodes in a
+This vignette introduces the implementation in airGRiwrm of the method developed by @lobligeoisMieuxConnaitreDistribution2014 for calibrating *Ungauged* nodes in a
 semi-distributed model.
 
 ## Presentation of the study case
 
 Using the study case of the vignette #1 and #2, we consider this time that nodes `54001` and
-`54029` are ungauged. We simulate the streamflow at these locations by sharing
+`54029` are *Ungauged*. We simulate the streamflow at these locations by sharing
 hydrological parameters of the gauged node `54032`.
 
 ```{r network, echo = FALSE}
@@ -69,16 +72,22 @@ class id95,54002 UpGau
 ")
 ```
 
-Hydrological parameters at the ungauged nodes will be the same as the one at the gauged node `54032` except for the unit hydrograph parameter which depend on the area of the sub-basin. @lobligeoisMieuxConnaitreDistribution2014 provides the following conversion formula for this parameter:
+Hydrological parameters at the ungauged nodes will be the same as the one at the 
+gauged node `54032` except for the unit hydrograph parameter which depend on the 
+area of the sub-basin. @lobligeoisMieuxConnaitreDistribution2014 provides the 
+following conversion formula for this parameter:
 
 $$
 x_{4i} = \left( \dfrac{S_i}{S_{BV}} \right) ^ {0.3} X_4
 $$
-With $X_4$ the unit hydrograph parameter for the entire basin at `54032` which as an area of $S_{BV}$; $S_i$ the area and $x_{4i}$ the parameter for the sub-basin $i$.
+With $X_4$ the unit hydrograph parameter for the entire basin at `54032` which 
+as an area of $S_{BV}$; $S_i$ the area and $x_{4i}$ the parameter for the 
+sub-basin $i$.
 
-## Using ungauged stations in the airGRiwrm model
+## Using *Ungauged* stations in the airGRiwrm model
 
-Ungauged stations are specified by using the model "Ungauged" in the `model` column provided in the `CreateGRiwrm` function:
+*Ungauged* stations are specified by using the model `"Ungauged"` in the `model` 
+column provided in the `CreateGRiwrm` function:
 
 ```{r griwrm}
 data(Severn)
@@ -92,7 +101,15 @@ griwrmV05 <- CreateGRiwrm(
 griwrmV05
 ```
 
-On the following network scheme, the ungauged nodes are cleared than gauged ones with the same color (blue for upstream nodes and green for intermediate and downstream nodes)
+It should be noted that the `GRiwrm` object includes a column which automatically
+define the first gauged station at downstream for each *Ungauged* node. 
+It is also possible to manually define the donor node of an *Ungauged* node, 
+which may be upstream or in a parallel sub-basin. Type `?CreateGRiwrm` for more 
+details.
+
+On the following network scheme, the *Ungauged* nodes are clearer than gauged ones 
+with the same color (blue for upstream nodes and green for intermediate and 
+downstream nodes)
 
 ```{r plot_network}
 plot(griwrmV05)
@@ -143,7 +160,7 @@ InputsCrit <- CreateInputsCrit(IM_U,
 CalibOptions <- CreateCalibOptions(IM_U)
 ```
 
-The **airGR** calibration process is applied on each hydrological node of the `GRiwrm` network from upstream nodes to downstream nodes but this time the calibration of the sub-basin `54032` invokes a semi-distributed model composed of the nodes `54029`, `54001` and `54032`.
+The **airGR** calibration process is applied on each hydrological node of the `GRiwrm` network from upstream nodes to downstream nodes but this time the calibration of the sub-basin `54032` invokes a semi-distributed model composed of the nodes `54029`, `54001` and `54032` sharing the same parameters.
 
 ```{r Calibration}
 OC_U <- suppressWarnings(
@@ -154,7 +171,7 @@ Hydrological parameters for sub-basins
 
 ## Run the model with the optimized model parameters
 
-The hydrological model uses parameters herited from the calibration of the gauged sub-basin `54032` for the ungauged nodes `54001` and `54029`:
+The hydrological model uses parameters inherited from the calibration of the gauged sub-basin `54032` for the *Ungauged* nodes `54001` and `54029`:
 
 ```{r param}
 ParamV05 <- sapply(griwrmV05$id, function(x) {OC_U[[x]]$Param})
@@ -177,7 +194,7 @@ OutputsModels <- RunModel(
 )
 ```
 
-and plot the comparison of the modeled and the observed flows including on the so-called "ungauged" stations :
+and plot the comparison of the modeled and the observed flows including the so-called *Ungauged* stations :
 
 ```{r plot, fig.height = 5, fig.width = 8}
 plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,], which = c("Regime", "CumFreq"))
