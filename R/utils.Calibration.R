@@ -28,7 +28,7 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
     AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
   }
   AprParamR <- AprParamR[featMod$indexParamUngauged]
-  message("A priori parameters from node ", AprioriId, ": ", paste(round(AprParamR, 3), collapse = ", "))
+  message("Parameter regularization: get a priori parameters from node ", AprioriId, ": ", paste(round(AprParamR, 3), collapse = ", "))
   AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
   return(Lavenne_FUN(AprParamR, AprCrit))
 }
@@ -216,7 +216,7 @@ transferGRparams <- function(InputsModel, Param, donor, receiver, default_param 
   missing_params <- setdiff(InputsModel[[receiver]]$model$indexParamUngauged,
                             InputsModel[[donor]]$model$indexParamUngauged)
   if (verbose) {
-    message("Tranfering parameters from node '", donor, "' to node '", receiver, "'")
+    message("Tranferring parameters from node '", donor, "' to node '", receiver, "'")
   }
   if (length(missing_params) > 0) {
     if (is.null(default_param)) {
@@ -252,6 +252,9 @@ transferGRparams <- function(InputsModel, Param, donor, receiver, default_param 
         (receiver_area / donor_area) ^ 0.3,
       0.5
     )
+  }
+  if (verbose) {
+    message(message("\t     Param = ", paste(sprintf("%8.3f", p), collapse = ", ")))
   }
   return(p)
 }
