@@ -37,11 +37,6 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   for (id in gaugedIds) {
     IM <- InputsModel[[id]]
 
-    if (inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
-      IC <- getInputsCrit_Lavenne(id, OutputsModel, InputsCrit)
-    } else {
-      IC <- InputsCrit[[id]]
-    }
     hasUngauged <- IM$hasUngaugedNodes
     if (hasUngauged) {
       l  <- updateParameters4Ungauged(id,
@@ -60,6 +55,12 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         # Update InputsModel$Qupstream with simulated upstream flows
         IM <- UpdateQsimUpstream(IM, RunOptions[[id]], OutputsModel)
       }
+    }
+
+    if (inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
+      IC <- getInputsCrit_Lavenne(id, OutputsModel, InputsCrit)
+    } else {
+      IC <- InputsCrit[[id]]
     }
 
     if (!is.null(IM$isReservoir) && IM$isReservoir & any(is.na(CalibOptions[[id]]$FixedParam))) {
