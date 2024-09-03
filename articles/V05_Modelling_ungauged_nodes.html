@@ -177,11 +177,14 @@
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     Calibration, CreateCalibOptions, CreateInputsCrit,</span></span>
 <span><span class="co">#&gt;     CreateInputsModel, CreateRunOptions, RunModel</span></span></code></pre></div>
+<p>An <em>Ungauged</em> station is a virtual hydrometric station where
+no observed flows are available for calibration.</p>
 <div class="section level3">
-<h3 id="why-modeling-ungauged-station-in-the-semi-distributed-model">Why modeling ungauged station in the semi-distributed model?<a class="anchor" aria-label="anchor" href="#why-modeling-ungauged-station-in-the-semi-distributed-model"></a>
+<h3 id="why-modeling-ungauged-station-in-a-semi-distributed-model">Why modeling <em>Ungauged</em> station in a semi-distributed
+model?<a class="anchor" aria-label="anchor" href="#why-modeling-ungauged-station-in-a-semi-distributed-model"></a>
 </h3>
-<p>Ungauged nodes in the semi-distributed model can be used to reach two
-different goals:</p>
+<p><em>Ungauged</em> nodes in a semi-distributed model can be used to
+reach two different goals:</p>
 <ul>
 <li>increase spatial resolution of the rain fall to improve streamflow
 simulation <span class="citation">(F. Lobligeois et al.
@@ -190,17 +193,18 @@ simulation <span class="citation">(F. Lobligeois et al.
 purpose</li>
 </ul>
 <p>This vignette introduces the implementation in airGRiwrm of the
-method developped by <span class="citation">Florent Lobligeois
-(2014)</span> for calibrating ungauged nodes in a semi-distributed
-model.</p>
+method developed by <span class="citation">Florent Lobligeois
+(2014)</span> for calibrating <em>Ungauged</em> nodes in a
+semi-distributed model.</p>
 </div>
 <div class="section level3">
 <h3 id="presentation-of-the-study-case">Presentation of the study case<a class="anchor" aria-label="anchor" href="#presentation-of-the-study-case"></a>
 </h3>
 <p>Using the study case of the vignette #1 and #2, we consider this time
-that nodes <code>54001</code> and <code>54029</code> are ungauged. We
-simulate the streamflow at these locations by sharing hydrological
-parameters of the gauged node <code>54032</code>.</p>
+that nodes <code>54001</code> and <code>54029</code> are
+<em>Ungauged</em>. We simulate the streamflow at these locations by
+sharing hydrological parameters of the gauged node
+<code>54032</code>.</p>
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/network-1.png" width="70%" style="display: block; margin: auto;"></p>
 <p>Hydrological parameters at the ungauged nodes will be the same as the
 one at the gauged node <code>54032</code> except for the unit hydrograph
@@ -220,11 +224,11 @@ the parameter for the sub-basin
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.</p>
 </div>
 <div class="section level3">
-<h3 id="using-ungauged-stations-in-the-airgriwrm-model">Using ungauged stations in the airGRiwrm model<a class="anchor" aria-label="anchor" href="#using-ungauged-stations-in-the-airgriwrm-model"></a>
+<h3 id="using-ungauged-stations-in-the-airgriwrm-model">Using <em>Ungauged</em> stations in the airGRiwrm model<a class="anchor" aria-label="anchor" href="#using-ungauged-stations-in-the-airgriwrm-model"></a>
 </h3>
-<p>Ungauged stations are specified by using the model “Ungauged” in the
-<code>model</code> column provided in the <code>CreateGRiwrm</code>
-function:</p>
+<p><em>Ungauged</em> stations are specified by using the model
+<code>"Ungauged"</code> in the <code>model</code> column provided in the
+<code>CreateGRiwrm</code> function:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
 <span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
@@ -244,9 +248,15 @@ function:</p>
 <span><span class="co">#&gt; 6 54029 54032     32 1483.65      Ungauged 54032</span></span>
 <span><span class="co">#&gt; 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span></span>
 <span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span></span></code></pre></div>
-<p>On the following network scheme, the ungauged nodes are cleared than
-gauged ones with the same color (blue for upstream nodes and green for
-intermediate and downstream nodes)</p>
+<p>It should be noted that the <code>GRiwrm</code> object includes a
+column which automatically define the first gauged station at downstream
+for each <em>Ungauged</em> node. It is also possible to manually define
+the donor node of an <em>Ungauged</em> node, which may be upstream or in
+a parallel sub-basin. Type <code><a href="../reference/CreateGRiwrm.html">?CreateGRiwrm</a></code> for more
+details.</p>
+<p>On the following network scheme, the <em>Ungauged</em> nodes are
+clearer than gauged ones with the same color (blue for upstream nodes
+and green for intermediate and downstream nodes)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV05</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot_network-1.png" width="70%" style="display: block; margin: auto;"></p>
@@ -303,7 +313,8 @@ here but only where an upstream simulated catchment is available.</p>
 hydrological node of the <code>GRiwrm</code> network from upstream nodes
 to downstream nodes but this time the calibration of the sub-basin
 <code>54032</code> invokes a semi-distributed model composed of the
-nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
+nodes <code>54029</code>, <code>54001</code> and <code>54032</code>
+sharing the same parameters.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OC_U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">IM_U</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span><span class="op">)</span></span>
@@ -325,13 +336,13 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <span><span class="co">#&gt;   Calibration completed (18 iterations, 209 runs)</span></span>
 <span><span class="co">#&gt;       Param =  389.753,    0.085,   17.870,    2.098</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9370</span></span>
-<span><span class="co">#&gt; A priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.871</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basins '54001', '54029', '54032' with '54032' as gauged donor...</span></span>
+<span><span class="co">#&gt; Parameter regularization: get a priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.871</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9578</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9579 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0023 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basins '54001', '54029', '54032' with '54032' as gauged donor...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   20.697,    1.944</span></span>
@@ -341,15 +352,19 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <span><span class="co">#&gt;       Param =    1.125,  386.196,   -0.611,   31.536,    1.803</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9650</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; Tranfering parameters from node '54032' to node '54001'</span></span>
-<span><span class="co">#&gt; Tranfering parameters from node '54032' to node '54029'</span></span>
-<span><span class="co">#&gt; A priori parameters from node 54032: 1.125, 386.196, -0.611, 31.536, 1.669</span></span>
+<span><span class="co">#&gt; Tranferring parameters from node '54032' to node '54001'</span></span>
+<span><span class="co">#&gt;       Param =    1.125,  386.196,   -0.611,   31.536,    1.529</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Tranferring parameters from node '54032' to node '54029'</span></span>
+<span><span class="co">#&gt;       Param =  386.196,   -0.611,   31.536,    1.999</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
+<span><span class="co">#&gt; Parameter regularization: get a priori parameters from node 54032: 1.125, 386.196, -0.611, 31.536, 1.669</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9660</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9664 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0013 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0050 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.649,   42.098,    1.944</span></span>
@@ -364,9 +379,9 @@ nodes <code>54029</code>, <code>54001</code> and <code>54032</code>.</p>
 <div class="section level3">
 <h3 id="run-the-model-with-the-optimized-model-parameters">Run the model with the optimized model parameters<a class="anchor" aria-label="anchor" href="#run-the-model-with-the-optimized-model-parameters"></a>
 </h3>
-<p>The hydrological model uses parameters herited from the calibration
-of the gauged sub-basin <code>54032</code> for the ungauged nodes
-<code>54001</code> and <code>54029</code>:</p>
+<p>The hydrological model uses parameters inherited from the calibration
+of the gauged sub-basin <code>54032</code> for the <em>Ungauged</em>
+nodes <code>54001</code> and <code>54029</code>:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ParamV05</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrmV05</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OC_U</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="va">dfParam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
@@ -450,7 +465,7 @@ of the gauged sub-basin <code>54032</code> for the ungauged nodes
 <span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54032...</span></span>
 <span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54057...</span></span></code></pre></div>
 <p>and plot the comparison of the modeled and the observed flows
-including on the so-called “ungauged” stations :</p>
+including the so-called <em>Ungauged</em> stations :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Regime"</span>, <span class="st">"CumFreq"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-1.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-2.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-3.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-4.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-5.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-6.png" width="70%" style="display: block; margin: auto;"></p>
