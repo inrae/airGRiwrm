@@ -33,6 +33,7 @@ New features:
 * Feature request: function for getting parameters from `GRiwrmOutputsCalib` (#86)
 * Speed up RunModel_Lag for RunModel.Supervisor (#164)
 * plot.GRiwrm: allow to use optional parameters of `mermaid` function (#160)
+* Ungauged node cluster: improve outsider gauged node detection (#168)
 
 Bug fixes:
 ----------
@@ -70,6 +71,7 @@ Bug fixes:
 * plot.GRiwrm crashes with a single node (#153)
 * CreateInputsModel: Don't allow ungauged donor (#131)
 * Rename internal function `RunModel.SD` (#166)
+* Calibration: crash with downstream receiver node with upstream reservoir (#167)
 
 Documentation:
 --------------
