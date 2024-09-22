@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 library(airGRiwrm)
 ```
 
-An *Ungauged* station is a virtual hydrometric station where no observed flows are 
+An *Ungauged* station is a virtual hydrometric station where no observed flows are
 available for calibration.
 
 ## Why modeling *Ungauged* station in a semi-distributed model?
@@ -72,21 +72,21 @@ class id95,54002 UpGau
 ")
 ```
 
-Hydrological parameters at the ungauged nodes will be the same as the one at the 
-gauged node `54032` except for the unit hydrograph parameter which depend on the 
-area of the sub-basin. @lobligeoisMieuxConnaitreDistribution2014 provides the 
+Hydrological parameters at the ungauged nodes will be the same as the one at the
+gauged node `54032` except for the unit hydrograph parameter which depend on the
+area of the sub-basin. @lobligeoisMieuxConnaitreDistribution2014 provides the
 following conversion formula for this parameter:
 
 $$
 x_{4i} = \left( \dfrac{S_i}{S_{BV}} \right) ^ {0.3} X_4
 $$
-With $X_4$ the unit hydrograph parameter for the entire basin at `54032` which 
-as an area of $S_{BV}$; $S_i$ the area and $x_{4i}$ the parameter for the 
+With $X_4$ the unit hydrograph parameter for the entire basin at `54032` which
+as an area of $S_{BV}$; $S_i$ the area and $x_{4i}$ the parameter for the
 sub-basin $i$.
 
 ## Using *Ungauged* stations in the airGRiwrm model
 
-*Ungauged* stations are specified by using the model `"Ungauged"` in the `model` 
+*Ungauged* stations are specified by using the model `"Ungauged"` in the `model`
 column provided in the `CreateGRiwrm` function:
 
 ```{r griwrm}
@@ -102,13 +102,13 @@ griwrmV05
 ```
 
 It should be noted that the `GRiwrm` object includes a column which automatically
-define the first gauged station at downstream for each *Ungauged* node. 
-It is also possible to manually define the donor node of an *Ungauged* node, 
-which may be upstream or in a parallel sub-basin. Type `?CreateGRiwrm` for more 
+define the first gauged station at downstream for each *Ungauged* node.
+It is also possible to manually define the donor node of an *Ungauged* node,
+which may be upstream or in a parallel sub-basin. Type `?CreateGRiwrm` for more
 details.
 
-On the following network scheme, the *Ungauged* nodes are clearer than gauged ones 
-with the same color (blue for upstream nodes and green for intermediate and 
+On the following network scheme, the *Ungauged* nodes are clearer than gauged ones
+with the same color (blue for upstream nodes and green for intermediate and
 downstream nodes)
 
 ```{r plot_network}
