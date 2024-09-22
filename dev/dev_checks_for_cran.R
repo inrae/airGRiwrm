@@ -6,6 +6,7 @@
 attachment::att_amend_desc()
 
 # Check package coverage
+remotes::update_packages("covr")
 covr::package_coverage()
 covr::report()
 
