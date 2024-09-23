@@ -1,6 +1,8 @@
 # Copied from https://github.com/ThinkR-open/prepare-for-cran
 # Prepare for CRAN ----
 
+# * Merge branch from dev to master
+
 # Update dependencies in DESCRIPTION
 # install.packages('attachment', repos = 'https://thinkr-open.r-universe.dev')
 attachment::att_amend_desc()
@@ -90,6 +92,15 @@ usethis::use_cran_comments(open = rlang::is_interactive())
 
 # Upgrade version number
 usethis::use_version(which = c("patch", "minor", "major", "dev")[1])
+# * Pass _pkgdown.yml > development > mode to "release"
 
 # Verify you're ready for release, and release
 devtools::release()
+
+# After the acceptation on CRAN
+# * Create the release on gitlab
+# * Create the release on github
+# * Upgrade version to dev x.y.z.9000
+usethis::use_version(which = c("patch", "minor", "major", "dev")[4])
+# * Pass _pkgdown.yml > development > mode to "devel"
+# * Merge branch from master to dev
