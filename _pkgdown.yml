@@ -1,6 +1,6 @@
 url: https://inrae.github.io/airGRiwrm
 development:
-  mode: auto
+  mode: release
 
 template:
   params:

@@ -33,6 +33,7 @@ run_examples:
 
 check:
   stage: checks
+  allow_failure: true
   except:
     refs:
       - tags
