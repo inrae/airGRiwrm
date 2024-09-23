@@ -19,7 +19,7 @@ from the Qrelease parameter of CreateInputsModel.GRiwrm."><meta property="og:ima
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.6.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.7.0.9000</span>
       </span>
     </div>
 
@@ -215,9 +215,10 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-in"><span>                 model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RunModel_GR4J"</span>, <span class="st">"RunModel_Reservoir"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                 stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="RunModel_Reservoir-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one</span></span></span>
 <span class="r-in"><span><span class="co"># column by sub-basin and node IDs as column names)</span></span></span>
@@ -268,10 +269,10 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># preparation of CalibOptions object</span></span></span>
 <span class="r-in"><span><span class="va">CalibOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateCalibOptions.html">CreateCalibOptions</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The node Reservoir which uses `RunModel_Reservoir` must have its parameters fixed: </span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The node 'Reservoir' which uses `RunModel_Reservoir` must have its parameters fixed: </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> You can either fix these parameters afterward by using the command:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> `CalibOptions[[id_of_reservoir_node]]$FixedParam &lt;- c(Vmax, celerity)`</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Or by calling `CreateCalibOptions(InputsModel, FixedParam = list(id_of_reservoir_node = c(Vmax, celerity)))`</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> `CalibOptions[['Reservoir']]$FixedParam &lt;- c(Vmax, celerity)`</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> Or by calling `CreateCalibOptions(InputsModel, FixedParam = list('Reservoir' = c(Vmax, celerity)))`</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Parameters of RunModel_Reservoir must be fixed</span></span></span>
 <span class="r-in"><span><span class="va">CalibOptions</span><span class="op">[[</span><span class="st">"Reservoir"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">FixedParam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Vmax <span class="op">=</span> <span class="fl">30E6</span>, celerity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></span>
@@ -318,13 +319,13 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-in"><span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">Qmm</span><span class="op">[</span><span class="va">Ind_Run</span><span class="op">]</span>, <span class="va">Qrelease</span><span class="op">[</span><span class="va">Ind_Run</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">Qobs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">griwrm</span><span class="op">$</span><span class="va">id</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModel</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="RunModel_Reservoir-1.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="RunModel_Reservoir-2.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="RunModel_Reservoir-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># N.B. "Observed releases" should be considered as "Target releases" here</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The plot for the reservoir can also be plotted alone</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModel</span><span class="op">$</span><span class="va">Reservoir</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span>, <span class="st">"Reservoir"</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="RunModel_Reservoir-3.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="RunModel_Reservoir-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </div>
@@ -339,7 +340,7 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

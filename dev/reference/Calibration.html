@@ -18,7 +18,7 @@ function using the provided functions."><meta property="og:image" content="https
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.6.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.7.0.9000</span>
       </span>
     </div>
 
@@ -149,6 +149,9 @@ function using the provided functions.</p>
 <span><span class="co"># S3 method for class 'InputsModel'</span></span>
 <span><span class="fu">Calibration</span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">CalibOptions</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">Calibration</span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'Ungauged'</span></span>
 <span><span class="fu">Calibration</span><span class="op">(</span><span class="va">InputsModel</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -190,7 +193,8 @@ one item per modeled sub-catchment</p></li>
     <div id="details">
     <h2>Details</h2>
     <p>This function can be used either for a catchment (with an <em>InputsModel</em>
-object) or for a network (with a <em>GRiwrmInputsModel</em> object)</p>
+object), for a network (with a <em>GRiwrmInputsModel</em> object), or for an
+ungauged node cluster (with a <em>Ungauged</em> object).</p>
 <p>Argument classes should be consistent to the usage:</p><ul><li><p>a <code>InputsModel</code> argument of class <em>InputsModel</em> must be followed by a
 <code>RunOptions</code> argument of class <em>RunOptions</em>, a <code>InputsCrit</code> argument of
 class <em>InputsCrit</em> and a <code>CalibOptions</code> of class <em>CalibOptions</em></p></li>
@@ -217,7 +221,7 @@ argument of class <em>GRiwrmInputsCrit</em> and a <code>CalibOptions</code> of c
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

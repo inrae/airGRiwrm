@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.6.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.7.0.9000</span>
       </span>
     </div>
 
@@ -128,6 +128,97 @@
       <small>Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="development version" id="airgriwrm-development-version">airGRiwrm (development version)<a class="anchor" aria-label="anchor" href="#airgriwrm-development-version"></a></h2>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.7.0" id="airgriwrm-070">airGRiwrm 0.7.0<small>2024-09-22</small><a class="anchor" aria-label="anchor" href="#airgriwrm-070"></a></h2>
+<div class="section level3">
+<h3 id="breaking-changes-0-7-0">Breaking changes:<a class="anchor" aria-label="anchor" href="#breaking-changes-0-7-0"></a></h3>
+<ul><li>CreateSupervisor [Breaking change]: Only allow to apply a command on DirectInjection and Diversion nodes (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/101" class="external-link">#101</a>)</li>
+<li>CreateInputsModel [Breaking change]: do not allow to use <code>Qobs</code> on nodes other than Direct Injection and Diversion (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/99" class="external-link">#99</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-features-0-7-0">New features:<a class="anchor" aria-label="anchor" href="#new-features-0-7-0"></a></h3>
+<ul><li>Handle simple in-line reservoir inside the model (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/51" class="external-link">#51</a>)</li>
+<li>Use of non gauged stations in the network (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/42" class="external-link">#42</a>)</li>
+<li>RunModel.Supervision: handle NA values on injected flows (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/94" class="external-link">#94</a>)</li>
+<li>Add checks on Supervisor functions (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/102" class="external-link">#102</a>)</li>
+<li>Get <code>plot.Qm3s</code> available as a function (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/104" class="external-link">#104</a>)</li>
+<li>Implementation of “Diversion” node (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/95" class="external-link">#95</a>)</li>
+<li>CreateInputsModel: downgrade error on “<code>Qobs</code> only for nodes Direct Injection and Diversion” to warning (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/109" class="external-link">#109</a>)</li>
+<li>Diversion: Remove error “The downstream node of a Diversion node must be different than the downstream node of the node is attached to” (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/111" class="external-link">#111</a>)</li>
+<li>Ungauged node: allow to define donor manually (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/129" class="external-link">#129</a>)</li>
+<li>Ungauged node - CreateGRiwrm: Search donor through Diversion if not available by natural network (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/132" class="external-link">#132</a>)</li>
+<li>Highlight the water deficit at a node due to too much withdrawals (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/144" class="external-link">#144</a>)</li>
+<li>Integration of reservoirs as nodes in the network (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/90" class="external-link">#90</a>)</li>
+<li>Handle direct withdrawal in reservoirs (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/147" class="external-link">#147</a>)</li>
+<li>plot.GRiwrm: use web service instead of DiagrammeR::mermaid (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/150" class="external-link">#150</a>)</li>
+<li>plot.GRiwrm: sketch ungauged cluster with subgraphs (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/151" class="external-link">#151</a>)</li>
+<li>Implementation of non gauged station with donor other than a downstream gauged station (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/92" class="external-link">#92</a>)</li>
+<li>CreateInputsCrit: allow a priori node not only at upstream (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/156" class="external-link">#156</a>)</li>
+<li>Allow Diversion on Reservoir (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/146" class="external-link">#146</a>)</li>
+<li>CreateInputsModel: deprecate <code>Qobs</code> parameter and use <code>Qinf</code> instead (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/120" class="external-link">#120</a>)</li>
+<li>CreateInputsModel: Specify the error message: “‘Qobs’ column names must be included in ’id’s of the GRiwrm object” (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/152" class="external-link">#152</a>)</li>
+<li>
+<code>plot.GRiwrmOutputsModel</code>: handle other units than mm / time step (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/105" class="external-link">#105</a>)</li>
+<li>Feature request: function for getting parameters from <code>GRiwrmOutputsCalib</code> (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/86" class="external-link">#86</a>)</li>
+<li>Speed up RunModel_Lag for RunModel.Supervisor (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/164" class="external-link">#164</a>)</li>
+<li>plot.GRiwrm: allow to use optional parameters of <code>mermaid</code> function (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/160" class="external-link">#160</a>)</li>
+<li>Ungauged node cluster: improve outsider gauged node detection (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/168" class="external-link">#168</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-0-7-0">Bug fixes:<a class="anchor" aria-label="anchor" href="#bug-fixes-0-7-0"></a></h3>
+<ul><li>Wrong file name for the “Get started” vignette (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/79" class="external-link">#79</a>)</li>
+<li>CreateInputsCrit: wrong id in error message (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/85" class="external-link">#85</a>)</li>
+<li>ConvertMeteoSD: crash with upstream nodes with no area (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/89" class="external-link">#89</a>)</li>
+<li>Regularisation: check if current node and a priori node use the same model (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/93" class="external-link">#93</a>)</li>
+<li>Regularisation: taking into account X4 transformation (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/88" class="external-link">#88</a>)</li>
+<li>RunModel.Supervisor doesn’t work with Diversion node (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/106" class="external-link">#106</a>)</li>
+<li>Allow to use node with model RunModel_Lag (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/107" class="external-link">#107</a>)</li>
+<li>Calibration does not work when upstream catchments are both gauged and ungauged (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/108" class="external-link">#108</a>)</li>
+<li>Ungauged node: incorrect definition of donor with Reservoir and bug with Diversion nodes (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/110" class="external-link">#110</a>)</li>
+<li>Ungauged node: crash with upstream Diversion node (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/113" class="external-link">#113</a>)</li>
+<li>Ungauged node: crash on diversion to node outside the sub-network (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/112" class="external-link">#112</a>)</li>
+<li>Ungauged node: difference of ErrorCrit between Calibration and RunModel (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/115" class="external-link">#115</a>)</li>
+<li>getSD_Ids crashes on upstream nodes with Diversion (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/116" class="external-link">#116</a>)</li>
+<li>CreateSupervisor: wrong definition of allowed nodes for command (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/117" class="external-link">#117</a>)</li>
+<li>Calibration: Diversion is not handled on upstream nodes (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/122" class="external-link">#122</a>)</li>
+<li>Calibration: crash with ungauged node and multiple Diversions (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/123" class="external-link">#123</a>)</li>
+<li>CreateInputsModel: wrong area of sub-basin with upstream Reservoir, Lag or Direct Injection nodes (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/124" class="external-link">#124</a>)</li>
+<li>RunModel.Supervisor: error with Diversion node (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/126" class="external-link">#126</a>)</li>
+<li>Ungauged node: Diversions are not handled correctly in Calibration (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/127" class="external-link">#127</a>)</li>
+<li>Calibration: crash with a diverted ungauged node (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/128" class="external-link">#128</a>)</li>
+<li>Ungauged nodes: X4 transformation not handled with CemaNeige models (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/135" class="external-link">#135</a>)</li>
+<li>Crash with Hysteresis in CemaNeige (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/134" class="external-link">#134</a>)</li>
+<li>Ungauged nodes: crash with a reservoir and several upstream nodes (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/136" class="external-link">#136</a>)</li>
+<li>Ungauged node: Diversion to Reservoir crashes Calibration (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/130" class="external-link">#130</a>)</li>
+<li>Wrong calibration node order with multiple ungauged node clusters (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/149" class="external-link">#149</a>)</li>
+<li>CreateGRiwrm: several Diversions on the same node do not raise error (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/125" class="external-link">#125</a>)</li>
+<li>Reservoir output plot color palette issue (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/154" class="external-link">#154</a>)</li>
+<li>Wrong sorting for calibration of ungauged nodes (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/155" class="external-link">#155</a>)</li>
+<li>Donor defined on gauged model node turns the node into ungauged at Calibration (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/157" class="external-link">#157</a>)</li>
+<li>Calibration: crash when transferring from upstream donor to upstream receiver (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/158" class="external-link">#158</a>)</li>
+<li>plot.GRiwrm crashes with a single node (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/153" class="external-link">#153</a>)</li>
+<li>CreateInputsModel: Don’t allow ungauged donor (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/131" class="external-link">#131</a>)</li>
+<li>Rename internal function <code>RunModel.SD</code> (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/166" class="external-link">#166</a>)</li>
+<li>Calibration: crash with downstream receiver node with upstream reservoir (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/167" class="external-link">#167</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-0-7-0">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-0-7-0"></a></h3>
+<ul><li>Improve Supervisor documentation (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/100" class="external-link">#100</a>)</li>
+<li>Update package citation reference (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/119" class="external-link">#119</a>)</li>
+<li>Add a main page in the package documentation (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/77" class="external-link">#77</a>)</li>
+<li>Improve RunModel documentation (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/133" class="external-link">#133</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-0-7-0">Internal changes:<a class="anchor" aria-label="anchor" href="#internal-changes-0-7-0"></a></h3>
+<ul><li>Check failed on release version (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/78" class="external-link">#78</a>)</li>
+<li>Transfer documentation to github pages (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/148" class="external-link">#148</a>)</li>
+<li>Publish documentation package on github with github workflow (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/162" class="external-link">#162</a>)</li>
+<li>CI: add check with version “dev” of airGR (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/84" class="external-link">#84</a>)</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.6.2" id="airgriwrm-062">airGRiwrm 0.6.2<small>2023-10-24</small><a class="anchor" aria-label="anchor" href="#airgriwrm-062"></a></h2>
 <ul><li>airGR changes cause failed check (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/139" class="external-link">#139</a>)</li>
@@ -282,7 +373,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>

@@ -39,7 +39,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">airGRiwrm</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.6.2.9000</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.7.0.9000</span>
       </span>
     </div>
 
@@ -227,8 +227,8 @@ declare its model as <code>NA</code>:</p>
 <span><span class="co">#&gt; 6 54029 54032     32 1483.65 RunModel_GR4J 54029</span></span>
 <span><span class="co">#&gt; 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span></span>
 <span><span class="co">#&gt; 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span></span>
-<span><span class="co">#&gt; 3 54001 54032     45 4329.90          &lt;NA&gt; 54001</span></span>
-<span><span class="co">#&gt; 5 54002 54057     43 2207.95          &lt;NA&gt; 54002</span></span></code></pre></div>
+<span><span class="co">#&gt; 3 54001 54032     45 4329.90          &lt;NA&gt;  &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5 54002 54057     43 2207.95          &lt;NA&gt;  &lt;NA&gt;</span></span></code></pre></div>
 <p>Here, we keep the area of this basin which means that the discharge
 will be provided in mm per time step. If the discharge is provided in
 m<sup>3</sup>/s, then the area should be set to <code>NA</code> and
@@ -319,13 +319,13 @@ to downstream nodes.</p>
 <span><span class="co">#&gt;   Calibration completed (32 iterations, 333 runs)</span></span>
 <span><span class="co">#&gt;       Param =  214.204,   -0.119,   46.754,    2.022</span></span>
 <span><span class="co">#&gt;       Crit. KGE2[sqrt(Q)] = 0.9696</span></span>
-<span><span class="co">#&gt; A priori parameters from node 54029: 1, 214.204, -0.119, 46.754, 1.823</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...</span></span>
+<span><span class="co">#&gt; Parameter regularization: get a priori parameters from node 54029: 1, 214.204, -0.119, 46.754, 1.823</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9696</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9697 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9975 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9989 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  432.681,   -0.020,   42.098,    1.944</span></span>
@@ -335,13 +335,13 @@ to downstream nodes.</p>
 <span><span class="co">#&gt;       Param =    1.110,  395.440,    0.000,   60.340,    1.788</span></span>
 <span><span class="co">#&gt;       Crit. Composite    = 0.9876</span></span>
 <span><span class="co">#&gt;  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])</span></span>
-<span><span class="co">#&gt; A priori parameters from node 54032: 1.11, 395.44, 0, 60.34, 1.655</span></span>
+<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
+<span><span class="co">#&gt; Parameter regularization: get a priori parameters from node 54032: 1.11, 395.44, 0, 60.34, 1.655</span></span>
 <span><span class="co">#&gt; Crit. KGE2[sqrt(Q)] = 0.9913</span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9916 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0020 </span></span>
 <span><span class="co">#&gt;  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0010 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...</span></span>
 <span><span class="co">#&gt; Grid-Screening in progress (0% 20% 40% 60% 80% 100%)</span></span>
 <span><span class="co">#&gt;   Screening completed (243 runs)</span></span>
 <span><span class="co">#&gt;       Param =    1.250,  247.151,   -0.020,   42.098,    1.944</span></span>
@@ -412,7 +412,7 @@ Research &amp; Management</em> 2 (3): 349–68. <a href="https://doi.org/10.1002
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer>
