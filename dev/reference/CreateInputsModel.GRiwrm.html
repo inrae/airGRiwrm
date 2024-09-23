@@ -152,6 +152,7 @@
 <span>  HypsoData <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  NLayers <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  IsHyst <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  FUN_REGUL <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -249,6 +250,10 @@ inputs, default=5</p></dd>
 CemaNeige is used. See details of <a href="https://rdrr.io/pkg/airGR/man/CreateRunOptions.html" class="external-link">airGR::CreateRunOptions</a>.</p></dd>
 
 
+<dt id="arg-fun-regul">FUN_REGUL<a class="anchor" aria-label="anchor" href="#arg-fun-regul"></a></dt>
+<dd><p>List of functions for local regulation (See details)</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>used for compatibility with S3 methods</p></dd>
 
@@ -268,16 +273,36 @@ as column names. For single values (<code>ZInputs</code> or <code>NLayers</code>
 requires named <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> with the id of the sub-catchment as name item. If an
 argument is optional, only the column or the named item has to be provided.</p>
 <p>See <a href="https://rdrr.io/pkg/airGR/man/CreateInputsModel.html" class="external-link">airGR::CreateInputsModel</a> documentation for details concerning each input.</p>
-<p>Number of rows of <code>Precip</code>, <code>PotEvap</code>, <code>Qinf</code>, <code>Qmin</code>, <code>TempMean</code>, <code>TempMin</code>,
-<code>TempMax</code> must be the same of the length of <code>DatesR</code> (each row corresponds to
-a time step defined in <code>DatesR</code>).</p>
+<p>Number of rows of <code>Precip</code>, <code>PotEvap</code>, <code>Qinf</code>, <code>Qmin</code>, <code>Qrelease</code>, <code>TempMean</code>,
+<code>TempMin</code>, <code>TempMax</code> must be the same of the length of <code>DatesR</code> (each row
+corresponds to a time step defined in <code>DatesR</code>).</p>
 <p>For examples of use see topics <a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel</a>, <a href="RunModel_Reservoir.html">RunModel_Reservoir</a>,
 and <a href="RunModel.Supervisor.html">RunModel.Supervisor</a>.</p>
 <p>For example of use of Direct Injection nodes, see vignettes
 "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".</p>
 <p>For example of use of Diversion nodes, see example in
 <a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel</a> topic and vignette
-"V06_Modelling_regulated_diversion".</p>
+"V06_Modelling_regulated_diversion".</p><div class="section">
+<h3 id="the-fun-regul-parameter">The <code>FUN_REGUL</code> parameter<a class="anchor" aria-label="anchor" href="#the-fun-regul-parameter"></a></h3>
+
+
+<p><code>FUN_REGUL</code> argument is a named <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of function that modify the node
+<code>InputsModel</code> before sending it to the node's model.
+This feature is useful for modifying data such as <code>InputsModel$Qdiv</code> or
+<code>InputsModel$Qrelease</code> giving simulated flows already available from upstream
+nodes.
+Each item of the list has a name corresponding to the node on which the
+function is applied. Each function must follow this interface:
+<code>function(InputsModel, RunOptions, OutputsModel, env)</code> where the arguments are:</p><ul><li><p><code>InputsModel</code>, the <em>InputsModel</em> object of the current node</p></li>
+<li><p><code>RunOptions</code>, the <em>RunOptions</em> object of the current node</p></li>
+<li><p><code>OutputsModel</code>, the <em>GRiwrmOutputsModel</em> object of the upstream and sibling
+nodes that have been already computed when the computation of the current
+node occurs</p></li>
+<li><p><code>env</code>, the <a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a> of the <a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel</a> function</p></li>
+</ul><p>The functions embedded in <code>FUN_REGUL</code> should all return the argument
+<code>InputsModel</code> after calculation.</p>
+</div>
+
     </div>
     <div id="see-also">
     <h2>See also</h2>
