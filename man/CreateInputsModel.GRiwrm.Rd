@@ -21,6 +21,7 @@
   HypsoData = NULL,
   NLayers = 5,
   IsHyst = FALSE,
+  FUN_REGUL = NULL,
   ...
 )
 }
@@ -82,6 +83,8 @@ inputs, default=5}
 \item{IsHyst}{\link{logical} boolean indicating if the hysteresis version of
 CemaNeige is used. See details of \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}.}
 
+\item{FUN_REGUL}{List of functions for local regulation (See details)}
+
 \item{...}{used for compatibility with S3 methods}
 }
 \value{
@@ -102,9 +105,9 @@ argument is optional, only the column or the named item has to be provided.
 
 See \link[airGR:CreateInputsModel]{airGR::CreateInputsModel} documentation for details concerning each input.
 
-Number of rows of \code{Precip}, \code{PotEvap}, \code{Qinf}, \code{Qmin}, \code{TempMean}, \code{TempMin},
-\code{TempMax} must be the same of the length of \code{DatesR} (each row corresponds to
-a time step defined in \code{DatesR}).
+Number of rows of \code{Precip}, \code{PotEvap}, \code{Qinf}, \code{Qmin}, \code{Qrelease}, \code{TempMean},
+\code{TempMin}, \code{TempMax} must be the same of the length of \code{DatesR} (each row
+corresponds to a time step defined in \code{DatesR}).
 
 For examples of use see topics \link{RunModel.GRiwrmInputsModel}, \link{RunModel_Reservoir},
 and \link{RunModel.Supervisor}.
@@ -115,6 +118,28 @@ For example of use of Direct Injection nodes, see vignettes
 For example of use of Diversion nodes, see example in
 \link{RunModel.GRiwrmInputsModel} topic and vignette
 "V06_Modelling_regulated_diversion".
+\subsection{The \code{FUN_REGUL} parameter}{
+
+\code{FUN_REGUL} argument is a named \link{list} of function that modify the node
+\code{InputsModel} before sending it to the node's model.
+This feature is useful for modifying data such as \code{InputsModel$Qdiv} or
+\code{InputsModel$Qrelease} giving simulated flows already available from upstream
+nodes.
+Each item of the list has a name corresponding to the node on which the
+function is applied. Each function must follow this interface:
+\verb{function(InputsModel, RunOptions, OutputsModel, env)} where the arguments are:
+\itemize{
+\item \code{InputsModel}, the \emph{InputsModel} object of the current node
+\item \code{RunOptions}, the \emph{RunOptions} object of the current node
+\item \code{OutputsModel}, the \emph{GRiwrmOutputsModel} object of the upstream and sibling
+nodes that have been already computed when the computation of the current
+node occurs
+\item \code{env}, the \link{environment} of the \link{RunModel.GRiwrmInputsModel} function
+}
+
+The functions embedded in \code{FUN_REGUL} should all return the argument
+\code{InputsModel} after calculation.
+}
 }
 \seealso{
 \code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateRunOptions]{CreateRunOptions()}}, \code{\link[=RunModel.GRiwrmInputsModel]{RunModel.GRiwrmInputsModel()}}

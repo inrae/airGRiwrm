@@ -41,6 +41,7 @@
 #'        inputs, default=5
 #' @param IsHyst [logical] boolean indicating if the hysteresis version of
 #'        CemaNeige is used. See details of [airGR::CreateRunOptions].
+#' @param FUN_REGUL List of functions for local regulation (See details)
 #' @param ... used for compatibility with S3 methods
 #'
 #' @details Meteorological data are needed for the nodes of the network that
@@ -53,9 +54,9 @@
 #'
 #' See [airGR::CreateInputsModel] documentation for details concerning each input.
 #'
-#' Number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `TempMean`, `TempMin`,
-#' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
-#' a time step defined in `DatesR`).
+#' Number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `Qrelease`, `TempMean`,
+#' `TempMin`, `TempMax` must be the same of the length of `DatesR` (each row
+#' corresponds to a time step defined in `DatesR`).
 #'
 #' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
 #' and [RunModel.Supervisor].
@@ -66,6 +67,26 @@
 #' For example of use of Diversion nodes, see example in
 #' [RunModel.GRiwrmInputsModel] topic and vignette
 #' "V06_Modelling_regulated_diversion".
+#'
+#' ## The `FUN_REGUL` parameter
+#'
+#' `FUN_REGUL` argument is a named [list] of function that modify the node
+#' `InputsModel` before sending it to the node's model.
+#' This feature is useful for modifying data such as `InputsModel$Qdiv` or
+#' `InputsModel$Qrelease` giving simulated flows already available from upstream
+#' nodes.
+#' Each item of the list has a name corresponding to the node on which the
+#' function is applied. Each function must follow this interface:
+#' `function(InputsModel, RunOptions, OutputsModel, env)` where the arguments are:
+#' - `InputsModel`, the *InputsModel* object of the current node
+#' - `RunOptions`, the *RunOptions* object of the current node
+#' - `OutputsModel`, the *GRiwrmOutputsModel* object of the upstream and sibling
+#' nodes that have been already computed when the computation of the current
+#' node occurs
+#' - `env`, the [environment] of the [RunModel.GRiwrmInputsModel] function
+#'
+#' The functions embedded in `FUN_REGUL` should all return the argument
+#' `InputsModel` after calculation.
 #'
 #' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
 #' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
@@ -83,7 +104,9 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                      TempMean = NULL, TempMin = NULL,
                                      TempMax = NULL, ZInputs = NULL,
                                      HypsoData = NULL, NLayers = 5,
-                                     IsHyst = FALSE, ...) {
+                                     IsHyst = FALSE,
+                                     FUN_REGUL = NULL,
+                                     ...) {
 
   # Check and format inputs
   if (!is.null(Qobs) && !is.null(Qinf)) {
@@ -215,7 +238,8 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
                                  Qinf = Qinf,
                                  Qmin = getInputBV(Qmin, id),
                                  Qrelease = Qrelease,
-                                 IsHyst = IsHyst
+                                 IsHyst = IsHyst,
+                                 FUN_REGUL = FUN_REGUL[[id]]
                                  )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
@@ -250,7 +274,7 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrelease, IsHyst) {
+CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrelease, IsHyst, FUN_REGUL) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -292,7 +316,8 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     upstreamDiversion <- which(
       sapply(griwrm$id[UpstreamNodeRows],
              function(id) {
-               getNodeProperties(id, griwrm)$Diversion
+               np <- getNodeProperties(id, griwrm)
+               np$Diversion
              })
     )
     if (length(upstreamDiversion) > 0) {
@@ -379,9 +404,14 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
-    # Fill reservoir release with Qinf
-    InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+    if (!is.null(Qrelease) && id %in% names(Qrelease)) {
+      # Fill reservoir release with Qinf
+      InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+    }
   }
+
+  # Add regulation function
+  InputsModel$FUN_REGUL <- FUN_REGUL
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)
   class(InputsModel) <- c(FUN_MOD_REAL, class(InputsModel))
