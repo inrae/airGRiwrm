@@ -233,9 +233,10 @@ diversion</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 GaugingDown        &lt;NA&gt;     NA  360 RunModel_GR4J GaugingDown</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   Reservoir GaugingDown    150   NA          &lt;NA&gt;        &lt;NA&gt;</span>
 <span class="r-in"><span><span class="co"># Network diagram with direct flow node in red, intermediate sub-basin in green</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_basic</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="CreateGRiwrm-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###################################################</span></span></span>
 <span class="r-in"><span><span class="co"># GR4J semi-distributed model of the Severn River #</span></span></span>
@@ -272,9 +273,10 @@ diversion</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span>
 <span class="r-in"><span><span class="co"># Network diagram with upstream basin nodes in blue, intermediate sub-basin in green</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_severn</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="CreateGRiwrm-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">####################################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Severn network with an ungauged station at nodes 54029 and 54001 #</span></span></span>
@@ -297,9 +299,10 @@ diversion</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 54032 54057     15 6864.88 RunModel_GR4J 54032</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 54057  &lt;NA&gt;     NA 9885.46 RunModel_GR4J 54057</span>
 <span class="r-in"><span><span class="co"># Network diagram with gauged nodes of vivid color, and ungauged nodes of dull color</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_ungauged</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="CreateGRiwrm-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">###########################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Severn network with a Diversion on the node "54029"     #</span></span></span>
@@ -317,18 +320,20 @@ diversion</p></li>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">griwrm_div</span> <span class="op">&lt;-</span> <span class="fu">CreateGRiwrm</span><span class="op">(</span><span class="va">nodes_div</span>, <span class="va">rename_columns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Network diagram figures Diversion node by a red frame and a red arrow</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm_div</span>, orientation <span class="op">=</span> <span class="st">"TB"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="CreateGRiwrm-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># It's also possible to custom the diagram's look with mermaid directives</span></span></span>
 <span class="r-in"><span><span class="co"># (See details in plot.GRiwrm help topic)</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">griwrm_div</span>,</span></span>
 <span class="r-in"><span>  header <span class="op">=</span> <span class="st">"%%{init: {'flowchart': {'nodeSpacing': 30, 'rankSpacing': 30, 'curve': 'linear'}}}%%"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="CreateGRiwrm-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
