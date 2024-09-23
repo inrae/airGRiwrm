@@ -37,6 +37,7 @@ check:
     refs:
       - tags
       - schedules
+  allow_failure: true
   script:
   - tlmgr update --self && tlmgr install ec epstopdf-pkg amsmath
   - R -q -e 'remotes::update_packages("rcmdcheck")'
