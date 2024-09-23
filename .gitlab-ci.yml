@@ -27,7 +27,6 @@ test_all:
 
 run_examples:
   stage: checks
-  allow_failure: true
   script:
   - R -q -e 'options(error = function() quit(save = "no", status = 1)); devtools::run_examples(run_donttest = TRUE, run_dontrun = TRUE)'
 

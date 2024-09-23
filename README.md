@@ -41,6 +41,11 @@ Visit the website dedicated to the package at
 <https://inrae.github.io/airGRiwrm/> for tutorials, usage examples and
 documentation.
 
+[Subscribe to the airGRiwrm users mailing
+list](https://groupes.renater.fr/sympa/subscribe/airgriwrm-users) to be
+kept informed of updates and to ask for help from other users of the
+software.
+
 ## Acknowledgement
 
 This package has been developped as part of the IN-WOP European project
