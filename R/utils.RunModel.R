@@ -88,3 +88,23 @@ calcOverAbstraction <- function(O, WarmUp) {
   }
   return(O)
 }
+
+
+#' Get the next time steps date/time of a simulation
+#'
+#' @param OutputsModel Object returned by [RunModel.GRiwrmInputsModel],
+#' [RunModel.Supervisor], or [RunModel.GRiwrmOutputsModel]
+#' @param TimeStep [integer] number of time steps to get after the end of the
+#' simulation
+#'
+#' @return A [POSIXct] containing the date/time of the time steps following
+#' the end of the simulation.
+#' @export
+#'
+getNextTimeSteps <- function(OutputsModel, TimeStep = 1L) {
+  stopifnot(inherits(OutputsModel, "GRiwrmOutputsModel"),
+            is.integer(TimeStep))
+  last_date <- dplyr::last(OutputsModel[[1]]$DatesR)
+  first_date <- last_date + attr(OutputsModel, "TimeStep")
+  return(seq(first_date, length.out = TimeStep, by = attr(OutputsModel, "TimeStep")))
+ }
