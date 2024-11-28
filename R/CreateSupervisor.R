@@ -4,7 +4,7 @@
 #' See [RunModel.Supervisor] and vignettes for examples of use.
 #'
 #' @param InputsModel \[object of type `GRiwrmInputsModel`\] inputs of the model
-#' @param TimeStep [numeric] number of time steps between each supervision
+#' @param TimeStep [integer] number of time steps between each supervision
 #'
 #' @return A `Supervisor` object which is an [environment] containing all the necessary variables to run a supervised simulation, such as:
 #' - `DatesR` [POSIXct]: vector of date from `InputsModel`
