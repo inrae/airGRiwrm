@@ -116,57 +116,21 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     warning("The usage of 'Qobs' is deprecated, use 'Qinf' instead")
     Qinf <- Qobs
   }
-  varNames <- c("Precip", "PotEvap", "TempMean", "Qinf", "Qmin",
-                "TempMin", "TempMax", "ZInputs", "HypsoData", "NLayers")
-  names(varNames) <- varNames
-  lapply(varNames, function(varName) {
-    v <- get(varName)
-    if (!is.null(v)) {
-      if (is.matrix(v) || is.data.frame(v)) {
-        if (is.null(colnames(v))) {
-          stop(sprintf(
-            "'%s' must have column names",
-            varName
-          ))
-        } else if (!all(colnames(v) %in% x$id)) {
-          stop(sprintf(
-            "'%s' column names must be included in 'id's of the GRiwrm object",
-            varName
-          ), "\n",
-          sprintf("These columns are not known: %s",
-                  paste(colnames(v)[!colnames(v) %in% x$id], collapse = ", ")))
-        } else if (any(duplicated(colnames(v)))) {
-          stop(sprintf(
-            "'%s' has duplicated column names: '%s'",
-            varName,
-            paste(colnames(v)[duplicated(colnames(v))], collapse = "', '")
-          ))
-        }
-        if (!varName %in% c("ZInputs", "NLayers", "HypsoData") && nrow(v) != length(DatesR)) {
-          stop(sprintf(
-            "'%s' number of rows and the length of 'DatesR' must be equal",
-             varName
-          ))
-        }
-        if (varName %in% c("Precip", "PotEvap", "Qmin")) {
-          if (any(is.na(v))) {
-            stop(sprintf(
-              "`NA` values detected in '%s'. Missing values are not allowed in InputsModel",
-              varName
-            ))
-          }
-          if (any(v < 0)) {
-            stop(sprintf(
-              "'%s' values must be positive or nul. Missing values are not allowed in InputsModel",
-              varName
-            ))
-          }
-        }
-      } else if (!varName %in% c("ZInputs", "NLayers")) {
-        stop(sprintf("'%s' must be a matrix or a data.frame", varName))
-      }
-    }
-  })
+
+  checkInputsModelArguments(
+    x,
+    DatesR,
+    Precip = Precip,
+    PotEvap = PotEvap,
+    TempMean = TempMean,
+    Qinf = Qinf,
+    Qmin = Qmin,
+    TempMin = TempMin,
+    TempMax = TempMax,
+    ZInputs = ZInputs,
+    HypsoData = HypsoData,
+    NLayers = NLayers
+  )
 
   if (is.null(Qinf)) Qinf <- matrix(0, ncol = 0, nrow = length(DatesR))
   if (is.null(Qrelease)) Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))

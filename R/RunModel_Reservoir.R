@@ -146,6 +146,7 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
       OutputsModel$RunOptions$WarmUpQdiv_m3 <- Qdiv_m3[iWarmUp]
     }
   }
+  OutputsModel$RunOptions$Param <- Param
   iRun <- length(IndPerWarmUp) + seq(length(RunOptions$IndPeriod_Run))
   OutputsModel$Qsim_m3 <- Qsim_m3[iRun]
   OutputsModel$Vsim <- Vsim[iRun]

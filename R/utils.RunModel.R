@@ -61,7 +61,9 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
 #' @noRd
 #'
 serializeIniStates <- function(IniStates) {
-  unlist(IniStates)
+  IniStates <- unlist(IniStates)
+  IniStates[is.na(IniStates)] <- 0
+  return(IniStates)
 }
 
 
