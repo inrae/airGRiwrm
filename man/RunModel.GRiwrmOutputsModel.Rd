@@ -12,7 +12,8 @@
   DatesR = getNextTimeSteps(OutputsModel),
   Qinf = NULL,
   Qrelease = NULL,
-  Qmin = NULL
+  Qmin = NULL,
+  ...
 )
 }
 \arguments{
@@ -42,6 +43,8 @@ time step]. See details}
 minimum flows to let downstream of a node with a Diversion [m3 per
 time step]. Default is zero. Column names correspond to node IDs.
 See details}
+
+\item{...}{further arguments passed to \link[airGR:Calibration]{airGR::Calibration}, see details}
 }
 \value{
 An object of class \emph{GRiwrmOutputsModel}.
