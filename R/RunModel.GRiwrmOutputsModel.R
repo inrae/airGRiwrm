@@ -31,6 +31,8 @@
 #' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
 #'        release flows by nodes using the model `RunModel_Reservoir` \[m3 per
 #'        time step\]. See details
+#' @param merge_outputs [logical] Merge simulation outputs with the one provided
+#' in argument `x`
 #' @param ... Further arguments for compatibility with S3 methods
 #'
 #' @inherit RunModel.GRiwrmInputsModel return

@@ -45,6 +45,9 @@ minimum flows to let downstream of a node with a Diversion [m3 per
 time step]. Default is zero. Column names correspond to node IDs.
 See details}
 
+\item{merge_outputs}{\link{logical} Merge simulation outputs with the one provided
+in argument \code{x}}
+
 \item{...}{Further arguments for compatibility with S3 methods}
 }
 \value{
