@@ -44,6 +44,7 @@ RunModel.GRiwrmOutputsModel <- function(x,
                                         Qinf = NULL,
                                         Qrelease = NULL,
                                         Qmin = NULL,
+                                        merge_outputs = TRUE,
                                         ...) {
   stopifnot(inherits(x, "GRiwrmOutputsModel"),
             inherits(InputsModel, "GRiwrmInputsModel"),
@@ -112,11 +113,17 @@ RunModel.GRiwrmOutputsModel <- function(x,
   }
 
   # Run the model
-  return(suppressMessages(
+  OM <- suppressMessages(
     RunModel(
       InputsModel,
       RunOptions = RunOptions,
-      Param = extractParam(OutputsModel)
+      Param = extractParam(x)
     )
-  ))
+  )
+
+  if (merge_outputs) {
+    OM <- merge(x, OM)
+  }
+
+  return(OM)
 }

@@ -109,3 +109,36 @@ getNextTimeSteps <- function(x, TimeStep = 1L) {
   first_date <- last_date + attr(x, "TimeStep")
   return(seq(first_date, length.out = TimeStep, by = attr(x, "TimeStep")))
 }
+
+
+#' Merge Two outputs of airGR simulations
+#'
+#' @param x,y **OutputsModel** objects from [airGR::RunModel],
+#' [RunModel.GRiwrmInputsModel], [RunModel.GRiwrmOutputsModel], [RunModel.Supervisor]
+#' @param ... Not used
+#'
+#' @return An object **OutputsModel** with merged times series of simulation
+#' results.
+#' @rdname merge.OutputsModel
+#' @export
+#'
+merge.OutputsModel <- function(x, y, ...) {
+  items <- names(x)
+  items <- items[!grepl("RunOptions|StateEnd", items)]
+  for (item in items) {
+    y[[item]] <- c(x[[item]], y[[item]])
+  }
+  return(y)
+}
+
+#' @rdname merge.OutputsModel
+#' @export
+merge.GRiwrmOutputsModel <- function(x, y, ...) {
+  y_attributes <- attributes(y)
+  y <- lapply(setNames(nm = names(y)), function(id) {
+    merge(x[[id]], y[[id]])
+  })
+  attributes(y) <- y_attributes
+  attr(y, "Qm3s") <- rbind(attr(x, "Qm3s"), attr(y, "Qm3s"))
+  return(y)
+}
