@@ -2,9 +2,15 @@
 % Please edit documentation in R/utils.Calibration.R
 \name{extractParam}
 \alias{extractParam}
+\alias{extractParam.GRiwrmOutputsCalib}
+\alias{extractParam.GRiwrmOutputsModel}
 \title{Extract calibrated parameters}
 \usage{
 extractParam(x)
+
+\method{extractParam}{GRiwrmOutputsCalib}(x)
+
+\method{extractParam}{GRiwrmOutputsModel}(x)
 }
 \arguments{
 \item{x}{A \emph{GRiwrmOutputsModel} object returned by \link{Calibration.GRiwrmInputsModel}}

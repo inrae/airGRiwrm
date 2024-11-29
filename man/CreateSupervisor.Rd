@@ -9,7 +9,7 @@ CreateSupervisor(InputsModel, TimeStep = 1L)
 \arguments{
 \item{InputsModel}{[object of type \code{GRiwrmInputsModel}] inputs of the model}
 
-\item{TimeStep}{\link{numeric} number of time steps between each supervision}
+\item{TimeStep}{\link{integer} number of time steps between each supervision}
 }
 \value{
 A \code{Supervisor} object which is an \link{environment} containing all the necessary variables to run a supervised simulation, such as:

@@ -278,6 +278,18 @@ transferGRparams <- function(InputsModel, Param, donor, receiver, default_param 
 #' @export
 #'
 extractParam <- function(x) {
-  stopifnot(inherits(x, "GRiwrmOutputsCalib"))
+  UseMethod("extractParam")
+}
+
+#' @export
+#' @rdname extractParam
+extractParam.GRiwrmOutputsCalib <- function(x) {
   lapply(x, "[[", "ParamFinalR")
 }
+
+#' @export
+#' @rdname extractParam
+extractParam.GRiwrmOutputsModel <- function(x) {
+  lapply(x, function(o) o$RunOptions$Param)
+}
+

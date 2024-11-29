@@ -195,7 +195,7 @@ with and without low-flow support at station 54001:
 dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR,
                      Diverted_flow = OM_div$`54001`$Qdiv_m3 / 86400)
 
-oldpar <- par(mfrow=c(3,1), mar = c(2.5,4,1,1))
+oldpar <- par(mfrow = c(3,1), mar = c(2.5,4,1,1))
 plot.Qm3s(dfQdiv)
 
 # Plot natural and influenced flow at station "54001" and "54029"
