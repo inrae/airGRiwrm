@@ -4,10 +4,10 @@
 \alias{getNextTimeSteps}
 \title{Get the next time steps date/time of a simulation}
 \usage{
-getNextTimeSteps(OutputsModel, TimeStep = 1L)
+getNextTimeSteps(x, TimeStep = 1L)
 }
 \arguments{
-\item{OutputsModel}{Object returned by \link{RunModel.GRiwrmInputsModel},
+\item{x}{Object returned by \link{RunModel.GRiwrmInputsModel},
 \link{RunModel.Supervisor}, or \link{RunModel.GRiwrmOutputsModel}}
 
 \item{TimeStep}{\link{integer} number of time steps to get after the end of the

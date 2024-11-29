@@ -6,7 +6,8 @@
 #'
 #' @details
 #' `IndPeriod_Run` or `DatesR` must must be continuous periods starting the
-#' time step after the last simulation time step of `OutputsModel`.
+#' time step after the last simulation time step of the `GRiwrmOutputsModel`
+#' object provided through the argument `x`.
 #'
 #' `Qinf`, `Qmin`, and `Qrelease` are used for overwriting the corresponding
 #' arguments provided to [CreateInputsModel.GRiwrm] for the period to be simulated.
@@ -14,7 +15,7 @@
 #' `IndPeriod_Run` or `DatesR` lengths.
 #'
 #' @inheritParams getNextTimeSteps
-#' @inheritParams Calibration
+#' @inheritParams RunModel.GRiwrmInputsModel
 #' @inheritParams airGR::CreateRunOptions
 #' @param DatesR (optional) [POSIXt] vector of dates of period to be used for
 #' the model run. See details
@@ -30,24 +31,25 @@
 #' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
 #'        release flows by nodes using the model `RunModel_Reservoir` \[m3 per
 #'        time step\]. See details
+#' @param ... Further arguments for compatibility with S3 methods
 #'
 #' @inherit RunModel.GRiwrmInputsModel return
 #' @export
 #'
-RunModel.GRiwrmOutputsModel <- function(OutputsModel,
+RunModel.GRiwrmOutputsModel <- function(x,
                                         InputsModel,
                                         RunOptions,
                                         IndPeriod_Run = which(InputsModel[[1]]$DatesR %in% DatesR),
-                                        DatesR = getNextTimeSteps(OutputsModel),
+                                        DatesR = getNextTimeSteps(x),
                                         Qinf = NULL,
                                         Qrelease = NULL,
                                         Qmin = NULL,
                                         ...) {
-  stopifnot(inherits(OutputsModel, "GRiwrmOutputsModel"),
+  stopifnot(inherits(x, "GRiwrmOutputsModel"),
             inherits(InputsModel, "GRiwrmInputsModel"),
             inherits(RunOptions, "GRiwrmRunOptions"))
   # Check Run Period
-  next_time_step <- getNextTimeSteps(OutputsModel)
+  next_time_step <- getNextTimeSteps(x)
   next_index <- which(InputsModel[[1]]$DatesR == next_time_step)
   if (IndPeriod_Run[1] != next_index) {
     stop("`IndPeriod_Run` should have its first element equal to ", next_index)
@@ -57,7 +59,7 @@ RunModel.GRiwrmOutputsModel <- function(OutputsModel,
   for (id in names(RunOptions)) {
     # Run model for the sub-basin and one time step
     RunOptions[[id]]$IniResLevels <- NULL
-    RunOptions[[id]]$IniStates <- serializeIniStates(OutputsModel[[id]]$StateEnd)
+    RunOptions[[id]]$IniStates <- serializeIniStates(x[[id]]$StateEnd)
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
     RunOptions[[id]]$IndPeriod_Run <- IndPeriod_Run
   }
@@ -84,7 +86,7 @@ RunModel.GRiwrmOutputsModel <- function(OutputsModel,
         if (inputArg == "Qrelease" && !InputsModel[[id]]$isReservoir) {
             stop("The column ", id, " of the argument `Qrelease` does not refer to a Reservoir node")
         }
-        if (inputArg == "Qmin" && !InputsModel[[id]]$isDiversion) {
+        if (inputArg == "Qmin" && !InputsModel[[id]]$hasDiversion) {
           stop("The column ", id, " of the argument `Qmin` does not refer to a Diversion node")
         }
         if (is.null(InputsModel[[id]][[inputArg]])) {
@@ -93,13 +95,13 @@ RunModel.GRiwrmOutputsModel <- function(OutputsModel,
         InputsModel[[id]][[inputArg]][IndPeriod_Run] <- v
       }
       if (inputArg == "Qinf") {
+        g <- attr(InputsModel, "GRiwrm")
         if (is.null(InputsModel[[id]])) {
           # Direct Injection
-          g <- attr(InputsModel, "GRiwrm")
           id_down <- g$down[g$id == id]
           InputsModel[[id_down]]$Qupstream[IndPeriod_Run, id] <- v
         } else {
-          if (!InputsModel[[id]]$isDiversion) {
+          if (!InputsModel[[id]]$hasDiversion) {
             stop("The column ", id, " of the argument `Qinf` does not refer to a DirectInjection or a Diversion node")
           }
           InputsModel[[id]]$Qdiv[IndPeriod_Run] <- v

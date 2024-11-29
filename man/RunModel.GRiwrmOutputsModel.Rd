@@ -5,24 +5,25 @@
 \title{RunModel for hot restart after a previous simulation period}
 \usage{
 \method{RunModel}{GRiwrmOutputsModel}(
-  OutputsModel,
+  x,
   InputsModel,
   RunOptions,
   IndPeriod_Run = which(InputsModel[[1]]$DatesR \%in\% DatesR),
-  DatesR = getNextTimeSteps(OutputsModel),
+  DatesR = getNextTimeSteps(x),
   Qinf = NULL,
   Qrelease = NULL,
   Qmin = NULL,
+  merge_outputs = TRUE,
   ...
 )
 }
 \arguments{
-\item{OutputsModel}{Object returned by \link{RunModel.GRiwrmInputsModel},
+\item{x}{Object returned by \link{RunModel.GRiwrmInputsModel},
 \link{RunModel.Supervisor}, or \link{RunModel.GRiwrmOutputsModel}}
 
-\item{InputsModel}{[object of class \emph{InputsModel} or \emph{GRiwrmInputsModel}] see \link{CreateInputsModel}}
+\item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link[airGR]{CreateInputsModel}} for details}
 
-\item{RunOptions}{[object of class \emph{RunOptions} or \emph{GRiwrmRunOptions}] see \link{CreateRunOptions}}
+\item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
 
 \item{IndPeriod_Run}{[numeric] index of period to be used for the model run [-]. See details}
 
@@ -44,7 +45,7 @@ minimum flows to let downstream of a node with a Diversion [m3 per
 time step]. Default is zero. Column names correspond to node IDs.
 See details}
 
-\item{...}{further arguments passed to \link[airGR:Calibration]{airGR::Calibration}, see details}
+\item{...}{Further arguments for compatibility with S3 methods}
 }
 \value{
 An object of class \emph{GRiwrmOutputsModel}.
@@ -66,7 +67,8 @@ redefined for this new simulation period.
 }
 \details{
 \code{IndPeriod_Run} or \code{DatesR} must must be continuous periods starting the
-time step after the last simulation time step of \code{OutputsModel}.
+time step after the last simulation time step of the \code{GRiwrmOutputsModel}
+object provided through the argument \code{x}.
 
 \code{Qinf}, \code{Qmin}, and \code{Qrelease} are used for overwriting the corresponding
 arguments provided to \link{CreateInputsModel.GRiwrm} for the period to be simulated.
