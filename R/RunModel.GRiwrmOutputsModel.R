@@ -104,7 +104,8 @@ RunModel.GRiwrmOutputsModel <- function(x,
           if (!InputsModel[[id]]$hasDiversion) {
             stop("The column ", id, " of the argument `Qinf` does not refer to a DirectInjection or a Diversion node")
           }
-          InputsModel[[id]]$Qdiv[IndPeriod_Run] <- v
+          # Update withdrawal due to Diversion
+          InputsModel[[id]]$Qdiv[IndPeriod_Run] <- -v
         }
       }
     }
