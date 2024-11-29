@@ -41,7 +41,8 @@ RunModel.GRiwrmOutputsModel <- function(OutputsModel,
                                         DatesR = getNextTimeSteps(OutputsModel),
                                         Qinf = NULL,
                                         Qrelease = NULL,
-                                        Qmin = NULL) {
+                                        Qmin = NULL,
+                                        ...) {
   stopifnot(inherits(OutputsModel, "GRiwrmOutputsModel"),
             inherits(InputsModel, "GRiwrmInputsModel"),
             inherits(RunOptions, "GRiwrmRunOptions"))

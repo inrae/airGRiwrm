@@ -43,6 +43,9 @@ RunModel.InputsModel <- function(x = NULL,
     }
   }
 
+  # Avoiding Error in `FUN_MOD(x, RunOptions, Param)`: NA/NaN/Inf in foreign function call (arg 7)
+  RunOptions$IniStates[is.na(RunOptions$IniStates)] <- 0
+
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
     OutputsModel <- RunModel_Routing(x, RunOptions, Param)

@@ -62,7 +62,6 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
 #'
 serializeIniStates <- function(IniStates) {
   IniStates <- unlist(IniStates)
-  IniStates[is.na(IniStates)] <- 0
   return(IniStates)
 }
 
@@ -109,4 +108,4 @@ getNextTimeSteps <- function(OutputsModel, TimeStep = 1L) {
   last_date <- dplyr::last(OutputsModel[[1]]$DatesR)
   first_date <- last_date + attr(OutputsModel, "TimeStep")
   return(seq(first_date, length.out = TimeStep, by = attr(OutputsModel, "TimeStep")))
- }
+}
