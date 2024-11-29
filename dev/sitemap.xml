@@ -30,6 +30,7 @@
 <url><loc>https://inrae.github.io/airGRiwrm/reference/CreateSupervisor.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.GR.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.GRiwrmInputsModel.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.GRiwrmOutputsModel.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.InputsModel.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.Supervisor.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/RunModel.html</loc></url>
@@ -38,12 +39,14 @@
 <url><loc>https://inrae.github.io/airGRiwrm/reference/airGRiwrm-package.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/as.Qm3s.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/extractParam.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/getNextTimeSteps.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/getNoSD_Ids.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/getNodeProperties.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/getNodeRanking.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/getSD_Ids.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/index.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/isNodeDownstream.html</loc></url>
+<url><loc>https://inrae.github.io/airGRiwrm/reference/merge.OutputsModel.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/mermaid.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/plot.GRiwrm.html</loc></url>
 <url><loc>https://inrae.github.io/airGRiwrm/reference/plot.GRiwrmOutputsModel.html</loc></url>
