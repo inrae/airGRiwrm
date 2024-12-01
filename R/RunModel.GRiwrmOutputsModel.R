@@ -17,6 +17,8 @@
 #' @inheritParams getNextTimeSteps
 #' @inheritParams RunModel.GRiwrmInputsModel
 #' @inheritParams airGR::CreateRunOptions
+#' @param InputsModel \[`GRiwrmInputsModel` object\] (see
+#' [CreateInputsModel.GRiwrm]) or \[`Supervisor` object\] (See [CreateSupervisor])
 #' @param DatesR (optional) [POSIXt] vector of dates of period to be used for
 #' the model run. See details
 #' @param Qinf (optional) [matrix] or [data.frame] of [numeric] containing
@@ -49,8 +51,17 @@ RunModel.GRiwrmOutputsModel <- function(x,
                                         merge_outputs = TRUE,
                                         ...) {
   stopifnot(inherits(x, "GRiwrmOutputsModel"),
-            inherits(InputsModel, "GRiwrmInputsModel"),
+            inherits(InputsModel, "GRiwrmInputsModel") || is.Supervisor(InputsModel),
             inherits(RunOptions, "GRiwrmRunOptions"))
+
+  if (is.Supervisor(InputsModel)) {
+    use_supervisor <- TRUE
+    sv <- InputsModel
+    InputsModel <- sv$InputsModel
+  } else {
+    use_supervisor <- FALSE
+  }
+
   # Check Run Period
   next_time_step <- getNextTimeSteps(x)
   next_index <- which(InputsModel[[1]]$DatesR == next_time_step)
@@ -112,6 +123,11 @@ RunModel.GRiwrmOutputsModel <- function(x,
         }
       }
     }
+  }
+
+  if (use_supervisor) {
+    sv$InputsModel <- InputsModel
+    InputsModel <- sv
   }
 
   # Run the model

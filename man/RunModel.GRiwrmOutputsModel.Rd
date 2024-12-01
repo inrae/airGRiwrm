@@ -21,7 +21,8 @@
 \item{x}{Object returned by \link{RunModel.GRiwrmInputsModel},
 \link{RunModel.Supervisor}, or \link{RunModel.GRiwrmOutputsModel}}
 
-\item{InputsModel}{[object of class \emph{InputsModel}] see \code{\link[airGR]{CreateInputsModel}} for details}
+\item{InputsModel}{[\code{GRiwrmInputsModel} object] (see
+\link{CreateInputsModel.GRiwrm}) or [\code{Supervisor} object] (See \link{CreateSupervisor})}
 
 \item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
 
