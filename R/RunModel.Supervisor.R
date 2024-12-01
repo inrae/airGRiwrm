@@ -151,7 +151,8 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     x$OutputsModel[[id]]$Qsim <-
       x$storedOutputs$Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
   }
-  attr(x$OutputsModel, "Qm3s") <- OutputsModelQsim(x$InputsModel, x$OutputsModel, IndPeriod_Run)
+
+  x$OutputsModel <- add_OutputsModel_attributes(x$InputsModel, x$OutputsModel, IndPeriod_Run)
 
   # restoration of InputsModel (Supervisor is an environment...)
   x$InputsModel <- InputsModelBackup

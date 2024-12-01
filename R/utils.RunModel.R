@@ -142,3 +142,10 @@ merge.GRiwrmOutputsModel <- function(x, y, ...) {
   attr(y, "Qm3s") <- rbind(attr(x, "Qm3s"), attr(y, "Qm3s"))
   return(y)
 }
+
+add_OutputsModel_attributes <- function(InputsModel, OutputsModel, IndPeriod_Run) {
+  attr(OutputsModel, "Qm3s") <- OutputsModelQsim(InputsModel, OutputsModel, IndPeriod_Run)
+  attr(OutputsModel, "GRiwrm") <- attr(InputsModel, "GRiwrm")
+  attr(OutputsModel, "TimeStep") <- attr(InputsModel, "TimeStep")
+  return(OutputsModel)
+}
