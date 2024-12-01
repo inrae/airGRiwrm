@@ -22,6 +22,8 @@ RunModel.GR <- function(x, RunOptions, Param, ...) {
     # All parameters
     iFirstParamRunOffModel <- 1
   }
+  # Avoiding Error in `FUN_MOD(x, RunOptions, Param)`: NA/NaN/Inf in foreign function call (arg 7)
+  RunOptions$IniStates[is.na(RunOptions$IniStates)] <- 0
 
   FUN_MOD <- match.fun(x$FUN_MOD)
   OutputsModel <- FUN_MOD(x, RunOptions = RunOptions,
