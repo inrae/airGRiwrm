@@ -42,6 +42,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     }
   })
   class(x$OutputsModel) <- c("GRiwrmOutputsModel", class(x$OutputsModel))
+  OutputsModelGR <- x$OutputsModel
 
   # Copy simulated pure runoff flows (no SD nor Diversion nodes) to Qupstream
   for (id in getNoSD_Ids(x$InputsModel, include_diversion = FALSE)) {
@@ -68,22 +69,14 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     OM_WarmUp <- NULL
   }
 
-  # Adapt RunOptions to step by step simulation and copy states
-  SD_Ids <- getSD_Ids(x$InputsModel, add_diversions = TRUE)
-  names(SD_Ids) <- SD_Ids
-  for (id in SD_Ids) {
-    RunOptions[[id]]$IndPeriod_WarmUp <- 0L
-    RunOptions[[id]]$Outputs_Sim <- c("Qsim_m3", "StateEnd", "Param")
-    if (!is.null(OM_WarmUp)) {
-      x$OutputsModel[[id]]$StateEnd <- OM_WarmUp[[id]]$StateEnd
-    } else {
-      x$OutputsModel[[id]]$StateEnd <- RunOptions[[id]]$IniStates
-    }
-  }
+  SD_Ids <- setNames(nm = getSD_Ids(x$InputsModel, add_diversions = TRUE))
 
   # Set Outputs to archive for final restitution
   outputVars <- lapply(SD_Ids, function(id) {
     ov <- c("Qsim_m3", "Qover_m3")
+    if (inherits(x$InputsModel[[id]], "GR")) {
+      ov <- c(ov, "Qsim", "QsimDown")
+    }
     if (x$InputsModel[[id]]$hasDiversion) {
       ov <- c(ov, "Qdiv_m3", "Qnat")
     }
@@ -92,6 +85,18 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     }
     return(ov)
   })
+
+  # Adapt RunOptions to step by step simulation and copy states
+  for (id in SD_Ids) {
+    RunOptions[[id]]$IndPeriod_WarmUp <- 0L
+    RunOptions[[id]]$Outputs_Sim <- c("Qsim", "Qsim_m3", "QsimDown", "StateEnd", "Param")
+    if (!is.null(OM_WarmUp)) {
+      x$OutputsModel[[id]]$StateEnd <- OM_WarmUp[[id]]$StateEnd
+    } else {
+      x$OutputsModel[[id]]$StateEnd <- RunOptions[[id]]$IniStates
+    }
+  }
+
   # Store OutputsModel for step by step simulation
   x$storedOutputs <- initStoredOutputs(x, outputVars)
 
@@ -125,11 +130,13 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
           Param = Param[[id]]
         )
       } else {
-        x$OutputsModel[[id]] <- RunModel_Routing(
-          x$InputsModel[[id]],
-          RunOptions = RunOptions[[id]],
-          Param = Param[[id]],
-          QcontribDown = x$storedOutputs$QcontribDown[x$ts.index, id]
+        x$OutputsModel[[id]] <- suppressWarnings(
+          RunModel_Routing(
+            x$InputsModel[[id]],
+            RunOptions = RunOptions[[id]],
+            Param = Param[[id]],
+            QcontribDown = x$storedOutputs$QcontribDown[x$ts.index, id]
+          )
         )
       }
       if (x$InputsModel[[id]]$hasDiversion) {
@@ -152,12 +159,20 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   message(" 100%")
 
   for (id in SD_Ids) {
-    x$OutputsModel[[id]]$DatesR <- x$DatesR[IndPeriod_Run]
+    StateEnd <- x$OutputsModel[[id]]$StateEnd
+    x$OutputsModel[[id]] <- OutputsModelGR[[id]]
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]
     }
     x$OutputsModel[[id]]$Qsim <-
       x$storedOutputs$Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
+    class_StateEnd <- class(x$OutputsModel[[id]]$StateEnd)
+    x$OutputsModel[[id]]$StateEnd <- c(x$OutputsModel[[id]]$StateEnd, StateEnd)
+    class(x$OutputsModel[[id]]$StateEnd) <- class_StateEnd
+    x$OutputsModel[[id]]$RunOptions$WarmUpQsim_m3 <- OM_WarmUp[[id]]$Qsim_m3
+    x$OutputsModel[[id]]$RunOptions$WarmUpQsim <- OM_WarmUp[[id]]$Qsim_m3 /
+      sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
+    x$OutputsModel[[id]]$RunOptions$Param <- Param[[id]]
   }
 
   x$OutputsModel <- add_OutputsModel_attributes(x$InputsModel, x$OutputsModel, IndPeriod_Run)
