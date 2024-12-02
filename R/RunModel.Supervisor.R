@@ -49,28 +49,36 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   }
 
   # Initialization of model states by running the model with no supervision on warm-up period
-  RunOptionsWarmUp <- RunOptions
-  for (id in names(x$InputsModel)) {
-    RunOptionsWarmUp[[id]]$IndPeriod_Run <- RunOptionsWarmUp[[id]]$IndPeriod_WarmUp
-    RunOptionsWarmUp[[id]]$IndPeriod_WarmUp <- 0L
-    RunOptionsWarmUp[[id]]$Outputs_Sim <- c("StateEnd", "Qsim")
-    if (x$InputsModel[[id]]$isReservoir) {
-      RunOptionsWarmUp[[id]]$Outputs_Sim <- c(RunOptionsWarmUp[[id]]$Outputs_Sim, "Qsim_m3")
+  if (RunOptions[[1]]$IndPeriod_WarmUp != 0L) {
+    RunOptionsWarmUp <- RunOptions
+    for (id in names(x$InputsModel)) {
+      RunOptionsWarmUp[[id]]$IndPeriod_Run <- RunOptionsWarmUp[[id]]$IndPeriod_WarmUp
+      RunOptionsWarmUp[[id]]$IndPeriod_WarmUp <- 0L
+      RunOptionsWarmUp[[id]]$Outputs_Sim <- c("StateEnd", "Qsim")
+      if (x$InputsModel[[id]]$isReservoir) {
+        RunOptionsWarmUp[[id]]$Outputs_Sim <- c(RunOptionsWarmUp[[id]]$Outputs_Sim, "Qsim_m3")
+      }
     }
+    OM_WarmUp <- suppressMessages(
+      RunModel.GRiwrmInputsModel(x$InputsModel,
+                                 RunOptions = RunOptionsWarmUp,
+                                 Param = Param)
+    )
+  } else {
+    OM_WarmUp <- NULL
   }
-  OM_WarmUp <- suppressMessages(
-    RunModel.GRiwrmInputsModel(x$InputsModel,
-                               RunOptions = RunOptionsWarmUp,
-                               Param = Param)
-  )
 
   # Adapt RunOptions to step by step simulation and copy states
   SD_Ids <- getSD_Ids(x$InputsModel, add_diversions = TRUE)
   names(SD_Ids) <- SD_Ids
   for (id in SD_Ids) {
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
-    RunOptions[[id]]$Outputs_Sim <- c("Qsim_m3", "StateEnd")
-    x$OutputsModel[[id]]$StateEnd <- serializeIniStates(OM_WarmUp[[id]]$StateEnd)
+    RunOptions[[id]]$Outputs_Sim <- c("Qsim_m3", "StateEnd", "Param")
+    if (!is.null(OM_WarmUp)) {
+      x$OutputsModel[[id]]$StateEnd <- OM_WarmUp[[id]]$StateEnd
+    } else {
+      x$OutputsModel[[id]]$StateEnd <- RunOptions[[id]]$IniStates
+    }
   }
 
   # Set Outputs to archive for final restitution
