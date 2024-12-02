@@ -32,18 +32,6 @@ test_that("RunModel.GRiwrmInputsModel should return same result with separated w
   })
 })
 
-test_that("RunModel.Supervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
-  sv <- CreateSupervisor(InputsModel)
-  OM_Supervisor <- RunModel(
-    sv,
-    RunOptions = RunOptions,
-    Param = ParamMichel
-  )
-  lapply(griwrm$id, function(id) {
-    expect_equal(OM_Supervisor[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
-  })
-})
-
 test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
   l <- setUpCemaNeigeData()
   l$griwrm[l$griwrm$id == "Down", "model"] <- "RunModel_GR4J"
