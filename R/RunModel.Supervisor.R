@@ -49,7 +49,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   }
 
   # Initialization of model states by running the model with no supervision on warm-up period
-  if (RunOptions[[1]]$IndPeriod_WarmUp != 0L) {
+  if (!identical(RunOptions[[1]]$IndPeriod_WarmUp, 0L)) {
     RunOptionsWarmUp <- RunOptions
     for (id in names(x$InputsModel)) {
       RunOptionsWarmUp[[id]]$IndPeriod_Run <- RunOptionsWarmUp[[id]]$IndPeriod_WarmUp
