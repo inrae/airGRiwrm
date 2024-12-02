@@ -20,20 +20,15 @@ RunModel_Routing <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
     x$BasinAreas[length(x$BasinAreas)] <- 1E-6
   }
   OutputsModel <- RunModel_Lag_enhanced(x,
-                                          RunOptions = RunOptions,
-                                          Param = Param[1],
-                                          QcontribDown = QcontribDown)
+                                        RunOptions = RunOptions,
+                                        Param = Param[1],
+                                        QcontribDown = QcontribDown)
   if (is.null(OutputsModel$DatesR)) {
     OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
   }
-  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
-    OutputsModel$RunOptions$WarmUpQsim_m3 <-
-      OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
-  }
+  OutputsModel <- complete_OutputsModel(OutputsModel, RunOptions, x$BasinAreas)
   OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
   OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
-
-  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   return(OutputsModel)
 }
 
