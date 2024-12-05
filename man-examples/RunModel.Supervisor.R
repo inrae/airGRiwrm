@@ -108,14 +108,4 @@ OM_dam <- RunModel(sv,
                    Param = P_severn)
 
 # Plotting the time series of flows and reservoir storage
-oldpar <- par(mfrow=c(2,1),
-              mar = c(2,3.3,1.2,0.5),
-              mgp = c(2,1,0))
-plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
-     ylim = c(0, 200))
-Vres <- as.Qm3s(DatesR = OM_dam$Dam$DatesR,
-                   "Simulated volume" = OM_dam$Dam$Vsim / 1E6)
-plot(Vres,
-     main = "Simulated reservoir storage",
-     ylab = expression("Storage (Mm" ^ "3" * ")"))
-par(oldpar)
+plot(OM_dam$Dam)

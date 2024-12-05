@@ -160,7 +160,11 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
 
   for (id in SD_Ids) {
     StateEnd <- x$OutputsModel[[id]]$StateEnd
-    x$OutputsModel[[id]] <- OutputsModelGR[[id]]
+    if (inherits(x$InputsModel[[id]], "GR")) {
+      x$OutputsModel[[id]] <- OutputsModelGR[[id]]
+    } else {
+      x$OutputsModel[[id]]$DatesR <- x$InputsModel[[1]]$DatesR[IndPeriod_Run]
+    }
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]
     }
