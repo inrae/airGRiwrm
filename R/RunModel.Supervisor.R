@@ -159,20 +159,24 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
   message(" 100%")
 
   for (id in SD_Ids) {
-    StateEnd <- x$OutputsModel[[id]]$StateEnd
     if (inherits(x$InputsModel[[id]], "GR")) {
+      # Copy OutputsModel from original run of GR contribution for the whole time series
+      # Except for StateEnd which has been modified
+      StateEnd <- x$OutputsModel[[id]]$StateEnd
       x$OutputsModel[[id]] <- OutputsModelGR[[id]]
+      class_StateEnd <- class(x$OutputsModel[[id]]$StateEnd)
+      x$OutputsModel[[id]]$StateEnd <- c(x$OutputsModel[[id]]$StateEnd, StateEnd)
+      class(x$OutputsModel[[id]]$StateEnd) <- class_StateEnd
     } else {
+      # Add missing DatesR for non GR models
       x$OutputsModel[[id]]$DatesR <- x$InputsModel[[1]]$DatesR[IndPeriod_Run]
     }
+    # Copy stored outputs for the whole time series
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]
     }
     x$OutputsModel[[id]]$Qsim <-
       x$storedOutputs$Qsim_m3[, id] / sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
-    class_StateEnd <- class(x$OutputsModel[[id]]$StateEnd)
-    x$OutputsModel[[id]]$StateEnd <- c(x$OutputsModel[[id]]$StateEnd, StateEnd)
-    class(x$OutputsModel[[id]]$StateEnd) <- class_StateEnd
     x$OutputsModel[[id]]$RunOptions$WarmUpQsim_m3 <- OM_WarmUp[[id]]$Qsim_m3
     x$OutputsModel[[id]]$RunOptions$WarmUpQsim <- OM_WarmUp[[id]]$Qsim_m3 /
       sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) / 1e3
