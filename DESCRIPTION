@@ -33,6 +33,7 @@ Imports:
 Suggests:
     htmltools,
     knitr,
+    lubridate,
     rmarkdown,
     spelling,
     testthat,
