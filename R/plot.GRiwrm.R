@@ -183,9 +183,9 @@ getNodeClass <- function(id, griwrm) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' diagram <- "flowchart LR\n  A --> B"
 #' mermaid_gen_link(diagram)
+#' \dontrun{
 #' f <- mermaid(diagram)
 #' f
 #'
@@ -308,10 +308,12 @@ plot_png <- function(path, add = FALSE) {
 #' @rdname mermaid
 #'
 #' @examples
+#' \dontrun{
 #' s <- "flowchart LR
-#' A -> B"
+#' A --> B"
 #' class(s) <- c("mermaid", class(s))
 #' plot(s)
+#' }
 plot.mermaid <- function(x, add = FALSE, ...) {
   file_mmd <- mermaid(x, ...)
   if (is.na(file_mmd)) {
