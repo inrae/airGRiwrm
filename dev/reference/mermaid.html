@@ -220,17 +220,17 @@ in mermaid script), the functions raises no error (see <code>mermaid</code> retu
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">diagram</span> <span class="op">&lt;-</span> <span class="st">"flowchart LR\n  A --&gt; B"</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">diagram</span> <span class="op">&lt;-</span> <span class="st">"flowchart LR\n  A --&gt; B"</span></span></span>
 <span class="r-in"><span><span class="fu">mermaid_gen_link</span><span class="op">(</span><span class="va">diagram</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "https://mermaid.ink/img/pako:eNqrVkrOT0lVslJKy8kvT85ILCpR8AmKyVNQcFTQ1bVTcFLSUcpNLcpNzExRsqpWKslIzQUpTklNSyzNKVGqrQUAjIcUfg?type=png"</span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu">mermaid</span><span class="op">(</span><span class="va">diagram</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">f</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpizcJXy/a0a48ce294b1a6f989506ce145809601.png"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpfEijTq/a0a48ce294b1a6f989506ce145809601.png"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># For displaying the diagram in Rmarkdown document</span></span></span>
 <span class="r-in"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/include_graphics.html" class="external-link">include_graphics</a></span><span class="op">(</span><span class="fu">mermaid</span><span class="op">(</span><span class="va">diagram</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpizcJXy/a0a48ce294b1a6f989506ce145809601.png"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpfEijTq/a0a48ce294b1a6f989506ce145809601.png"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "knit_image_paths" "knit_asis"       </span>
 <span class="r-in"><span></span></span>
@@ -238,14 +238,13 @@ in mermaid script), the functions raises no error (see <code>mermaid</code> retu
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="va">s</span> <span class="op">&lt;-</span> <span class="st">"flowchart LR</span></span></span>
-<span class="r-in"><span><span class="st">A -&gt; B"</span></span></span>
+<span class="r-in"><span><span class="st">A --&gt; B"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mermaid"</span>, <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">s</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>downloaded length 0 != reported length 20</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslJKy8kvT85ILCpR8AmKyXNU0LVTcFLSUcpNLcpNzExRsqpWKslIzQWpTElNSyzNKVGqrQUAY2oUEQ?type=png': HTTP status was '400 Bad Request'</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Mermaid diagram generation failed with error:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslJKy8kvT85ILCpR8AmKyXNU0LVTcFLSUcpNLcpNzExRsqpWKslIzQWpTElNSyzNKVGqrQUAY2oUEQ?type=png'</span>
+<span class="r-plt img"><img src="mermaid-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
