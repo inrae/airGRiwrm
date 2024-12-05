@@ -21,9 +21,10 @@
 If \code{InputsModel} parameter has been created for using a semi-distributed (SD) lag model (See \code{\link[airGR]{CreateInputsModel}}), the list value contains an extra item named \code{QsimDown} which is a numeric series of simulated discharge [mm/time step] related to the run-off contribution of the downstream sub-catchment.
 }
 \description{
-Function which performs a single model run with the provided function over the selected period.
+Run ONLY the rainfall-runoff model, upstream flow routing and Diversions are
+not processed.
 }
 \details{
-This function runs \link[airGR:RunModel]{airGR::RunModel} and add an item \code{Qsim_m3} to the returned
-\emph{OutputsModel} object.
+This function runs \link[airGR:RunModel]{airGR::RunModel} (without lag) and add an item \code{Qsim_m3}
+to the returned \emph{OutputsModel} object.
 }

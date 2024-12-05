@@ -70,6 +70,7 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN){
 #' # For pointing the discharge at the oulet of basins "54095" and "54002"
 #' CreateControl(c("54095", "54002"))
 CreateControl <- function(locations, sv, isU) {
+  if (is.null(locations)) return(NULL)
   if (!is.character(locations)) {
     stop("Parameters `Y` and `U` should be character")
   }

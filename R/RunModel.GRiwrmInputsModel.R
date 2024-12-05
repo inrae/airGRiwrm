@@ -43,8 +43,6 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
       Param = Param[[id]]
     )
   }
-  attr(OutputsModel, "Qm3s") <- OutputsModelQsim(x, OutputsModel, RunOptions[[1]]$IndPeriod_Run)
-  attr(OutputsModel, "GRiwrm") <- attr(x, "GRiwrm")
-  attr(OutputsModel, "TimeStep") <- attr(x, "TimeStep")
+  OutputsModel <- add_OutputsModel_attributes(x, OutputsModel, RunOptions[[1]]$IndPeriod_Run)
   return(OutputsModel)
 }

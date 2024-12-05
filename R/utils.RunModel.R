@@ -142,3 +142,25 @@ merge.GRiwrmOutputsModel <- function(x, y, ...) {
   attr(y, "Qm3s") <- rbind(attr(x, "Qm3s"), attr(y, "Qm3s"))
   return(y)
 }
+
+add_OutputsModel_attributes <- function(InputsModel, OutputsModel, IndPeriod_Run) {
+  attr(OutputsModel, "Qm3s") <- OutputsModelQsim(InputsModel, OutputsModel, IndPeriod_Run)
+  attr(OutputsModel, "GRiwrm") <- attr(InputsModel, "GRiwrm")
+  attr(OutputsModel, "TimeStep") <- attr(InputsModel, "TimeStep")
+  return(OutputsModel)
+}
+
+complete_OutputsModel <- function(OutputsModel, RunOptions, BasinAreas) {
+  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
+  if (is.null(OutputsModel$Qsim_m3)) {
+    # Add Qsim_m3 in m3/timestep
+    OutputsModel$Qsim_m3 <-
+      OutputsModel$Qsim * sum(BasinAreas, na.rm = TRUE) * 1e3
+  }
+  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim &&
+      is.null(OutputsModel$RunOptions$WarmUpQsim_m3)) {
+    OutputsModel$RunOptions$WarmUpQsim_m3 <-
+      OutputsModel$RunOptions$WarmUpQsim * sum(BasinAreas, na.rm = TRUE) * 1e3
+  }
+  return(OutputsModel)
+}

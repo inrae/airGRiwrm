@@ -6,6 +6,22 @@ e <- setupRunModel()
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
 for(x in ls(e)) assign(x, get(x, e))
 
+test_that("RunModel.Supervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
+  sv <- CreateSupervisor(InputsModel)
+  OM_Supervisor <- RunModel(
+    sv,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  )
+  lapply(griwrm$id, function(id) {
+    expect_equal(sort(names(OM_GriwrmInputs[[!!id]])),
+                 sort(names(OM_Supervisor[[!!id]])))
+    lapply(names(OM_Supervisor[[id]]), function(x) {
+      expect_equal(OM_Supervisor[[!!id]][[!!x]], OM_GriwrmInputs[[!!id]][[!!x]])
+    })
+  }) |> invisible()
+})
+
 # Add 2 nodes to the network
 nodes2 <- rbind(nodes,
                 data.frame(

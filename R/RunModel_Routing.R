@@ -20,20 +20,15 @@ RunModel_Routing <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
     x$BasinAreas[length(x$BasinAreas)] <- 1E-6
   }
   OutputsModel <- RunModel_Lag_enhanced(x,
-                                          RunOptions = RunOptions,
-                                          Param = Param[1],
-                                          QcontribDown = QcontribDown)
+                                        RunOptions = RunOptions,
+                                        Param = Param[1],
+                                        QcontribDown = QcontribDown)
   if (is.null(OutputsModel$DatesR)) {
     OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
   }
-  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
-    OutputsModel$RunOptions$WarmUpQsim_m3 <-
-      OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
-  }
+  OutputsModel <- complete_OutputsModel(OutputsModel, RunOptions, x$BasinAreas)
   OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
   OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
-
-  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
   return(OutputsModel)
 }
 
@@ -45,7 +40,7 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
     stop("'InputsModel' must be of class 'InputsModel'")
   }
   if (!inherits(InputsModel, "SD")) {
-    stop("'InputsModel' must be of class 'SD'")
+    warning("'InputsModel' may better be of class 'SD'")
   }
   if (!inherits(RunOptions, "RunOptions")) {
     stop("'RunOptions' must be of class 'RunOptions'")
@@ -186,14 +181,16 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
   }
 
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
-    SD <- lapply(seq(NbUpBasins), function(x) {
-      lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
-      InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
-    })
-    if (is.null(OutputsModel$StateEnd)) {
-      OutputsModel$StateEnd <- list(SD = SD)
-    } else {
-      OutputsModel$StateEnd$SD <- SD
+    if (NbUpBasins > 0) {
+      SD <- lapply(seq(NbUpBasins), function(x) {
+        lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
+        InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
+      })
+      if (is.null(OutputsModel$StateEnd)) {
+        OutputsModel$StateEnd <- list(SD = SD)
+      } else {
+        OutputsModel$StateEnd$SD <- SD
+      }
     }
     # message("StateEnd: ", paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }

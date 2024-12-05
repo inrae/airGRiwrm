@@ -69,9 +69,9 @@ If the generation failed (due to internet connection failure or syntax error
 in mermaid script), the functions raises no error (see \code{mermaid} returned value).
 }
 \examples{
-\dontrun{
 diagram <- "flowchart LR\n  A --> B"
 mermaid_gen_link(diagram)
+\dontrun{
 f <- mermaid(diagram)
 f
 
@@ -82,8 +82,10 @@ knitr::include_graphics(mermaid(diagram))
 unlink(f)
 }
 
+\dontrun{
 s <- "flowchart LR
-A -> B"
+A --> B"
 class(s) <- c("mermaid", class(s))
 plot(s)
+}
 }

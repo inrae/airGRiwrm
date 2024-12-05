@@ -62,17 +62,7 @@ RunModel.InputsModel <- function(x = NULL,
     OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
     OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
   }
-  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
-  if (is.null(OutputsModel$Qsim_m3)) {
-    # Add Qsim_m3 in m3/timestep
-    OutputsModel$Qsim_m3 <-
-      OutputsModel$Qsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
-  }
-  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim &&
-      is.null(OutputsModel$RunOptions$WarmUpQsim_m3)) {
-    OutputsModel$RunOptions$WarmUpQsim_m3 <-
-      OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
-  }
+  OutputsModel <- complete_OutputsModel(OutputsModel, RunOptions, x$BasinAreas)
   if (x$hasDiversion && !x$isReservoir) {
     OutputsModel <- RunModel_Diversion(x, RunOptions, OutputsModel)
   }
