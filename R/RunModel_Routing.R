@@ -40,7 +40,7 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
     stop("'InputsModel' must be of class 'InputsModel'")
   }
   if (!inherits(InputsModel, "SD")) {
-    stop("'InputsModel' must be of class 'SD'")
+    warning("'InputsModel' may better be of class 'SD'")
   }
   if (!inherits(RunOptions, "RunOptions")) {
     stop("'RunOptions' must be of class 'RunOptions'")
@@ -181,14 +181,16 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
   }
 
   if ("StateEnd" %in% RunOptions$Outputs_Sim) {
-    SD <- lapply(seq(NbUpBasins), function(x) {
-      lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
-      InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
-    })
-    if (is.null(OutputsModel$StateEnd)) {
-      OutputsModel$StateEnd <- list(SD = SD)
-    } else {
-      OutputsModel$StateEnd$SD <- SD
+    if (NbUpBasins > 0) {
+      SD <- lapply(seq(NbUpBasins), function(x) {
+        lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
+        InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
+      })
+      if (is.null(OutputsModel$StateEnd)) {
+        OutputsModel$StateEnd <- list(SD = SD)
+      } else {
+        OutputsModel$StateEnd$SD <- SD
+      }
     }
     # message("StateEnd: ", paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }
