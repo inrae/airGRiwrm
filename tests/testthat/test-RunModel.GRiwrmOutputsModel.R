@@ -26,25 +26,29 @@ Qrelease <- data.frame(Dam = rep(100E3, length(DatesR)))
 Qmin <- data.frame("54095" = rep(3E6, length(DatesR)))
 names(Qmin) <- "54095"
 e <- setupRunModel(
+  runRunModel = FALSE,
   griwrm = griwrm,
   Qinf = Qinf,
   Qrelease = Qrelease,
-  Qmin = Qmin,
-  runRunOptions = FALSE
+  Qmin = Qmin
 )
 for (x in ls(e)) assign(x, get(x, e))
 
-# Set up initial conditions
-RunOptions <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365L)
-Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(100E6, 1)))
-OM <- RunModel(InputsModel, RunOptions, Param)
-
-# Loop over periods months periods
+# Simulation periods up to 31/12/1986
 dfTS <- data.frame(
   DatesR = DatesR,
   yearmonth = format(DatesR, "%Y-%m")
 )
-dfTS <- dfTS[1:(which(dfTS$yearmonth == "1987-01")[1]), ]
+dfTS <- dfTS[1:(which(dfTS$yearmonth == "1987-01")[1] - 1), ]
+
+# Run simulation in "normal" mode
+Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(100E6, 1)))
+ROref <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365:nrow(dfTS))
+OMref <- RunModel(InputsModel, ROref, Param)
+
+# Set up initial conditions
+ROO <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365L)
+OM <- RunModel(InputsModel, ROO, Param)
 
 test_that("RunModel.GRiwrmOutputsModel works with InputsModel", {
 
@@ -56,10 +60,10 @@ test_that("RunModel.GRiwrmOutputsModel works with InputsModel", {
     ym_Qrelease <- Qrelease[ym_IndPeriod_Run, , drop = FALSE]
 
     # 50% Restriction on reservoir withdrawals if remaining less than 90 days of water
-    nb_remain_days <- OM$Dam$StateEnd$Reservoir$V / (-ym_Qinf$`WD`[1] + ym_Qrelease$Dam[1])
-    if (nb_remain_days < 180) {
-      ym_Qinf$`WD` <- -(max(0, OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam))) / 365
-    }
+    # nb_remain_days <- OM$Dam$StateEnd$Reservoir$V / (-ym_Qinf$`WD`[1] + ym_Qrelease$Dam[1])
+    # if (nb_remain_days < 180) {
+    #   ym_Qinf$`WD` <- -(max(0, OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam))) / 365
+    # }
     OM <- RunModel(OM,
                    InputsModel = InputsModel,
                    RunOptions = RunOptions,
@@ -69,6 +73,7 @@ test_that("RunModel.GRiwrmOutputsModel works with InputsModel", {
 
   expect_equal(nrow(attr(OM, "Qm3s")), nrow(dfTS) - 364)
   expect_equal(length(OM[[1]]$DatesR), nrow(dfTS) - 364)
+  expect_equal(str(attr(OM, "Qm3s")), str(attr(OMref, "Qm3s")))
 })
 
 test_that("RunModel.GRiwrmOutputsModel works with Supervisor", {
