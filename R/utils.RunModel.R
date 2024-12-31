@@ -61,6 +61,7 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
 #' @noRd
 #'
 serializeIniStates <- function(IniStates, InputsModel) {
+  if (!is.list(IniStates)) return(IniStates)
   ObjectClass <- class(InputsModel)
   if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$G))) {
     IniStates$CemaNeigeLayers$G <- NULL
