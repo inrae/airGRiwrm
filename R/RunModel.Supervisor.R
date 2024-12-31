@@ -120,7 +120,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     # Loop over sub-basin using SD model
     for (id in SD_Ids) {
       # Run model for the sub-basin and one time step
-      RunOptions[[id]]$IniStates <- serializeIniStates(x$OutputsModel[[id]]$StateEnd)
+      RunOptions[[id]]$IniStates <- serializeIniStates(x$OutputsModel[[id]]$StateEnd, x$InputsModel[[id]])
       RunOptions[[id]]$IndPeriod_Run <- iTS
       # Route upstream flows for SD nodes
       if (x$InputsModel[[id]]$isReservoir) {

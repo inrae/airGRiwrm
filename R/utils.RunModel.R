@@ -60,8 +60,26 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
 #' @return A vector as in `RunOptions$IniStates`
 #' @noRd
 #'
-serializeIniStates <- function(IniStates) {
+serializeIniStates <- function(IniStates, InputsModel) {
+  ObjectClass <- class(InputsModel)
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$G))) {
+    IniStates$CemaNeigeLayers$G <- NULL
+  }
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$eTG))) {
+    IniStates$CemaNeigeLayers$eTG <- NULL
+  }
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$Gthr))) {
+    IniStates$CemaNeigeLayers$Gthr <- NULL
+  }
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$Glocmax))) {
+    IniStates$CemaNeigeLayers$Glocmax <- NULL
+  }
+  IniStates$Store$Rest <- rep(NA, 3)
   IniStates <- unlist(IniStates)
+  IniStates[is.na(IniStates) & !grepl("SD", names(IniStates))] <- 0
+  if ("monthly" %in% ObjectClass) {
+    IniStates <- IniStates[seq_len(NState)]
+  }
   return(IniStates)
 }
 
