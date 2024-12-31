@@ -148,6 +148,9 @@ merge.OutputsModel <- function(x, y, ...) {
   for (item in items) {
     y[[item]] <- c(x[[item]], y[[item]])
   }
+  # We keep original warm-up data
+  if (!is.null(x$RunOptions$WarmUpQsim)) y$RunOptions$WarmUpQsim <- x$RunOptions$WarmUpQsim
+  if (!is.null(x$RunOptions$WarmUpQsim_m3)) y$RunOptions$WarmUpQsim_m3 <- x$RunOptions$WarmUpQsim_m3
   return(y)
 }
 
