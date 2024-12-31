@@ -49,6 +49,7 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   dfQsim <- cbind(data.frame(DatesR = InputsModel[[1]]$DatesR[IndPeriod_Run]),
                   do.call(cbind,lQsim) / attr(InputsModel, "TimeStep"))
   dfQsim <- as.Qm3s(dfQsim)
+  rownames(dfQsim) <- NULL
   return(dfQsim)
 }
 
@@ -159,6 +160,7 @@ merge.GRiwrmOutputsModel <- function(x, y, ...) {
   })
   attributes(y) <- y_attributes
   attr(y, "Qm3s") <- rbind(attr(x, "Qm3s"), attr(y, "Qm3s"))
+  rownames(attr(y, "Qm3s")) <- NULL
   return(y)
 }
 
