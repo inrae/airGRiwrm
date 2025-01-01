@@ -73,7 +73,7 @@ RunModel.GRiwrmOutputsModel <- function(x,
   for (id in names(RunOptions)) {
     # Run model for the sub-basin and one time step
     RunOptions[[id]]$IniResLevels <- NULL
-    RunOptions[[id]]$IniStates <- serializeIniStates(x[[id]]$StateEnd)
+    RunOptions[[id]]$IniStates <- serializeIniStates(x[[id]]$StateEnd, InputsModel[[id]])
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
     RunOptions[[id]]$IndPeriod_Run <- IndPeriod_Run
   }

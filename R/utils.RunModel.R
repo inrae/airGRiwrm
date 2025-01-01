@@ -49,6 +49,7 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
   dfQsim <- cbind(data.frame(DatesR = InputsModel[[1]]$DatesR[IndPeriod_Run]),
                   do.call(cbind,lQsim) / attr(InputsModel, "TimeStep"))
   dfQsim <- as.Qm3s(dfQsim)
+  rownames(dfQsim) <- NULL
   return(dfQsim)
 }
 
@@ -60,8 +61,27 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
 #' @return A vector as in `RunOptions$IniStates`
 #' @noRd
 #'
-serializeIniStates <- function(IniStates) {
+serializeIniStates <- function(IniStates, InputsModel) {
+  if (!is.list(IniStates)) return(IniStates)
+  ObjectClass <- class(InputsModel)
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$G))) {
+    IniStates$CemaNeigeLayers$G <- NULL
+  }
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$eTG))) {
+    IniStates$CemaNeigeLayers$eTG <- NULL
+  }
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$Gthr))) {
+    IniStates$CemaNeigeLayers$Gthr <- NULL
+  }
+  if (!"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$Glocmax))) {
+    IniStates$CemaNeigeLayers$Glocmax <- NULL
+  }
+  IniStates$Store$Rest <- rep(NA, 3)
   IniStates <- unlist(IniStates)
+  IniStates[is.na(IniStates) & !grepl("SD", names(IniStates))] <- 0
+  if ("monthly" %in% ObjectClass) {
+    IniStates <- IniStates[seq_len(NState)]
+  }
   return(IniStates)
 }
 
@@ -128,6 +148,9 @@ merge.OutputsModel <- function(x, y, ...) {
   for (item in items) {
     y[[item]] <- c(x[[item]], y[[item]])
   }
+  # We keep original warm-up data
+  if (!is.null(x$RunOptions$WarmUpQsim)) y$RunOptions$WarmUpQsim <- x$RunOptions$WarmUpQsim
+  if (!is.null(x$RunOptions$WarmUpQsim_m3)) y$RunOptions$WarmUpQsim_m3 <- x$RunOptions$WarmUpQsim_m3
   return(y)
 }
 
@@ -140,6 +163,7 @@ merge.GRiwrmOutputsModel <- function(x, y, ...) {
   })
   attributes(y) <- y_attributes
   attr(y, "Qm3s") <- rbind(attr(x, "Qm3s"), attr(y, "Qm3s"))
+  rownames(attr(y, "Qm3s")) <- NULL
   return(y)
 }
 
