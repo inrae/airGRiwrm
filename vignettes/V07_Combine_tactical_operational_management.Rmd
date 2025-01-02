@@ -1,0 +1,131 @@
+---
+title: "Severn_07: Combine tactical and operational planning management"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Severn_07: Combine tactical and operational planning management}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  fig.width = 6,
+  fig.asp = 0.68,
+  out.width = "70%",
+  fig.align = "center"
+)
+```
+
+Watershed-scale water resource management involves balancing ecological, social, 
+and economic needs through structured planning approaches. 
+Tactical and operational planning play distinct but complementary roles in 
+achieving sustainable water use, flood control, and ecosystem health.
+Tactical planning in watershed management focuses on mid-term strategies like 
+infrastructure development, policy creation, and risk mitigation to ensure 
+sustainable water use. 
+Operational planning handles short-term, day-to-day activities such as water 
+allocation, monitoring, and emergency response. 
+
+**airGRiwrm** offers various tools for introducing human influences into 
+catchment hydrological modelling, which can be combined to represent these 
+different planning levels.
+
+```{r setup}
+library(airGRiwrm)
+```
+
+## Introducing time loop simulation
+
+```{r}
+# Setup model
+griwrm <- CreateGRiwrm(rbind(
+  n_derived_rsrvr,
+  data.frame(
+    id = "WD",
+    down = "Dam",
+    length = 0,
+    area = NA,
+    model = NA
+  )
+))
+data(Severn)
+DatesR <-  Severn$BasinsObs[[1]]$DatesR
+Qinf <- data.frame(
+  # Diversion to the dam
+  `54095` = rep(-1E6, length(DatesR)),
+  # Withdrawal in the dam
+  WD = rep(-250000, length(DatesR))
+)
+names(Qinf)[1] <- "54095"
+# Release of the dam back to the river
+Qrelease <- data.frame(Dam = rep(100E3, length(DatesR)))
+# Diversion limited by fixed minimum flow to let in the river
+Qmin <- data.frame("54095" = rep(3E6, length(DatesR)))
+names(Qmin) <- "54095"
+e <- setupRunModel(
+  runRunModel = FALSE,
+  griwrm = griwrm,
+  Qinf = Qinf,
+  Qrelease = Qrelease,
+  Qmin = Qmin
+)
+for (x in ls(e)) assign(x, get(x, e))
+
+# Simulation periods up to 31/12/1986
+dfTS <- data.frame(
+  DatesR = DatesR,
+  yearmonth = format(DatesR, "%Y-%m")
+)
+dfTS <- dfTS[1:(which(dfTS$yearmonth == "1987-01")[1] - 1), ]
+
+# Set up initial conditions
+ROO <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365L)
+OM <- RunModel(InputsModel, ROO, Param)
+```
+
+## Combining time loop simulation and supervisor
+
+
+
+```{r}
+  sv <- CreateSupervisor(InputsModel)
+
+  curve <- approx(x = c(31*11 - 365, 30 * 6, 31 * 11, 366 + 30 * 6),
+                  y = c(20E6, 90E6, 20E6, 90E6),
+                  xout = 1:366)$y
+
+  fn_guide_curve_factory <- function(sv, curve) {
+    function(y) {
+      # How much to release for reaching the filling curve ?
+      deltaV <- sv$OutputsModel$Dam$Vsim - curve[lubridate::yday(sv$ts.date)]
+      # Minimum 500L/s and max 1E6 m3
+      return(max(86400 / 2, min(1E6, deltaV)))
+    }
+  }
+  fn_guide_curve <- fn_guide_curve_factory(sv, curve)
+
+  CreateController(sv, "dam_filling_curve",
+                   Y = NULL,
+                   U = "Dam",
+                   fn_guide_curve)
+
+  for(ym in unique(dfTS$yearmonth[dfTS$DatesR > OM[[1]]$DatesR])) {
+    message("Processing period ", ym)
+    # Preparing extract of Qinf for the current run
+    ym_IndPeriod_Run <- which(dfTS$yearmonth == ym)
+    ym_Qinf <- Qinf[ym_IndPeriod_Run, , drop = FALSE]
+    ym_Qrelease <- Qrelease[ym_IndPeriod_Run, , drop = FALSE]
+
+    # 50% Restriction on reservoir withdrawals if remaining less than 90 days of water
+    nb_remain_days <- OM$Dam$StateEnd$Reservoir$V / (-ym_Qinf$`WD`[1] + ym_Qrelease$Dam[1])
+    if (nb_remain_days < 180) {
+      ym_Qinf$`WD` <- -(max(0, OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam))) / 365
+    }
+    OM <- RunModel(OM,
+                   InputsModel = sv,
+                   RunOptions = RunOptions,
+                   IndPeriod_Run = ym_IndPeriod_Run,
+                   Qinf = ym_Qinf)
+  }
+```
