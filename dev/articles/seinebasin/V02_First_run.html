@@ -180,8 +180,6 @@ semi-distributed model of the Seine River with naturalized flows.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: airGR</span></span></code></pre>
-<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'airGRiwrm'</span></span></code></pre>
 <pre><code><span><span class="co">## The following objects are masked from 'package:airGR':</span></span>
@@ -198,7 +196,7 @@ semi-distributed model of the Seine River with naturalized flows.</p>
 <p>It is necessary to run the
 <code>vignette("01_First_network", package = "airGRiwrm")</code> before
 this one in order to create the Rdata file loaded below:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">"_cache/V01.RData"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -206,7 +204,7 @@ this one in order to create the Rdata file loaded below:</p>
 </h3>
 <p>GR4J parameters come from a calibration realized during the ClimAware
 project using naturalized flows.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">seinebasin</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">ClimAwareParams</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">ClimAwareParams</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"id_sgl"</span>, <span class="st">"Tau0"</span>, <span class="st">"K0"</span>, <span class="st">"X1"</span>, <span class="st">"X2"</span>, <span class="st">"X3"</span>, <span class="st">"X4"</span>, <span class="st">"NashId"</span><span class="op">)</span></span>
@@ -250,7 +248,7 @@ equal to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>τ</mi><mn>0</mn></msub><mo>+</mo><msub><mi>K</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">\tau_0 + K_0</annotation></semantics></math>.</p>
 <p>This lag parameter has to be converted in a speed in m/s used in the
 <strong>airGR</strong> lag model:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert TGR routing parameter into speed</span></span>
 <span><span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">ClimAwareParams</span>, by.x <span class="op">=</span> <span class="st">"id"</span>, by.y <span class="op">=</span> <span class="st">"id_sgl"</span><span class="op">)</span></span>
 <span></span>
@@ -281,16 +279,16 @@ options required by the <code><a href="../../reference/RunModel.html">RunModel()
 <li>InputsModel: the associated input data</li>
 <li>IndPeriod_Run: the period on which the model is run</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">IndPeriod_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">==</span> <span class="op">(</span><span class="va">InputsModel</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">365</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span>, <span class="co"># Set aside a one-year period for warm up</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span> <span class="co"># Until the end of the time series</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We define the (optional but recommended) warm up period as a one-year
 period before the run period:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">IndPeriod_WarmUp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">IndPeriod_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel</span>,</span>
 <span>  IndPeriod_WarmUp <span class="op">=</span> <span class="va">IndPeriod_WarmUp</span>,</span>
@@ -300,7 +298,7 @@ period before the run period:</p>
 <div class="section level2">
 <h2 id="run-the-sd-model-for-the-whole-basin">Run the SD model for the whole basin<a class="anchor" aria-label="anchor" href="#run-the-sd-model-for-the-whole-basin"></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsModelsClimAware</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/RunModel.html">RunModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel</span>,</span>
 <span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span>
@@ -342,7 +340,7 @@ period before the run period:</p>
 <h2 id="plot-the-result-for-each-basin">Plot the result for each basin<a class="anchor" aria-label="anchor" href="#plot-the-result-for-each-basin"></a>
 </h2>
 <p>We plot the simulated discharges against the naturalized ones.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">QNAT</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModelsClimAware</span>, Qobs <span class="op">=</span> <span class="va">Qnat</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V02_First_run_files/figure-html/plot-1.png" width="768"><img src="V02_First_run_files/figure-html/plot-2.png" width="768"><img src="V02_First_run_files/figure-html/plot-3.png" width="768"><img src="V02_First_run_files/figure-html/plot-4.png" width="768"><img src="V02_First_run_files/figure-html/plot-5.png" width="768"><img src="V02_First_run_files/figure-html/plot-6.png" width="768"><img src="V02_First_run_files/figure-html/plot-7.png" width="768"><img src="V02_First_run_files/figure-html/plot-8.png" width="768"><img src="V02_First_run_files/figure-html/plot-9.png" width="768"><img src="V02_First_run_files/figure-html/plot-10.png" width="768"><img src="V02_First_run_files/figure-html/plot-11.png" width="768"><img src="V02_First_run_files/figure-html/plot-12.png" width="768"><img src="V02_First_run_files/figure-html/plot-13.png" width="768"><img src="V02_First_run_files/figure-html/plot-14.png" width="768"><img src="V02_First_run_files/figure-html/plot-15.png" width="768"><img src="V02_First_run_files/figure-html/plot-16.png" width="768"><img src="V02_First_run_files/figure-html/plot-17.png" width="768"><img src="V02_First_run_files/figure-html/plot-18.png" width="768"><img src="V02_First_run_files/figure-html/plot-19.png" width="768"><img src="V02_First_run_files/figure-html/plot-20.png" width="768"><img src="V02_First_run_files/figure-html/plot-21.png" width="768"><img src="V02_First_run_files/figure-html/plot-22.png" width="768"><img src="V02_First_run_files/figure-html/plot-23.png" width="768"><img src="V02_First_run_files/figure-html/plot-24.png" width="768"><img src="V02_First_run_files/figure-html/plot-25.png" width="768"></p>
@@ -350,7 +348,7 @@ period before the run period:</p>
 <div class="section level2">
 <h2 id="save-data-for-next-vignettes">Save data for next vignettes<a class="anchor" aria-label="anchor" href="#save-data-for-next-vignettes"></a>
 </h2>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span><span class="va">RunOptions</span>, <span class="va">ParamClimAware</span>, <span class="va">IndPeriod_Run</span>, file <span class="op">=</span> <span class="st">"_cache/V02.RData"</span><span class="op">)</span></span></code></pre></div>
 </div>
   </div>

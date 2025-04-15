@@ -175,8 +175,6 @@ Dorchies</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: airGR</span></span></code></pre>
-<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## Attaching package: 'airGRiwrm'</span></span></code></pre>
 <pre><code><span><span class="co">## The following objects are masked from 'package:airGR':</span></span>
@@ -195,7 +193,7 @@ necessary for the hydrological model.</p>
 in <span class="citation">Dorchies et al. (2014)</span>.</p>
 <p>First, we must read the list of nodes and the associated
 metadata:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seine_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.table</a></span><span class="op">(</span></span>
 <span>  file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"seine_data"</span>, <span class="st">"network_gauging_stations.txt"</span>, package <span class="op">=</span> <span class="st">"seinebasin"</span><span class="op">)</span>,</span>
 <span>  sep <span class="op">=</span> <span class="st">";"</span>, header <span class="op">=</span> <span class="cn">TRUE</span>, fileEncoding <span class="op">=</span> <span class="st">"UTF-8"</span>, quote <span class="op">=</span> <span class="st">"\""</span>, stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -275,7 +273,7 @@ used.</li>
 </ul>
 <p>The <code>CreateGRiwrm</code> function helps to rename the columns of
 the dataframe and assign the variable classes.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seine_nodes</span><span class="op">$</span><span class="va">id_aval</span><span class="op">[</span><span class="va">seine_nodes</span><span class="op">$</span><span class="va">id_aval</span> <span class="op">==</span> <span class="st">""</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
 <span><span class="va">seine_nodes</span><span class="op">$</span><span class="va">distance_aval</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double</a></span><span class="op">(</span><span class="va">seine_nodes</span><span class="op">$</span><span class="va">distance_aval</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1000</span></span>
 <span><span class="va">seine_nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span>
@@ -314,7 +312,7 @@ the dataframe and assign the variable classes.</p>
 <p>The diagram of the network structure is represented below with in
 blue the upstream nodes with a GR4J model and in green the intermediate
 nodes with an SD (GR4J + LAG) model.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V01_First_network_files/figure-html/plot-1.png" width="768"></p>
 </div>
@@ -327,7 +325,7 @@ of the intermediate sub-basins are extracted from the SAFRAN reanalysis
 <p>The daily naturalized flow is provided by <span class="citation">Hydratec (2011)</span>.</p>
 <p>These data are embedded in the R package ‘seinebasin’, which is not
 publicly available.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">seinebasin</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">QNAT</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -339,7 +337,7 @@ InputsModel objects. The identifier of the sub-basin is used as a key in
 the list, which is ordered from upstream to downstream.</p>
 <p>The <strong>airGR</strong> CreateInputsModel function is extended in
 order to handle the GRiwrm object that describes the basin diagram:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin TRANN_01...</span></span></code></pre>
 <pre><code><span><span class="co">## CreateInputsModel.GRiwrm: Processing sub-basin STDIZ_04...</span></span></code></pre>
@@ -370,7 +368,7 @@ order to handle the GRiwrm object that describes the basin diagram:</p>
 <div class="section level3">
 <h3 id="save-data-for-next-vignettes">Save data for next vignettes<a class="anchor" aria-label="anchor" href="#save-data-for-next-vignettes"></a>
 </h3>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/files2.html" class="external-link">dir.create</a></span><span class="op">(</span><span class="st">"_cache"</span>, showWarnings <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/save.html" class="external-link">save</a></span><span class="op">(</span><span class="va">seine_nodes</span>, <span class="va">griwrm</span>, <span class="va">InputsModel</span>, file <span class="op">=</span> <span class="st">"_cache/V01.RData"</span><span class="op">)</span></span></code></pre></div>
 </div>

@@ -173,8 +173,6 @@ model network calibrated with influenced flows</h1>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: airGR</span></span>
-<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'airGRiwrm'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:airGR':</span></span>
@@ -211,8 +209,13 @@ Marne system:</p>
 <code class="sourceCode R"><span><span class="va">selectedNodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"STDIZ_04"</span>, <span class="st">"LOUVE_19"</span>, <span class="st">"VITRY_25"</span>, <span class="st">"CHALO_21"</span>, <span class="st">"MONTR_18"</span>, <span class="st">"NOISI_17"</span><span class="op">)</span></span>
 <span><span class="va">griwrm4</span> <span class="op">&lt;-</span> <span class="va">griwrm</span><span class="op">[</span><span class="va">griwrm</span><span class="op">$</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selectedNodes</span>,<span class="op">]</span></span>
 <span><span class="va">griwrm4</span><span class="op">[</span><span class="va">griwrm4</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"NOISI_17"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"down"</span>, <span class="st">"length"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="cn">NA</span> <span class="co"># Downstream station instead of PARIS_05</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm4</span><span class="op">)</span></span></code></pre></div>
-<p><img src="V06_Naturalised_flow_simulation_files/figure-html/griwrm4-1.png" width="700"></p>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
+<span><span class="co">#&gt; URL</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqdlFtrwkAQhf_KkiK-RGhML5qHQqnFBqyBeIE2SljMrG7NRZLVFmL-e1N1bLL1gn0Js5yz35ydDZsqk8gDxVAqlZSHXBgkrYoZBFA1SDWEpYipX81IVqmMwlE4jeliRjr2T809t9dvme_u9Y2DxXgnvFrdvu1qDQcLFDrWYPjsak0HCxSGZt9-c-u3DhYoPL08diy3rjlYoNC1zJ7pavcOFmMpFanVHtakcUfmwZoUSFLGrU1voA1xUuIzNIwt0yQbLre2-uGuE58mCSmcRC3EVQuZ1GLjwSIRMdCgTZdT8Eoc7KoWGhEzFBAH4HEqQNrTAkY8YHTpC5JDozkYV7qul3RsNwinm82Ecd83rgDYQVu7aKK0bCpGkXkMjlrLTEZLRhsSiFcRj3d60yuDWjyGiTDDj_zLo3DnYpSePGWLryBOfv35cdX9iPLNuKh9ck_MDH3xdWIaMiwfyyWwQ1P7k4_Bf5FHMjJ6CXB_CzInv44zHEVVgjwM5Z5ipMrmTcqfqd1vqWTZNxS6pIQ?type=png':</span></span>
+<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
+<span><span class="co">#&gt; Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqdlFtrwkAQhf_KkiK-RGhML5qHQqnFBqyBeIE2SljMrG7NRZLVFmL-e1N1bLL1gn0Js5yz35ydDZsqk8gDxVAqlZSHXBgkrYoZBFA1SDWEpYipX81IVqmMwlE4jeliRjr2T809t9dvme_u9Y2DxXgnvFrdvu1qDQcLFDrWYPjsak0HCxSGZt9-c-u3DhYoPL08diy3rjlYoNC1zJ7pavcOFmMpFanVHtakcUfmwZoUSFLGrU1voA1xUuIzNIwt0yQbLre2-uGuE58mCSmcRC3EVQuZ1GLjwSIRMdCgTZdT8Eoc7KoWGhEzFBAH4HEqQNrTAkY8YHTpC5JDozkYV7qul3RsNwinm82Ecd83rgDYQVu7aKK0bCpGkXkMjlrLTEZLRhsSiFcRj3d60yuDWjyGiTDDj_zLo3DnYpSePGWLryBOfv35cdX9iPLNuKh9ck_MDH3xdWIaMiwfyyWwQ1P7k4_Bf5FHMjJ6CXB_CzInv44zHEVVgjwM5Z5ipMrmTcqfqd1vqWTZNxS6pIQ?type=png'</span></span></code></pre></div>
 <p>We can now generate the new <code>GRiwrmInputsModel</code>
 object:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">

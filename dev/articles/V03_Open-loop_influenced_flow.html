@@ -175,8 +175,6 @@ Dorchies</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: airGR</span></span>
-<span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'airGRiwrm'</span></span>
 <span><span class="co">#&gt; The following objects are masked from 'package:airGR':</span></span>
@@ -243,8 +241,13 @@ downstream basin areas should be modified subsequently.</p>
 model)</li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV03</span><span class="op">)</span></span></code></pre></div>
-<p><img src="V03_Open-loop_influenced_flow_files/figure-html/diagram-1.png" width="70%" style="display: block; margin: auto;"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV03</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
+<span><span class="co">#&gt; URL</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNq1lE2LwjAQhv9KiJReKtTGIvawJ0GEPQmeqizBTDRrm0oa3YXqf99sbbtp_Vhc2MuQTt48886kpMDrjAGOsOMUQgodocLVW0jBjZAr4aAVTdwzOjvOUi7lRtH9Fr3Ov9eCvYVDfxzGZVz9pIJxXEYrRYK4jFYqHMVlXP0Pyx_EZbRT5UE_aFVE_f7LCQ0DtEtPqD5q178IiC0gge3mIhiEliAc2UaqEuEdgl8RhuSKsE5onqPaqtdYWuxzrYCmU3rYAOsqSeDVEDSTGlQKTFANt9X-wGt8TISCtZ7JdxNFJhvpBDhiwOkh0chUznYQ9Qghrf3a00JuyjqIiySJegD8pmxqiyhti2zXXR6Hu9I2k9OWcA45qGMmVLU_Zm1Qp_dKxSl92OVEHEHlP3rTrteMyByuP_ofgultRPafD6bRhZmxPAO7NbUrfxz-irzjkdNngM0tdDnmOn7hYA-nxgwVDEcFLt8o82xVvyU-n78AKq-f5Q?type=png':</span></span>
+<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
+<span><span class="co">#&gt; Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNq1lE2LwjAQhv9KiJReKtTGIvawJ0GEPQmeqizBTDRrm0oa3YXqf99sbbtp_Vhc2MuQTt48886kpMDrjAGOsOMUQgodocLVW0jBjZAr4aAVTdwzOjvOUi7lRtH9Fr3Ov9eCvYVDfxzGZVz9pIJxXEYrRYK4jFYqHMVlXP0Pyx_EZbRT5UE_aFVE_f7LCQ0DtEtPqD5q178IiC0gge3mIhiEliAc2UaqEuEdgl8RhuSKsE5onqPaqtdYWuxzrYCmU3rYAOsqSeDVEDSTGlQKTFANt9X-wGt8TISCtZ7JdxNFJhvpBDhiwOkh0chUznYQ9Qghrf3a00JuyjqIiySJegD8pmxqiyhti2zXXR6Hu9I2k9OWcA45qGMmVLU_Zm1Qp_dKxSl92OVEHEHlP3rTrteMyByuP_ofgultRPafD6bRhZmxPAO7NbUrfxz-irzjkdNngM0tdDnmOn7hYA-nxgwVDEcFLt8o82xVvyU-n78AKq-f5Q?type=png'</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="generation-of-the-griwrminputsmodel-object">Generation of the GRiwrmInputsModel object<a class="anchor" aria-label="anchor" href="#generation-of-the-griwrminputsmodel-object"></a>

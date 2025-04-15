@@ -175,8 +175,6 @@ Dorchies</h4>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://inrae.github.io/airGRiwrm/">airGRiwrm</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; Loading required package: airGR</span></span></code></pre>
-<pre><code><span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
-<span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'airGRiwrm'</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; The following objects are masked from 'package:airGR':</span></span>
@@ -202,7 +200,7 @@ model.</p>
 </h3>
 <p>The example of this tutorial takes place on the Severn River in the
 United Kingdom. The data set comes from the CAMELS GB database <span class="citation">(see Coxon et al. 2020)</span>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
 <span><span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;   gauge_id                 gauge_name gauge_lat gauge_lon    area elev_mean</span></span>
@@ -247,7 +245,7 @@ model is used (otherwise set to <code>NA</code>).</li>
 </ul>
 <p>Below, we constitute a <code>data.frame</code> bringing together all
 this information for the tutorial example:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span></code></pre></div>
 <p>The network description consists in a <code>GRiwrm</code> object that
@@ -274,7 +272,7 @@ used.</li>
 <p>The <code>GRiwrm</code> function helps to create an object of class
 <code>GRiwrm</code>. It renames the columns of the
 <code>data.frame</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>, down <span class="op">=</span> <span class="st">"downstream_id"</span>, length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">griwrm</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt;      id  down length    area         model donor</span></span>
@@ -287,7 +285,7 @@ used.</li>
 <p>The diagram of the network structure is represented below with in
 blue the upstream nodes with a GR4J model and in green the intermediate
 nodes with an SD (GR4J + LAG) model.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V01_Structure_SD_model_files/figure-html/diagram-1.png" width="70%" style="display: block; margin: auto;"></p>
 </div>
@@ -297,7 +295,7 @@ nodes with an SD (GR4J + LAG) model.</p>
 <p>Observations (precipitation, potential evapotranspiration (PE) and
 flows) should be formatted in a separate data.frame with one column of
 data per sub-catchment.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">BasinsObs</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; List of 6</span></span>
@@ -331,7 +329,7 @@ data per sub-catchment.</p>
 <span><span class="co">#&gt;   ..$ precipitation : num [1:11536] 4.01 0.57 2 0.37 0.01 0.3 0.12 0 0.12 0.07 ...</span></span>
 <span><span class="co">#&gt;   ..$ peti          : num [1:11536] 0.59 1.64 1.42 0.31 0.59 0.73 0.59 0.66 0.57 0.61 ...</span></span>
 <span><span class="co">#&gt;   ..$ discharge_spec: num [1:11536] 0.9 0.9 0.94 0.87 0.86 0.81 0.76 0.73 0.7 0.69 ...</span></span></code></pre>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="va">BasinsObs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span></span>
 <span></span>
 <span><span class="va">PrecipTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">precipitation</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
@@ -341,7 +339,7 @@ data per sub-catchment.</p>
 each basin. However, the model needs mean precipitation and PE at
 sub-basin scale. The function <code>ConvertMeteoSD</code> calculates
 these values for downstream sub-basins:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
 <span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -355,7 +353,7 @@ upstream to downstream.</p>
 <p>The <strong>airGR</strong> <code>CreateInputsModel</code> function is
 extended in order to handle the <code>GRiwrm</code> object that
 describes the basin diagram:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span></code></pre>
 <pre><code><span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span></span></code></pre>
