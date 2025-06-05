@@ -1,77 +1,98 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# airGRiwrm: airGR based Integrated Water Resource Management Modeling <img src="man/figures/logo.png" align="right" width="20%"/>
+# airGRiwrm <img src="man/figures/logo.png" align="right" width="20%"/>
+
+> **airGR-based Integrated Water Resource Management Modeling**
 
 <!-- badges: start -->
 
-[![CRAN](https://www.r-pkg.org/badges/version-ago/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
+[![CRAN
+version](https://www.r-pkg.org/badges/version-ago/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
 [![Total
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
 [![License:
 AGPL-3](https://img.shields.io/badge/license-AGPL--3-orange.svg)](https://cran.r-project.org/web/licenses/AGPL-3)
 [![DOI:
 10.15454/3CVD1I](https://img.shields.io/badge/doi-10.15454%2F3CVD1I-purple)](https://doi.org/10.15454/3CVD1I)
-[![Dev check
-status](https://gitlab.irstea.fr/in-wop/airGRiwrm/badges/dev/pipeline.svg)](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/pipelines)
+[![Dev
+pipeline](https://gitlab.irstea.fr/in-wop/airGRiwrm/badges/dev/pipeline.svg)](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/pipelines)
 <!-- badges: end -->
 
-**airGRiwrm** is an extension of the **airGR** R package for managing
-semi-distributive hydrological model on an anthropized catchment.
+**airGRiwrm** is an R package extending
+[**airGR**](https://hydrogr.github.io/airGR/) to support
+**semi-distributed hydrological modeling** for **anthropized
+catchments**.
 
-This package is developed by the [mixed research unit G-EAU,
-Montpellier, France](https://g-eau.fr/index.php/en/) and the [HYDRO team
-of the INRAE HYCAR research unit, Antony,
-France](https://webgr.inrae.fr/eng).
+This package is developed by:
 
-## Installation
+- [UMR G-EAU, Montpellier, France](https://g-eau.fr/index.php/en/)
+- [INRAE HYCAR – HYDRO team, Antony, France](https://webgr.inrae.fr/eng)
+
+## 🔧 Installation
 
 ``` r
-# Install stable version from CRAN
+# Stable version from CRAN
 install.packages("airGRiwrm")
 
-# Or the development version from GitHub:
+# Development version from GitHub
 # install.packages("devtools")
-devtools::install_github("inrae/airGRiwrm", "dev")
+devtools::install_github("inrae/airGRiwrm", ref = "dev")
 ```
 
-## Get started
+## 🚀 Getting Started
 
-Visit the website dedicated to the package at
-<https://inrae.github.io/airGRiwrm/> for tutorials, usage examples and
-documentation.
+Visit the package website: 👉 <https://inrae.github.io/airGRiwrm/>
 
-[Subscribe to the airGRiwrm users mailing
-list](https://groupes.renater.fr/sympa/subscribe/airgriwrm-users) to be
-kept informed of updates and to ask for help from other users of the
-software.
+There you’ll find: - Tutorials - Usage examples - Full documentation
 
-## Acknowledgement
+📬 [Subscribe to the airGRiwrm mailing
+list](https://groupes.renater.fr/sympa/subscribe/airgriwrm-users) To
+stay informed, ask questions, and connect with other users.
 
-This package has been developped as part of the IN-WOP European project
-(2019-2023) and the Talanoa-Water PRIMA project (2021-2025).
+## 💡 Use Cases
 
-The authors would like to thank the European Commission and the French
-National Research Agency (ANR) for funding in the frame of the
-collaborative international consortium
-[IN-WOP](http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop)
-financed under the 2018 Joint call of the WaterWorks2017 ERA-NET Cofund.
-This ERA-NET is an integral part of the activities developed by the
-Water JPI.
+**airGRiwrm** can be used in various contexts:
 
-<p style="display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center;">
-<img src="man/figures/logo_water_jpi.png" alt="Water JPI"/>
-<img src="man/figures/logo_water_works_2017.png" alt="Water Works 2017"/>
-<img src="man/figures/logo_european_commission.jpg" alt="European Commission"/>
-<img src="man/figures/logo_2018_joint_call.png" alt="2018 Joint call"/>
+1.  **Water Resource Management** Model and manage water systems in
+    human-impacted catchments.
+
+2.  **Research & Academia** Study anthropogenic impacts on hydrological
+    behavior.
+
+3.  **Environmental Impact Assessment** Evaluate effects of
+    infrastructure or policy on water flows.
+
+4.  **Policy Support** Inform evidence-based decision-making with robust
+    simulations.
+
+5.  **Education** Teach distributed hydrology and human-nature system
+    modeling.
+
+## 🤝 Acknowledgements
+
+This package was developed within:
+
+- [**IN-WOP project**
+  (2019–2023)](http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop)
+
+- [**Talanoa-Water project**
+  (2021–2025)](https://talanoa-water-france.hub.inrae.fr/) Part of the
+  **PRIMA Programme**, supported under **Horizon 2020** (Grant No. 2023)
+
+**Funding agencies:** - European Commission - French National Research
+Agency (ANR) - Water JPI via WaterWorks2017
+
+<p align="center">
+
+<img src="man/figures/logo_water_jpi.png" height="80"/>
+<img src="man/figures/logo_water_works_2017.png" height="80"/>
+<img src="man/figures/logo_european_commission.jpg" height="80"/>
+<img src="man/figures/logo_2018_joint_call.png" height="80"/>
 </p>
 
-Talanoa-Water is part of the PRIMA Programme supported by the European
-Union. The PRIMA programme is supported under Horizon 2020 the European
-Union’s Framework Programme for Research and Innovation. Grant Agreement
-number: 2023
+<p align="center">
 
-<p style="display: flex; justify-content: space-between;">
-<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Horizon_2020_Logo.png" alt="Logo H2020" width="25%"/>
-<img src="man/figures/logo_prima.png" alt="Logo PRIMA"  width="25%"/>
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Horizon_2020_Logo.png" width="25%"/>
+<img src="man/figures/logo_prima.png" width="25%"/>
 </p>
