@@ -41,7 +41,7 @@
 Mermaid code of the diagram if display is \code{FALSE}, otherwise the function returns the diagram itself.
 }
 \description{
-Plot of a diagram representing the network structure of a GRiwrm object
+Plot a GRiwrm diagram using online mermaid diagram generator.
 }
 \details{
 \code{header} parameter allows to add any mermaid code injected before the \code{graph}
@@ -49,6 +49,10 @@ instruction. It is notably useful for injecting directives that impact the
 format of the graph. See \href{https://mermaid.js.org/config/directives.html}{mermaid documentation on directives} for
 more details and also the
 \href{https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878}{complete list of available directives}.
+
+By default, this uses the service https://mermaid.ink.
+One can define an alternative server to use with the environment variable
+\code{MERMAID_URL} (See \link{mermaid} for more details).
 }
 \examples{
 library(airGRiwrm)

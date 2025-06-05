@@ -1,11 +1,17 @@
 #' Plot of a diagram representing the network structure of a GRiwrm object
 #'
+#' Plot a GRiwrm diagram using online mermaid diagram generator.
+#'
 #' @details
 #' `header` parameter allows to add any mermaid code injected before the `graph`
 #' instruction. It is notably useful for injecting directives that impact the
 #' format of the graph. See [mermaid documentation on directives](https://mermaid.js.org/config/directives.html) for
 #' more details and also the
 #' [complete list of available directives](https://github.com/mermaid-js/mermaid/blob/master/packages/mermaid/src/schemas/config.schema.yaml#L1878).
+#'
+#' By default, this uses the service https://mermaid.ink.
+#' One can define an alternative server to use with the environment variable
+#' `MERMAID_URL` (See [mermaid] for more details).
 #'
 #' @param x \[GRiwrm object\] data to display. See [CreateGRiwrm] for details
 #' @param display [logical] if `TRUE` plots the diagram, returns the mermaid code otherwise
