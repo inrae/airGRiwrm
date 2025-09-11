@@ -1,13 +1,13 @@
 #' Create InputsCrit for De Lavenne regularization
 #'
-#' Internal function that run [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori upstream
+#' Internal function that runs [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori upstream
 #' sub-catchment parameters grabbed during network calibration process.
 #'
 #' @param id [character] the id of the current sub-catchment
 #' @param OutputsModel \[GRiwrmOutputsModel\] object with simulation results of upstream sub-catchments run with calibrated parameters
 #' @param InputsCrit \[InputsCritLavenneFunction\] object internally created by [CreateInputsCrit.GRiwrmInputsModel]
 #'
-#' @return \[InputsCrit\] object with De Lavenne regularization
+#' @return \[InputsCrit\] object with de Lavenne regularization
 #' @import airGR
 #' @noRd
 #'
@@ -147,7 +147,7 @@ updateParameters4Ungauged <- function(
 #'
 #' @param IM *GRiwrmInputsModel* object (See [CreateInputsModel.GRiwrm])
 #'
-#' @return [numeric] named [vector] of the area of the downstream sub-basins
+#' @return [\numeric\] named [vector] of the area of the downstream sub-basins
 #' @noRd
 calcSubBasinAreas <- function(IM) {
   unlist(
@@ -164,7 +164,7 @@ calcSubBasinAreas <- function(IM) {
 #' shared with ungauged nodes inside the basin.
 #'
 #' @details
-#' The network should contains only one gauged station at downstream and other
+#' The network should contain only one gauged station at downstream and other
 #' nodes can be direct injection or ungauged nodes.
 #'
 #' This function works as functions similar to [airGR::RunModel_GR4J] except that
@@ -180,7 +180,7 @@ calcSubBasinAreas <- function(IM) {
 #' <https://pastel.hal.science/tel-01134990/document>
 #'
 #' @inheritParams airGR::RunModel
-#' @param ouput.all [logical] if `TRUE` returns the output of [RunModel.GRiwrm],
+#' @param ouput.all [logical] if `TRUE` returns the output of [RunModel.GRiwrmInputsModel],
 #' returns the `OutputsModel` of the downstream node otherwise
 #'
 #' @inherit RunModel.GRiwrmInputsModel return return
@@ -222,7 +222,7 @@ RunModel_Ungauged <- function(
 #' Transfer GR parameters from one donor sub-basin to a receiver sub-basin
 #'
 #' This function is used by `Calibration.GRiwrmInputsModel` for transferring parameters
-#' to ungauged nodes and
+#' to ungauged nodes
 #'
 #' @details
 #' `donor` and `receiver` nodes should have the same GR model with the same snow
@@ -230,16 +230,23 @@ RunModel_Ungauged <- function(
 #'
 #' The transfer takes care of:
 #' - the presence/absence of hydraulic routing parameters between the donor and the receiver
-#' - the transformation of the X4 parameters of GR models
+#' - the transformation of the X4 parameters of GR models. Indeed, this parameter is correlated to the catchment area.
+#' Therefore, it has to be rescaled from the surface of the donor catchment to the surface of the receiver catchment,
+#' following the relationship suggested by Lobligeois (2014): \eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
 #'
-#' @param InputsModel A *GRiwrmInputsModel* object (See [CreateInputsModel.GRiwrm])
-#' @param Param [numeric] vector of GR model parameters
-#' @param donor [character] id of the node which gives its parameters
-#' @param receiver [character] id of the node which receives the parameters from the donor
-#' @param default_param [numeric] vector of GR model parameters if parameters are missing from the donor
-#' @param verbose [logical] Add information message on donor and receiver
+#' @param InputsModel [\Object of class *GRiwrmInputsModel*\] see [CreateInputsModel.GRiwrm] for details
+#' @param Param [\numeric\] vector of GR model parameters
+#' @param donor [\character\] id of the node which gives its parameters
+#' @param receiver [\character\] id of the node which receives the parameters from the donor
+#' @param default_param [\numeric\] vector of GR model parameters if parameters are missing from the donor
+#' @param verbose [\logical\] Add information message on donor and receiver
 #'
-#' @return A [numeric] [vector] with transferred parameters
+#' @references
+#' Lobligeois, F., 2014. Mieux connaitre la distribution spatiale des pluies améliore-t-il la modélisation des crues ?
+#' Diagnostic sur 181 bassins versants français. Thèse de Doctorat, Irstea (Antony), AgroParisTech (Paris), 312 pp.
+#' https://webgr.inrae.fr/Media/Files/biblio-theses/2014_lobligeois_these.pdf
+#'
+#' @return [\numeric\] vector of transferred parameters
 #' @export
 #'
 transferGRparams <- function(
@@ -336,9 +343,9 @@ transferGRparams <- function(
 #' @details
 #' See vignettes and example of [RunModel_Reservoir] for examples of use.
 #'
-#' @param x A *GRiwrmOutputsModel* object returned by [Calibration.GRiwrmInputsModel]
+#' @param x [\Object of class *GRiwrmOutputsModel*\] returned by [Calibration.GRiwrmInputsModel]
 #'
-#' @return A named [list] of [numeric] [vector] containing the calibrated parameters
+#' @return [\list\] [numeric] [vector] containing the calibrated parameters
 #' of each modeled node.
 #'
 #' @seealso [Calibration], [RunModel.GRiwrmInputsModel], [RunModel.Supervisor]

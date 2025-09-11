@@ -14,24 +14,39 @@ transferGRparams(
 )
 }
 \arguments{
-\item{InputsModel}{A \emph{GRiwrmInputsModel} object (See \link{CreateInputsModel.GRiwrm})}
+\item{InputsModel}{[\Object of class \emph{GRiwrmInputsModel}] see [CreateInputsModel.GRiwrm] for details
 
-\item{Param}{\link{numeric} vector of GR model parameters}
+[\Object of class \emph{GRiwrmInputsModel}]: R:\%5C\%5CObject\%20of\%20class\%20\emph{GRiwrmInputsModel}\%5C
+[CreateInputsModel.GRiwrm]: R:CreateInputsModel.GRiwrm}
 
-\item{donor}{\link{character} id of the node which gives its parameters}
+\item{Param}{[\numeric] vector of GR model parameters
 
-\item{receiver}{\link{character} id of the node which receives the parameters from the donor}
+[\numeric]: R:\%5C\%5Cnumeric\%5C}
 
-\item{default_param}{\link{numeric} vector of GR model parameters if parameters are missing from the donor}
+\item{donor}{[\character] id of the node which gives its parameters
 
-\item{verbose}{\link{logical} Add information message on donor and receiver}
+[\character]: R:\%5C\%5Ccharacter\%5C}
+
+\item{receiver}{[\character] id of the node which receives the parameters from the donor
+
+[\character]: R:\%5C\%5Ccharacter\%5C}
+
+\item{default_param}{[\numeric] vector of GR model parameters if parameters are missing from the donor
+
+[\numeric]: R:\%5C\%5Cnumeric\%5C}
+
+\item{verbose}{[\logical] Add information message on donor and receiver
+
+[\logical]: R:\%5C\%5Clogical\%5C}
 }
 \value{
-A \link{numeric} \link{vector} with transferred parameters
+[\numeric] vector of transferred parameters
+
+[\numeric]: R:\%5C\%5Cnumeric\%5C
 }
 \description{
 This function is used by \code{Calibration.GRiwrmInputsModel} for transferring parameters
-to ungauged nodes and
+to ungauged nodes
 }
 \details{
 \code{donor} and \code{receiver} nodes should have the same GR model with the same snow
@@ -40,6 +55,13 @@ module configuration.
 The transfer takes care of:
 \itemize{
 \item the presence/absence of hydraulic routing parameters between the donor and the receiver
-\item the transformation of the X4 parameters of GR models
+\item the transformation of the X4 parameters of GR models. Indeed, this parameter is correlated to the catchment area.
+Therefore, it has to be rescaled from the surface of the donor catchment to the surface of the receiver catchment,
+following the relationship suggested by Lobligeois (2014): \eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
 }
+}
+\references{
+Lobligeois, F., 2014. Mieux connaitre la distribution spatiale des pluies améliore-t-il la modélisation des crues ?
+Diagnostic sur 181 bassins versants français. Thèse de Doctorat, Irstea (Antony), AgroParisTech (Paris), 312 pp.
+https://webgr.inrae.fr/Media/Files/biblio-theses/2014_lobligeois_these.pdf
 }

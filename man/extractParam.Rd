@@ -13,11 +13,18 @@ extractParam(x)
 \method{extractParam}{GRiwrmOutputsModel}(x)
 }
 \arguments{
-\item{x}{A \emph{GRiwrmOutputsModel} object returned by \link{Calibration.GRiwrmInputsModel}}
+\item{x}{[\Object of class \emph{GRiwrmOutputsModel}] returned by [Calibration.GRiwrmInputsModel]
+
+[\Object of class \emph{GRiwrmOutputsModel}]: R:\%5C\%5CObject\%20of\%20class\%20\emph{GRiwrmOutputsModel}\%5C
+[Calibration.GRiwrmInputsModel]: R:Calibration.GRiwrmInputsModel}
 }
 \value{
-A named \link{list} of \link{numeric} \link{vector} containing the calibrated parameters
+[\list] [numeric] [vector] containing the calibrated parameters
 of each modeled node.
+
+[\list]: R:\%5C\%5Clist\%5C
+[numeric]: R:numeric
+[vector]: R:vector
 }
 \description{
 Extract \link{list} of parameters from the output of \link{Calibration.GRiwrmInputsModel}
