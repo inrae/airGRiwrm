@@ -93,21 +93,26 @@
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateRunOptions()], [RunModel.GRiwrmInputsModel()]
 #'
-CreateInputsModel.GRiwrm <- function(x, DatesR,
-                                     Precip = NULL,
-                                     PotEvap = NULL,
-                                     Qinf = NULL,
-                                     Qobs = NULL,
-                                     Qmin = NULL,
-                                     Qrelease = NULL,
-                                     PrecipScale = TRUE,
-                                     TempMean = NULL, TempMin = NULL,
-                                     TempMax = NULL, ZInputs = NULL,
-                                     HypsoData = NULL, NLayers = 5,
-                                     IsHyst = FALSE,
-                                     FUN_REGUL = NULL,
-                                     ...) {
-
+CreateInputsModel.GRiwrm <- function(
+  x,
+  DatesR,
+  Precip = NULL,
+  PotEvap = NULL,
+  Qinf = NULL,
+  Qobs = NULL,
+  Qmin = NULL,
+  Qrelease = NULL,
+  PrecipScale = TRUE,
+  TempMean = NULL,
+  TempMin = NULL,
+  TempMax = NULL,
+  ZInputs = NULL,
+  HypsoData = NULL,
+  NLayers = 5,
+  IsHyst = FALSE,
+  FUN_REGUL = NULL,
+  ...
+) {
   # Check and format inputs
   if (!is.null(Qobs) && !is.null(Qinf)) {
     stop("'Qobs' and 'Qinf' cannot be used together, use only 'Qinf' instead")
@@ -132,8 +137,12 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     NLayers = NLayers
   )
 
-  if (is.null(Qinf)) Qinf <- matrix(0, ncol = 0, nrow = length(DatesR))
-  if (is.null(Qrelease)) Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
+  if (is.null(Qinf)) {
+    Qinf <- matrix(0, ncol = 0, nrow = length(DatesR))
+  }
+  if (is.null(Qrelease)) {
+    Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
+  }
   l <- updateQinfQrelease(g = x, Qinf = Qinf, Qrelease = Qrelease)
   Qinf <- l$Qinf
   Qrelease <- l$Qrelease
@@ -187,24 +196,25 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
 
     InputsModel[[id]] <-
-      CreateOneGRiwrmInputsModel(id = id,
-                                 griwrm = x,
-                                 DatesR = DatesR,
-                                 Precip = getInputBV(Precip, id),
-                                 PrecipScale,
-                                 PotEvap = getInputBV(PotEvap, id),
-                                 TempMean = getInputBV(TempMean, id),
-                                 TempMin = getInputBV(TempMin, id),
-                                 TempMax = getInputBV(TempMax, id),
-                                 ZInputs = getInputBV(ZInputs, id),
-                                 HypsoData = getInputBV(HypsoData, id),
-                                 NLayers = getInputBV(NLayers, id, 5),
-                                 Qinf = Qinf,
-                                 Qmin = getInputBV(Qmin, id),
-                                 Qrelease = Qrelease,
-                                 IsHyst = IsHyst,
-                                 FUN_REGUL = FUN_REGUL[[id]]
-                                 )
+      CreateOneGRiwrmInputsModel(
+        id = id,
+        griwrm = x,
+        DatesR = DatesR,
+        Precip = getInputBV(Precip, id),
+        PrecipScale,
+        PotEvap = getInputBV(PotEvap, id),
+        TempMean = getInputBV(TempMean, id),
+        TempMin = getInputBV(TempMin, id),
+        TempMax = getInputBV(TempMax, id),
+        ZInputs = getInputBV(ZInputs, id),
+        HypsoData = getInputBV(HypsoData, id),
+        NLayers = getInputBV(NLayers, id, 5),
+        Qinf = Qinf,
+        Qmin = getInputBV(Qmin, id),
+        Qrelease = Qrelease,
+        IsHyst = IsHyst,
+        FUN_REGUL = FUN_REGUL[[id]]
+      )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
   return(InputsModel)
@@ -238,7 +248,17 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrelease, IsHyst, FUN_REGUL) {
+CreateOneGRiwrmInputsModel <- function(
+  id,
+  griwrm,
+  DatesR,
+  ...,
+  Qinf,
+  Qmin,
+  Qrelease,
+  IsHyst,
+  FUN_REGUL
+) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -254,7 +274,6 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     FUN_MOD <- node$model
   }
 
-
   # Set hydraulic parameters
   UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
   Qupstream <- NULL
@@ -265,11 +284,21 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     # Sub-basin with hydraulic routing
     Qupstream <- NULL
     Qupstream <- as.matrix(cbind(
-      Qinf[ , colnames(Qinf)[colnames(Qinf) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE],
-      Qrelease[ , colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE]
+      Qinf[,
+        colnames(Qinf)[colnames(Qinf) %in% griwrm$id[UpstreamNodeRows]],
+        drop = FALSE
+      ],
+      Qrelease[,
+        colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]],
+        drop = FALSE
+      ]
     ))
     # Qupstream completion with zeros for all upstream nodes
-    Qupstream0 <- matrix(0, nrow = length(DatesR), ncol = length(UpstreamNodeRows))
+    Qupstream0 <- matrix(
+      0,
+      nrow = length(DatesR),
+      ncol = length(UpstreamNodeRows)
+    )
     colnames(Qupstream0) <- griwrm$id[UpstreamNodeRows]
     if (is.null(Qupstream) || ncol(Qupstream) == 0) {
       Qupstream <- Qupstream0
@@ -278,21 +307,20 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
       Qupstream <- Qupstream0
     }
     upstreamDiversion <- which(
-      sapply(griwrm$id[UpstreamNodeRows],
-             function(id) {
-               np <- getNodeProperties(id, griwrm)
-               np$Diversion
-             })
+      sapply(griwrm$id[UpstreamNodeRows], function(id) {
+        np <- getNodeProperties(id, griwrm)
+        np$Diversion
+      })
     )
     if (length(upstreamDiversion) > 0) {
-      Qupstream[, upstreamDiversion] <- - Qupstream[, upstreamDiversion]
+      Qupstream[, upstreamDiversion] <- -Qupstream[, upstreamDiversion]
     }
     LengthHydro <- griwrm$length[UpstreamNodeRows]
     names(LengthHydro) <- griwrm$id[UpstreamNodeRows]
     upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     BasinAreas <- c(
-        upstreamAreas,
-        node$area - sum(upstreamAreas, na.rm = TRUE)
+      upstreamAreas,
+      node$area - sum(upstreamAreas, na.rm = TRUE)
     )
     if (!is.na(node$area)) {
       if (BasinAreas[length(BasinAreas)] < 0) {
@@ -327,10 +355,12 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     InputsModel$UpstreamNodes <- griwrm$id[UpstreamNodeRows]
     InputsModel$UpstreamIsModeled <- !is.na(griwrm$model[UpstreamNodeRows])
     names(InputsModel$UpstreamIsModeled) <- InputsModel$UpstreamNodes
-    InputsModel$UpstreamVarQ <- ifelse(!is.na(griwrm$model[UpstreamNodeRows]) &
-                                    griwrm$model[UpstreamNodeRows] == "Diversion",
-                                    "Qdiv_m3",
-                                    "Qsim_m3")
+    InputsModel$UpstreamVarQ <- ifelse(
+      !is.na(griwrm$model[UpstreamNodeRows]) &
+        griwrm$model[UpstreamNodeRows] == "Diversion",
+      "Qdiv_m3",
+      "Qsim_m3"
+    )
     names(InputsModel$UpstreamVarQ) <- InputsModel$UpstreamNodes
   } else {
     InputsModel$BasinAreas <- node$area
@@ -342,13 +372,11 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
   # inUngaugedCluster: Ungauged node with downstream donor
   # including reservoirs between ungauged nodes and donor
   InputsModel$inUngaugedCluster <- node$donor != id &&
-                                   isNodeDownstream(griwrm, id, node$donor)
+    isNodeDownstream(griwrm, id, node$donor)
   # isReceiver: Ungauged node with not downstream donor
   InputsModel$isReceiver <- node$model == "Ungauged" &&
-                            !isNodeDownstream(griwrm, id, node$donor)
-  InputsModel$gaugedId <- ifelse(node$model == "Ungauged",
-                                 node$donor,
-                                 id)
+    !isNodeDownstream(griwrm, id, node$donor)
+  InputsModel$gaugedId <- ifelse(node$model == "Ungauged", node$donor, id)
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
   InputsModel$model <-
     list(
@@ -453,12 +481,19 @@ getInputBV <- function(x, id, unset = NULL) {
 hasUngaugedNodes <- function(id, griwrm) {
   g <- griwrm[!is.na(griwrm$model), ]
   idsWithCurrentAsDonor <- g$id[g$id != id & !is.na(g$donor) & g$donor == id]
-  if (length(idsWithCurrentAsDonor) == 0) return(FALSE)
-  areNodesUpstream <- sapply(idsWithCurrentAsDonor,
-                             function(x) isNodeUpstream(g, id, x))
-  if (!any(areNodesUpstream)) return(FALSE)
+  if (length(idsWithCurrentAsDonor) == 0) {
+    return(FALSE)
+  }
+  areNodesUpstream <- sapply(idsWithCurrentAsDonor, function(x) {
+    isNodeUpstream(g, id, x)
+  })
+  if (!any(areNodesUpstream)) {
+    return(FALSE)
+  }
   g_red <- g[g$id %in% idsWithCurrentAsDonor[areNodesUpstream], ]
-  if (any(g_red$model == "Ungauged")) return(TRUE)
+  if (any(g_red$model == "Ungauged")) {
+    return(TRUE)
+  }
   return(FALSE)
 }
 
@@ -468,11 +503,20 @@ hasUngaugedNodes <- function(id, griwrm) {
 #' @noRd
 .GetFeatModel <- function(InputsModel, IsHyst) {
   path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
-  FeatMod <- read.table(path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
-  NameFunMod <- ifelse(test = FeatMod$Pkg %in% "airGR",
-                       yes  = paste("RunModel", FeatMod$NameMod, sep = "_"),
-                       no   = FeatMod$NameMod)
-  IdMod <- which(sapply(NameFunMod, FUN = function(x) identical(InputsModel$FUN_MOD, x)))
+  FeatMod <- read.table(
+    path,
+    header = TRUE,
+    sep = ";",
+    stringsAsFactors = FALSE
+  )
+  NameFunMod <- ifelse(
+    test = FeatMod$Pkg %in% "airGR",
+    yes = paste("RunModel", FeatMod$NameMod, sep = "_"),
+    no = FeatMod$NameMod
+  )
+  IdMod <- which(sapply(NameFunMod, FUN = function(x) {
+    identical(InputsModel$FUN_MOD, x)
+  }))
   if (length(IdMod) < 1) {
     stop("'FUN_MOD' must be one of ", paste(NameFunMod, collapse = ", "))
   }
@@ -506,9 +550,13 @@ hasUngaugedNodes <- function(id, griwrm) {
 #'
 getNodeBasinArea <- function(i, griwrm) {
   area <- griwrm$area[i]
-  if (!is.na(area)) return(area)
+  if (!is.na(area)) {
+    return(area)
+  }
   Diversions <- !is.na(griwrm$model) & griwrm$model == "Diversion"
-  if (i %in% which(Diversions)) return(NA)
+  if (i %in% which(Diversions)) {
+    return(NA)
+  }
   UpstreamNodeRows <-
     which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down) & !Diversions)
   if (length(UpstreamNodeRows) > 0) {
@@ -517,5 +565,4 @@ getNodeBasinArea <- function(i, griwrm) {
   } else {
     return(NA)
   }
-
 }
