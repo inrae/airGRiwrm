@@ -14,7 +14,7 @@ CreateSupervisor(InputsModel, TimeStep = 1L)
 \value{
 A \code{Supervisor} object which is an \link{environment} containing all the necessary variables to run a supervised simulation, such as:
 \itemize{
-\item \code{DatesR} \link{POSIXct}: vector of date from \code{InputsModel}
+\item \code{DatesR} \link[lubridate:posix_utils]{lubridate::POSIXct}: vector of date from \code{InputsModel}
 \item \code{InputsModel}: a copy of \code{InputsModel} provided by \link{CreateInputsModel.GRiwrm}
 \item \code{griwrm}: a copy of \code{griwrm} provided by \link{CreateGRiwrm}
 \item \code{Controllers} \link{list}: list of the controllers used in the supervised simulation (See \link{CreateController})

@@ -14,7 +14,7 @@ getNextTimeSteps(x, TimeStep = 1L)
 simulation}
 }
 \value{
-A \link{POSIXct} containing the date/time of the time steps following
+A \link[lubridate:posix_utils]{lubridate::POSIXct} containing the date/time of the time steps following
 the end of the simulation.
 }
 \description{
