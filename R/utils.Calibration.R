@@ -28,8 +28,16 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
     AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
   }
   AprParamR <- AprParamR[featMod$indexParamUngauged]
-  message("Parameter regularization: get a priori parameters from node ", AprioriId, ": ", paste(round(AprParamR, 3), collapse = ", "))
-  AprCrit <- ErrorCrit(InputsCrit[[AprioriId]], OutputsModel[[AprioriId]])$CritValue
+  message(
+    "Parameter regularization: get a priori parameters from node ",
+    AprioriId,
+    ": ",
+    paste(round(AprParamR, 3), collapse = ", ")
+  )
+  AprCrit <- ErrorCrit(
+    InputsCrit[[AprioriId]],
+    OutputsModel[[AprioriId]]
+  )$CritValue
   return(Lavenne_FUN(AprParamR, AprCrit))
 }
 
@@ -70,13 +78,14 @@ reduceGRiwrmObj4Ungauged <- function(griwrm, obj) {
 #' @importFrom dplyr "%>%"
 #' @importFrom rlang .data
 #'
-updateParameters4Ungauged <- function(GaugedId,
-                                      InputsModel,
-                                      RunOptions,
-                                      CalibOptions,
-                                      OutputsModel,
-                                      useUpstreamQsim) {
-
+updateParameters4Ungauged <- function(
+  GaugedId,
+  InputsModel,
+  RunOptions,
+  CalibOptions,
+  OutputsModel,
+  useUpstreamQsim
+) {
   g <- getUngaugedCluster(attr(InputsModel, "GRiwrm"), GaugedId)
 
   ### Modify InputsModel for the reduced network ###
@@ -86,10 +95,17 @@ updateParameters4Ungauged <- function(GaugedId,
   for (id in names(InputsModel)) {
     if (id != GaugedId && InputsModel[[id]]$gaugedId == id) {
       if (any(is.na(CalibOptions[[id]]$FixedParam))) {
-        stop("Node '", id, "' located inside the ungauged node cluster '",
-             GaugedId, "' must have its parameters fixed.\n",
-             "Fix its parameters by assigning values to :",
-             " `CalibOptions[['", id, "']]$FixedParam`")
+        stop(
+          "Node '",
+          id,
+          "' located inside the ungauged node cluster '",
+          GaugedId,
+          "' must have its parameters fixed.\n",
+          "Fix its parameters by assigning values to :",
+          " `CalibOptions[['",
+          id,
+          "']]$FixedParam`"
+        )
       }
       InputsModel[[id]]$FixedParam <- CalibOptions[[id]]$FixedParam
     }
@@ -106,9 +122,11 @@ updateParameters4Ungauged <- function(GaugedId,
       ImUpIds <- InputsModel[[id]]$UpstreamNodes
       InputsModel[[id]]$UpstreamIsModeled[!ImUpIds %in% upIds] <- FALSE
       # Update InputsModel$Qupstream with simulated upstream flows
-      InputsModel[[id]] <- UpdateQsimUpstream(InputsModel[[id]],
-                                              RunOptions[[id]],
-                                              OutputsModel)
+      InputsModel[[id]] <- UpdateQsimUpstream(
+        InputsModel[[id]],
+        RunOptions[[id]],
+        OutputsModel
+      )
       # Restore initial UpstreamIsModeled and switch off already modeled nodes
       InputsModel[[id]]$UpstreamIsModeled <- UpIsModeledBackUp
       InputsModel[[id]]$UpstreamIsModeled[ImUpIds %in% upIds] <- FALSE
@@ -134,7 +152,8 @@ updateParameters4Ungauged <- function(GaugedId,
 calcSubBasinAreas <- function(IM) {
   unlist(
     sapply(IM, function(x) {
-      if (is.list(x)) as.numeric(x$BasinAreas[length(x$BasinAreas)])})
+      if (is.list(x)) as.numeric(x$BasinAreas[length(x$BasinAreas)])
+    })
   )
 }
 
@@ -166,21 +185,32 @@ calcSubBasinAreas <- function(IM) {
 #'
 #' @inherit RunModel.GRiwrmInputsModel return return
 #' @noRd
-RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE) {
+RunModel_Ungauged <- function(
+  InputsModel,
+  RunOptions,
+  Param,
+  output.all = FALSE
+) {
   InputsModel$FUN_MOD <- NULL
   donor <- RunOptions$id
   # Compute Param for each sub-basin
   P <- lapply(InputsModel, function(IM) {
     if (IM$id == donor) {
       return(Param)
-    } else if (IM$gaugedId == donor) { # Ungauged nodes
+    } else if (IM$gaugedId == donor) {
+      # Ungauged nodes
       return(transferGRparams(InputsModel, Param, donor, IM$id))
-    } else { # Nodes with fixed params (Reservoir or other model with fixed params)
+    } else {
+      # Nodes with fixed params (Reservoir or other model with fixed params)
       return(IM$FixedParam)
     }
   })
   OM <- suppressMessages(
-    RunModel.GRiwrmInputsModel(InputsModel, attr(RunOptions, "GRiwrmRunOptions"), P)
+    RunModel.GRiwrmInputsModel(
+      InputsModel,
+      attr(RunOptions, "GRiwrmRunOptions"),
+      P
+    )
   )
   if (output.all) {
     return(OM)
@@ -212,49 +242,87 @@ RunModel_Ungauged <- function(InputsModel, RunOptions, Param, output.all = FALSE
 #' @return A [numeric] [vector] with transferred parameters
 #' @export
 #'
-transferGRparams <- function(InputsModel, Param, donor, receiver, default_param = NULL, verbose = FALSE) {
-  missing_params <- setdiff(InputsModel[[receiver]]$model$indexParamUngauged,
-                            InputsModel[[donor]]$model$indexParamUngauged)
+transferGRparams <- function(
+  InputsModel,
+  Param,
+  donor,
+  receiver,
+  default_param = NULL,
+  verbose = FALSE
+) {
+  missing_params <- setdiff(
+    InputsModel[[receiver]]$model$indexParamUngauged,
+    InputsModel[[donor]]$model$indexParamUngauged
+  )
   if (verbose) {
-    message("Tranferring parameters from node '", donor, "' to node '", receiver, "'")
+    message(
+      "Tranferring parameters from node '",
+      donor,
+      "' to node '",
+      receiver,
+      "'"
+    )
   }
   if (length(missing_params) > 0) {
     if (is.null(default_param)) {
-      stop("Missing parameters in transfer between nodes '",
-           donor, "' and '", receiver, "'\n",
-           "Fix the missing parameters with the argument `FixedParam` of `CreateCalibOptions`")
+      stop(
+        "Missing parameters in transfer between nodes '",
+        donor,
+        "' and '",
+        receiver,
+        "'\n",
+        "Fix the missing parameters with the argument `FixedParam` of `CreateCalibOptions`"
+      )
     }
     max_params <- max(
       max(InputsModel[[receiver]]$model$indexParamUngauged),
       max(InputsModel[[donor]]$model$indexParamUngauged)
     )
     if (length(default_param) < max_params) {
-      stop("Error in parameter transfer between nodes '", donor, "' and '",
-           receiver, "'\n`default_params` should have a minimum length of ", max_params)
+      stop(
+        "Error in parameter transfer between nodes '",
+        donor,
+        "' and '",
+        receiver,
+        "'\n`default_params` should have a minimum length of ",
+        max_params
+      )
     }
-    Param2 <- rep(as.numeric(NA), length(InputsModel[[receiver]]$model$indexParamUngauged))
+    Param2 <- rep(
+      as.numeric(NA),
+      length(InputsModel[[receiver]]$model$indexParamUngauged)
+    )
     Param2[InputsModel[[donor]]$model$indexParamUngauged] <- Param
     Param2[missing_params] <- default_param[missing_params]
     Param <- Param2
   }
 
   p <- Param
-  if (length(Param) > length(InputsModel[[receiver]]$model$indexParamUngauged)) {
+  if (
+    length(Param) > length(InputsModel[[receiver]]$model$indexParamUngauged)
+  ) {
     # Transfer from intermediate node to upstream node
     p <- p[InputsModel[[receiver]]$model$indexParamUngauged]
   }
 
   if (InputsModel[[receiver]]$model$hasX4) {
-    donor_area <- InputsModel[[donor]]$BasinAreas[length(InputsModel[[donor]]$BasinAreas)]
-    receiver_area <- InputsModel[[receiver]]$BasinAreas[length(InputsModel[[receiver]]$BasinAreas)]
+    donor_area <- InputsModel[[donor]]$BasinAreas[length(
+      InputsModel[[donor]]$BasinAreas
+    )]
+    receiver_area <- InputsModel[[receiver]]$BasinAreas[length(
+      InputsModel[[receiver]]$BasinAreas
+    )]
     p[InputsModel[[receiver]]$model$iX4] <- max(
       Param[InputsModel[[donor]]$model$iX4] *
-        (receiver_area / donor_area) ^ 0.3,
+        (receiver_area / donor_area)^0.3,
       0.5
     )
   }
   if (verbose) {
-    message(message("\t     Param = ", paste(sprintf("%8.3f", p), collapse = ", ")))
+    message(message(
+      "\t     Param = ",
+      paste(sprintf("%8.3f", p), collapse = ", ")
+    ))
   }
   return(p)
 }
@@ -292,4 +360,3 @@ extractParam.GRiwrmOutputsCalib <- function(x) {
 extractParam.GRiwrmOutputsModel <- function(x) {
   lapply(x, function(o) o$RunOptions$Param)
 }
-
