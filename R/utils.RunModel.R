@@ -76,37 +76,23 @@ OutputsModelQsim <- function(InputsModel, OutputsModel, IndPeriod_Run) {
 #' @noRd
 #'
 serializeIniStates <- function(IniStates, InputsModel) {
+  stopifnot(inherits(InputsModel, "InputsModel"))
   if (!is.list(IniStates)) {
     return(IniStates)
   }
-  ObjectClass <- class(InputsModel)
-  if (
-    !"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$G))
-  ) {
-    IniStates$CemaNeigeLayers$G <- NULL
+  if (!"CemaNeige" %in% ObjectClass) {
+    fields <- c("G", "eTG", "Gthr", "Glocmax")
+
+    for (f in fields) {
+      if (any(is.na(IniStates$CemaNeigeLayers[[f]]))) {
+        IniStates$CemaNeigeLayers[[f]] <- NULL
+      }
+    }
   }
-  if (
-    !"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$eTG))
-  ) {
-    IniStates$CemaNeigeLayers$eTG <- NULL
-  }
-  if (
-    !"CemaNeige" %in% ObjectClass && any(is.na(IniStates$CemaNeigeLayers$Gthr))
-  ) {
-    IniStates$CemaNeigeLayers$Gthr <- NULL
-  }
-  if (
-    !"CemaNeige" %in% ObjectClass &&
-      any(is.na(IniStates$CemaNeigeLayers$Glocmax))
-  ) {
-    IniStates$CemaNeigeLayers$Glocmax <- NULL
-  }
+
   IniStates$Store$Rest <- rep(NA, 3)
   IniStates <- unlist(IniStates)
   IniStates[is.na(IniStates) & !grepl("SD", names(IniStates))] <- 0
-  if ("monthly" %in% ObjectClass) {
-    IniStates <- IniStates[seq_len(NState)]
-  }
   return(IniStates)
 }
 
