@@ -1,32 +1,30 @@
-#' Function to obtain the ID of sub-basins using SD model
+#' Function to get the IDs of sub-basins using SD model or not
 #'
-#' @param InputsModel \[`GRiwrmInputsModel` object\]
-#' @param add_diversions [logical] for adding upstream nodes with diversion
+#' @param InputsModel [GRiwrmInputsModel][CreateInputsModel.GRiwrm] object
+#' @param add_diversions [logical] for adding upstream nodes due to diversion
 #'
-#' @return [character] IDs of the sub-basins using SD model
+#' @return [character] IDs of the sub-basins using SD model or not
 #' @export
+#' @rdname getSD_Ids
 getSD_Ids <- function(InputsModel, add_diversions = FALSE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
-  bSDs <- sapply(InputsModel, function (IM) {
+  bSDs <- sapply(InputsModel, function(IM) {
     inherits(IM, "SD") || (add_diversions & IM$hasDiversion)
   })
   names(InputsModel)[bSDs]
 }
 
-#' Function to obtain the ID of sub-basins not using SD model
+#' @rdname getSD_Ids
 #'
-#' @param InputsModel \[`GRiwrmInputsModel` object\]
 #' @param include_diversion [logical] for including diversion nodes
-#'
-#' @return [character] IDs of the sub-basins not using the SD model
 #' @export
 getNoSD_Ids <- function(InputsModel, include_diversion = TRUE) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
     stop("Argument `InputsModel` should be of class GRiwrmInputsModel")
   }
-  bSDs <- sapply(InputsModel, function (IM) {
+  bSDs <- sapply(InputsModel, function(IM) {
     !inherits(IM, "SD") & (include_diversion | !IM$hasDiversion)
   })
   names(InputsModel)[bSDs]
@@ -35,8 +33,8 @@ getNoSD_Ids <- function(InputsModel, include_diversion = TRUE) {
 
 #' Check if a node is downstream or upstream another one
 #'
-#' @param x \[`GRiwrmInputsModel` object\] (see [CreateInputsModel.GRiwrm]) or
-#'        \[`GRiwrm` object\] (See [CreateGRiwrm])
+#' @param x [GRiwrmInputsModel][CreateInputsModel.GRiwrm] object (see [CreateInputsModel.GRiwrm]) or
+#'        [GRiwrm][CreateGRiwrm] (See [CreateGRiwrm])
 #' @param current_node [character] with the id of the current node
 #' @param candidate_node [character] with the id of the node for which we want
 #'        to know if it is downstream or upstream `current_node`
@@ -52,7 +50,11 @@ isNodeDownstream <- function(x, current_node, candidate_node) {
 
 #' @export
 #' @rdname isNodeDownstream
-isNodeDownstream.GRiwrmInputsModel <- function(x, current_node, candidate_node) {
+isNodeDownstream.GRiwrmInputsModel <- function(
+  x,
+  current_node,
+  candidate_node
+) {
   isNodeDownstream(attr(x, "GRiwrm"), current_node, candidate_node)
 }
 
@@ -61,10 +63,16 @@ isNodeDownstream.GRiwrmInputsModel <- function(x, current_node, candidate_node) 
 isNodeDownstream.GRiwrm <- function(x, current_node, candidate_node) {
   stopifnot(length(current_node) == 1)
   current_down_node <- x$down[x$id == current_node]
-  if (all(is.na(current_down_node))) return(FALSE)
+  if (all(is.na(current_down_node))) {
+    return(FALSE)
+  }
   current_down_node <- current_down_node[!is.na(current_down_node)]
-  if (any(current_down_node == candidate_node)) return(TRUE)
-  return(any(sapply(current_down_node, function(cdn) isNodeDownstream(x, cdn, candidate_node))))
+  if (any(current_down_node == candidate_node)) {
+    return(TRUE)
+  }
+  return(any(sapply(current_down_node, function(cdn) {
+    isNodeDownstream(x, cdn, candidate_node)
+  })))
 }
 
 #' Reduce the size of a GRiwrm by selecting the subset of nodes corresponding to a downstream node
@@ -102,7 +110,9 @@ reduceGRiwrm <- function(griwrm, down_node, check = FALSE) {
 
     to_visit <- to_visit[-1]
 
-    upstream_nodes <- griwrm$id[!is.na(griwrm$down) & griwrm$down == current_node]
+    upstream_nodes <- griwrm$id[
+      !is.na(griwrm$down) & griwrm$down == current_node
+    ]
 
     upstream_nodes <- upstream_nodes[!upstream_nodes %in% visited]
     to_visit <- unique(c(upstream_nodes, to_visit))
@@ -112,7 +122,9 @@ reduceGRiwrm <- function(griwrm, down_node, check = FALSE) {
   subgriwrm[subgriwrm$id == down_node, c("down", "length")] <- NA
   subgriwrm[!subgriwrm$down %in% subgriwrm$id, c("down", "length")] <- NA
 
-  if (check) subgriwrm <- CreateGRiwrm(subgriwrm, keep_all = TRUE)
+  if (check) {
+    subgriwrm <- CreateGRiwrm(subgriwrm, keep_all = TRUE)
+  }
 
   return(subgriwrm)
 }
@@ -127,7 +139,9 @@ isNodeUpstream <- function(x, current_node, candidate_node) {
 #' @export
 #' @rdname isNodeDownstream
 isNodeUpstream.GRiwrm <- function(x, current_node, candidate_node) {
-  if (candidate_node == current_node) return (FALSE)
+  if (candidate_node == current_node) {
+    return(FALSE)
+  }
   g <- reduceGRiwrm(x, current_node)
   return(candidate_node %in% g$id)
 }
@@ -155,13 +169,14 @@ getUngaugedCluster <- function(griwrm, GaugedId) {
   # Remove receiver nodes that haven't GaugedId as downstream node
   donorIds <- c(
     GaugedId,
-    donorIds[sapply(donorIds, function(x) isNodeDownstream(griwrm, x, GaugedId))]
+    donorIds[sapply(donorIds, function(x) {
+      isNodeDownstream(griwrm, x, GaugedId)
+    })]
   )
   gDonor <- griwrm %>% dplyr::filter(.data$id %in% donorIds)
   # Add upstream nodes for routing upstream flows
   upNodes <- griwrm %>%
-    dplyr::filter(.data$down %in% gDonor$id,
-                  !.data$id %in% gDonor$id) %>%
+    dplyr::filter(.data$down %in% gDonor$id, !.data$id %in% gDonor$id) %>%
     dplyr::mutate(model = ifelse(!is.na(.data$model), NA, .data$model))
   upIds <- upNodes$id
   g <- rbind(upNodes, gDonor)

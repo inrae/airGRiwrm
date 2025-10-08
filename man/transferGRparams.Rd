@@ -14,7 +14,8 @@ transferGRparams(
 )
 }
 \arguments{
-\item{InputsModel}{A \emph{GRiwrmInputsModel} object (See \link{CreateInputsModel.GRiwrm})}
+\item{InputsModel}{Object of class \link[=CreateInputsModel.GRiwrm]{GRiwrmInputsModel},
+see \link{CreateInputsModel.GRiwrm} for details}
 
 \item{Param}{\link{numeric} vector of GR model parameters}
 
@@ -27,11 +28,12 @@ transferGRparams(
 \item{verbose}{\link{logical} Add information message on donor and receiver}
 }
 \value{
-A \link{numeric} \link{vector} with transferred parameters
+A \link{numeric} \link{vector} of transferred parameters
 }
 \description{
 This function is used by \code{Calibration.GRiwrmInputsModel} for transferring parameters
-to ungauged nodes and
+to ungauged nodes and for providing a priori parameters in parameter
+regularization (See \link{CreateInputsCrit}).
 }
 \details{
 \code{donor} and \code{receiver} nodes should have the same GR model with the same snow
@@ -39,7 +41,19 @@ module configuration.
 
 The transfer takes care of:
 \itemize{
-\item the presence/absence of hydraulic routing parameters between the donor and the receiver
-\item the transformation of the X4 parameters of GR models
+\item the presence/absence of hydraulic routing parameters between the donor and
+the receiver (But \code{default_param} should be provided if the receiver has more
+parameters than the donor)
+\item the transformation of the X4 parameters of GR models. Indeed, this parameter
+is correlated to the catchment area.
+Therefore, it has to be rescaled from the surface of the donor catchment to
+the surface of the receiver catchment, following the relationship suggested
+by Lobligeois (2014):
+\eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
 }
+}
+\references{
+Lobligeois, F., 2014. Mieux connaitre la distribution spatiale des pluies améliore-t-il la modélisation des crues ?
+Diagnostic sur 181 bassins versants français. Thèse de Doctorat, Irstea (Antony), AgroParisTech (Paris), 312 pp.
+https://webgr.inrae.fr/Media/Files/biblio-theses/2014_lobligeois_these.pdf
 }

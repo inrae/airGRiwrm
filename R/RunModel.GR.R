@@ -13,7 +13,7 @@
 #' @param ... further arguments passed to or from other methods
 #'
 #' @inherit airGR::RunModel description details return
-#' @export
+#' @noRd
 #'
 RunModel.GR <- function(x, RunOptions, Param, ...) {
 

@@ -17,8 +17,8 @@
 #' @inheritParams getNextTimeSteps
 #' @inheritParams RunModel.GRiwrmInputsModel
 #' @inheritParams airGR::CreateRunOptions
-#' @param InputsModel \[`GRiwrmInputsModel` object\] (see
-#' [CreateInputsModel.GRiwrm]) or \[`Supervisor` object\] (See [CreateSupervisor])
+#' @param InputsModel [GRiwrmInputsModel][CreateInputsModel.GRiwrm] (see
+#' [CreateInputsModel.GRiwrm]) or [Supervisor][CreateSupervisor] (See [CreateSupervisor])
 #' @param DatesR (optional) [POSIXt] vector of dates of period to be used for
 #' the model run. See details
 #' @param Qinf (optional) [matrix] or [data.frame] of [numeric] containing
@@ -40,19 +40,23 @@
 #' @inherit RunModel.GRiwrmInputsModel return
 #' @export
 #'
-RunModel.GRiwrmOutputsModel <- function(x,
-                                        InputsModel,
-                                        RunOptions,
-                                        IndPeriod_Run = which(InputsModel[[1]]$DatesR %in% DatesR),
-                                        DatesR = getNextTimeSteps(x),
-                                        Qinf = NULL,
-                                        Qrelease = NULL,
-                                        Qmin = NULL,
-                                        merge_outputs = TRUE,
-                                        ...) {
-  stopifnot(inherits(x, "GRiwrmOutputsModel"),
-            inherits(InputsModel, "GRiwrmInputsModel") || is.Supervisor(InputsModel),
-            inherits(RunOptions, "GRiwrmRunOptions"))
+RunModel.GRiwrmOutputsModel <- function(
+  x,
+  InputsModel,
+  RunOptions,
+  IndPeriod_Run = which(InputsModel[[1]]$DatesR %in% DatesR),
+  DatesR = getNextTimeSteps(x),
+  Qinf = NULL,
+  Qrelease = NULL,
+  Qmin = NULL,
+  merge_outputs = TRUE,
+  ...
+) {
+  stopifnot(
+    inherits(x, "GRiwrmOutputsModel"),
+    inherits(InputsModel, "GRiwrmInputsModel") || is.Supervisor(InputsModel),
+    inherits(RunOptions, "GRiwrmRunOptions")
+  )
 
   if (is.Supervisor(InputsModel)) {
     use_supervisor <- TRUE
@@ -73,7 +77,10 @@ RunModel.GRiwrmOutputsModel <- function(x,
   for (id in names(RunOptions)) {
     # Run model for the sub-basin and one time step
     RunOptions[[id]]$IniResLevels <- NULL
-    RunOptions[[id]]$IniStates <- serializeIniStates(x[[id]]$StateEnd, InputsModel[[id]])
+    RunOptions[[id]]$IniStates <- serializeIniStates(
+      x[[id]]$StateEnd,
+      InputsModel[[id]]
+    )
     RunOptions[[id]]$IndPeriod_WarmUp <- 0L
     RunOptions[[id]]$IndPeriod_Run <- IndPeriod_Run
   }
@@ -91,20 +98,37 @@ RunModel.GRiwrmOutputsModel <- function(x,
   for (inputArg in names(inputs)) {
     input <- inputs[[inputArg]]
     if (length(IndPeriod_Run) != nrow(input)) {
-      stop("The Argument ", inputArg,
-           " must have a number of rows identical to the lenght of `IndPeriod_Run`")
+      stop(
+        "The Argument ",
+        inputArg,
+        " must have a number of rows identical to the lenght of `IndPeriod_Run`"
+      )
     }
     for (id in colnames(input)) {
       v <- input[, id, drop = TRUE]
       if (inputArg %in% c("Qrelease", "Qmin")) {
         if (inputArg == "Qrelease" && !InputsModel[[id]]$isReservoir) {
-            stop("The column ", id, " of the argument `Qrelease` does not refer to a Reservoir node")
+          stop(
+            "The column ",
+            id,
+            " of the argument `Qrelease` does not refer to a Reservoir node"
+          )
         }
         if (inputArg == "Qmin" && !InputsModel[[id]]$hasDiversion) {
-          stop("The column ", id, " of the argument `Qmin` does not refer to a Diversion node")
+          stop(
+            "The column ",
+            id,
+            " of the argument `Qmin` does not refer to a Diversion node"
+          )
         }
         if (is.null(InputsModel[[id]][[inputArg]])) {
-            stop("InputsModel[['", id, "']] should contain a `", inputArg, "` item")
+          stop(
+            "InputsModel[['",
+            id,
+            "']] should contain a `",
+            inputArg,
+            "` item"
+          )
         }
         InputsModel[[id]][[inputArg]][IndPeriod_Run] <- v
       }
@@ -116,7 +140,11 @@ RunModel.GRiwrmOutputsModel <- function(x,
           InputsModel[[id_down]]$Qupstream[IndPeriod_Run, id] <- v
         } else {
           if (!InputsModel[[id]]$hasDiversion) {
-            stop("The column ", id, " of the argument `Qinf` does not refer to a DirectInjection or a Diversion node")
+            stop(
+              "The column ",
+              id,
+              " of the argument `Qinf` does not refer to a DirectInjection or a Diversion node"
+            )
           }
           # Update withdrawal due to Diversion
           InputsModel[[id]]$Qdiv[IndPeriod_Run] <- -v
