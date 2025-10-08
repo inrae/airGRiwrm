@@ -107,16 +107,18 @@
 #' CalibOptions <- CreateCalibOptions(InputsModel)
 #'
 #' # Calibration
-#' OutputsCalib <- suppressWarnings(
-#'   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
-#' )
+#' if (interactive()) { # Too long for CRAN check...
+#'   OutputsCalib <- suppressWarnings(
+#'     Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+#'   )
 #'
-#' # Simulation
-#' OutputsModels <- RunModel(
-#'   InputsModel,
-#'   RunOptions = RunOptions,
-#'   Param = extractParam(OutputsCalib)
-#' )
+#'   # Simulation
+#'   OutputsModels <- RunModel(
+#'     InputsModel,
+#'     RunOptions = RunOptions,
+#'     Param = extractParam(OutputsCalib)
+#'   )
+#' }
 #'
 #' #############################################################################
 #' # EXAMPLE 2 - The one where the node "54032" is ungauged                    #
@@ -149,16 +151,18 @@
 #' CalibOptions <- CreateCalibOptions(InputsModel)
 #'
 #' # Calibration
-#' OutputsCalib <- suppressWarnings(
-#'   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
-#' )
+#' if (interactive()) { # Too long for CRAN check...
+#'   OutputsCalib <- suppressWarnings(
+#'     Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+#'   )
 #'
-#' # Simulation
-#' OutputsModels <- RunModel(
-#'   InputsModel,
-#'   RunOptions = RunOptions,
-#'   Param = extractParam(OutputsCalib)
-#' )
+#'   # Simulation
+#'   OutputsModels <- RunModel(
+#'     InputsModel,
+#'     RunOptions = RunOptions,
+#'     Param = extractParam(OutputsCalib)
+#'   )
+#' }
 #'
 #' #############################################################################
 #' # EXAMPLE 3 - Parameter transfer from donor catchment "54001"                #
@@ -194,17 +198,19 @@
 #' # Preparation of CalibOptions object
 #' CalibOptions <- CreateCalibOptions(InputsModel)
 #'
-#' # Calibration
-#' OutputsCalib <- suppressWarnings(
-#'   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
-#' )
+#' if (interactive()) { # Too long for CRAN check...
+#'   # Calibration
+#'   OutputsCalib <- suppressWarnings(
+#'     Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+#'   )
 #'
-#' # Simulation
-#' OutputsModels <- RunModel(
-#'   InputsModel,
-#'   RunOptions = RunOptions,
-#'   Param = extractParam(OutputsCalib)
-#' )
+#'   # Simulation
+#'   OutputsModels <- RunModel(
+#'     InputsModel,
+#'     RunOptions = RunOptions,
+#'     Param = extractParam(OutputsCalib)
+#'   )
+#' }
 #'
 #' #############################################################################
 #' # EXAMPLE 4 - Parameter transfer with prescribed celerity parameter         #
@@ -245,17 +251,19 @@
 #'   FixedParam = list("54032" = c(1, NA, NA, NA, NA))
 #' )
 #'
-#' # Calibration
-#' OutputsCalib <- suppressWarnings(
-#'   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
-#' )
+#' if (interactive()) { # Too long for CRAN check...
+#'   # Calibration
+#'   OutputsCalib <- suppressWarnings(
+#'     Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+#'   )
 #'
-#' # Simulation
-#' OutputsModels <- RunModel(
-#'   InputsModel,
-#'   RunOptions = RunOptions,
-#'   Param = extractParam(OutputsCalib)
-#' )
+#'   # Simulation
+#'   OutputsModels <- RunModel(
+#'     InputsModel,
+#'     RunOptions = RunOptions,
+#'     Param = extractParam(OutputsCalib)
+#'   )
+#' }
 #'
 CreateCalibOptions <- function(x, FixedParam = NULL, ...) {
   UseMethod("CreateCalibOptions", x)

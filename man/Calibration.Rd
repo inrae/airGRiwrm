@@ -118,17 +118,19 @@ InputsCrit <- CreateInputsCrit(
 # Preparation of CalibOptions object
 CalibOptions <- CreateCalibOptions(InputsModel)
 
-# Calibration
-OutputsCalib <- suppressWarnings(
-  Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
-)
+if (interactive()) { # Too long for CRAN check...
+  # Calibration
+  OutputsCalib <- suppressWarnings(
+    Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
+  )
 
-# Simulation
-OutputsModels <- RunModel(
-  InputsModel,
-  RunOptions = RunOptions,
-  Param = extractParam(OutputsCalib)
-)
+  # Simulation
+  OutputsModels <- RunModel(
+    InputsModel,
+    RunOptions = RunOptions,
+    Param = extractParam(OutputsCalib)
+  )
+}
 
 }
 \seealso{
