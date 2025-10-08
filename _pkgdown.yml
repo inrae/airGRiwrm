@@ -3,6 +3,7 @@ development:
   mode: devel
 
 template:
+  bootstrap: 5
   params:
     bootswatch: cerulean
 
