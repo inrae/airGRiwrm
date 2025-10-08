@@ -282,7 +282,11 @@ CreateCalibOptions.InputsModel <- function(x, FixedParam = NULL, ...) {
     }
   }
   # Add FixedParam
-  dots$FixedParam <- FixedParam
+  if (!is.null(FixedParam) && !any(is.na(FixedParam))) {
+    dots$FixedParam <- NULL
+  } else {
+    dots$FixedParam <- FixedParam
+  }
   # Automatically define IsSD for intermediate basin GR models
   dots$IsSD = !is.null(x$Qupstream) & dots$FUN_MOD != "RunModel_Lag"
   # Add IsHyst in parameters if carried by InputsModel
@@ -290,7 +294,13 @@ CreateCalibOptions.InputsModel <- function(x, FixedParam = NULL, ...) {
     dots$IsHyst <- x$model$IsHyst
   }
   # Call airGR function
-  do.call(airGR::CreateCalibOptions, dots)
+  CalibOptions <- do.call(airGR::CreateCalibOptions, dots)
+  # airGR::CreateCalibOptions don't like when there are no param to calibrate
+  # But we need the full set of fixed parameters here for airGRiwrm Calibration
+  if (!is.null(FixedParam) && !any(is.na(FixedParam))) {
+    CalibOptions$FixedParam <- FixedParam
+  }
+  return(CalibOptions)
 }
 
 #' @rdname CreateCalibOptions
