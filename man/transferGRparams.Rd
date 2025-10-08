@@ -14,39 +14,26 @@ transferGRparams(
 )
 }
 \arguments{
-\item{InputsModel}{[\Object of class \emph{GRiwrmInputsModel}] see [CreateInputsModel.GRiwrm] for details
+\item{InputsModel}{Object of class \link[=CreateInputsModel.GRiwrm]{GRiwrmInputsModel},
+see \link{CreateInputsModel.GRiwrm} for details}
 
-[\Object of class \emph{GRiwrmInputsModel}]: R:\%5C\%5CObject\%20of\%20class\%20\emph{GRiwrmInputsModel}\%5C
-[CreateInputsModel.GRiwrm]: R:CreateInputsModel.GRiwrm}
+\item{Param}{\link{numeric} vector of GR model parameters}
 
-\item{Param}{[\numeric] vector of GR model parameters
+\item{donor}{\link{character} id of the node which gives its parameters}
 
-[\numeric]: R:\%5C\%5Cnumeric\%5C}
+\item{receiver}{\link{character} id of the node which receives the parameters from the donor}
 
-\item{donor}{[\character] id of the node which gives its parameters
+\item{default_param}{\link{numeric} vector of GR model parameters if parameters are missing from the donor}
 
-[\character]: R:\%5C\%5Ccharacter\%5C}
-
-\item{receiver}{[\character] id of the node which receives the parameters from the donor
-
-[\character]: R:\%5C\%5Ccharacter\%5C}
-
-\item{default_param}{[\numeric] vector of GR model parameters if parameters are missing from the donor
-
-[\numeric]: R:\%5C\%5Cnumeric\%5C}
-
-\item{verbose}{[\logical] Add information message on donor and receiver
-
-[\logical]: R:\%5C\%5Clogical\%5C}
+\item{verbose}{\link{logical} Add information message on donor and receiver}
 }
 \value{
-[\numeric] vector of transferred parameters
-
-[\numeric]: R:\%5C\%5Cnumeric\%5C
+A \link{numeric} \link{vector} of transferred parameters
 }
 \description{
 This function is used by \code{Calibration.GRiwrmInputsModel} for transferring parameters
-to ungauged nodes
+to ungauged nodes and for providing a priori parameters in parameter
+regularization (See \link{CreateInputsCrit}).
 }
 \details{
 \code{donor} and \code{receiver} nodes should have the same GR model with the same snow
@@ -54,10 +41,15 @@ module configuration.
 
 The transfer takes care of:
 \itemize{
-\item the presence/absence of hydraulic routing parameters between the donor and the receiver
-\item the transformation of the X4 parameters of GR models. Indeed, this parameter is correlated to the catchment area.
-Therefore, it has to be rescaled from the surface of the donor catchment to the surface of the receiver catchment,
-following the relationship suggested by Lobligeois (2014): \eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
+\item the presence/absence of hydraulic routing parameters between the donor and
+the receiver (But \code{default_param} should be provided if the receiver has more
+parameters than the donor)
+\item the transformation of the X4 parameters of GR models. Indeed, this parameter
+is correlated to the catchment area.
+Therefore, it has to be rescaled from the surface of the donor catchment to
+the surface of the receiver catchment, following the relationship suggested
+by Lobligeois (2014):
+\eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
 }
 }
 \references{

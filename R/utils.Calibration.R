@@ -222,31 +222,38 @@ RunModel_Ungauged <- function(
 #' Transfer GR parameters from one donor sub-basin to a receiver sub-basin
 #'
 #' This function is used by `Calibration.GRiwrmInputsModel` for transferring parameters
-#' to ungauged nodes
+#' to ungauged nodes and for providing a priori parameters in parameter
+#' regularization (See [CreateInputsCrit]).
 #'
 #' @details
 #' `donor` and `receiver` nodes should have the same GR model with the same snow
 #' module configuration.
 #'
 #' The transfer takes care of:
-#' - the presence/absence of hydraulic routing parameters between the donor and the receiver
-#' - the transformation of the X4 parameters of GR models. Indeed, this parameter is correlated to the catchment area.
-#' Therefore, it has to be rescaled from the surface of the donor catchment to the surface of the receiver catchment,
-#' following the relationship suggested by Lobligeois (2014): \eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
+#' - the presence/absence of hydraulic routing parameters between the donor and
+#' the receiver (But `default_param` should be provided if the receiver has more
+#' parameters than the donor)
+#' - the transformation of the X4 parameters of GR models. Indeed, this parameter
+#' is correlated to the catchment area.
+#' Therefore, it has to be rescaled from the surface of the donor catchment to
+#' the surface of the receiver catchment, following the relationship suggested
+#' by Lobligeois (2014):
+#' \eqn{X4_{receiver} = X4_{donor} \times (S_{receiver} / S_{donor})^{0.3}}.
 #'
-#' @param InputsModel [\Object of class *GRiwrmInputsModel*\] see [CreateInputsModel.GRiwrm] for details
-#' @param Param [\numeric\] vector of GR model parameters
-#' @param donor [\character\] id of the node which gives its parameters
-#' @param receiver [\character\] id of the node which receives the parameters from the donor
-#' @param default_param [\numeric\] vector of GR model parameters if parameters are missing from the donor
-#' @param verbose [\logical\] Add information message on donor and receiver
+#' @param InputsModel Object of class [GRiwrmInputsModel][CreateInputsModel.GRiwrm],
+#' see [CreateInputsModel.GRiwrm] for details
+#' @param Param [numeric] vector of GR model parameters
+#' @param donor [character] id of the node which gives its parameters
+#' @param receiver [character] id of the node which receives the parameters from the donor
+#' @param default_param [numeric] vector of GR model parameters if parameters are missing from the donor
+#' @param verbose [logical] Add information message on donor and receiver
 #'
 #' @references
 #' Lobligeois, F., 2014. Mieux connaitre la distribution spatiale des pluies améliore-t-il la modélisation des crues ?
 #' Diagnostic sur 181 bassins versants français. Thèse de Doctorat, Irstea (Antony), AgroParisTech (Paris), 312 pp.
 #' https://webgr.inrae.fr/Media/Files/biblio-theses/2014_lobligeois_these.pdf
 #'
-#' @return [\numeric\] vector of transferred parameters
+#' @return A [numeric] [vector] of transferred parameters
 #' @export
 #'
 transferGRparams <- function(
@@ -337,16 +344,16 @@ transferGRparams <- function(
 #' Extract calibrated parameters
 #'
 #' Extract [list] of parameters from the output of [Calibration.GRiwrmInputsModel]
-#' which can be directly used as argument `Param` of [RunModel.GRiwrmInputsModel]
-#' and [RunModel.Supervisor].
+#' which can be directly used as argument `Param` of [RunModel.GRiwrmInputsModel],
+#' [RunModel.Supervisor], and [RunModel.GRiwrmOutputsModel].
 #'
 #' @details
 #' See vignettes and example of [RunModel_Reservoir] for examples of use.
 #'
-#' @param x [\Object of class *GRiwrmOutputsModel*\] returned by [Calibration.GRiwrmInputsModel]
+#' @param x Object of class [GRiwrmOutputsModel][Calibration.GRiwrmInputsModel] returned by [Calibration.GRiwrmInputsModel]
 #'
-#' @return [\list\] [numeric] [vector] containing the calibrated parameters
-#' of each modeled node.
+#' @return A [list] containing representing the calibrated parameters
+#' of each modeled node as a [numeric] [vector].
 #'
 #' @seealso [Calibration], [RunModel.GRiwrmInputsModel], [RunModel.Supervisor]
 #'
