@@ -80,6 +80,7 @@ serializeIniStates <- function(IniStates, InputsModel) {
   if (!is.list(IniStates)) {
     return(IniStates)
   }
+  ObjectClass <- class(InputsModel)
   if (!"CemaNeige" %in% ObjectClass) {
     fields <- c("G", "eTG", "Gthr", "Glocmax")
 
