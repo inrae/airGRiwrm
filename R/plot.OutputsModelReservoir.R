@@ -1,7 +1,7 @@
 #' Plot simulated reservoir volume, inflows and released flows time series on a reservoir node
 #'
 #' @param x Object returned by [RunModel_Reservoir]
-#' @param Qobs (optional) [numeric] time series of observed released flow \[m3/time step\]
+#' @param Qobs (optional) [numeric] time series of targeted released flow \[m3/time step\]
 #' @param ... Further arguments passed to [plot.Qm3s]
 #'
 #' @return Function used for side effect.
@@ -24,7 +24,7 @@ plot.OutputsModelReservoir <- function(x, Qobs = NULL, ...) {
                    "Simulated inflows" = x$Qinflows_m3 / x$RunOptions$TimeStep,
                    "Simulated releases" = x$Qsim_m3 / x$RunOptions$TimeStep)
   if (!is.null(Qobs)) {
-    df$`Observed releases` <- Qobs / x$RunOptions$TimeStep
+    df$`Targeted releases` <- Qobs / x$RunOptions$TimeStep
   }
   plot.Qm3s(df, ...)
 

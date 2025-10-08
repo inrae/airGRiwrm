@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{Object returned by \link{RunModel_Reservoir}}
 
-\item{Qobs}{(optional) \link{numeric} time series of observed released flow [m3/time step]}
+\item{Qobs}{(optional) \link{numeric} time series of targeted released flow [m3/time step]}
 
 \item{...}{Further arguments passed to \link{plot.Qm3s}}
 }
@@ -108,7 +108,6 @@ OutputsModel <- RunModel(InputsModel, RunOptions, Param)
 Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qrelease[Ind_Run, ])
 colnames(Qobs) <- griwrm$id
 plot(OutputsModel, Qobs = Qobs)
-# N.B. "Observed releases" should be considered as "Target releases" here
 
 # The plot for the reservoir can also be plotted alone
 plot(OutputsModel$Reservoir, Qobs = Qobs[, "Reservoir"])

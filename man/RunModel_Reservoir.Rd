@@ -154,7 +154,6 @@ OutputsModel <- RunModel(InputsModel, RunOptions, Param)
 Qobs <- cbind(BasinObs$Qmm[Ind_Run], Qrelease[Ind_Run, ])
 colnames(Qobs) <- griwrm$id
 plot(OutputsModel, Qobs = Qobs)
-# N.B. "Observed releases" should be considered as "Target releases" here
 
 # The plot for the reservoir can also be plotted alone
 plot(OutputsModel$Reservoir, Qobs = Qobs[, "Reservoir"])
