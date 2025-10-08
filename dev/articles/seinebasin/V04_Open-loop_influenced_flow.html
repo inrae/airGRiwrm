@@ -141,17 +141,17 @@ flows downstream (reservoir releases).</p>
 <span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 --&gt;|79.7km| MERY-_22\n  SEINE_P7 --&gt;|73.7km| MERY-_22\n  SEINE_R8 --&gt;|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n"): Mermaid diagram generation failed with error:</span></span>
 <span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png'</span></span></code></pre>
 <p>The Pannecière lake is an inline reservoir:</p>
-<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; cannot open URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png':</span></span>
-<span><span class="co">#&gt; HTTP status was '503 Service Unavailable'</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 --&gt;|0km| P\nP --&gt; |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'</span></span></code></pre>
+<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_true-1.png" width="700"></p>
 <p>We can keep the same structure to model it. <code>PANNEC_R</code>
 corresponds to the flow released by the Pannecière lake, it is acting as
 an upstream node which means that the flow simulated at
 <code>CHAUM_07</code> is no longer routed to downstream.</p>
-<p><img src="V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png" width="700"></p>
+<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
+<span><span class="co">#&gt; cannot open URL</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':</span></span>
+<span><span class="co">#&gt; HTTP status was '503 Service Unavailable'</span></span>
+<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --&gt; |0km| PANNEC_R\nPANNEC_R --&gt; |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'</span></span></code></pre>
 <p>The Marne lake can be mapped as:</p>
 <pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
 <span><span class="co">#&gt; cannot open URL</span></span>
