@@ -4,12 +4,15 @@
 \alias{plot.OutputsModelReservoir}
 \title{Plot simulated reservoir volume, inflows and released flows time series on a reservoir node}
 \usage{
-\method{plot}{OutputsModelReservoir}(x, Qobs = NULL, ...)
+\method{plot}{OutputsModelReservoir}(x, Qobs = NULL, Vobs = NULL, ...)
 }
 \arguments{
 \item{x}{Object returned by \link{RunModel_Reservoir}}
 
 \item{Qobs}{(optional) \link{numeric} time series of targeted released flow [m3/time step]}
+
+\item{Vobs}{(optional) \link{numeric} time series of observed or targeted volume
+curve [m3]}
 
 \item{...}{Further arguments passed to \link{plot.Qm3s}}
 }
@@ -49,9 +52,9 @@ PotEvap <- matrix(BasinObs$E, ncol = 1)
 colnames(PotEvap) <- BasinInfo$BasinCode
 
 # We propose to compute the constant released flow from
-# the median of the natural flow
+# the Q20 of the natural flow
 # The value is in m3 by time step (day)
-(Qrelease <- median(BasinObs$Qls, na.rm = TRUE) / 1000 * 86400)
+(Qrelease <- quantile(BasinObs$Qls, na.rm = TRUE, probs = 0.2) / 1000 * 86400)
 
 # Formatting of reservoir released flow inputs for airGRiwrm (matrix or data.frame
 # with one column by node and node IDs as column names)
@@ -85,10 +88,12 @@ InputsCrit <- CreateInputsCrit(InputsModel,
                                Obs = Qobs)
 
 # preparation of CalibOptions object with fixed parameters for the reservoir
-Vmax <- 30E6
-CalibOptions <-
-  CreateCalibOptions(InputsModel,
-                     FixedParam = list(Reservoir = c(Vmax = 30E6, celerity = 0.5)))
+# The capacity of the reservoir is 10 hm3 and the inflow celerity is 0.5 m/s.
+Vmax <- 4E6
+CalibOptions <- CreateCalibOptions(
+    InputsModel,
+    FixedParam = list(Reservoir = c(Vmax = Vmax, celerity = 0.5))
+)
 
 OC <- Calibration(
   InputsModel = InputsModel,
@@ -120,13 +125,13 @@ plot(OutputsModel$Reservoir, Qobs = Qobs[, "Reservoir"])
 # The objective here is to simulate the same reservoir as above
 # but with new rules:
 # - A minimum flow downstream the reservoir defined as:
-(Qmin <- Qrelease[1,] / 2)
-# - A maximum release flow due to reservoir outlet limitation
-(Qmax <- Qrelease[1,] * 5)
+(Qmin <- Qrelease[1,])
+# - A maximum release flow of 20 m3/s for flood mitigation
+(Qmax <- 20 * 86400)
 # - An annual objective filling curve managing floods and droughts by
-# trying to keep the reservoir volume between 10 and 20 Mm3:
-Vobj <- approx(c(1, 120, 300, 366),
-               c(20E6, 20E6, 10E6, 20E6),
+# trying to keep the reservoir volume between 2 and 8 Mm3:
+Vobj <- approx(c(1, 150, 300, 366),
+               c(1E6, 3.5E6, 0.5E6, 1E6),
                seq(366))
 plot(Vobj, type = "l", col = "red", lty = 2)
 
@@ -188,5 +193,5 @@ IM_reg <- CreateInputsModel(griwrm,
 OM_reg <- RunModel(IM_reg, RunOptions, Param)
 
 # And plot the new result
-plot(OM_reg$Reservoir)
+plot(OM_reg$Reservoir, Vobs = Vobj$y[lubridate::yday(OM_reg$Reservoir$DatesR)])
 }
