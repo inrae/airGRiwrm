@@ -10,8 +10,8 @@
 \item{x}{Object of class \link[=CreateSupervisor]{Supervisor} see \link{CreateSupervisor}
 for details}
 
-\item{RunOptions}{Object of class \link[=CreateRunOptions.GRiwrm]{GRiwrmRunOptions},
-see \link{CreateRunOptions.GRiwrm} for details}
+\item{RunOptions}{Object of class \link[=CreateRunOptions]{GRiwrmRunOptions},
+see \link{CreateRunOptions} for details}
 
 \item{Param}{\link{list} of parameter values (See .
 The list item names are the IDs of the sub-basins.

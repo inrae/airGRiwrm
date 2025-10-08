@@ -5,8 +5,8 @@
 #'
 #' @param x Object of class [Supervisor][CreateSupervisor] see [CreateSupervisor]
 #' for details
-#' @param RunOptions Object of class [GRiwrmRunOptions][CreateRunOptions.GRiwrm],
-#' see [CreateRunOptions.GRiwrm] for details
+#' @param RunOptions Object of class [GRiwrmRunOptions][CreateRunOptions],
+#' see [CreateRunOptions] for details
 #' @param Param [list] of parameter values (See .
 #' The list item names are the IDs of the sub-basins.
 #' Each item is a vector of numerical parameters
