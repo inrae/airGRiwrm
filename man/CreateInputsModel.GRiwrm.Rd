@@ -26,7 +26,8 @@
 )
 }
 \arguments{
-\item{x}{[\code{GRiwrm} object] : diagram of the semi-distributed model (See [\link{CreateGRiwrm}])}
+\item{x}{\link[=CreateGRiwrm]{GRiwrm} object containing diagram of the
+semi-distributed model (See [\link{CreateGRiwrm}])}
 
 \item{DatesR}{[\link{POSIXt}] vector of dates}
 
@@ -51,8 +52,8 @@ minimum flows that must be provided downstream of a node with a Diversion [m³ p
 time step]. Default is zero. Column names correspond to node IDs}
 
 \item{Qrelease}{(optional) [\link{matrix}] or [\link{data.frame}] of [\link{numeric}] containing
-release flows by nodes using the \code{RunModel_Reservoir} model [m³ per
-time step]. Column names correspond to node IDs}
+targeted release flows by nodes using the \link{RunModel_Reservoir} model
+[m³ per time step]. Column names correspond to node IDs}
 
 \item{PrecipScale}{(optional) [\link{logical} \link{vector}] indicating if the
 mean of the precipitation interpolated on the elevation layers must be

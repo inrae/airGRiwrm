@@ -1,76 +1,77 @@
 #' Creation of an InputsModel object for an **airGRiwrm** network
 #'
-#' @param x \[`GRiwrm` object\] : diagram of the semi-distributed model (See \[[CreateGRiwrm]\])
-#' @param DatesR \[[POSIXt]\] vector of dates
-#' @param Precip (optional) \[[matrix]\] or \[[data.frame]\] of \[[numeric]\] containing
+#' @param x [GRiwrm][CreateGRiwrm] object containing diagram of the
+#' semi-distributed model (See [CreateGRiwrm])
+#' @param DatesR [POSIXt] vector of dates
+#' @param Precip (optional) [matrix] or [data.frame] of [numeric] containing
 #'        precipitation in \[mm per time step\]. Column names correspond to node IDs
-#' @param PotEvap (optional) \[[matrix]\] or \[[data.frame]\] of \[[numeric]\] containing
+#' @param PotEvap (optional) [matrix] or [data.frame] of [numeric] containing
 #'        potential evaporation \[mm per time step\]. Column names correspond to node IDs
-#' @param Qinf (optional) \[[matrix]\] or \[[data.frame]\] of \[[numeric]\] containing
+#' @param Qinf (optional) [matrix] or [data.frame] of [numeric] containing
 #'        observed flows. It must be provided only for nodes of type "Direct
-#'        injection" and "Diversion". See \[[CreateGRiwrm]\] for
+#'        injection" and "Diversion". See [CreateGRiwrm] for
 #'        details about these node types. Unit is \[mm per time step\] for nodes
 #'        with an area, and \[m³ per time step\] for nodes with `area=NA`.
 #'        Column names correspond to node IDs. Negative flows are abstracted from
 #'        the model and positive flows are injected to the model
 #' @param Qobs (deprecated) use `Qinf` instead
-#' @param Qmin (optional) \[[matrix]\] or \[[data.frame]\] of \[[numeric]\] containing
+#' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
 #'        minimum flows that must be provided downstream of a node with a Diversion \[m³ per
 #'        time step\]. Default is zero. Column names correspond to node IDs
-#' @param Qrelease (optional) \[[matrix]\] or \[[data.frame]\] of \[[numeric]\] containing
-#'        release flows by nodes using the `RunModel_Reservoir` model \[m³ per
-#'        time step\]. Column names correspond to node IDs
-#' @param PrecipScale (optional) \[[logical] [vector]\] indicating if the
+#' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
+#'        targeted release flows by nodes using the [RunModel_Reservoir] model
+#'        \[m³ per time step\]. Column names correspond to node IDs
+#' @param PrecipScale (optional) [logical] [vector] indicating if the
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
 #'        (the mean of the precipitation is kept to the original value). Column names correspond to node IDs
-#' @param TempMean (optional) \[[matrix]\] or \[[data.frame]\] of time series of mean
+#' @param TempMean (optional) [matrix] or [data.frame] of time series of mean
 #'        air temperature \[°C\], required to create the CemaNeige module inputs. Column names correspond to node IDs
-#' @param TempMin (optional) \[[matrix]\] or \[[data.frame]\] of time series of minimum
+#' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum
 #'        air temperature \[°C\], possibly used to create the CemaNeige module inputs. Column names correspond to node IDs
-#' @param TempMax (optional) \[[matrix]\] or \[[data.frame]\] of time series of maximum
+#' @param TempMax (optional) [matrix] or [data.frame] of time series of maximum
 #'        air temperature \[°C\], possibly used to create the CemaNeige module inputs. Column names correspond to node IDs
-#' @param ZInputs (optional) \[[numeric] [vector]\] giving the mean
+#' @param ZInputs (optional) [numeric] [vector] giving the mean
 #'        elevation of the Precip and Temp series (before extrapolation) \[m\],
 #'        possibly used to create the CemaNeige module input. Column names correspond to node IDs
-#' @param HypsoData (optional) \[[matrix]\] or \[[data.frame]\] containing 101 \[[numeric]\]
+#' @param HypsoData (optional) [matrix] or [data.frame] containing 101 [numeric]
 #'        rows: min, q01 to q99 and max of catchment elevation distribution \[m\],
 #'        if not defined a single elevation is used for CemaNeige. Column names correspond to node IDs
-#' @param NLayers (optional) \[[numeric]\] vector (integer) giving the number
+#' @param NLayers (optional) [numeric] vector (integer) giving the number
 #'        of elevation layers requested \[-\], required to create CemaNeige module
 #'        inputs, default=5. Column names correspond to node IDs
-#' @param IsHyst \[[logical]\] indicating if the hysteresis version of
-#'        CemaNeige is used. See details of \[[airGR::CreateRunOptions()]\].
-#' @param FUN_REGUL \[[list]\] of functions for local regulation (See details)
+#' @param IsHyst [logical] indicating if the hysteresis version of
+#'        CemaNeige is used. See details of [airGR::CreateRunOptions()].
+#' @param FUN_REGUL [list] of functions for local regulation (See details)
 #' @param ... used for compatibility with S3 methods
 #'
 #' @details Meteorological data are needed for the nodes of the network that
 #' represent a catchment simulated by a rainfall-runoff model. Instead of
-#' \[[airGR::CreateInputsModel()]\] that has \[[numeric]\] \[[vector]\] as time series inputs,
-#' this function uses \[[matrix]\] or \[[data.frame]\] with the id of the sub-catchments
+#' [airGR::CreateInputsModel()] that has [numeric] [vector] as time series inputs,
+#' this function uses [matrix] or [data.frame] with the id of the sub-catchments
 #' as column names. For single values (`ZInputs` or `NLayers`), the function
-#' requires named \[[vector]\] with the id of the sub-catchment as name item. If an
+#' requires named [vector] with the id of the sub-catchment as name item. If an
 #' argument is optional, only the column or the named item has to be provided.
 #'
-#' See \[[airGR::CreateInputsModel()]\] documentation for details concerning each argument
+#' See [airGR::CreateInputsModel()] documentation for details concerning each argument
 #'
 #' The number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `Qrelease`, `TempMean`,
 #' `TempMin`, `TempMax` must be the same as the length of `DatesR` (each row
 #' corresponds to a time step defined in `DatesR`).
 #'
-#' For various examples of use see topics \[[RunModel.GRiwrmInputsModel()]\],
-#' \[[RunModel_Reservoir()]\], and \[[RunModel.Supervisor()]\].
+#' For various examples of use see topics [RunModel.GRiwrmInputsModel()],
+#' [RunModel_Reservoir()], and [RunModel.Supervisor()].
 #'
 #' For example of use of Direct Injection nodes, see vignettes
 #' "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".
 #'
 #' For example of use of Diversion nodes, see example in
-#' \[[RunModel.GRiwrmInputsModel()]\] topic and vignette
+#' [RunModel.GRiwrmInputsModel()] topic and vignette
 #' "V06_Modelling_regulated_diversion".
 #'
 #' ## The `FUN_REGUL` parameter
 #'
-#' `FUN_REGUL` argument is a named \[[list]\] of functions that modify the node
+#' `FUN_REGUL` argument is a named [list] of functions that modify the node
 #' `InputsModel` before sending it to the node's model.
 #' This feature is useful for modifying data such as `InputsModel$Qdiv` or
 #' `InputsModel$Qrelease` giving simulated flows already available from upstream
@@ -83,13 +84,13 @@
 #' - `OutputsModel`, the *GRiwrmOutputsModel* object of the upstream and sibling
 #' nodes that have been already computed when the computation of the current
 #' node occurs
-#' - `env`, the \[[environment]\] of the \[[RunModel.GRiwrmInputsModel()]\] function
+#' - `env`, the [environment] of the [RunModel.GRiwrmInputsModel()] function
 #'
 #' The functions embedded in `FUN_REGUL` should all return the argument
 #' `InputsModel` after calculation.
 #'
-#' @return A \emph{GRiwrmInputsModel} object which is a \[[list]\] of \emph{InputsModel}
-#' objects created by \[[airGR::CreateInputsModel()]\] with one item per modeled sub-catchment.
+#' @return A \emph{GRiwrmInputsModel} object which is a [list] of \emph{InputsModel}
+#' objects created by [airGR::CreateInputsModel()] with one item per modeled sub-catchment.
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateRunOptions()], [RunModel.GRiwrmInputsModel()]
 #'
