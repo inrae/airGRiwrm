@@ -95,7 +95,10 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
       ov <- c(ov, "Qsim", "QsimDown")
     }
     if (x$InputsModel[[id]]$hasDiversion) {
-      ov <- c(ov, "Qdiv_m3", "Qnat")
+      ov <- c(ov, "Qdiv_m3")
+      if (!x$InputsModel[[id]]$isReservoir) {
+        ov <- c(ov, "Qnat")
+      }
     }
     if (x$InputsModel[[id]]$isReservoir) {
       ov <- c(ov, "Qinflows_m3", "Vsim")
