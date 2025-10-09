@@ -7,21 +7,26 @@
 #'
 #' @return [numeric] retrieved data at the location
 #' @noRd
-getDataFromLocation <- function(loc, sv) {
-  if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
-    stop("Reaching output of other controller is not implemented yet")
-  } else {
-    if (!sv$nodeProperties[loc, "DirectInjection"]) {
-      if (sv$nodeProperties[loc, "Upstream"]) {
-        sv$OutputsModel[[loc]]$Qsim_m3[sv$ts.previous]
+getDataFromLocation <- function(ctrlr, sv) {
+  if (is.null(ctrlr$Ynodes)) {
+    return(NULL)
+  }
+  l <- lapply(seq(length(ctrlr$Ynodes)), function(i) {
+    nodeY <- ctrlr$Ynodes[i]
+    varY <- ctrlr$Yvars[i]
+    if (varY != "Qupstream") {
+      if (sv$nodeProperties[nodeY, "Upstream"]) {
+        sv$OutputsModel[[nodeY]][[varY]][sv$ts.previous]
       } else {
-        sv$OutputsModel[[loc]]$Qsim_m3
+        sv$OutputsModel[[nodeY]][[varY]]
       }
     } else {
-      node <- sv$griwrm$down[sv$griwrm$id == loc]
-      sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.previous, loc]
+      # Direct injection node => read Qupstream of downstream node
+      node <- sv$griwrm$down[sv$griwrm$id == nodeY]
+      sv$InputsModel[[node]]$Qupstream[sv$ts.current, nodeY]
     }
-  }
+  })
+  return(do.call(cbind, l))
 }
 
 
@@ -33,26 +38,24 @@ getDataFromLocation <- function(loc, sv) {
 #' @return [NULL]
 #' @noRd
 setDataToLocation <- function(ctrlr, sv) {
-  l <- lapply(seq(length(ctrlr$Unames)), function(i) {
+  l <- lapply(seq(length(ctrlr$Unodes)), function(i) {
     # limit U size to the number of simulation time steps of the current supervision time step
     U <- ctrlr$U[seq.int(length(sv$ts.index)), i]
+    nodeU <- ctrlr$Unodes[i]
+    varU <- ctrlr$Uvars[i]
 
-    locU <- ctrlr$Unames[i]
-
-    if (sv$nodeProperties[locU, "DirectInjection"]) {
+    if (varU == "Qupstream") {
       # Direct injection node => update Qusptream of downstream node
-      node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
+      node <- sv$griwrm4U$down[sv$griwrm4U$id == nodeU]
       # ! Qupstream contains warm up period and run period => the index is shifted
       if (!is.null(sv$InputsModel[[node]])) {
-        sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, locU] <- U
+        sv$InputsModel[[node]]$Qupstream[sv$ts.current, nodeU] <- U
       }
-    } else if (sv$nodeProperties[locU, "Diversion"]){
+    } else if (varU == "Qdiv") {
       # Diversion node => update Qdiv with -U
-      sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
-    } else if (sv$nodeProperties[locU, "Reservoir"]) {
-      sv$InputsModel[[locU]]$Qrelease[sv$ts.index0 + sv$ts.index] <- U
-    } else {
-      stop("Node ", locU, " must be a Direct Injection or a Diversion node")
+      sv$InputsModel[[nodeU]]$Qdiv[sv$ts.current] <- -U
+    } else if (varU == "Qrelease") {
+      sv$InputsModel[[nodeU]]$Qrelease[sv$ts.current] <- U
     }
   })
 }
@@ -66,25 +69,32 @@ doSupervision <- function(supervisor) {
   for (id in names(supervisor$controllers)) {
     supervisor$controller.id <- id
     # Read Y from locations in the model
-    supervisor$controllers[[id]]$Y <- do.call(
-      cbind,
-      lapply(supervisor$controllers[[id]]$Ynames, getDataFromLocation, sv = supervisor)
-    )
+    supervisor$controllers[[id]]$Y <-
+      getDataFromLocation(supervisor$controllers[[id]], sv = supervisor)
     # Run logic
     supervisor$controllers[[id]]$U <-
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
     if (is.vector(supervisor$controllers[[id]]$U)) {
-      supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
+      supervisor$controllers[[id]]$U <- matrix(
+        supervisor$controllers[[id]]$U,
+        nrow = 1
+      )
     }
     # Check U output
     if (
-      ncol(supervisor$controllers[[id]]$U) != length(supervisor$controllers[[id]]$Unames) |
-      (!nrow(supervisor$controllers[[id]]$U) %in% c(supervisor$.TimeStep, length(supervisor$ts.index)))
+      ncol(supervisor$controllers[[id]]$U) !=
+        length(supervisor$controllers[[id]]$Unodes) |
+        (!nrow(supervisor$controllers[[id]]$U) %in%
+          c(supervisor$.TimeStep, length(supervisor$ts.index)))
     ) {
-      stop("The logic function of the controller ",
-           supervisor$controllers[[id]]$name,
-           " should return a matrix of dimension ",
-           supervisor$.TimeStep, ", ", length(supervisor$controllers[[id]]$Unames))
+      stop(
+        "The logic function of the controller ",
+        supervisor$controllers[[id]]$name,
+        " should return a matrix of dimension ",
+        supervisor$.TimeStep,
+        ", ",
+        length(supervisor$controllers[[id]]$Unodes)
+      )
     }
     # For the last supervisor time step which can be truncated
     if (length(supervisor$ts.index) < supervisor$.TimeStep) {
