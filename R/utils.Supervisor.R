@@ -8,6 +8,9 @@
 #' @return [numeric] retrieved data at the location
 #' @noRd
 getDataFromLocation <- function(ctrlr, sv) {
+  if (is.null(ctrlr$Ynodes)) {
+    return(NULL)
+  }
   l <- lapply(seq(length(ctrlr$Ynodes)), function(i) {
     nodeY <- ctrlr$Ynodes[i]
     varY <- ctrlr$Yvars[i]
