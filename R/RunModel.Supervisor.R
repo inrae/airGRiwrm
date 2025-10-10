@@ -163,7 +163,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
         if (id %in% colnames(x$storedOutputs$QcontribDown)) {
           QcontribDown <- x$storedOutputs$QcontribDown[x$ts.index, id]
         } else {
-          QcontribDown <- rep(0, length(x$ts.index))
+          QcontribDown <- NULL
         }
         x$OutputsModel[[id]] <- suppressWarnings(
           RunModel_Routing(
