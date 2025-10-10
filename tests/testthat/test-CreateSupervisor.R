@@ -32,6 +32,12 @@ test_that("Checks in CreateSupervisor", {
   expect_s3_class(sv, "Supervisor")
 })
 
+test_that("Checks in CreateControl", {
+  Y <- CreateControl(c("R1", "R2"), sv, isU = FALSE)
+  expect_equal(attr(Y, "nodes"), c("R1", "R2"))
+  expect_equal(attr(Y, "vars"), rep("Qupstream", 2))
+})
+
 test_that("Checks in CreateController", {
   FUN <- function(Y) return(0)
   expect_error(

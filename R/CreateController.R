@@ -77,9 +77,6 @@ CreateController <- function(supervisor, ctrl.id, Y, U, FUN) {
 #' the values of the variable for the current time steps (empty by default)
 #' @noRd
 #'
-#' @examples
-#' # For pointing the discharge at the oulet of basins "54095" and "54002"
-#' CreateControl(c("54095", "54002"))
 CreateControl <- function(locations, sv, isU) {
   if (is.null(locations)) {
     return(NULL)
@@ -106,12 +103,16 @@ CreateControl <- function(locations, sv, isU) {
   }
   # Replace defaults variables by explicit ones
   for (i in which(is.na(vars))) {
+    np <- sv$nodeProperties[nodes[i], , drop = FALSE]
     if (!isU) {
       # Y are observations of simulated discharge
-      vars[i] <- "Qsim"
+      if (np$DirectInjection) {
+        vars[i] <- "Qupstream"
+      } else {
+        vars[i] <- "Qsim"
+      }
     } else {
       # U are commands on direct injections, reservoirs or diversions
-      np <- sv$nodeProperties[nodes[i], , drop = FALSE]
       if (np$DirectInjection) {
         vars[i] <- "Qupstream"
       } else if (np$Reservoir) {
@@ -170,11 +171,20 @@ CreateControl <- function(locations, sv, isU) {
       vars[i] <- sub("^Qdiv$", "Qdiv_m3", vars[i])
       vars[i] <- sub("^Qover$", "Qover_m3", vars[i])
       # Y variables
-      if (!(vars[i] %in% c("Qsim_m3", "Vsim", "Qdiv_m3", "Qover_m3"))) {
+      if (
+        !(vars[i] %in% c("Qsim_m3", "Vsim", "Qdiv_m3", "Qover_m3", "Qupstream"))
+      ) {
         stop(
           "For all nodes, `Y` variable must be one of 'Qsim', 'Vsim', 'Qdiv', 'Qover' (found '",
           vars[i],
           "' for node '",
+          nodes[i],
+          "')"
+        )
+      }
+      if (vars[i] == "Qupstream" && !np$DirectInjection) {
+        stop(
+          "Variable 'Qupstream' can only be used for DirectInjection nodes (found for node '",
           nodes[i],
           "')"
         )
