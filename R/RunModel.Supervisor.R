@@ -160,12 +160,17 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
           Param = Param[[id]]
         )
       } else {
+        if (id %in% colnames(x$storedOutputs$QcontribDown)) {
+          QcontribDown <- x$storedOutputs$QcontribDown[x$ts.index, id]
+        } else {
+          QcontribDown <- rep(0, length(x$ts.index))
+        }
         x$OutputsModel[[id]] <- suppressWarnings(
           RunModel_Routing(
             x$InputsModel[[id]],
             RunOptions = RunOptions[[id]],
             Param = Param[[id]],
-            QcontribDown = x$storedOutputs$QcontribDown[x$ts.index, id]
+            QcontribDown = QcontribDown
           )
         )
       }
