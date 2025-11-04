@@ -12,17 +12,24 @@ RunModel_Routing <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
     QcontribDown <- list(
       Qsim = rep(0, length(RunOptions$IndPeriod_Run))
     )
-    if (!is.null(RunOptions$IndPeriod_WarmUp) &&
-        !(length(RunOptions$IndPeriod_WarmUp) == 1 && RunOptions$IndPeriod_WarmUp == 0L)) {
-      QcontribDown$RunOptions = list(WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp)))
+    if (
+      !is.null(RunOptions$IndPeriod_WarmUp) &&
+        !(length(RunOptions$IndPeriod_WarmUp) == 1 &&
+          RunOptions$IndPeriod_WarmUp == 0L)
+    ) {
+      QcontribDown$RunOptions = list(
+        WarmUpQsim = rep(0, length(RunOptions$IndPeriod_WarmUp))
+      )
     }
     class(QcontribDown) <- c("OutputsModel", class(RunOptions)[-1])
     x$BasinAreas[length(x$BasinAreas)] <- 1E-6
   }
-  OutputsModel <- RunModel_Lag_enhanced(x,
-                                        RunOptions = RunOptions,
-                                        Param = Param[1],
-                                        QcontribDown = QcontribDown)
+  OutputsModel <- RunModel_Lag_enhanced(
+    x,
+    RunOptions = RunOptions,
+    Param = Param[1],
+    QcontribDown = QcontribDown
+  )
   if (is.null(OutputsModel$DatesR)) {
     OutputsModel$DatesR <- x$DatesR[RunOptions$IndPeriod_Run]
   }
@@ -32,10 +39,15 @@ RunModel_Routing <- function(x, RunOptions, Param, QcontribDown = NULL, ...) {
   return(OutputsModel)
 }
 
-RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) {
+RunModel_Lag_enhanced <- function(
+  InputsModel,
+  RunOptions,
+  Param,
+  QcontribDown
+) {
   NParam <- 1
 
-## argument check
+  ## argument check
   if (!inherits(InputsModel, "InputsModel")) {
     stop("'InputsModel' must be of class 'InputsModel'")
   }
@@ -49,26 +61,44 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
     stop("'Param' must be a numeric vector")
   }
   if (sum(!is.na(Param)) != NParam) {
-    stop(paste("'Param' must be a vector of length", NParam, "and contain no NA"))
+    stop(paste(
+      "'Param' must be a vector of length",
+      NParam,
+      "and contain no NA"
+    ))
   }
   if (inherits(QcontribDown, "OutputsModel")) {
     if (is.null(QcontribDown$Qsim)) {
-      stop("'QcontribDown' should contain a key 'Qsim' containing the output of the runoff of the downstream subcatchment")
+      stop(
+        "'QcontribDown' should contain a key 'Qsim' containing the output of the runoff of the downstream subcatchment"
+      )
     }
     if (length(QcontribDown$Qsim) != length(RunOptions$IndPeriod_Run)) {
-      stop("Time series Qsim in 'QcontribDown' should have the same length as 'RunOptions$IndPeriod_Run'")
+      stop(
+        "Time series Qsim in 'QcontribDown' should have the same length as 'RunOptions$IndPeriod_Run'"
+      )
     }
-    if (!identical(RunOptions$IndPeriod_WarmUp, 0L) && !identical(RunOptions$Outputs_Sim, RunOptions$Outputs_Cal)) {
+    if (
+      !identical(RunOptions$IndPeriod_WarmUp, 0L) &&
+        !identical(RunOptions$Outputs_Sim, RunOptions$Outputs_Cal)
+    ) {
       # This test is not necessary during calibration but usefull in other cases because
       # WarmUpQsim is then used for downstream sub-basins because of the delay in Qupstream
-      if (is.null(QcontribDown$RunOptions$WarmUpQsim) ||
-          length(QcontribDown$RunOptions$WarmUpQsim) != length(RunOptions$IndPeriod_WarmUp)) {
-        stop("Time series WarmUpQsim in 'QcontribDown' should have the same length as 'RunOptions$IndPeriod_WarmUp'")
+      if (
+        is.null(QcontribDown$RunOptions$WarmUpQsim) ||
+          length(QcontribDown$RunOptions$WarmUpQsim) !=
+            length(RunOptions$IndPeriod_WarmUp)
+      ) {
+        stop(
+          "Time series WarmUpQsim in 'QcontribDown' should have the same length as 'RunOptions$IndPeriod_WarmUp'"
+        )
       }
     }
   } else if (is.vector(QcontribDown) && is.numeric(QcontribDown)) {
     if (length(QcontribDown) != length(RunOptions$IndPeriod_Run)) {
-      stop("'QcontribDown' should have the same length as 'RunOptions$IndPeriod_Run'")
+      stop(
+        "'QcontribDown' should have the same length as 'RunOptions$IndPeriod_Run'"
+      )
     }
   } else {
     stop("'QcontribDown' must be a numeric vector or a 'OutputsModel' object")
@@ -79,25 +109,30 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
   if (identical(RunOptions$IndPeriod_WarmUp, 0L)) {
     RunOptions$IndPeriod_WarmUp <- NULL
   }
-  IndPeriod1   <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
+  IndPeriod1 <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
   LInputSeries <- as.integer(length(IndPeriod1))
-  IndPeriod2 <- (length(RunOptions$IndPeriod_WarmUp)+1):LInputSeries
+  IndPeriod2 <- (length(RunOptions$IndPeriod_WarmUp) + 1):LInputSeries
 
   if (inherits(QcontribDown, "OutputsModel")) {
     OutputsModel <- QcontribDown
     if (is.null(OutputsModel$RunOptions$WarmUpQsim)) {
-      OutputsModel$RunOptions$WarmUpQsim <- rep(NA, length(RunOptions$IndPeriod_WarmUp))
+      OutputsModel$RunOptions$WarmUpQsim <- rep(
+        NA,
+        length(RunOptions$IndPeriod_WarmUp)
+      )
     }
     QsimDown <- c(OutputsModel$RunOptions$WarmUpQsim, OutputsModel$Qsim)
   } else if (is.vector(QcontribDown) && is.numeric(QcontribDown)) {
     OutputsModel <- list()
     class(OutputsModel) <- c("OutputsModel", class(RunOptions)[-1])
-    QsimDown <- c(rep(NA, length(RunOptions$IndPeriod_WarmUp)),
-                  QcontribDown)
+    QsimDown <- c(rep(NA, length(RunOptions$IndPeriod_WarmUp)), QcontribDown)
   }
 
   ## propagation time from upstream meshes to outlet
-  PT <- InputsModel$LengthHydro * 1e3 / Param[1L] / RunOptions$FeatFUN_MOD$TimeStep
+  PT <- InputsModel$LengthHydro *
+    1e3 /
+    Param[1L] /
+    RunOptions$FeatFUN_MOD$TimeStep
   HUTRANS <- rbind(1 - (PT - floor(PT)), PT - floor(PT))
 
   ## set up initial states
@@ -125,7 +160,7 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
       function(iUpBasins) {
         iWarmUp <- seq.int(
           from = max(1, IndPeriod1[1] - floor(PT[iUpBasins]) - 1),
-          to   = max(1, IndPeriod1[1] - 1)
+          to = max(1, IndPeriod1[1] - 1)
         )
         ini <- InputsModel$Qupstream[iWarmUp, iUpBasins]
         if (length(ini) != floor(PT[iUpBasins] + 1)) {
@@ -140,11 +175,14 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
 
   ## Lag model computation
   Qsim_m3 <- QsimDown *
-    InputsModel$BasinAreas[length(InputsModel$BasinAreas)] * 1e3
+    InputsModel$BasinAreas[length(InputsModel$BasinAreas)] *
+    1e3
 
   for (upstream_basin in seq_len(NbUpBasins)) {
-    Qupstream <- c(IniStates[[upstream_basin]],
-                   InputsModel$Qupstream[IndPeriod1, upstream_basin])
+    Qupstream <- c(
+      IniStates[[upstream_basin]],
+      InputsModel$Qupstream[IndPeriod1, upstream_basin]
+    )
     # message("Qupstream[", upstream_basin, "]: ", paste(Qupstream, collapse = ", "))
     Qsim_m3 <- Qsim_m3 +
       Qupstream[2:(1 + LInputSeries)] * HUTRANS[1, upstream_basin] +
@@ -159,7 +197,9 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
 
   if ("Qsim" %in% RunOptions$Outputs_Sim) {
     # Convert back Qsim to mm
-    OutputsModel$Qsim <- Qsim_m3[IndPeriod2] / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+    OutputsModel$Qsim <- Qsim_m3[IndPeriod2] /
+      sum(InputsModel$BasinAreas, na.rm = TRUE) /
+      1e3
     # message("Qsim: ", paste(OutputsModel$Qsim, collapse = ", "))
   }
 
@@ -171,12 +211,18 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
   # Warning for negative flows or NAs only in extended outputs
   if (length(RunOptions$Outputs_Sim) > 2) {
     if (any(OutputsModel$Qsim[!is.na(OutputsModel$Qsim)] < 0)) {
-      warning(length(which(OutputsModel$Qsim < 0)), " time steps with negative flow, set to zero.")
+      warning(
+        length(which(OutputsModel$Qsim < 0)),
+        " time steps with negative flow, set to zero."
+      )
       OutputsModel$Qsim[OutputsModel$Qsim < 0] <- 0
     }
     # Warning for NAs
     if (any(is.na(OutputsModel$Qsim))) {
-      warning(length(which(is.na(OutputsModel$Qsim))), " time steps with NA values")
+      warning(
+        length(which(is.na(OutputsModel$Qsim))),
+        " time steps with NA values"
+      )
     }
   }
 
@@ -195,7 +241,11 @@ RunModel_Lag_enhanced <- function(InputsModel, RunOptions, Param, QcontribDown) 
     # message("StateEnd: ", paste(OutputsModel$StateEnd$SD, collapse = ", "))
   }
   if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
-    OutputsModel$RunOptions$WarmUpQsim <- Qsim_m3[seq_len(length(RunOptions$IndPeriod_WarmUp))] / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
+    OutputsModel$RunOptions$WarmUpQsim <- Qsim_m3[seq_len(length(
+      RunOptions$IndPeriod_WarmUp
+    ))] /
+      sum(InputsModel$BasinAreas, na.rm = TRUE) /
+      1e3
   }
 
   if ("Param" %in% RunOptions$Outputs_Sim) {
