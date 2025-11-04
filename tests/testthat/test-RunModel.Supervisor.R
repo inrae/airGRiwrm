@@ -185,3 +185,23 @@ test_that("RunModel.Supervisor with diversion node should not produce NAs", {
     expect_false(any(is.na(OM$Qsim_m3)))
   })
 })
+
+test_that("RunModel.Supervisor should be able to run without warm-up period", {
+  sv <- CreateSupervisor(InputsModel)
+  RO <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = 1:165
+  )
+  Param <- ParamMichel
+  Param$`54057`[1] <- 0.01 # Low velocity to having several time steps in the lag
+  OM_Supervisor <- RunModel(
+    sv,
+    RunOptions = RO,
+    Param = Param
+  )
+  lapply(OM_Supervisor, function(OM) {
+    expect_false(any(is.na(OM$Qsim)))
+    expect_false(any(is.na(OM$Qsim_m3)))
+  })
+})
