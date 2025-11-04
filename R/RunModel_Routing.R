@@ -230,7 +230,15 @@ RunModel_Lag_enhanced <- function(
     if (NbUpBasins > 0) {
       SD <- lapply(seq(NbUpBasins), function(x) {
         lastTS <- RunOptions$IndPeriod_Run[length(RunOptions$IndPeriod_Run)]
-        InputsModel$Qupstream[(lastTS - floor(PT[x])):lastTS, x]
+        firstTS <- lastTS - floor(PT[x])
+        if (firstTS < 1) {
+          c(
+            rep(InputsModel$Qupstream[1, x], 1 - firstTS),
+            InputsModel$Qupstream[1:lastTS, x]
+          )
+        } else {
+          InputsModel$Qupstream[firstTS:lastTS, x]
+        }
       })
       if (is.null(OutputsModel$StateEnd)) {
         OutputsModel$StateEnd <- list(SD = SD)
