@@ -39,33 +39,46 @@ library(airGRiwrm)
 
 # Load Severn network information
 data(Severn)
-nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes <- Severn$BasinsInfo[, c(
+  "gauge_id",
+  "downstream_id",
+  "distance_downstream",
+  "area"
+)]
 nodes$model <- "RunModel_GR4J"
 
 # Insert a dam downstream the location the gauging station 54095
 # The dam is a direct injection node
 nodes$downstream_id[nodes$gauge_id == "54095"] <- "Dam"
 nodes$distance_downstream[nodes$gauge_id == "54095"] <- 0
-nodes <- rbind(nodes,
-               data.frame(gauge_id = "Dam",
-                          downstream_id = "54001",
-                          distance_downstream = 42,
-                          area = NA,
-                          model = "RunModel_Reservoir"))
+nodes <- rbind(
+  nodes,
+  data.frame(
+    gauge_id = "Dam",
+    downstream_id = "54001",
+    distance_downstream = 42,
+    area = NA,
+    model = "RunModel_Reservoir"
+  )
+)
 
-griwrm <- CreateGRiwrm(nodes,
-                 list(id = "gauge_id",
-                      down = "downstream_id",
-                      length = "distance_downstream"))
-\dontrun{
-plot(griwrm)
+griwrm <- CreateGRiwrm(
+  nodes,
+  list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
+)
+if (interactive()) {
+  plot(griwrm)
 }
 
 # Format meteorological inputs for CreateInputs
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
-PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {
+  x$precipitation
+}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {
+  x$peti
+}))
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 
@@ -74,11 +87,19 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 # We initiate it with the natural flow for having a good initialization of the
 # model at the first time step of the running period
 Qrelease <- data.frame(
-  Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
+  Dam = BasinsObs$`54095`$discharge_spec *
+    griwrm$area[griwrm$id == "54095"] *
+    1E3
 )
 
 # InputsModel object
-IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qrelease = Qrelease)
+IM_severn <- CreateInputsModel(
+  griwrm,
+  DatesR,
+  Precip,
+  PotEvap,
+  Qrelease = Qrelease
+)
 
 # Initialization of the Supervisor
 sv <- CreateSupervisor(IM_severn)
@@ -109,12 +130,18 @@ funDamLogic <- factoryDamLogic(
   Qthreshold = 65 * 86400 # Min flow threshold to support at station 54057 (m3/day)
 )
 
-CreateController(sv, "DamRelease", Y = c("54057", "Dam"), U = "Dam", FUN = funDamLogic)
+CreateController(
+  sv,
+  "DamRelease",
+  Y = c("54057", "Dam"),
+  U = "Dam",
+  FUN = funDamLogic
+)
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
 IndPeriod_Run <- which(
   DatesR >= as.POSIXct("2002-11-01", tz = "UTC") &
-  DatesR <= as.POSIXct("2003-11-01", tz = "UTC")
+    DatesR <= as.POSIXct("2003-11-01", tz = "UTC")
 )
 IndPeriod_WarmUp <- seq.int(IndPeriod_Run[1] - 366, IndPeriod_Run[1] - 1)
 RO_severn <- CreateRunOptions(
@@ -124,7 +151,11 @@ RO_severn <- CreateRunOptions(
 )
 
 # Load parameters of the model from Calibration in vignette V02
-P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
+P_severn <- readRDS(system.file(
+  "vignettes",
+  "ParamV02.RDS",
+  package = "airGRiwrm"
+))
 
 # Set the reservoir parameters: maximum storage capacity and celerity of inflows
 # As the distance between the upstream node "54095" and the dam is 0 km, the celerity
@@ -132,9 +163,7 @@ P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwr
 P_severn$Dam <- c(Vmax = 650E6, celerity = 1)
 
 # The Supervisor is used instead of InputsModel for running the model
-OM_dam <- RunModel(sv,
-                   RunOptions = RO_severn,
-                   Param = P_severn)
+OM_dam <- RunModel(sv, RunOptions = RO_severn, Param = P_severn)
 
 # Plotting the time series of flows and reservoir storage
 plot(OM_dam$Dam)

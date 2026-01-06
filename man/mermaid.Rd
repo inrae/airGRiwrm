@@ -76,7 +76,7 @@ One can define an alternative server to use with the environment variable
 \examples{
 diagram <- "flowchart LR\n  A --> B"
 mermaid_gen_link(diagram)
-\dontrun{
+if (interactive()){
 f <- mermaid(diagram)
 f
 
@@ -87,7 +87,7 @@ knitr::include_graphics(mermaid(diagram))
 unlink(f)
 }
 
-\dontrun{
+if (interactive()){
 s <- "flowchart LR
 A --> B"
 class(s) <- c("mermaid", class(s))

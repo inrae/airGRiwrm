@@ -33,16 +33,21 @@ data(L0123001)
 
 # Inflows comes from a catchment of 360 km² modeled with GR4J
 # The reservoir receives directly the inflows
-db <- data.frame(id = c(BasinInfo$BasinCode, "Reservoir"),
-                 length = c(0, NA),
-                 down = c("Reservoir", NA),
-                 area = c(BasinInfo$BasinArea, NA),
-                 model = c("RunModel_GR4J", "RunModel_Reservoir"),
-                 stringsAsFactors = FALSE)
+db <- data.frame(
+  id = c(BasinInfo$BasinCode, "Reservoir"),
+  length = c(0, NA),
+  down = c("Reservoir", NA),
+  area = c(BasinInfo$BasinArea, NA),
+  model = c("RunModel_GR4J", "RunModel_Reservoir"),
+  stringsAsFactors = FALSE
+)
 griwrm <- CreateGRiwrm(db)
-\dontrun{
-plot(griwrm)
+if (interactive()) {
+  plot(griwrm)
 }
+
+# This catchment inflows a reservoir of maximum capacity Vmax
+Vmax <- 4E6 # in m3
 
 # Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one
 # column by sub-basin and node IDs as column names)
@@ -60,14 +65,19 @@ colnames(PotEvap) <- BasinInfo$BasinCode
 # with one column by node and node IDs as column names)
 Qrelease <- data.frame(Reservoir = rep(Qrelease, length(BasinObs$DatesR)))
 
-InputsModel <- CreateInputsModel(griwrm, DatesR = BasinObs$DatesR,
-                                 Precip = Precip,
-                                 PotEvap = PotEvap,
-                                 Qrelease = Qrelease)
+InputsModel <- CreateInputsModel(
+  griwrm,
+  DatesR = BasinObs$DatesR,
+  Precip = Precip,
+  PotEvap = PotEvap,
+  Qrelease = Qrelease
+)
 
 ## run period selection
-Ind_Run <- seq(which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1990-01-01"),
-               which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d")=="1999-12-31"))
+Ind_Run <- seq(
+  which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d") == "1990-01-01"),
+  which(format(BasinObs$DatesR, format = "\%Y-\%m-\%d") == "1999-12-31")
+)
 
 # Creation of the GRiwmRunOptions object
 RunOptions <- CreateRunOptions(
@@ -82,17 +92,18 @@ RunOptions[["Reservoir"]]$IniStates <- c("Reservoir.V" = 0)
 
 # calibration criterion: preparation of the InputsCrit object
 Qobs <- data.frame("L0123001" = BasinObs$Qmm[Ind_Run])
-InputsCrit <- CreateInputsCrit(InputsModel,
-                               ErrorCrit_KGE2,
-                               RunOptions = RunOptions,
-                               Obs = Qobs)
+InputsCrit <- CreateInputsCrit(
+  InputsModel,
+  ErrorCrit_KGE2,
+  RunOptions = RunOptions,
+  Obs = Qobs
+)
 
 # preparation of CalibOptions object with fixed parameters for the reservoir
-# The capacity of the reservoir is 10 hm3 and the inflow celerity is 0.5 m/s.
-Vmax <- 4E6
+# The capacity of the reservoir is set to Vmax and the inflow celerity is 0.5 m/s.
 CalibOptions <- CreateCalibOptions(
-    InputsModel,
-    FixedParam = list(Reservoir = c(Vmax = Vmax, celerity = 0.5))
+  InputsModel,
+  FixedParam = list(Reservoir = c(Vmax = Vmax, celerity = 0.5))
 )
 
 OC <- Calibration(
@@ -125,14 +136,12 @@ plot(OutputsModel$Reservoir, Qobs = Qobs[, "Reservoir"])
 # The objective here is to simulate the same reservoir as above
 # but with new rules:
 # - A minimum flow downstream the reservoir defined as:
-(Qmin <- Qrelease[1,])
+(Qmin <- Qrelease[1, ])
 # - A maximum release flow of 20 m3/s for flood mitigation
 (Qmax <- 20 * 86400)
 # - An annual objective filling curve managing floods and droughts by
 # trying to keep the reservoir volume between 2 and 8 Mm3:
-Vobj <- approx(c(1, 150, 300, 366),
-               c(1E6, 3.5E6, 0.5E6, 1E6),
-               seq(366))
+Vobj <- approx(c(1, 150, 300, 366), c(1E6, 3.5E6, 0.5E6, 1E6), seq(366))
 plot(Vobj, type = "l", col = "red", lty = 2)
 
 # The regulation function takes InputsModel of the reservoir node and the
@@ -145,12 +154,14 @@ fun_factory_Regulation_Reservoir <- function(Vini, Vobj, Qmin, Qmax, Vmax) {
     # Build inflows time series from upstream Qsim (warmup & run)
     Qinflows <- Qrelease
     IPR_all <- c(RunOptions$IndPeriod_WarmUp, RunOptions$IndPeriod_Run)
-    Qinflows[IPR_all] <- c(OutputsModel$L0123001$RunOptions$WarmUpQsim_m3,
-                           OutputsModel$L0123001$Qsim_m3)
+    Qinflows[IPR_all] <- c(
+      OutputsModel$L0123001$RunOptions$WarmUpQsim_m3,
+      OutputsModel$L0123001$Qsim_m3
+    )
     # Reservoir volume initialisation
     V <- Vini
     # Loop over simulation time steps (warmup & run periods)
-    for(ts in IPR_all) {
+    for (ts in IPR_all) {
       # Update reservoir volume with inflows
       V <- V + Qinflows[ts]
       # Rule #1: follow the objective filling curve (lower priority)
@@ -178,16 +189,24 @@ fun_factory_Regulation_Reservoir <- function(Vini, Vobj, Qmin, Qmax, Vmax) {
 # function with the parameters Qmin, Qmax, Vobj enclosed in the environment
 # of the function
 Regulation_Reservoir <-
-  fun_factory_Regulation_Reservoir(RunOptions$Reservoir$IniStates, Vobj, Qmin, Qmax, Vmax)
+  fun_factory_Regulation_Reservoir(
+    RunOptions$Reservoir$IniStates,
+    Vobj,
+    Qmin,
+    Qmax,
+    Vmax
+  )
 
 # Then we need to update InputsModel in order to take into account the regulation
 # function instead of predefined Qrelease in the previous study case
-IM_reg <- CreateInputsModel(griwrm,
-                            DatesR = BasinObs$DatesR,
-                            Precip = Precip,
-                            PotEvap = PotEvap,
-                            Qrelease = Qrelease,
-                            FUN_REGUL = list(Reservoir = Regulation_Reservoir))
+IM_reg <- CreateInputsModel(
+  griwrm,
+  DatesR = BasinObs$DatesR,
+  Precip = Precip,
+  PotEvap = PotEvap,
+  Qrelease = Qrelease,
+  FUN_REGUL = list(Reservoir = Regulation_Reservoir)
+)
 
 # And we can finally run the simulation!
 OM_reg <- RunModel(IM_reg, RunOptions, Param)
