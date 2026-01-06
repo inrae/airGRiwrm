@@ -103,7 +103,8 @@ setupRunOptions <- function(InputsModel) {
   RunOptions <- CreateRunOptions(
     InputsModel,
     IndPeriod_WarmUp = IndPeriod_WarmUp,
-    IndPeriod_Run = IndPeriod_Run
+    IndPeriod_Run = IndPeriod_Run,
+    warnings = FALSE
   )
   return(environment())
 }

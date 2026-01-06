@@ -113,7 +113,8 @@ Param <- c(
 ROref <- CreateRunOptions(
   InputsModel,
   IndPeriod_WarmUp = 1:364,
-  IndPeriod_Run = 365:nrow(dfTS)
+  IndPeriod_Run = 365:nrow(dfTS),
+  warnings = FALSE # Warn: model states initialisation not defined: default configuration used
 )
 OMref <- RunModel(InputsModel, ROref, Param)
 
@@ -121,7 +122,8 @@ OMref <- RunModel(InputsModel, ROref, Param)
 ROO <- CreateRunOptions(
   InputsModel,
   IndPeriod_WarmUp = 1:364,
-  IndPeriod_Run = 365L
+  IndPeriod_Run = 365L,
+  warnings = FALSE # Warn: model states initialisation not defined: default configuration used
 )
 OM <- RunModel(InputsModel, ROO, Param)
 

@@ -193,7 +193,8 @@ test_that("RunModel_Lag should work", {
   RO <- CreateRunOptions(
     IM,
     IndPeriod_Run = IndPeriod_Run,
-    IndPeriod_WarmUp = IndPeriod_WarmUp
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    warnings = FALSE # Warn: model states initialisation not defined: default configuration used
   )
   P <- ParamMichel["54095"]
   P$DownLag <- 1
