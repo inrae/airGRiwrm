@@ -21,6 +21,9 @@ if (interactive()) {
   plot(griwrm)
 }
 
+# This catchment inflows a reservoir of maximum capacity Vmax
+Vmax <- 4E6 # in m3
+
 # Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one
 # column by sub-basin and node IDs as column names)
 Precip <- matrix(BasinObs$P, ncol = 1)
@@ -72,8 +75,7 @@ InputsCrit <- CreateInputsCrit(
 )
 
 # preparation of CalibOptions object with fixed parameters for the reservoir
-# The capacity of the reservoir is 10 hm3 and the inflow celerity is 0.5 m/s.
-Vmax <- 4E6
+# The capacity of the reservoir is set to Vmax and the inflow celerity is 0.5 m/s.
 CalibOptions <- CreateCalibOptions(
   InputsModel,
   FixedParam = list(Reservoir = c(Vmax = Vmax, celerity = 0.5))
