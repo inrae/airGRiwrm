@@ -39,19 +39,24 @@ CreateRunOptions.InputsModel <- function(x, ...) {
   dots$InputsModel <- x
 
   # Add FUN_MOD in parameters if carried by InputsModel
-  if (!"FUN_MOD" %in% names(dots)) {
-    if (!is.null(x$FUN_MOD)) {
-      dots$FUN_MOD <- x$FUN_MOD
-    } else {
-      stop(" The parameter `FUN_MOD` must be defined")
+  FUN_MOD <- attr(x, "FeatFUN_MOD")$NameFunMod
+  if ("FUN_MOD" %in% names(dots)) {
+    if (!identical(match.fun(dots$FUN_MOD), match.fun(FUN_MOD))) {
+      stop(
+        "The parameter `FUN_MOD` differe from the one defined in `InputsModel`"
+      )
     }
   }
+  dots$FUN_MOD <- FUN_MOD
   # Add IsHyst in parameters if carried by InputsModel
   if (!is.null(x$model$IsHyst)) {
     dots$IsHyst <- x$model$IsHyst
   }
 
-  do.call(airGR::CreateRunOptions, dots)
+  suppressWarningsRegex(
+    do.call(airGR::CreateRunOptions, dots),
+    pattern = "does not require .*\\. Values? set to NA"
+  )
 }
 
 #' @rdname CreateRunOptions
