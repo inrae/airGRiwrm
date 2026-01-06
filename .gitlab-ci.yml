@@ -55,10 +55,9 @@ check:
 github_master_dev:
   extends:
     - .github
-  only:
-    refs:
-      - master
-      - dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+    - if: $CI_COMMIT_BRANCH == "dev"
   script:
     - git push --force github HEAD:refs/heads/$CI_COMMIT_BRANCH
 
