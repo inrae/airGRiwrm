@@ -27,22 +27,22 @@
 #' @export plot.Qm3s
 #' @export
 #'
-plot.Qm3s <- function(x,
-                      type = "l",
-                      xlab = "Date",
-                      ylab = expression("Flow rate (m"^"3"*"/s)"),
-                      main = "Simulated flows",
-                      col = grDevices::hcl.colors(ncol(x) - 1, "Zissou 1"),
-                      legend = colnames(x)[-1],
-                      legend.cex = 0.7,
-                      legend.x = "topright",
-                      legend.y = NULL,
-                      lty = 1,
-                      mgp = c(2.5, 1, 0),
-                      ...) {
-
-  stopifnot(is.data.frame(x),
-            inherits(x[, 1], "POSIXct"))
+plot.Qm3s <- function(
+  x,
+  type = "l",
+  xlab = "Date",
+  ylab = expression("Flow rate (m"^"3" * "/s)"),
+  main = "Simulated flows",
+  col = grDevices::hcl.colors(ncol(x) - 1, "Zissou 1"),
+  legend = colnames(x)[-1],
+  legend.cex = 0.7,
+  legend.x = "topright",
+  legend.y = NULL,
+  lty = 1,
+  mgp = c(2.5, 1, 0),
+  ...
+) {
+  stopifnot(is.data.frame(x), inherits(x[, 1], "POSIXct"))
 
   col <- tryCatch(
     col,
@@ -62,12 +62,14 @@ plot.Qm3s <- function(x,
     ...
   )
   if (!is.null(legend)) {
-    legend(x = legend.x,
-           y = legend.y,
-           legend = legend,
-           cex = legend.cex,
-           lty = lty,
-           col = col)
+    legend(
+      x = legend.x,
+      y = legend.y,
+      legend = legend,
+      cex = legend.cex,
+      lty = lty,
+      col = col
+    )
   }
 }
 

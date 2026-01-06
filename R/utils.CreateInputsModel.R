@@ -18,8 +18,12 @@ updateQinfQrelease <- function(g, Qinf, Qrelease) {
     }
   }
   if (!is.null(warn_ids)) {
-    warning("Use of the `Qinf` parameter for reservoir releases is deprecated, please use `Qrelease` instead.\n",
-            "Processing `Qrelease <- cbind(Qrelease, Qinf[, c(\"", paste(warn_ids, collapse = "\", `"), "\"])`...")
+    warning(
+      "Use of the `Qinf` parameter for reservoir releases is deprecated, please use `Qrelease` instead.\n",
+      "Processing `Qrelease <- cbind(Qrelease, Qinf[, c(\"",
+      paste(warn_ids, collapse = "\", `"),
+      "\"])`..."
+    )
   }
   return(list(Qinf = Qinf, Qrelease = Qrelease))
 }
@@ -42,15 +46,28 @@ checkQinfQrelease <- function(g, varname, Q) {
         err <- TRUE
       }
     }
-    if (err) stop(sprintf("'%s' column names must at least contain %s", varname, paste(directFlowIds, collapse = ", ")))
+    if (err) {
+      stop(sprintf(
+        "'%s' column names must at least contain %s",
+        varname,
+        paste(directFlowIds, collapse = ", ")
+      ))
+    }
   }
   if (!all(colnames(Q) %in% directFlowIds)) {
     warning(
-      sprintf("The following columns in '%s' are ignored since they don't match with ", varname),
-      ifelse(varname == "Qinf",
-             c("Direction Injection (model=`NA`), ",
-               "or Diversion nodes (model=\"Diversion\"): "),
-             "Reservoir nodes (model=\"RunModelReservoir\"): "),
+      sprintf(
+        "The following columns in '%s' are ignored since they don't match with ",
+        varname
+      ),
+      ifelse(
+        varname == "Qinf",
+        c(
+          "Direction Injection (model=`NA`), ",
+          "or Diversion nodes (model=\"Diversion\"): "
+        ),
+        "Reservoir nodes (model=\"RunModelReservoir\"): "
+      ),
       paste(setdiff(colnames(Q), directFlowIds), collapse = ", ")
     )
     Q <- Q[, directFlowIds]
@@ -80,12 +97,17 @@ checkInputsModelArguments <- function(x, DatesR, ...) {
             varName
           ))
         } else if (!all(colnames(v) %in% x$id)) {
-          stop(sprintf(
-            "'%s' column names must be included in 'id's of the GRiwrm object",
-            varName
-          ), "\n",
-          sprintf("These columns are not known: %s",
-                  paste(colnames(v)[!colnames(v) %in% x$id], collapse = ", ")))
+          stop(
+            sprintf(
+              "'%s' column names must be included in 'id's of the GRiwrm object",
+              varName
+            ),
+            "\n",
+            sprintf(
+              "These columns are not known: %s",
+              paste(colnames(v)[!colnames(v) %in% x$id], collapse = ", ")
+            )
+          )
         } else if (any(duplicated(colnames(v)))) {
           stop(sprintf(
             "'%s' has duplicated column names: '%s'",
@@ -93,7 +115,10 @@ checkInputsModelArguments <- function(x, DatesR, ...) {
             paste(colnames(v)[duplicated(colnames(v))], collapse = "', '")
           ))
         }
-        if (!varName %in% c("ZInputs", "NLayers", "HypsoData") && nrow(v) != length(DatesR)) {
+        if (
+          !varName %in% c("ZInputs", "NLayers", "HypsoData") &&
+            nrow(v) != length(DatesR)
+        ) {
           stop(sprintf(
             "'%s' number of rows and the length of 'DatesR' must be equal",
             varName

@@ -55,11 +55,8 @@
 #' @example man-examples/RunModel_Reservoir.R
 #'
 RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
-
   # Input checks
-  stopifnot(InputsModel$isReservoir,
-            is.numeric(Param),
-            length(Param) == 2)
+  stopifnot(InputsModel$isReservoir, is.numeric(Param), length(Param) == 2)
 
   # Model parameter
   Vmax <- Param[1]
@@ -67,28 +64,46 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
 
   # Time parameters
   IndPerWarmUp <- RunOptions$IndPeriod_WarmUp[RunOptions$IndPeriod_WarmUp > 0]
-  IndPerTot   <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
+  IndPerTot <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
   iPerTot <- seq(length(IndPerTot))
 
   # Relocate upstream direct injection into the reservoir
-  Qdirect <- InputsModel$Qupstream[IndPerTot, !InputsModel$UpstreamIsModeled, drop = FALSE]
-  InputsModel$Qupstream <-  InputsModel$Qupstream[, InputsModel$UpstreamIsModeled, drop = FALSE]
-  InputsModel$LengthHydro <- InputsModel$LengthHydro[InputsModel$UpstreamIsModeled]
-  InputsModel$BasinAreas <- InputsModel$BasinAreas[c(InputsModel$UpstreamIsModeled, TRUE)]
-  InputsModel$UpstreamNodes <- InputsModel$UpstreamNodes[InputsModel$UpstreamIsModeled]
-  InputsModel$UpstreamVarQ <- InputsModel$UpstreamVarQ[InputsModel$UpstreamIsModeled]
-  InputsModel$UpstreamIsModeled <- InputsModel$UpstreamIsModeled[InputsModel$UpstreamIsModeled]
+  Qdirect <- InputsModel$Qupstream[
+    IndPerTot,
+    !InputsModel$UpstreamIsModeled,
+    drop = FALSE
+  ]
+  InputsModel$Qupstream <- InputsModel$Qupstream[,
+    InputsModel$UpstreamIsModeled,
+    drop = FALSE
+  ]
+  InputsModel$LengthHydro <- InputsModel$LengthHydro[
+    InputsModel$UpstreamIsModeled
+  ]
+  InputsModel$BasinAreas <- InputsModel$BasinAreas[c(
+    InputsModel$UpstreamIsModeled,
+    TRUE
+  )]
+  InputsModel$UpstreamNodes <- InputsModel$UpstreamNodes[
+    InputsModel$UpstreamIsModeled
+  ]
+  InputsModel$UpstreamVarQ <- InputsModel$UpstreamVarQ[
+    InputsModel$UpstreamIsModeled
+  ]
+  InputsModel$UpstreamIsModeled <- InputsModel$UpstreamIsModeled[
+    InputsModel$UpstreamIsModeled
+  ]
 
   # Compute inflows with RunModel_Lag
   if (ncol(InputsModel$Qupstream) > 0) {
-    OutputsModel <- RunModel_Routing(InputsModel,
-                                RunOptions,
-                                Param = celerity)
+    OutputsModel <- RunModel_Routing(InputsModel, RunOptions, Param = celerity)
     names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
     OutputsModel$Qsim <- NULL
     OutputsModel$RunOptions$WarmUpQsim <- NULL
-    Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
-                     OutputsModel$Qinflows_m3)
+    Qinflows_m3 <- c(
+      OutputsModel$RunOptions$WarmUpQsim_m3,
+      OutputsModel$Qinflows_m3
+    )
   } else {
     OutputsModel <- list(
       DatesR = InputsModel$DatesR[RunOptions$IndPeriod_Run]
@@ -97,7 +112,9 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
     Qinflows_m3 <- rep(0, length(IndPerTot))
   }
   if (ncol(Qdirect) > 0) {
-    if (ncol(Qdirect) > 1) Qdirect <- rowSums(Qdirect)
+    if (ncol(Qdirect) > 1) {
+      Qdirect <- rowSums(Qdirect)
+    }
     Qinflows_m3 <- Qinflows_m3 + Qdirect
   } else {
     Qdirect <- NULL
@@ -125,7 +142,10 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
       Vsim[i] <- 0
     }
     if (InputsModel$hasDiversion) {
-      Qdiv_m3[i] <- min(Vsim[i] + InputsModel$Qmin[IndPerTot[i]], InputsModel$Qdiv[IndPerTot[i]])
+      Qdiv_m3[i] <- min(
+        Vsim[i] + InputsModel$Qmin[IndPerTot[i]],
+        InputsModel$Qdiv[IndPerTot[i]]
+      )
       Vsim[i] <- Vsim[i] - Qdiv_m3[i]
     }
     Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])

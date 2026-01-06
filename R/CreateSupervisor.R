@@ -17,10 +17,16 @@
 #'
 CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
-    stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
+    stop(
+      "`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)"
+    )
   }
-  if (!is.integer(TimeStep)) stop("`TimeStep` parameter must be an integer")
-  if (TimeStep < 1) stop("`TimeStep` parameter must be strictly positive")
+  if (!is.integer(TimeStep)) {
+    stop("`TimeStep` parameter must be an integer")
+  }
+  if (TimeStep < 1) {
+    stop("`TimeStep` parameter must be strictly positive")
+  }
 
   # Create Supervisor environment from the parent of GlobalEnv
   e <- new.env(parent = parent.env(globalenv()))
@@ -40,8 +46,10 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$nodeProperties <- getAllNodesProperties(e$griwrm)
   models4U <- c("Diversion", "RunModel_Reservoir")
   e$griwrm4U <-
-    e$griwrm[is.na(e$griwrm$model) |
-             (!is.na(e$griwrm$model) & e$griwrm$model %in% models4U), ]
+    e$griwrm[
+      is.na(e$griwrm$model) |
+        (!is.na(e$griwrm$model) & e$griwrm$model %in% models4U),
+    ]
   e$OutputsModel <- list()
   e$.TimeStep <- TimeStep
 

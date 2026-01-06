@@ -3,19 +3,31 @@ test_that("airGR::CreateInputsModel should work", {
   data(L0123001)
 
   ## preparation of InputsModel object
-  InputsModel <- airGR::CreateInputsModel(FUN_MOD = RunModel_GR4J, DatesR = BasinObs$DatesR,
-                                   Precip = BasinObs$P, PotEvap = BasinObs$E)
+  InputsModel <- airGR::CreateInputsModel(
+    FUN_MOD = RunModel_GR4J,
+    DatesR = BasinObs$DatesR,
+    Precip = BasinObs$P,
+    PotEvap = BasinObs$E
+  )
 
-  expect_equal(CreateInputsModel(RunModel_GR4J,
-                                 DatesR = BasinObs$DatesR,
-                                 Precip = BasinObs$P,
-                                 PotEvap = BasinObs$E),
-               InputsModel)
-  expect_equal(CreateInputsModel("RunModel_GR4J",
-                                 DatesR = BasinObs$DatesR,
-                                 Precip = BasinObs$P,
-                                 PotEvap = BasinObs$E),
-               InputsModel)
+  expect_equal(
+    CreateInputsModel(
+      RunModel_GR4J,
+      DatesR = BasinObs$DatesR,
+      Precip = BasinObs$P,
+      PotEvap = BasinObs$E
+    ),
+    InputsModel
+  )
+  expect_equal(
+    CreateInputsModel(
+      "RunModel_GR4J",
+      DatesR = BasinObs$DatesR,
+      Precip = BasinObs$P,
+      PotEvap = BasinObs$E
+    ),
+    InputsModel
+  )
 })
 
 
@@ -23,13 +35,15 @@ l <- setUpCemaNeigeData()
 
 test_that("CemaNeige data should be in InputsModel", {
   InputsModels <- suppressWarnings(
-    CreateInputsModel(l$griwrm,
-                      DatesR = l$DatesR,
-                      Precip = l$Precip,
-                      PotEvap = l$PotEvap,
-                      TempMean = l$TempMean,
-                      ZInputs = l$ZInputs,
-                      HypsoData = l$HypsoData)
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    )
   )
   l$DatesR <- as.data.frame(l$DatesR)
   lapply(InputsModels, function(IM) {
@@ -44,14 +58,18 @@ test_that("CemaNeige data should be in InputsModel", {
 
 test_that("downstream sub-catchment area should be positive", {
   l$griwrm$area[3] <- 360
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 TempMean = l$TempMean,
-                                 ZInputs = l$ZInputs,
-                                 HypsoData = l$HypsoData),
-               regexp = "must be greater than the sum of the areas")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "must be greater than the sum of the areas"
+  )
 })
 
 test_that("handles mix of with and without CemaNeige nodes", {
@@ -61,13 +79,15 @@ test_that("handles mix of with and without CemaNeige nodes", {
   l$TempMean <- l$TempMean[, 1:2]
   l$HypsoData <- l$HypsoData[, 1:2]
   InputsModels <- suppressWarnings(
-    CreateInputsModel(l$griwrm,
-                      DatesR = l$DatesR,
-                      Precip = l$Precip,
-                      PotEvap = l$PotEvap,
-                      TempMean = l$TempMean,
-                      ZInputs = l$ZInputs,
-                      HypsoData = l$HypsoData)
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    )
   )
   expect_false(inherits(InputsModels$Down, "CemaNeige"))
   expect_null(InputsModels$Down$LayerPrecip)
@@ -75,72 +95,100 @@ test_that("handles mix of with and without CemaNeige nodes", {
 
 test_that("throws error on wrong column name", {
   colnames(l$Precip)[1] <- "Up0"
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 TempMean = l$TempMean,
-                                 ZInputs = l$ZInputs,
-                                 HypsoData = l$HypsoData),
-               regexp = "column names must be included in.*Up0")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "column names must be included in.*Up0"
+  )
   colnames(l$Precip) <- NULL
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 TempMean = l$TempMean,
-                                 ZInputs = l$ZInputs,
-                                 HypsoData = l$HypsoData),
-               regexp = "must have column names")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "must have column names"
+  )
 })
 
 test_that("throw error on missing column in inputs", {
   l$Precip <- l$Precip[, -1]
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 TempMean = l$TempMean,
-                                 ZInputs = l$ZInputs,
-                                 HypsoData = l$HypsoData),
-               regexp = "Precip is missing")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "Precip is missing"
+  )
 })
 
 test_that("throw error on wrong number of rows in inputs", {
   l$Precip <- l$Precip[-1, ]
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 TempMean = l$TempMean,
-                                 ZInputs = l$ZInputs,
-                                 HypsoData = l$HypsoData),
-               regexp = "number of rows and the length of 'DatesR' must be equal")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "number of rows and the length of 'DatesR' must be equal"
+  )
 })
 
 
 test_that("throws error when missing CemaNeige data", {
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap),
-               regexp = "'TempMean' is missing")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap
+    ),
+    regexp = "'TempMean' is missing"
+  )
 })
 
 test_that("throws error when missing Qinf on node Direct Injection node", {
   l$griwrm$model[1] <- NA
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap),
-               regexp = "'Qinf' column names must at least contain")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap
+    ),
+    regexp = "'Qinf' column names must at least contain"
+  )
 
-  expect_error(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 Qinf = l$Qobs[, -1]),
-               regexp = "'Qinf' column names must at least contain")
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      Qinf = l$Qobs[, -1]
+    ),
+    regexp = "'Qinf' column names must at least contain"
+  )
 })
 
 test_that("must works with node not related to an hydrological model", {
@@ -155,44 +203,54 @@ test_that("must works with node not related to an hydrological model", {
     ZInputs = l$ZInputs,
     HypsoData = l$HypsoData
   ))
-  expect_equal(IM[[2]]$Qupstream[, "Up1"], l$Qobs[, "Up1"] * l$griwrm[1, "area"] * 1E3)
+  expect_equal(
+    IM[[2]]$Qupstream[, "Up1"],
+    l$Qobs[, "Up1"] * l$griwrm[1, "area"] * 1E3
+  )
   expect_equal(colnames(IM[[2]]$Qupstream), c("Up1", "Up2"))
 })
 
 test_that("Qinf on hydrological nodes should throw a warning", {
-  expect_warning(CreateInputsModel(l$griwrm,
-                                 DatesR = l$DatesR,
-                                 Precip = l$Precip,
-                                 PotEvap = l$PotEvap,
-                                 Qinf = l$Qobs,
-                                 TempMean = l$TempMean,
-                                 ZInputs = l$ZInputs,
-                                 HypsoData = l$HypsoData),
-               regexp = "columns in 'Qinf' are ignored since they don't match with")
-  l$griwrm$model[1] <- NA
-  expect_s3_class(suppressWarnings(
+  expect_warning(
     CreateInputsModel(
       l$griwrm,
       DatesR = l$DatesR,
       Precip = l$Precip,
       PotEvap = l$PotEvap,
-      Qinf = l$Qobs[,1, drop = F],
+      Qinf = l$Qobs,
       TempMean = l$TempMean,
       ZInputs = l$ZInputs,
       HypsoData = l$HypsoData
-    )
-  ),
-  "GRiwrmInputsModel")
+    ),
+    regexp = "columns in 'Qinf' are ignored since they don't match with"
+  )
+  l$griwrm$model[1] <- NA
+  expect_s3_class(
+    suppressWarnings(
+      CreateInputsModel(
+        l$griwrm,
+        DatesR = l$DatesR,
+        Precip = l$Precip,
+        PotEvap = l$PotEvap,
+        Qinf = l$Qobs[, 1, drop = F],
+        TempMean = l$TempMean,
+        ZInputs = l$ZInputs,
+        HypsoData = l$HypsoData
+      )
+    ),
+    "GRiwrmInputsModel"
+  )
 })
 
 # data set up
 e <- setupRunModel(runInputsModel = FALSE)
 # variables are copied from environment 'e' to the current environment
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
-for(x in ls(e)) assign(x, get(x, e))
+for (x in ls(e)) {
+  assign(x, get(x, e))
+}
 
 test_that("Ungauged node should inherits its FUN_MOD from the downstream gauged node", {
-
   nodes$model[nodes$id == "54032"] <- "Ungauged"
   griwrmV05 <- CreateGRiwrm(nodes)
   IM <- suppressWarnings(
@@ -203,11 +261,13 @@ test_that("Ungauged node should inherits its FUN_MOD from the downstream gauged 
 
 test_that("Network with Diversion works", {
   n_div <- rbind(
-    data.frame(id = "54029",
-               down = "54002",
-               length = 20,
-               model = "Diversion",
-               area = NA),
+    data.frame(
+      id = "54029",
+      down = "54002",
+      length = 20,
+      model = "Diversion",
+      area = NA
+    ),
     nodes
   )
   g <- CreateGRiwrm(n_div)
@@ -217,32 +277,56 @@ test_that("Network with Diversion works", {
     CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf)
   )
   expect_equal(IM[["54032"]]$UpstreamNodes, c("54029", "54001"))
-  expect_equal(IM[["54032"]]$UpstreamVarQ , c("54029" = "Qsim_m3", "54001" = "Qsim_m3"))
+  expect_equal(
+    IM[["54032"]]$UpstreamVarQ,
+    c("54029" = "Qsim_m3", "54001" = "Qsim_m3")
+  )
   expect_equal(IM[["54002"]]$UpstreamNodes, "54029")
-  expect_equal(IM[["54002"]]$UpstreamIsModeled  , c("54029" = TRUE))
-  expect_equal(IM[["54002"]]$UpstreamVarQ , c("54029" = "Qdiv_m3"))
+  expect_equal(IM[["54002"]]$UpstreamIsModeled, c("54029" = TRUE))
+  expect_equal(IM[["54002"]]$UpstreamVarQ, c("54029" = "Qdiv_m3"))
   expect_equivalent(IM$`54029`$Qmin, matrix(0, nrow = length(DatesR), ncol = 1))
 })
 
 test_that("Diversion node: checks about 'Qmin'", {
-  n_div <- rbind(nodes,
-                 data.frame(id = "54029", down = "54002", length = 50, area = NA, model = "Diversion"))
+  n_div <- rbind(
+    nodes,
+    data.frame(
+      id = "54029",
+      down = "54002",
+      length = 50,
+      area = NA,
+      model = "Diversion"
+    )
+  )
   g <- CreateGRiwrm(n_div)
   Qinf = matrix(-1, nrow = length(DatesR), ncol = 1)
   colnames(Qinf) = "54029"
-  expect_warning(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf),
-                 regexp = "Zero values")
+  expect_warning(
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf),
+    regexp = "Zero values"
+  )
   Qmin <- -Qinf
   IM <- CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = Qmin)
   expect_equivalent(IM$`54029`$Qmin, Qmin)
   QminNA <- Qmin
   QminNA[1] <- NA
-  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = QminNA),
-               regexp = "NA")
+  expect_error(
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = QminNA),
+    regexp = "NA"
+  )
   QminBadCol <- Qmin
   colnames(QminBadCol) = "54002"
-  expect_error(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf, Qmin = QminBadCol),
-               regexp = "columns that does not match with IDs of Diversion nodes")
+  expect_error(
+    CreateInputsModel(
+      g,
+      DatesR,
+      Precip,
+      PotEvap,
+      Qinf = Qinf,
+      Qmin = QminBadCol
+    ),
+    regexp = "columns that does not match with IDs of Diversion nodes"
+  )
 })
 
 test_that("Node with upstream nodes having area = NA should return correct BasinsAreas", {
@@ -255,29 +339,41 @@ test_that("Node with upstream nodes having area = NA should return correct Basin
   # The dam is a direct injection node
   nodes$down[nodes$id == "54095"] <- "Dam"
   nodes$length[nodes$id == "54095"] <- 0
-  nodes <- rbind(nodes,
-                 data.frame(id = "Dam",
-                            down = "54001",
-                            length = 42,
-                            area = NA,
-                            model = "RunModel_Reservoir"))
+  nodes <- rbind(
+    nodes,
+    data.frame(
+      id = "Dam",
+      down = "54001",
+      length = 42,
+      area = NA,
+      model = "RunModel_Reservoir"
+    )
+  )
   g <- CreateGRiwrm(nodes)
   Qinf <- data.frame(
-    Dam = rep(0,11536)
+    Dam = rep(0, 11536)
   )
   e <- setupRunModel(griwrm = g, runInputsModel = FALSE, Qinf = Qinf)
-  for (x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
   InputsModel <-
     suppressWarnings(CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf = Qinf))
-  expect_equal(sum(InputsModel$`54001`$BasinAreas),
-               g$area[g$id == "54001"])
+  expect_equal(sum(InputsModel$`54001`$BasinAreas), g$area[g$id == "54001"])
 })
 
-test_that("Use of Qinf for Qrelease should raise a warning",  {
+test_that("Use of Qinf for Qrelease should raise a warning", {
   g <- CreateGRiwrm(n_rsrvr)
   e <- setupRunModel(griwrm = g, runInputsModel = FALSE)
-  for (x in ls(e)) assign(x, get(x, e))
-  expect_warning(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
-                                   TempMean = TempMean,
-                                   Qinf = Qinf_rsrvr))
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  expect_warning(CreateInputsModel(
+    griwrm,
+    DatesR,
+    Precip,
+    PotEvap,
+    TempMean = TempMean,
+    Qinf = Qinf_rsrvr
+  ))
 })

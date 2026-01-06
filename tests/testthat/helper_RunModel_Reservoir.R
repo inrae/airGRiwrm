@@ -4,7 +4,7 @@
 n_rsrvr <- loadSevernNodes()
 
 # Reduce the network
-n_rsrvr <- n_rsrvr[n_rsrvr$id %in% c("54095", "54001"),]
+n_rsrvr <- n_rsrvr[n_rsrvr$id %in% c("54095", "54001"), ]
 n_rsrvr$down[n_rsrvr$id == "54001"] <- NA
 n_rsrvr$length[n_rsrvr$id == "54001"] <- NA
 # Insert a dam downstream the location the gauging station 54095
@@ -38,21 +38,27 @@ n_derived_rsrvr <- get_nodes_derived_reservoir(n_rsrvr)
 getGriwrmDerivedReservoirUngauged <- function(donorByDerivation) {
   nodes <- loadSevernNodes()
   nodes <-
-    nodes[nodes$id %in% c("54095", "54001", "54029", "54032"),]
+    nodes[nodes$id %in% c("54095", "54001", "54029", "54032"), ]
   nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
   nodes$model[nodes$id == "54095"] <- "Ungauged"
-  nodes <- rbind(nodes,
-                 data.frame(
-                   id = c("54095", "Dam"),
-                   down = c("54029", "54029"),
-                   length = c(10, 0),
-                   area = rep(NA, 2),
-                   model = c("Diversion", "RunModel_Reservoir")
-                 ))
-  nodes$down[nodes$id == "54095" &
-               nodes$model == "Diversion"] <- "Dam"
+  nodes <- rbind(
+    nodes,
+    data.frame(
+      id = c("54095", "Dam"),
+      down = c("54029", "54029"),
+      length = c(10, 0),
+      area = rep(NA, 2),
+      model = c("Diversion", "RunModel_Reservoir")
+    )
+  )
+  nodes$down[
+    nodes$id == "54095" &
+      nodes$model == "Diversion"
+  ] <- "Dam"
   nodes$donor <- as.character(NA)
-  if (donorByDerivation) nodes$donor[nodes$id == "54095"] <- "54029"
+  if (donorByDerivation) {
+    nodes$donor[nodes$id == "54095"] <- "54029"
+  }
   g <- CreateGRiwrm(nodes)
   return(g)
 }
@@ -64,12 +70,20 @@ testDerivedUngauged <- function(donorByDerivation) {
   Qinf[, "54095"] <- -1E9
   Qinf[, "Dam"] <- 1E9
   e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qinf = Qinf)
-  for (x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
 
-  CalibOptions <- CreateCalibOptions(InputsModel,
-                                     FixedParam = list(Dam = c(650E6, 1)))
+  CalibOptions <- CreateCalibOptions(
+    InputsModel,
+    FixedParam = list(Dam = c(650E6, 1))
+  )
   e <- runCalibration(g, Qinf = Qinf, CalibOptions = CalibOptions)
-  for (x in ls(e)) assign(x, get(x, e))
-  expect_equal(Param[["54095"]][1:3],
-               Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4])
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  expect_equal(
+    Param[["54095"]][1:3],
+    Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4]
+  )
 }

@@ -20,12 +20,19 @@
 #' @export
 #'
 #'
-plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, Vobs = NULL, unit = "m3/s", ...) {
-
+plot.GRiwrmOutputsModel <- function(
+  x,
+  Qobs = NULL,
+  Vobs = NULL,
+  unit = "m3/s",
+  ...
+) {
   # Arguments checks
-  stopifnot(is.null(Qobs) || is.matrix(Qobs) || is.data.frame(Qobs),
-            is.character(unit),
-            unit %in% c("mm", "m3/s"))
+  stopifnot(
+    is.null(Qobs) || is.matrix(Qobs) || is.data.frame(Qobs),
+    is.character(unit),
+    unit %in% c("mm", "m3/s")
+  )
 
   griwrm <- attr(x, "GRiwrm")
   ## define outer margins and a title inside it
@@ -39,7 +46,7 @@ plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, Vobs = NULL, unit = "m3/s", 
       Qobs_id <- NULL
       if (!is.null(Qobs)) {
         if (id %in% colnames(Qobs)) {
-          Qobs_id <- Qobs[,id, drop = TRUE]
+          Qobs_id <- Qobs[, id, drop = TRUE]
         } else {
           warning("Column \"", id, "\" not found in Qobs")
         }
@@ -47,13 +54,21 @@ plot.GRiwrmOutputsModel <- function(x, Qobs = NULL, Vobs = NULL, unit = "m3/s", 
       Vobs_id <- NULL
       if (!is.null(Vobs)) {
         if (id %in% colnames(Vobs)) {
-          Vobs_id <- Vobs[,id, drop = TRUE]
+          Vobs_id <- Vobs[, id, drop = TRUE]
         }
       }
 
-      BasinArea <- griwrm$area[griwrm$id == id & !is.na(griwrm$model) & griwrm$model != "Diversion"]
+      BasinArea <- griwrm$area[
+        griwrm$id == id & !is.na(griwrm$model) & griwrm$model != "Diversion"
+      ]
       if (unit == "m3/s" && length(BasinArea) == 1 && !is.na(BasinArea)) {
-        plot(x[[id]], Qobs = Qobs_id, Vobs = Vobs_id, BasinArea = BasinArea, ...)
+        plot(
+          x[[id]],
+          Qobs = Qobs_id,
+          Vobs = Vobs_id,
+          BasinArea = BasinArea,
+          ...
+        )
       } else {
         plot(x[[id]], Qobs = Qobs_id, Vobs = Vobs_id, ...)
       }

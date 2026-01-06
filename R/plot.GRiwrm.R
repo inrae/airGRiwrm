@@ -201,7 +201,9 @@ getNodeClass <- function(id, griwrm) {
   } else {
     nc <- paste0(props$position, ifelse(props$gauged, "Gauged", "Ungauged"))
   }
-  if (props$Diversion) nc <- paste0(nc, "Diversion")
+  if (props$Diversion) {
+    nc <- paste0(nc, "Diversion")
+  }
   return(nc)
 }
 
@@ -243,7 +245,7 @@ getNodeClass <- function(id, griwrm) {
 #' @examples
 #' diagram <- "flowchart LR\n  A --> B"
 #' mermaid_gen_link(diagram)
-#' \dontrun{
+#' if (interactive()){
 #' f <- mermaid(diagram)
 #' f
 #'
@@ -268,9 +270,12 @@ mermaid <- function(
     server = server
   )
 ) {
-  if (!dir.exists(dir.dest))
+  if (!dir.exists(dir.dest)) {
     dir.create(dir.dest, recursive = TRUE, showWarnings = FALSE)
-  if (dirname(file.dest) == ".") file.dest <- file.path(dir.dest, file.dest)
+  }
+  if (dirname(file.dest) == ".") {
+    file.dest <- file.path(dir.dest, file.dest)
+  }
   if (!file.exists(file.dest)) {
     ret <- tryCatch(
       utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"),
@@ -380,7 +385,7 @@ plot_png <- function(path, add = FALSE) {
 #' @rdname mermaid
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()){
 #' s <- "flowchart LR
 #' A --> B"
 #' class(s) <- c("mermaid", class(s))

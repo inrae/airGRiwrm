@@ -1,6 +1,14 @@
 nodes <- loadSevernNodes()
-nodes <- rbind(nodes,
-               data.frame(id = "54032", down = "54002", length = 30, area = NA, model = "Diversion"))
+nodes <- rbind(
+  nodes,
+  data.frame(
+    id = "54032",
+    down = "54002",
+    length = 30,
+    area = NA,
+    model = "Diversion"
+  )
+)
 g <- CreateGRiwrm(nodes)
 
 test_that("isNodeDownstream works", {

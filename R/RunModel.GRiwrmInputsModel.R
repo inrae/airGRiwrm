@@ -19,14 +19,17 @@
 #' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()]
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
 RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
-
   checkRunModelParameters(x, RunOptions, Param)
 
   OutputsModel <- list()
   class(OutputsModel) <- c("GRiwrmOutputsModel", class(OutputsModel))
 
   for (id in names(x)) {
-    message("RunModel.GRiwrmInputsModel: Processing sub-basin ", x[[id]]$id, "...")
+    message(
+      "RunModel.GRiwrmInputsModel: Processing sub-basin ",
+      x[[id]]$id,
+      "..."
+    )
 
     # Update x[[id]]$Qupstream with simulated upstream flows
     if (any(x[[id]]$UpstreamIsModeled)) {
@@ -34,7 +37,12 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
     }
     # Run node regulation if any
     if (!is.null(x[[id]]$FUN_REGUL)) {
-      x[[id]] <- x[[id]]$FUN_REGUL(x[[id]], RunOptions[[id]], OutputsModel, e = environment())
+      x[[id]] <- x[[id]]$FUN_REGUL(
+        x[[id]],
+        RunOptions[[id]],
+        OutputsModel,
+        e = environment()
+      )
     }
     # Run the model for the sub-basin
     OutputsModel[[id]] <- RunModel.InputsModel(
@@ -43,6 +51,10 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
       Param = Param[[id]]
     )
   }
-  OutputsModel <- add_OutputsModel_attributes(x, OutputsModel, RunOptions[[1]]$IndPeriod_Run)
+  OutputsModel <- add_OutputsModel_attributes(
+    x,
+    OutputsModel,
+    RunOptions[[1]]$IndPeriod_Run
+  )
   return(OutputsModel)
 }

@@ -16,7 +16,6 @@
 #' @noRd
 #'
 RunModel.GR <- function(x, RunOptions, Param, ...) {
-
   if (inherits(x, "SD")) {
     # Lag model take one parameter at the beginning of the vector
     iFirstParamRunOffModel <- 2
@@ -29,8 +28,11 @@ RunModel.GR <- function(x, RunOptions, Param, ...) {
   RunOptions$IniStates[is.na(RunOptions$IniStates)] <- 0
 
   FUN_MOD <- match.fun(x$FUN_MOD)
-  OutputsModel <- FUN_MOD(x, RunOptions = RunOptions,
-          Param = Param[iFirstParamRunOffModel:length(Param)])
+  OutputsModel <- FUN_MOD(
+    x,
+    RunOptions = RunOptions,
+    Param = Param[iFirstParamRunOffModel:length(Param)]
+  )
   OutputsModel <- complete_OutputsModel(OutputsModel, RunOptions, x$BasinAreas)
 
   return(OutputsModel)
