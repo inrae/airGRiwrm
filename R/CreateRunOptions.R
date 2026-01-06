@@ -47,28 +47,21 @@ CreateRunOptions.InputsModel <- function(x, ...) {
     }
   }
   # Add IsHyst in parameters if carried by InputsModel
-  if (!is.null(x$model$IsHyst)) dots$IsHyst <- x$model$IsHyst
-
-  # Temporary fix waiting for resolution of HYCAR-Hydro/airgr#167
-  if (identical(match.fun(dots$FUN_MOD), RunModel_Lag)) {
-    dots$IniStates <- CreateIniStates(RunModel_Lag, x)
+  if (!is.null(x$model$IsHyst)) {
+    dots$IsHyst <- x$model$IsHyst
   }
-  # End of temporary fix HYCAR-Hydro/airgr#167
+
   do.call(airGR::CreateRunOptions, dots)
 }
 
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.character <- function(x, InputsModel, ...) {
-  CreateRunOptions(x = InputsModel,
-                   FUN_MOD = x,
-                   ...)
+  CreateRunOptions(x = InputsModel, FUN_MOD = x, ...)
 }
 
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.function <- function(x, InputsModel, ...) {
-  CreateRunOptions(x = InputsModel,
-                   FUN_MOD = x,
-                   ...)
+  CreateRunOptions(x = InputsModel, FUN_MOD = x, ...)
 }
