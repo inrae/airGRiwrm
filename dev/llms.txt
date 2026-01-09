@@ -1,0 +1,260 @@
+# airGRiwrm
+
+> **airGR-based Integrated Water Resource Management Modeling**
+
+**airGRiwrm** is an R package extending
+[**airGR**](https://hydrogr.github.io/airGR/) to support
+**semi-distributed hydrological modeling** for **anthropized
+catchments**.
+
+This package is developed by:
+
+- [UMR G-EAU, Montpellier, France](https://g-eau.fr/index.php/en/)
+- [INRAE HYCAR – HYDRO team, Antony, France](https://webgr.inrae.fr/eng)
+
+## 🔧 Installation
+
+``` r
+# Stable version from CRAN
+install.packages("airGRiwrm")
+
+# Development version from GitHub
+# install.packages("devtools")
+devtools::install_github("inrae/airGRiwrm", ref = "dev")
+```
+
+## 🚀 Getting Started
+
+Visit the package website: 👉 <https://inrae.github.io/airGRiwrm/>
+
+There you’ll find: - Tutorials - Usage examples - Full documentation
+
+📬 [Subscribe to the airGRiwrm mailing
+list](https://groupes.renater.fr/sympa/subscribe/airgriwrm-users) To
+stay informed, ask questions, and connect with other users.
+
+## 💡 Use Cases
+
+**airGRiwrm** can be used in various contexts:
+
+1.  **Water Resource Management** Model and manage water systems in
+    human-impacted catchments.
+
+2.  **Research & Academia** Study anthropogenic impacts on hydrological
+    behavior.
+
+3.  **Environmental Impact Assessment** Evaluate effects of
+    infrastructure or policy on water flows.
+
+4.  **Policy Support** Inform evidence-based decision-making with robust
+    simulations.
+
+5.  **Education** Teach distributed hydrology and human-nature system
+    modeling.
+
+## 🤝 Acknowledgements
+
+This package was developed within:
+
+- [**IN-WOP project**
+  (2019–2023)](http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop)
+
+- [**Talanoa-Water project**
+  (2021–2025)](https://talanoa-water-france.hub.inrae.fr/) Part of the
+  **PRIMA Programme**, supported under **Horizon 2020** (Grant No. 2023)
+
+**Funding agencies:** - European Commission - French National Research
+Agency (ANR) - Water JPI via WaterWorks2017
+
+![](reference/figures/logo_water_jpi.png)![](reference/figures/logo_water_works_2017.png)![](reference/figures/logo_european_commission.jpg)![](reference/figures/logo_2018_joint_call.png)
+
+![](https://upload.wikimedia.org/wikipedia/commons/2/29/Horizon_2020_Logo.png)![](reference/figures/logo_prima.png)
+
+# Package index
+
+## All functions
+
+- [`Calibration()`](https://inrae.github.io/airGRiwrm/dev/reference/Calibration.md)
+  : Calibration of the parameters of one catchment or a network of
+  sub-catchments
+
+- [`ConvertMeteoSD()`](https://inrae.github.io/airGRiwrm/dev/reference/ConvertMeteoSD.md)
+  : Conversion of meteorological data from basin scale to sub-basin
+  scale
+
+- [`CreateCalibOptions.GRiwrmInputsModel`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md)
+  [`CreateCalibOptions`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md)
+  [`CreateCalibOptions.InputsModel`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md)
+  [`CreateCalibOptions.character`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md)
+  [`CreateCalibOptions.function`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md)
+  [`CreateCalibOptions.RunModel_Reservoir`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md)
+  : Creation of the CalibOptions object
+
+- [`CreateController()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateController.md)
+  : Creation and adding of a controller in a supervisor
+
+- [`CreateGRiwrm()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateGRiwrm.md)
+  : Generation of a network description containing all hydraulic nodes
+  and the description of their connections
+
+- [`CreateInputsCrit()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsCrit.md)
+  :
+
+  Creation of the InputsCrit object required to the `ErrorCrit`
+  functions
+
+- [`CreateInputsModel(`*`<GRiwrm>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.GRiwrm.md)
+  :
+
+  Creation of an InputsModel object for an **airGRiwrm** network
+
+- [`CreateInputsModel()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.md)
+  :
+
+  Generic function for creating `InputsModel` object for either
+  **airGR** or **airGRiwrm**
+
+- [`CreateRunOptions.GRiwrmInputsModel`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+  [`CreateRunOptions`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+  [`CreateRunOptions.InputsModel`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+  [`CreateRunOptions.character`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+  [`CreateRunOptions.function`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+  : Creation of the RunOptions object
+
+- [`CreateSupervisor()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md)
+  : Creation of a Supervisor for handling regulation in a model
+
+- [`RunModel(`*`<GRiwrmInputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GRiwrmInputsModel.md)
+  :
+
+  RunModel function for *GRiwrmInputsModel* object
+
+- [`RunModel(`*`<GRiwrmOutputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GRiwrmOutputsModel.md)
+  : RunModel for hot restart after a previous simulation period
+
+- [`RunModel(`*`<InputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.InputsModel.md)
+  :
+
+  Wrapper for
+  [airGR::RunModel](https://rdrr.io/pkg/airGR/man/RunModel.html) for one
+  sub-basin
+
+- [`RunModel()`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.md)
+  :
+
+  RunModel function for both **airGR** InputsModel and GRiwrmInputsModel
+  object
+
+- [`RunModel(`*`<Supervisor>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.Supervisor.md)
+  : RunModel function for a Supervisor
+
+- [`RunModel_Reservoir()`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel_Reservoir.md)
+  : Run with a reservoir model
+
+- [`Severn`](https://inrae.github.io/airGRiwrm/dev/reference/Severn.md)
+  : Catchment attributes and hydro-meteorological timeseries for some
+  gauging stations on the Severn River
+
+- [`as.Qm3s()`](https://inrae.github.io/airGRiwrm/dev/reference/as.Qm3s.md)
+  :
+
+  Coerce [data.frame](https://rdrr.io/r/base/data.frame.html) or content
+  of a [data.frame](https://rdrr.io/r/base/data.frame.html) into a
+  *Qm3s* object ready for plotting
+
+- [`extractParam()`](https://inrae.github.io/airGRiwrm/dev/reference/extractParam.md)
+  : Extract calibrated parameters
+
+- [`getNextTimeSteps()`](https://inrae.github.io/airGRiwrm/dev/reference/getNextTimeSteps.md)
+  : Get the next time steps date/time of a simulation
+
+- [`getNodeProperties()`](https://inrae.github.io/airGRiwrm/dev/reference/getNodeProperties.md)
+  [`getAllNodesProperties()`](https://inrae.github.io/airGRiwrm/dev/reference/getNodeProperties.md)
+  : Properties of GRiwrm nodes
+
+- [`getNodeRanking()`](https://inrae.github.io/airGRiwrm/dev/reference/getNodeRanking.md)
+  : Sorting of the nodes from upstream to downstream for RunModel and
+  Calibration
+
+- [`getSD_Ids()`](https://inrae.github.io/airGRiwrm/dev/reference/getSD_Ids.md)
+  [`getNoSD_Ids()`](https://inrae.github.io/airGRiwrm/dev/reference/getSD_Ids.md)
+  : Function to get the IDs of sub-basins using SD model or not
+
+- [`isNodeDownstream()`](https://inrae.github.io/airGRiwrm/dev/reference/isNodeDownstream.md)
+  [`isNodeUpstream()`](https://inrae.github.io/airGRiwrm/dev/reference/isNodeDownstream.md)
+  : Check if a node is downstream or upstream another one
+
+- [`merge(`*`<OutputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/merge.OutputsModel.md)
+  [`merge(`*`<GRiwrmOutputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/merge.OutputsModel.md)
+  : Merge Two outputs of airGR simulations
+
+- [`mermaid()`](https://inrae.github.io/airGRiwrm/dev/reference/mermaid.md)
+  [`mermaid_gen_link()`](https://inrae.github.io/airGRiwrm/dev/reference/mermaid.md)
+  [`plot(`*`<mermaid>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/mermaid.md)
+  : Plot a mermaid diagram
+
+- [`plot(`*`<GRiwrm>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/plot.GRiwrm.md)
+  : Plot of a diagram representing the network structure of a GRiwrm
+  object
+
+- [`plot(`*`<GRiwrmOutputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/plot.GRiwrmOutputsModel.md)
+  : Function which creates screen plots giving an overview of the model
+  outputs in the GRiwrm network
+
+- [`plot(`*`<OutputsModelReservoir>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/plot.OutputsModelReservoir.md)
+  : Plot simulated reservoir volume, inflows and released flows time
+  series on a reservoir node
+
+- [`plot(`*`<Qm3s>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/plot.Qm3s.md)
+  :
+
+  Plot of a `Qm3s` object (time series of simulated flows)
+
+- [`reduceGRiwrm()`](https://inrae.github.io/airGRiwrm/dev/reference/reduceGRiwrm.md)
+  : Reduce the size of a GRiwrm by selecting the subset of nodes
+  corresponding to a downstream node
+
+- [`sort(`*`<GRiwrm>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/sort.GRiwrm.md)
+  : Sort a GRiwrm network in upstream-downstream order ready for
+  Calibration
+
+- [`transferGRparams()`](https://inrae.github.io/airGRiwrm/dev/reference/transferGRparams.md)
+  : Transfer GR parameters from one donor sub-basin to a receiver
+  sub-basin
+
+# Articles
+
+### Quick start on the Severn River (UK)
+
+- [Severn_01: Set up of a semi-distributed GR model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/V01_Structure_SD_model.md):
+- [Severn_02: Calibration of a GR4J semi-distributed model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/V02_Calibration_SD_model.md):
+- [Severn_03: Calibration of an open-loop influenced flow model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/V03_Open-loop_influenced_flow.md):
+- [Severn_04: Modeling a regulated withdrawal (closed-loop
+  control)](https://inrae.github.io/airGRiwrm/dev/articles/V04_Closed-loop_regulated_withdrawal.md):
+- [Severn_05: Modeling ungauged
+  stations](https://inrae.github.io/airGRiwrm/dev/articles/V05_Modelling_ungauged_nodes.md):
+- [Severn_06: Modeling a regulated
+  diversion](https://inrae.github.io/airGRiwrm/dev/articles/V06_Modelling_regulated_diversion.md):
+
+### Example of a large network on the Seine River (France)
+
+- [Seine_01: Structuration of a semi-distributed GR4J model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V01_First_network.md):
+- [Seine_02: Run a semi-distributed GR model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V02_First_run.md):
+- [Seine_03: Calibration of a semi-distributed GR model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V03_First_Calibration.md):
+- [Seine_04: Running open-loop influenced flow semi-distributed model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V04_Open-loop_influenced_flow.md):
+- [Seine_05: Calibration of an open-loop influenced flow
+  semi-distributed model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V05_Open-loop_influenced_flow_calibration.md):
+- [Seine_05b: Calibration of an open-loop influenced flow
+  semi-distributed GR6J model
+  network](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V05b_Open-loop_influenced_flow_calibration_GR6J.md):
+- [Seine_06: Simulate naturalized flows with a model network calibrated
+  with influenced
+  flows](https://inrae.github.io/airGRiwrm/dev/articles/seinebasin/V06_Naturalised_flow_simulation.md):

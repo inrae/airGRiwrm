@@ -132,7 +132,7 @@ that nodes <code>54001</code> and <code>54029</code> are
 <em>Ungauged</em>. We simulate the streamflow at these locations by
 sharing hydrological parameters of the gauged node
 <code>54032</code>.</p>
-<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/network-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/network-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 <p>Hydrological parameters at the ungauged nodes will be the same as the
 one at the gauged node <code>54032</code> except for the unit hydrograph
 parameter which depend on the area of the sub-basin. <span class="citation">Florent Lobligeois (2014)</span> provides the following
@@ -186,7 +186,7 @@ clearer than gauged ones with the same color (blue for upstream nodes
 and green for intermediate and downstream nodes)</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV05</span><span class="op">)</span></span></code></pre></div>
-<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot_network-1.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot_network-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
 <h3 id="generation-of-the-griwrminputsmodel-object">Generation of the GRiwrmInputsModel object<a class="anchor" aria-label="anchor" href="#generation-of-the-griwrminputsmodel-object"></a>
@@ -395,7 +395,7 @@ nodes <code>54001</code> and <code>54029</code>:</p>
 including the so-called <em>Ungauged</em> stations :</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Regime"</span>, <span class="st">"CumFreq"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-1.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-2.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-3.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-4.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-5.png" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-6.png" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-2.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-3.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-4.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-5.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-6.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -427,7 +427,7 @@ thesis, AgroParisTech. <a href="https://pastel.hal.science/tel-01134990/document
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

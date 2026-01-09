@@ -108,17 +108,21 @@ curve [m3]</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Inflows comes from a catchment of 360 km² modeled with GR4J</span></span></span>
 <span class="r-in"><span><span class="co"># The reservoir receives directly the inflows</span></span></span>
-<span class="r-in"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">BasinInfo</span><span class="op">$</span><span class="va">BasinCode</span>, <span class="st">"Reservoir"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 down <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reservoir"</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 area <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">BasinInfo</span><span class="op">$</span><span class="va">BasinArea</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RunModel_GR4J"</span>, <span class="st">"RunModel_Reservoir"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                 stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">db</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">BasinInfo</span><span class="op">$</span><span class="va">BasinCode</span>, <span class="st">"Reservoir"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  down <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reservoir"</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  area <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">BasinInfo</span><span class="op">$</span><span class="va">BasinArea</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RunModel_GR4J"</span>, <span class="st">"RunModel_Reservoir"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stringsAsFactors <span class="op">=</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">db</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.OutputsModelReservoir-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># This catchment inflows a reservoir of maximum capacity Vmax</span></span></span>
+<span class="r-in"><span><span class="va">Vmax</span> <span class="op">&lt;-</span> <span class="fl">4E6</span> <span class="co"># in m3</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Formatting of GR4J inputs for airGRiwrm (matrix or data.frame with one</span></span></span>
 <span class="r-in"><span><span class="co"># column by sub-basin and node IDs as column names)</span></span></span>
@@ -138,16 +142,21 @@ curve [m3]</p></dd>
 <span class="r-in"><span><span class="co"># with one column by node and node IDs as column names)</span></span></span>
 <span class="r-in"><span><span class="va">Qrelease</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">Qrelease</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, DatesR <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
-<span class="r-in"><span>                                 Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
-<span class="r-in"><span>                                 PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
-<span class="r-in"><span>                                 Qrelease <span class="op">=</span> <span class="va">Qrelease</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">griwrm</span>,</span></span>
+<span class="r-in"><span>  DatesR <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
+<span class="r-in"><span>  Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
+<span class="r-in"><span>  PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
+<span class="r-in"><span>  Qrelease <span class="op">=</span> <span class="va">Qrelease</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin L0123001...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin Reservoir...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## run period selection</span></span></span>
-<span class="r-in"><span><span class="va">Ind_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span><span class="op">==</span><span class="st">"1990-01-01"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>               <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span><span class="op">==</span><span class="st">"1999-12-31"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Ind_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1990-01-01"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1999-12-31"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Creation of the GRiwmRunOptions object</span></span></span>
 <span class="r-in"><span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span></span>
@@ -155,6 +164,7 @@ curve [m3]</p></dd>
 <span class="r-in"><span>  IndPeriod_Run <span class="op">=</span> <span class="va">Ind_Run</span>,</span></span>
 <span class="r-in"><span>  IndPeriod_WarmUp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq.int</a></span><span class="op">(</span><span class="va">Ind_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">365</span>, length.out <span class="op">=</span> <span class="fl">365</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>model states initialisation not defined: default configuration used</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Initial states of the reservoir can be provided by the user</span></span></span>
 <span class="r-in"><span><span class="co"># For example for starting with an empty reservoir...</span></span></span>
@@ -162,17 +172,18 @@ curve [m3]</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># calibration criterion: preparation of the InputsCrit object</span></span></span>
 <span class="r-in"><span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"L0123001"</span> <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">Qmm</span><span class="op">[</span><span class="va">Ind_Run</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">InputsCrit</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsCrit.html">CreateInputsCrit</a></span><span class="op">(</span><span class="va">InputsModel</span>,</span></span>
-<span class="r-in"><span>                               <span class="va">ErrorCrit_KGE2</span>,</span></span>
-<span class="r-in"><span>                               RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span></span>
-<span class="r-in"><span>                               Obs <span class="op">=</span> <span class="va">Qobs</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">InputsCrit</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsCrit.html">CreateInputsCrit</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">InputsModel</span>,</span></span>
+<span class="r-in"><span>  <span class="va">ErrorCrit_KGE2</span>,</span></span>
+<span class="r-in"><span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span></span>
+<span class="r-in"><span>  Obs <span class="op">=</span> <span class="va">Qobs</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># preparation of CalibOptions object with fixed parameters for the reservoir</span></span></span>
-<span class="r-in"><span><span class="co"># The capacity of the reservoir is 10 hm3 and the inflow celerity is 0.5 m/s.</span></span></span>
-<span class="r-in"><span><span class="va">Vmax</span> <span class="op">&lt;-</span> <span class="fl">4E6</span></span></span>
+<span class="r-in"><span><span class="co"># The capacity of the reservoir is set to Vmax and the inflow celerity is 0.5 m/s.</span></span></span>
 <span class="r-in"><span><span class="va">CalibOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateCalibOptions.html">CreateCalibOptions</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">InputsModel</span>,</span></span>
-<span class="r-in"><span>    FixedParam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Vmax <span class="op">=</span> <span class="va">Vmax</span>, celerity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">InputsModel</span>,</span></span>
+<span class="r-in"><span>  FixedParam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>Vmax <span class="op">=</span> <span class="va">Vmax</span>, celerity <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">OC</span> <span class="op">&lt;-</span> <span class="fu"><a href="Calibration.html">Calibration</a></span><span class="op">(</span></span></span>
@@ -217,12 +228,12 @@ curve [m3]</p></dd>
 <span class="r-in"><span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">Qmm</span><span class="op">[</span><span class="va">Ind_Run</span><span class="op">]</span>, <span class="va">Qrelease</span><span class="op">[</span><span class="va">Ind_Run</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">Qobs</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">griwrm</span><span class="op">$</span><span class="va">id</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModel</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.OutputsModelReservoir-1.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="plot.OutputsModelReservoir-2.png" alt="" width="700" height="433"></span>
-<span class="r-plt img"><img src="plot.OutputsModelReservoir-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The plot for the reservoir can also be plotted alone</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModel</span><span class="op">$</span><span class="va">Reservoir</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span>, <span class="st">"Reservoir"</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.OutputsModelReservoir-4.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.OutputsModelReservoir-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">#######################################################</span></span></span>
 <span class="r-in"><span><span class="co"># Daily time step simulation of a reservoir tracking  #</span></span></span>
@@ -232,18 +243,16 @@ curve [m3]</p></dd>
 <span class="r-in"><span><span class="co"># The objective here is to simulate the same reservoir as above</span></span></span>
 <span class="r-in"><span><span class="co"># but with new rules:</span></span></span>
 <span class="r-in"><span><span class="co"># - A minimum flow downstream the reservoir defined as:</span></span></span>
-<span class="r-in"><span><span class="op">(</span><span class="va">Qmin</span> <span class="op">&lt;-</span> <span class="va">Qrelease</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">Qmin</span> <span class="op">&lt;-</span> <span class="va">Qrelease</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 114393.6</span>
 <span class="r-in"><span><span class="co"># - A maximum release flow of 20 m3/s for flood mitigation</span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">Qmax</span> <span class="op">&lt;-</span> <span class="fl">20</span> <span class="op">*</span> <span class="fl">86400</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1728000</span>
 <span class="r-in"><span><span class="co"># - An annual objective filling curve managing floods and droughts by</span></span></span>
 <span class="r-in"><span><span class="co"># trying to keep the reservoir volume between 2 and 8 Mm3:</span></span></span>
-<span class="r-in"><span><span class="va">Vobj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">approx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">150</span>, <span class="fl">300</span>, <span class="fl">366</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E6</span>, <span class="fl">3.5E6</span>, <span class="fl">0.5E6</span>, <span class="fl">1E6</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>               <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">366</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Vobj</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">approx</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">150</span>, <span class="fl">300</span>, <span class="fl">366</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1E6</span>, <span class="fl">3.5E6</span>, <span class="fl">0.5E6</span>, <span class="fl">1E6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">366</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Vobj</span>, type <span class="op">=</span> <span class="st">"l"</span>, col <span class="op">=</span> <span class="st">"red"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.OutputsModelReservoir-5.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.OutputsModelReservoir-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The regulation function takes InputsModel of the reservoir node and the</span></span></span>
 <span class="r-in"><span><span class="co"># global GRiwrm OutputsModel as arguments and returns a modified</span></span></span>
@@ -255,12 +264,14 @@ curve [m3]</p></dd>
 <span class="r-in"><span>    <span class="co"># Build inflows time series from upstream Qsim (warmup &amp; run)</span></span></span>
 <span class="r-in"><span>    <span class="va">Qinflows</span> <span class="op">&lt;-</span> <span class="va">Qrelease</span></span></span>
 <span class="r-in"><span>    <span class="va">IPR_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">RunOptions</span><span class="op">$</span><span class="va">IndPeriod_WarmUp</span>, <span class="va">RunOptions</span><span class="op">$</span><span class="va">IndPeriod_Run</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">Qinflows</span><span class="op">[</span><span class="va">IPR_all</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">OutputsModel</span><span class="op">$</span><span class="va">L0123001</span><span class="op">$</span><span class="va">RunOptions</span><span class="op">$</span><span class="va">WarmUpQsim_m3</span>,</span></span>
-<span class="r-in"><span>                           <span class="va">OutputsModel</span><span class="op">$</span><span class="va">L0123001</span><span class="op">$</span><span class="va">Qsim_m3</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">Qinflows</span><span class="op">[</span><span class="va">IPR_all</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      <span class="va">OutputsModel</span><span class="op">$</span><span class="va">L0123001</span><span class="op">$</span><span class="va">RunOptions</span><span class="op">$</span><span class="va">WarmUpQsim_m3</span>,</span></span>
+<span class="r-in"><span>      <span class="va">OutputsModel</span><span class="op">$</span><span class="va">L0123001</span><span class="op">$</span><span class="va">Qsim_m3</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="co"># Reservoir volume initialisation</span></span></span>
 <span class="r-in"><span>    <span class="va">V</span> <span class="op">&lt;-</span> <span class="va">Vini</span></span></span>
 <span class="r-in"><span>    <span class="co"># Loop over simulation time steps (warmup &amp; run periods)</span></span></span>
-<span class="r-in"><span>    <span class="kw">for</span><span class="op">(</span><span class="va">ts</span> <span class="kw">in</span> <span class="va">IPR_all</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="kw">for</span> <span class="op">(</span><span class="va">ts</span> <span class="kw">in</span> <span class="va">IPR_all</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>      <span class="co"># Update reservoir volume with inflows</span></span></span>
 <span class="r-in"><span>      <span class="va">V</span> <span class="op">&lt;-</span> <span class="va">V</span> <span class="op">+</span> <span class="va">Qinflows</span><span class="op">[</span><span class="va">ts</span><span class="op">]</span></span></span>
 <span class="r-in"><span>      <span class="co"># Rule #1: follow the objective filling curve (lower priority)</span></span></span>
@@ -288,16 +299,24 @@ curve [m3]</p></dd>
 <span class="r-in"><span><span class="co"># function with the parameters Qmin, Qmax, Vobj enclosed in the environment</span></span></span>
 <span class="r-in"><span><span class="co"># of the function</span></span></span>
 <span class="r-in"><span><span class="va">Regulation_Reservoir</span> <span class="op">&lt;-</span></span></span>
-<span class="r-in"><span>  <span class="fu">fun_factory_Regulation_Reservoir</span><span class="op">(</span><span class="va">RunOptions</span><span class="op">$</span><span class="va">Reservoir</span><span class="op">$</span><span class="va">IniStates</span>, <span class="va">Vobj</span>, <span class="va">Qmin</span>, <span class="va">Qmax</span>, <span class="va">Vmax</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">fun_factory_Regulation_Reservoir</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">RunOptions</span><span class="op">$</span><span class="va">Reservoir</span><span class="op">$</span><span class="va">IniStates</span>,</span></span>
+<span class="r-in"><span>    <span class="va">Vobj</span>,</span></span>
+<span class="r-in"><span>    <span class="va">Qmin</span>,</span></span>
+<span class="r-in"><span>    <span class="va">Qmax</span>,</span></span>
+<span class="r-in"><span>    <span class="va">Vmax</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Then we need to update InputsModel in order to take into account the regulation</span></span></span>
 <span class="r-in"><span><span class="co"># function instead of predefined Qrelease in the previous study case</span></span></span>
-<span class="r-in"><span><span class="va">IM_reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>,</span></span>
-<span class="r-in"><span>                            DatesR <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
-<span class="r-in"><span>                            Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
-<span class="r-in"><span>                            PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
-<span class="r-in"><span>                            Qrelease <span class="op">=</span> <span class="va">Qrelease</span>,</span></span>
-<span class="r-in"><span>                            FUN_REGUL <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="va">Regulation_Reservoir</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">IM_reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">griwrm</span>,</span></span>
+<span class="r-in"><span>  DatesR <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
+<span class="r-in"><span>  Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
+<span class="r-in"><span>  PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
+<span class="r-in"><span>  Qrelease <span class="op">=</span> <span class="va">Qrelease</span>,</span></span>
+<span class="r-in"><span>  FUN_REGUL <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="va">Regulation_Reservoir</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin L0123001...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin Reservoir...</span>
 <span class="r-in"><span></span></span>
@@ -308,7 +327,7 @@ curve [m3]</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># And plot the new result</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OM_reg</span><span class="op">$</span><span class="va">Reservoir</span>, Vobs <span class="op">=</span> <span class="va">Vobj</span><span class="op">$</span><span class="va">y</span><span class="op">[</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">yday</a></span><span class="op">(</span><span class="va">OM_reg</span><span class="op">$</span><span class="va">Reservoir</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot.OutputsModelReservoir-6.png" alt="" width="700" height="433"></span>
+<span class="r-plt img"><img src="plot.OutputsModelReservoir-5.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -320,7 +339,7 @@ curve [m3]</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
