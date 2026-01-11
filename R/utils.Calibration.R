@@ -11,19 +11,25 @@
 #' @import airGR
 #' @noRd
 #'
-getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
-  if (!inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
-    stop("'InputsCrit[[id]]' must be of class InputsCritLavenneFunction")
+getInputsCrit_Lavenne <- function(
+  InputsModel,
+  RunOptions,
+  OutputsModel,
+  InputsCrit
+) {
+  id <- InputsModel$id
+  if (!inherits(InputsCrit, "InputsCritLavenneFunction")) {
+    stop("'InputsCrit' must be of class InputsCritLavenneFunction")
   }
-  AprioriId <- attr(InputsCrit[[id]], "AprioriId")
-  AprCelerity <- attr(InputsCrit[[id]], "AprCelerity")
-  Lavenne_FUN <- attr(InputsCrit[[id]], "Lavenne_FUN")
+  AprioriId <- attr(InputsCrit, "AprioriId")
+  AprCelerity <- attr(InputsCrit, "AprCelerity")
+  Lavenne_FUN <- attr(InputsCrit, "Lavenne_FUN")
   AprParamR <- OutputsModel[[AprioriId]]$RunOptions$Param
   if (!inherits(OutputsModel[[AprioriId]], "SD")) {
     # Add Celerity parameter if apriori is an upstream node
     AprParamR <- c(AprCelerity, AprParamR)
   }
-  featMod <- attr(InputsCrit[[id]], "model")
+  featMod <- attr(InputsCrit, "model")
   if (featMod$hasX4) {
     AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
   }
@@ -34,10 +40,8 @@ getInputsCrit_Lavenne <- function(id, OutputsModel, InputsCrit) {
     ": ",
     paste(round(AprParamR, 3), collapse = ", ")
   )
-  AprCrit <- ErrorCrit(
-    InputsCrit[[AprioriId]],
-    OutputsModel[[AprioriId]]
-  )$CritValue
+  OM_Apriori <- RunModel(InputsModel, RunOptions, AprParamR)
+  AprCrit <- ErrorCrit(InputsCrit, OM_Apriori)$CritValue
   return(Lavenne_FUN(AprParamR, AprCrit))
 }
 
