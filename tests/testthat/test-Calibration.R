@@ -61,25 +61,28 @@ for (x in ls(e)) {
   assign(x, get(x, e))
 }
 
-test_that("Calibrated parameters remains unchanged", {
-  skip_on_cran()
+test_that("Calibrated parameters equals reference parameters", {
+  lapply(names(Param), function(id) {
+    expect_equal(Param[[!!id]], ParamMichel[[id]])
+  })
+
   InputsCrit <- CreateInputsCrit(
-    InputsModel = InputsModel,
+    InputsModel,
+    FUN_CRIT = ErrorCrit_NSE,
     RunOptions = RunOptions,
-    Obs = Qobs[IndPeriod_Run, ]
+    Obs = Qobs[
+      IndPeriod_Run,
+      np$id[np$calibration == "Gauged"],
+      drop = FALSE
+    ],
+    AprioriIds = NULL
   )
-
-  OC <- Calibration(
-    InputsModel = InputsModel,
-    RunOptions = RunOptions,
-    InputsCrit = InputsCrit,
-    CalibOptions = CalibOptions
-  )
-
-  ParamFinalR <- extractParam(OutputsCalib)
-
-  lapply(names(ParamFinalR), function(id) {
-    expect_equal(ParamFinalR[[!!id]], ParamMichel[[id]])
+  e <- runCalibration(runRunModel = TRUE, InputsCrit = InputsCrit)
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  lapply(names(Param), function(id) {
+    expect_equal(Param[[!!id]], ParamMichel[[id]])
   })
 })
 

@@ -112,18 +112,6 @@ test_that("Using Lavenne criterion with 'weight' should throw error", {
   )
 })
 
-test_that("Lavenne criterion without defining `transfo` should throw error", {
-  expect_error(
-    CreateInputsCrit(
-      InputsModel = InputsModel,
-      RunOptions = RunOptions,
-      Obs = Qobs[IndPeriod_Run, ],
-      AprioriIds = c("54057" = "54032")
-    ),
-    regexp = "transfo"
-  )
-})
-
 AprioriIds <- c("54057" = "54032", "54032" = "54001", "54001" = "54095")
 IC <- CreateInputsCrit(
   InputsModel = InputsModel,
@@ -278,4 +266,25 @@ test_that("Lavenne criterion: multiple Apriori nodes works", {
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
+})
+
+test_that("getDefaultAprioriIds works", {
+  expect_equal(
+    getDefaultAprioriIds(InputsModel),
+    list(
+      "54001" = "54095",
+      "54032" = c("54029", "54001"),
+      "54057" = c("54002", "54032")
+    )
+  )
+})
+
+test_that("getDefaultAprioriIds works with reservoirs", {
+  g <- CreateGRiwrm(n_rsrvr)
+
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qinf = Qinf_rsrvr)
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  expect_equal(getDefaultAprioriIds(InputsModel), list("54001" = "54095"))
 })

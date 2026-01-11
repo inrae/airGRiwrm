@@ -4,10 +4,10 @@
 #' @export
 CreateInputsCrit.GRiwrmInputsModel <- function(
   InputsModel,
-  FUN_CRIT = ErrorCrit_NSE,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions,
   Obs,
-  AprioriIds = NULL,
+  AprioriIds = getDefaultAprioriIds(InputsModel),
   k = 0.15,
   AprCelerity = 1,
   ...
@@ -17,7 +17,9 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
   # We invoke the mandatory arguments here for avoiding
   # a messy error message on "get(x)" if an argument is missing
   # We also list all arguments in order to check arguments even in "..."
-  arguments <- c(as.list(environment()), list(...))
+  force(InputsModel)
+  force(RunOptions)
+  force(Obs)
 
   # Checking argument classes
   lVars2Check <- list(
@@ -50,13 +52,9 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
         "Each name of AprioriIds items must be unique: duplicate entry detected"
       )
     }
-    if ("Weights" %in% names(arguments)) {
+    dots <- list(...)
+    if ("Weights" %in% names(dots)) {
       stop("Argument 'Weights' cannot be used when using Lavenne criterion")
-    }
-    if (!"transfo" %in% names(arguments)) {
-      stop(
-        "Argument 'transfo' must be defined when using Lavenne criterion (Using \"sqrt\" is recommended)"
-      )
     }
     lapply(names(AprioriIds), function(id) {
       if (!id %in% names(InputsModel)) {
@@ -169,6 +167,57 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
     }
   }
   return(InputsCrit)
+}
+
+#' Get default AprioriIds from direct upstream nodes of each node
+#' @inheritParams CreateInputsCrit.GRiwrmInputsModel
+#' @returns A [list] named with node Ids and containing the Ids of the upstream
+#' nodes that can be used for apriori parameters.
+#' @export
+getDefaultAprioriIds <- function(InputsModel) {
+  l <- lapply(
+    setNames(nm = names(InputsModel)),
+    getDefaultAprioriIds_node,
+    InputsModel = InputsModel
+  )
+  l <- l[!sapply(l, is.null)]
+  return(l)
+}
+
+getDefaultAprioriIds_node <- function(Id, InputsModel, skip_reservoir = TRUE) {
+  IM <- InputsModel[[Id]]
+  if (skip_reservoir && IM$isReservoir) {
+    return(NULL)
+  }
+  if (is.null(IM$UpstreamNodes)) {
+    return(NULL)
+  }
+  AprioriIds <- IM$UpstreamNodes[IM$UpstreamIsModeled]
+  if (length(AprioriIds) == 0) {
+    return(NULL)
+  }
+  AprioriIds <- lapply(AprioriIds, function(AprioriId) {
+    if (InputsModel[[AprioriId]]$isReservoir) {
+      AprioriId <- getDefaultAprioriIds_node(AprioriId, InputsModel, FALSE)
+    }
+    if (
+      InputsModel[[AprioriId]]$inUngaugedCluster &
+        InputsModel[[AprioriId]]$gaugedId == IM$id
+    ) {
+      return(NULL)
+    }
+    if (
+      !IM$isReservoir &&
+        !identical(
+          IM$FUN_MOD,
+          InputsModel[[AprioriId]]$FUN_MOD
+        )
+    ) {
+      return(NULL)
+    }
+    return(AprioriId)
+  }) %>%
+    unlist()
 }
 
 #' Generate a `CreateInputsCrit_Lavenne` function which embeds know parameters

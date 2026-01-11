@@ -50,7 +50,7 @@ runCalibration <- function(
       InputsCrit,
       CalibOptions
     )
-    Param <- sapply(OutputsCalib, "[[", "ParamFinalR")
+    Param <- extractParam(OutputsCalib)
   }
   return(environment())
 }

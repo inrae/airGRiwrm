@@ -21,12 +21,12 @@
 #' Parameter regularization consists of defining a priori parameters which are
 #' used in a composed criterion based on the formula proposed by
 #' Lavenne et al. (2019) (See [airGR::CreateInputsCrit_Lavenne]).
-#' The parameter `AprioriIds` allows to define which neighbor sub-catchment is
+#' The parameter `AprioriIds` allows to define which neighbor sub-catchments are
 #' used for providing a priori parameters.
 #' Its format is as follows:
-#' `AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)`
+#' `AprioriIds <- list("Downstream sub-catchment 1" = c("A priori upstream sub-catchment 1", ...))`
 #' where the quoted strings are the ids of the sub-catchments.
-#' The node providing a priori parameters must be calibrated before the
+#' The nodes providing a priori parameters must be calibrated before the
 #' current one.
 #' The sequence order of calibration can be checked with [getNodeRanking].
 #' If the latter is not adequate, this order can be forced by setting the node providing
@@ -35,6 +35,8 @@
 #' The parameter `AprCelerity` is a default value used as a priori for the
 #' parameter 'Celerity' in case of an upstream catchment (without celerity parameter)
 #' is used as a priori catchment.
+#' In the calibration process, all a priori parameter sets are tested and the one
+#' getting the best `ErrorCrit` score is used for the parameter regularization.
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `InputsCrit` object (See [airGR::CreateInputsCrit])
