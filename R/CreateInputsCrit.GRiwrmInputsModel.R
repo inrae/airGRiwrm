@@ -39,10 +39,10 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
   })
 
   if (!is.null(AprioriIds)) {
-    AprioriIds <- unlist(AprioriIds)
-    if (!is.character(AprioriIds) || is.null(names(AprioriIds))) {
+    AprioriIds <- as.list(AprioriIds)
+    if (!all(sapply(AprioriIds, is.character)) || is.null(names(AprioriIds))) {
       stop(
-        "Argument 'AprioriIds' must be a named list or a named vector of characters"
+        "Argument 'AprioriIds' must be a named list of character vectors or a named character vector"
       )
     }
     if (length(unique(names(AprioriIds))) != length(names(AprioriIds))) {
@@ -67,53 +67,54 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
           "\" is not in the list of the modeled nodes"
         )
       }
-      if (!AprioriIds[id] %in% names(InputsModel)) {
+      if (!all(AprioriIds[[id]] %in% names(InputsModel))) {
         stop(
           "'Each item of AprioriIds must be an id of a modeled node:",
-          " the id \"",
-          AprioriIds[id],
+          " one of the ids \"",
+          AprioriIds[[id]],
           "\" is not in the list of the modeled nodes"
         )
       }
-      if (
-        !AprioriIds[id] %in%
-          names(InputsModel)[1:which(id == names(InputsModel))]
-      ) {
-        stop(
-          "'AprioriIds': the node \"",
-          AprioriIds[id],
-          "\" is not calibrated before the node \"",
-          id,
-          "\".",
-          "\nIf possible, set this apriori id as the donor of the node \"",
-          id,
-          "\" to force the calibration sequence order"
-        )
-      }
-      if (
-        InputsModel[[AprioriIds[id]]]$inUngaugedCluster &
-          InputsModel[[AprioriIds[id]]]$gaugedId == id
-      ) {
-        stop(
-          "'AprioriIds': the node \"",
-          AprioriIds[id],
-          "\" is ungauged, use a gauged node instead"
-        )
-      }
-      if (
-        !identical(
-          InputsModel[[id]]$FUN_MOD,
-          InputsModel[[AprioriIds[id]]]$FUN_MOD
-        )
-      ) {
-        stop(
-          "'AprioriIds': the node \"",
-          AprioriIds[id],
-          "\" must use the same hydrological model as the node \"",
-          id,
-          "\""
-        )
-      }
+      sapply(AprioriIds[[id]], function(AprioriId) {
+        if (
+          !AprioriId %in% names(InputsModel)[1:which(id == names(InputsModel))]
+        ) {
+          stop(
+            "'AprioriIds': the node \"",
+            AprioriId,
+            "\" is not calibrated before the node \"",
+            id,
+            "\".",
+            "\nIf possible, set this apriori id as the donor of the node \"",
+            id,
+            "\" to force the calibration sequence order"
+          )
+        }
+        if (
+          InputsModel[[AprioriId]]$inUngaugedCluster &
+            InputsModel[[AprioriId]]$gaugedId == id
+        ) {
+          stop(
+            "'AprioriIds': the node \"",
+            AprioriId,
+            "\" is ungauged, use a gauged node instead"
+          )
+        }
+        if (
+          !identical(
+            InputsModel[[id]]$FUN_MOD,
+            InputsModel[[AprioriId]]$FUN_MOD
+          )
+        ) {
+          stop(
+            "'AprioriIds': the node \"",
+            AprioriId,
+            "\" must use the same hydrological model as the node \"",
+            id,
+            "\""
+          )
+        }
+      })
     })
   }
 
@@ -143,13 +144,13 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
             k = k,
             ...
           )
-        attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
+        attr(InputsCrit[[IM$id]], "AprioriIds") <- AprioriIds[[IM$id]]
         attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
         attr(InputsCrit[[IM$id]], "model") <- IM$model
         if (IM$model$hasX4) {
           attr(InputsCrit[[IM$id]], "model")$X4Ratio <- max(
             (tail(IM$BasinAreas, 1) /
-              tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3,
+              tail(InputsModel[[AprioriIds[[IM$id]]]]$BasinAreas, 1))^0.3,
             0.5
           )
         }

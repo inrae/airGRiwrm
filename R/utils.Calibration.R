@@ -21,11 +21,59 @@ getInputsCrit_Lavenne <- function(
   if (!inherits(InputsCrit, "InputsCritLavenneFunction")) {
     stop("'InputsCrit' must be of class InputsCritLavenneFunction")
   }
-  AprioriId <- attr(InputsCrit, "AprioriId")
+  AprioriIds <- attr(InputsCrit, "AprioriIds")
   AprCelerity <- attr(InputsCrit, "AprCelerity")
   Lavenne_FUN <- attr(InputsCrit, "Lavenne_FUN")
-  AprParamR <- OutputsModel[[AprioriId]]$RunOptions$Param
-  if (!inherits(OutputsModel[[AprioriId]], "SD")) {
+  if (length(AprioriIds) == 1) {
+    l <- getInputsCrit_Lavenne_AprCrit(
+      AprioriIds,
+      InputsModel,
+      RunOptions,
+      OutputsModel[[AprioriIds]],
+      AprCelerity,
+      InputsCrit,
+      "get"
+    )
+  } else {
+    best_set <- list(AprCrit = -Inf)
+    for (AprioriId in AprioriIds) {
+      l <- getInputsCrit_Lavenne_AprCrit(
+        AprioriId,
+        InputsModel,
+        RunOptions,
+        OutputsModel[[AprioriId]],
+        AprCelerity,
+        InputsCrit,
+        "test"
+      )
+      if (l$AprCrit > best_set$AprCrit) {
+        best_set <- l
+        best_AprioriId <- AprioriId
+      }
+    }
+    l <- best_set
+    message(
+      "Parameter regularization: set a priori parameters from node ",
+      best_AprioriId,
+      ": ",
+      paste(round(l$AprParamR, 3), collapse = ", ")
+    )
+  }
+  return(Lavenne_FUN(l$AprParamR, l$AprCrit))
+}
+
+
+getInputsCrit_Lavenne_AprCrit <- function(
+  AprioriId,
+  InputsModel,
+  RunOptions,
+  OutputsModel,
+  AprCelerity,
+  InputsCrit,
+  get_or_test
+) {
+  AprParamR <- OutputsModel$RunOptions$Param
+  if (!inherits(OutputsModel, "SD")) {
     # Add Celerity parameter if apriori is an upstream node
     AprParamR <- c(AprCelerity, AprParamR)
   }
@@ -34,17 +82,20 @@ getInputsCrit_Lavenne <- function(
     AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
   }
   AprParamR <- AprParamR[featMod$indexParamUngauged]
+
   message(
-    "Parameter regularization: get a priori parameters from node ",
+    "Parameter regularization: ",
+    get_or_test,
+    " a priori parameters from node ",
     AprioriId,
     ": ",
     paste(round(AprParamR, 3), collapse = ", ")
   )
+
   OM_Apriori <- RunModel(InputsModel, RunOptions, AprParamR)
   AprCrit <- ErrorCrit(InputsCrit, OM_Apriori)$CritValue
-  return(Lavenne_FUN(AprParamR, AprCrit))
+  return(list(AprParamR = AprParamR, AprCrit = AprCrit))
 }
-
 
 #' Reduce a GRiwrm list object (InputsModel, RunOptions...) for a reduced network
 #'
