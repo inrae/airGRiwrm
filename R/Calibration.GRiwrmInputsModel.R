@@ -74,7 +74,7 @@ Calibration.GRiwrmInputsModel <- function(
 
     if (inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
       IC <- getInputsCrit_Lavenne(
-        InputsModel[[id]],
+        IM,
         RunOptions[[id]],
         OutputsModel,
         InputsCrit[[id]]
