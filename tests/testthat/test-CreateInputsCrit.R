@@ -112,18 +112,6 @@ test_that("Using Lavenne criterion with 'weight' should throw error", {
   )
 })
 
-test_that("Lavenne criterion without defining `transfo` should throw error", {
-  expect_error(
-    CreateInputsCrit(
-      InputsModel = InputsModel,
-      RunOptions = RunOptions,
-      Obs = Qobs[IndPeriod_Run, ],
-      AprioriIds = c("54057" = "54032")
-    ),
-    regexp = "transfo"
-  )
-})
-
 AprioriIds <- c("54057" = "54032", "54032" = "54001", "54001" = "54095")
 IC <- CreateInputsCrit(
   InputsModel = InputsModel,
@@ -164,6 +152,7 @@ test_that("Lavenne criterion: wrong sub-catchment order should throw error", {
 test_that("Lavenne criterion: not upstream a priori nodes are allow if processed before #156", {
   IC156 <- CreateInputsCrit(
     InputsModel = InputsModel,
+    FUN_CRIT = ErrorCrit_KGE2,
     RunOptions = RunOptions,
     Obs = Qobs[IndPeriod_Run, ],
     AprioriIds = c(
@@ -173,13 +162,12 @@ test_that("Lavenne criterion: not upstream a priori nodes are allow if processed
     ),
     transfo = "sqrt"
   )
-  expect_equal(attr(IC156$`54029`, "AprioriId"), c("54029" = "54095"))
+  expect_equal(attr(IC156$`54029`, "AprioriIds"), "54095")
   e <- runCalibration(
     nodes = nodes,
     Qinf = NULL,
     InputsCrit = IC156,
     CalibOptions = NULL,
-    FUN_CRIT = ErrorCrit_KGE2,
     runRunModel = FALSE,
     IsHyst = FALSE
   )
@@ -193,7 +181,7 @@ test_that("Lavenne criterion: not upstream a priori nodes are allow if processed
 test_that("Lavenne criterion: redefined calibration order works #157", {
   nodes$donor <- nodes$id
   nodes$donor[nodes$id == "54095"] <- "54029"
-  e <- setupRunModel(runRunModel = FALSE, griwrm = CreateGRiwrm(nodes))
+  e <- setupRunModel(runRunModel = FALSE, nodes = nodes)
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
@@ -251,4 +239,52 @@ test_that("Ungauged node as Apriori node should throw an error", {
     ),
     regexp = "\"54001\" is ungauged"
   )
+})
+
+test_that("Lavenne criterion: multiple Apriori nodes works", {
+  ICmult <- CreateInputsCrit(
+    InputsModel = InputsModel,
+    FUN_CRIT = ErrorCrit_KGE2,
+    RunOptions = RunOptions,
+    Obs = Qobs[IndPeriod_Run, ],
+    AprioriIds = list(
+      "54057" = c("54032", "54002"),
+      "54032" = c("54001", "54029"),
+      "54001" = "54095"
+    ),
+    transfo = "sqrt"
+  )
+  expect_equal(attr(ICmult$`54057`, "AprioriIds"), c("54032", "54002"))
+  e <- runCalibration(
+    nodes = nodes,
+    Qinf = NULL,
+    InputsCrit = ICmult,
+    CalibOptions = NULL,
+    runRunModel = FALSE,
+    IsHyst = FALSE
+  )
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+})
+
+test_that("getDefaultAprioriIds works", {
+  expect_equal(
+    getDefaultAprioriIds(InputsModel),
+    list(
+      "54001" = "54095",
+      "54032" = c("54029", "54001"),
+      "54057" = c("54002", "54032")
+    )
+  )
+})
+
+test_that("getDefaultAprioriIds works with reservoirs", {
+  g <- CreateGRiwrm(n_rsrvr)
+
+  e <- setupRunModel(griwrm = g, runRunModel = FALSE, Qinf = Qinf_rsrvr)
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  expect_equal(getDefaultAprioriIds(InputsModel), list("54001" = "54095"))
 })

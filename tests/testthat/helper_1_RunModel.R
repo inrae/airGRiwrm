@@ -15,7 +15,8 @@ setupRunModel <-
     runInputsModel = TRUE,
     runRunOptions = TRUE,
     runRunModel = TRUE,
-    griwrm = NULL,
+    nodes = loadSevernNodes(),
+    griwrm = CreateGRiwrm(nodes),
     Qinf = NULL,
     Qrelease = NULL,
     Qmin = NULL,
@@ -37,13 +38,6 @@ setupRunModel <-
     Qobs <- cbind(sapply(BasinsObs, function(x) {
       x$discharge_spec
     }))
-
-    # Set network
-    if (is.null(griwrm)) {
-      nodes <- loadSevernNodes()
-      griwrm <-
-        CreateGRiwrm(nodes)
-    }
 
     # Convert meteo data to SD (remove upstream areas)
     Precip <- ConvertMeteoSD(griwrm, PrecipTot)

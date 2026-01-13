@@ -157,9 +157,8 @@ test_that("Withdrawal on a reservoir works #147", {
   )
   Qrelease <- data.frame(Dam = rep(1E6, length(DatesR)))
   Qinf <- data.frame(Irrigation = rep(-1E6, length(DatesR)))
-  g <- CreateGRiwrm(nodes)
   e <- setupRunModel(
-    griwrm = g,
+    nodes = nodes,
     runRunModel = FALSE,
     Qinf = Qinf,
     Qrelease = Qrelease
@@ -177,10 +176,9 @@ test_that("Withdrawal on a reservoir works #147", {
   expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
 
   nodes$model[nodes$id == "54095"] <- NA
-  g <- CreateGRiwrm(nodes)
   Qinf <- cbind(Qinf, "54095" = Qobs[, "54095"])
   e <- setupRunModel(
-    griwrm = g,
+    nodes = nodes,
     runRunModel = FALSE,
     Qinf = Qinf,
     Qrelease = Qrelease

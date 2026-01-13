@@ -1,9 +1,10 @@
 runCalibration <- function(
-  nodes = NULL,
+  nodes = loadSevernNodes(),
   Qinf = NULL,
   InputsCrit = NULL,
   CalibOptions = NULL,
   FUN_CRIT = ErrorCrit_KGE2,
+  use_default_AprioriIds = TRUE,
   runRunModel = FALSE,
   IsHyst = FALSE,
   doCalibration = TRUE
@@ -16,6 +17,7 @@ runCalibration <- function(
     griwrm <- CreateGRiwrm(nodes)
   }
   e <- setupRunModel(
+    nodes = nodes,
     griwrm = griwrm,
     runRunModel = runRunModel,
     Qinf = Qinf,
@@ -28,6 +30,11 @@ runCalibration <- function(
   np <- getAllNodesProperties(griwrm)
 
   if (is.null(InputsCrit)) {
+    if (use_default_AprioriIds) {
+      AprioriIds <- getDefaultAprioriIds(InputsModel)
+    } else {
+      AprioriIds <- NULL
+    }
     InputsCrit <- CreateInputsCrit(
       InputsModel,
       FUN_CRIT = FUN_CRIT,
@@ -37,6 +44,7 @@ runCalibration <- function(
         np$id[np$calibration == "Gauged"],
         drop = FALSE
       ],
+      AprioriIds = AprioriIds
     )
   }
 
@@ -50,7 +58,7 @@ runCalibration <- function(
       InputsCrit,
       CalibOptions
     )
-    Param <- sapply(OutputsCalib, "[[", "ParamFinalR")
+    Param <- extractParam(OutputsCalib)
   }
   return(environment())
 }

@@ -4,10 +4,10 @@
 #' @export
 CreateInputsCrit.GRiwrmInputsModel <- function(
   InputsModel,
-  FUN_CRIT = ErrorCrit_NSE,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions,
   Obs,
-  AprioriIds = NULL,
+  AprioriIds = getDefaultAprioriIds(InputsModel),
   k = 0.15,
   AprCelerity = 1,
   ...
@@ -17,7 +17,9 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
   # We invoke the mandatory arguments here for avoiding
   # a messy error message on "get(x)" if an argument is missing
   # We also list all arguments in order to check arguments even in "..."
-  arguments <- c(as.list(environment()), list(...))
+  force(InputsModel)
+  force(RunOptions)
+  force(Obs)
 
   # Checking argument classes
   lVars2Check <- list(
@@ -39,10 +41,10 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
   })
 
   if (!is.null(AprioriIds)) {
-    AprioriIds <- unlist(AprioriIds)
-    if (!is.character(AprioriIds) || is.null(names(AprioriIds))) {
+    AprioriIds <- as.list(AprioriIds)
+    if (!all(sapply(AprioriIds, is.character)) || is.null(names(AprioriIds))) {
       stop(
-        "Argument 'AprioriIds' must be a named list or a named vector of characters"
+        "Argument 'AprioriIds' must be a named list of character vectors or a named character vector"
       )
     }
     if (length(unique(names(AprioriIds))) != length(names(AprioriIds))) {
@@ -50,13 +52,9 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
         "Each name of AprioriIds items must be unique: duplicate entry detected"
       )
     }
-    if ("Weights" %in% names(arguments)) {
+    dots <- list(...)
+    if ("Weights" %in% names(dots)) {
       stop("Argument 'Weights' cannot be used when using Lavenne criterion")
-    }
-    if (!"transfo" %in% names(arguments)) {
-      stop(
-        "Argument 'transfo' must be defined when using Lavenne criterion (Using \"sqrt\" is recommended)"
-      )
     }
     lapply(names(AprioriIds), function(id) {
       if (!id %in% names(InputsModel)) {
@@ -67,53 +65,54 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
           "\" is not in the list of the modeled nodes"
         )
       }
-      if (!AprioriIds[id] %in% names(InputsModel)) {
+      if (!all(AprioriIds[[id]] %in% names(InputsModel))) {
         stop(
           "'Each item of AprioriIds must be an id of a modeled node:",
-          " the id \"",
-          AprioriIds[id],
+          " one of the ids \"",
+          AprioriIds[[id]],
           "\" is not in the list of the modeled nodes"
         )
       }
-      if (
-        !AprioriIds[id] %in%
-          names(InputsModel)[1:which(id == names(InputsModel))]
-      ) {
-        stop(
-          "'AprioriIds': the node \"",
-          AprioriIds[id],
-          "\" is not calibrated before the node \"",
-          id,
-          "\".",
-          "\nIf possible, set this apriori id as the donor of the node \"",
-          id,
-          "\" to force the calibration sequence order"
-        )
-      }
-      if (
-        InputsModel[[AprioriIds[id]]]$inUngaugedCluster &
-          InputsModel[[AprioriIds[id]]]$gaugedId == id
-      ) {
-        stop(
-          "'AprioriIds': the node \"",
-          AprioriIds[id],
-          "\" is ungauged, use a gauged node instead"
-        )
-      }
-      if (
-        !identical(
-          InputsModel[[id]]$FUN_MOD,
-          InputsModel[[AprioriIds[id]]]$FUN_MOD
-        )
-      ) {
-        stop(
-          "'AprioriIds': the node \"",
-          AprioriIds[id],
-          "\" must use the same hydrological model as the node \"",
-          id,
-          "\""
-        )
-      }
+      sapply(AprioriIds[[id]], function(AprioriId) {
+        if (
+          !AprioriId %in% names(InputsModel)[1:which(id == names(InputsModel))]
+        ) {
+          stop(
+            "'AprioriIds': the node \"",
+            AprioriId,
+            "\" is not calibrated before the node \"",
+            id,
+            "\".",
+            "\nIf possible, set this apriori id as the donor of the node \"",
+            id,
+            "\" to force the calibration sequence order"
+          )
+        }
+        if (
+          InputsModel[[AprioriId]]$inUngaugedCluster &
+            InputsModel[[AprioriId]]$gaugedId == id
+        ) {
+          stop(
+            "'AprioriIds': the node \"",
+            AprioriId,
+            "\" is ungauged, use a gauged node instead"
+          )
+        }
+        if (
+          !identical(
+            InputsModel[[id]]$FUN_MOD,
+            InputsModel[[AprioriId]]$FUN_MOD
+          )
+        ) {
+          stop(
+            "'AprioriIds': the node \"",
+            AprioriId,
+            "\" must use the same hydrological model as the node \"",
+            id,
+            "\""
+          )
+        }
+      })
     })
   }
 
@@ -143,13 +142,13 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
             k = k,
             ...
           )
-        attr(InputsCrit[[IM$id]], "AprioriId") <- AprioriIds[IM$id]
+        attr(InputsCrit[[IM$id]], "AprioriIds") <- AprioriIds[[IM$id]]
         attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
         attr(InputsCrit[[IM$id]], "model") <- IM$model
         if (IM$model$hasX4) {
           attr(InputsCrit[[IM$id]], "model")$X4Ratio <- max(
             (tail(IM$BasinAreas, 1) /
-              tail(InputsModel[[AprioriIds[IM$id]]]$BasinAreas, 1))^0.3,
+              tail(InputsModel[[AprioriIds[[IM$id]]]]$BasinAreas, 1))^0.3,
             0.5
           )
         }
@@ -168,6 +167,57 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
     }
   }
   return(InputsCrit)
+}
+
+#' Get default AprioriIds from direct upstream nodes of each node
+#' @inheritParams CreateInputsCrit.GRiwrmInputsModel
+#' @returns A [list] named with node Ids and containing the Ids of the upstream
+#' nodes that can be used for apriori parameters.
+#' @export
+getDefaultAprioriIds <- function(InputsModel) {
+  l <- lapply(
+    setNames(nm = names(InputsModel)),
+    getDefaultAprioriIds_node,
+    InputsModel = InputsModel
+  )
+  l <- l[!sapply(l, is.null)]
+  return(l)
+}
+
+getDefaultAprioriIds_node <- function(Id, InputsModel, skip_reservoir = TRUE) {
+  IM <- InputsModel[[Id]]
+  if (skip_reservoir && IM$isReservoir) {
+    return(NULL)
+  }
+  if (is.null(IM$UpstreamNodes)) {
+    return(NULL)
+  }
+  AprioriIds <- IM$UpstreamNodes[IM$UpstreamIsModeled]
+  if (length(AprioriIds) == 0) {
+    return(NULL)
+  }
+  AprioriIds <- lapply(AprioriIds, function(AprioriId) {
+    if (InputsModel[[AprioriId]]$isReservoir) {
+      AprioriId <- getDefaultAprioriIds_node(AprioriId, InputsModel, FALSE)
+    }
+    if (
+      InputsModel[[AprioriId]]$inUngaugedCluster &
+        InputsModel[[AprioriId]]$gaugedId == IM$id
+    ) {
+      return(NULL)
+    }
+    if (
+      !IM$isReservoir &&
+        !identical(
+          IM$FUN_MOD,
+          InputsModel[[AprioriId]]$FUN_MOD
+        )
+    ) {
+      return(NULL)
+    }
+    return(AprioriId)
+  }) %>%
+    unlist()
 }
 
 #' Generate a `CreateInputsCrit_Lavenne` function which embeds know parameters

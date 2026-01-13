@@ -106,7 +106,6 @@ Calibration <- function(InputsModel, ...) {
   UseMethod("Calibration", InputsModel)
 }
 
-#' @rdname Calibration
 #' @noRd
 Calibration.Ungauged <- function(InputsModel, ...) {
   InputsModel$FUN_MOD <- "RunModel_Ungauged"

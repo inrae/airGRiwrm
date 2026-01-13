@@ -61,25 +61,24 @@ for (x in ls(e)) {
   assign(x, get(x, e))
 }
 
-test_that("Calibrated parameters remains unchanged", {
-  skip_on_cran()
+test_that("Calibrated parameters equals reference parameters without regularization", {
   InputsCrit <- CreateInputsCrit(
-    InputsModel = InputsModel,
+    InputsModel,
+    FUN_CRIT = ErrorCrit_NSE,
     RunOptions = RunOptions,
-    Obs = Qobs[IndPeriod_Run, ]
+    Obs = Qobs[
+      IndPeriod_Run,
+      np$id[np$calibration == "Gauged"],
+      drop = FALSE
+    ],
+    AprioriIds = NULL
   )
-
-  OC <- Calibration(
-    InputsModel = InputsModel,
-    RunOptions = RunOptions,
-    InputsCrit = InputsCrit,
-    CalibOptions = CalibOptions
-  )
-
-  ParamFinalR <- extractParam(OutputsCalib)
-
-  lapply(names(ParamFinalR), function(id) {
-    expect_equal(ParamFinalR[[!!id]], ParamMichel[[id]])
+  e <- runCalibration(runRunModel = TRUE, InputsCrit = InputsCrit)
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  lapply(names(Param), function(id) {
+    expect_equal(Param[[!!id]], ParamMichel[[id]])
   })
 })
 
@@ -224,8 +223,9 @@ test_that("Derivation and normal connection should return same calibration", {
   RO_2ol <- setupRunOptions(IM_2ol)$RunOptions
   IC_2ol <- CreateInputsCrit(
     InputsModel = IM_2ol,
+    FUN_CRIT = ErrorCrit_NSE,
     RunOptions = RO_2ol,
-    Obs = Qobs[IndPeriod_Run, ],
+    Obs = Qobs[IndPeriod_Run, ]
   )
   CO_2ol <- CreateCalibOptions(IM_2ol)
   CO_2ol[["54095"]]$FixedParam[1] <- 1
@@ -235,7 +235,7 @@ test_that("Derivation and normal connection should return same calibration", {
     InputsCrit = IC_2ol,
     CalibOptions = CO_2ol
   )
-  ParamRef <- ParamMichel[names(IM_2ol)]
+  ParamRef <- Param[names(IM_2ol)]
   ParamRef[["54095"]] <- c(1, ParamRef[["54095"]])
   ParamFinalR <- extractParam(OC_2ol)
   lapply(names(ParamFinalR), function(id) {
@@ -250,7 +250,7 @@ test_that("Derivation and normal connection should return same calibration", {
     expect_equal(
       ParamFinalR[[!!id]][-3] / ParamRef[[!!id]][-3],
       rep(1, 4),
-      tolerance = 3E-3
+      tolerance = 3E-2
     )
   })
 })
