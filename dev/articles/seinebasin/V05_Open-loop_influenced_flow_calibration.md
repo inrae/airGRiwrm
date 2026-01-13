@@ -185,23 +185,57 @@ OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 #>       Param =  299.290,   -1.228,   91.986,    5.101
 #>       Crit. KGE2[Q]      = 0.9531
 #> Calibration.GRiwrmInputsModel: Processing sub-basin 'CHALO_21'...
+#> Parameter regularization: test a priori parameters from node STDIZ_04: 19.99, 165.875, -0.244, 68.481, 3.198
+#> Crit. KGE2[Q] = 0.7892
+#>  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9100 
+#>  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0743 
+#>  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.1756 
+#> 
+#> Parameter regularization: test a priori parameters from node LOUVE_19: 1, 174.509, -3.018, 96.535, 3.25
+#> Crit. KGE2[Q] = 0.8629
+#>  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9408 
+#>  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0596 
+#>  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.1084 
+#> 
+#> Parameter regularization: test a priori parameters from node VITRY_25: 1, 299.29, -1.228, 91.986, 4.485
+#> Crit. KGE2[Q] = 0.8550
+#>  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9473 
+#>  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0380 
+#>  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.1296 
+#> 
+#> Parameter regularization: set a priori parameters from node LOUVE_19: 1, 174.509, -3.018, 96.535, 3.25
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 #>   Screening completed (243 runs)
-#>       Param =    1.250,  432.681,   -2.376,   20.697,    1.417
-#>       Crit. KGE2[Q]      = 0.9111
+#>       Param =    1.250,  432.681,   -2.376,   20.697,    2.384
+#>       Crit. Composite    = 0.9334
 #> Steepest-descent local search in progress
-#>   Calibration completed (106 iterations, 1323 runs)
-#>       Param =    0.390, 1242.283,   -2.030,    4.865,    3.965
-#>       Crit. KGE2[Q]      = 0.9574
+#>   Calibration completed (28 iterations, 502 runs)
+#>       Param =    0.600,  330.300,   -8.443,   69.408,    3.184
+#>       Crit. Composite    = 0.9510
+#>  Formula: sum(0.87 * KGE2[sqrt(Q)], 0.13 * GAPX[ParamT])
 #> Calibration.GRiwrmInputsModel: Processing sub-basin 'NOISI_17'...
+#> Parameter regularization: test a priori parameters from node MONTR_18: 1, 198.455, -1.07, 77.183, 3.825
+#> Crit. KGE2[Q] = 0.6571
+#>  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9290 
+#>  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.2613 
+#>  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.2104 
+#> 
+#> Parameter regularization: test a priori parameters from node CHALO_21: 0.6, 330.3, -8.443, 69.408, 4.712
+#> Crit. KGE2[Q] = 0.7661
+#>  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9410 
+#>  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.2238 
+#>  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 0.9658 
+#> 
+#> Parameter regularization: set a priori parameters from node CHALO_21: 0.6, 330.3, -8.443, 69.408, 4.712
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 #>   Screening completed (243 runs)
-#>       Param =    1.250,  432.681,   -2.376,   83.096,    1.417
-#>       Crit. KGE2[Q]      = 0.8228
+#>       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
+#>       Crit. Composite    = 0.8247
 #> Steepest-descent local search in progress
-#>   Calibration completed (146 iterations, 1775 runs)
-#>       Param =    0.769, 2344.527,   -2.365,   24.986,    2.704
-#>       Crit. KGE2[Q]      = 0.9504
+#>   Calibration completed (29 iterations, 510 runs)
+#>       Param =    0.770, 2951.297,   -2.617,   30.877,    4.004
+#>       Crit. Composite    = 0.9401
+#>  Formula: sum(0.88 * KGE2[sqrt(Q)], 0.12 * GAPX[ParamT])
 ```
 
 ### Run model with Michel calibration

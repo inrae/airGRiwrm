@@ -69,10 +69,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'GRiwrmInputsModel'</span></span>
 <span><span class="fu">CreateInputsCrit</span><span class="op">(</span></span>
 <span>  <span class="va">InputsModel</span>,</span>
-<span>  FUN_CRIT <span class="op">=</span> <span class="va">ErrorCrit_NSE</span>,</span>
+<span>  FUN_CRIT <span class="op">=</span> <span class="va">ErrorCrit_KGE2</span>,</span>
 <span>  <span class="va">RunOptions</span>,</span>
 <span>  <span class="va">Obs</span>,</span>
-<span>  AprioriIds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  AprioriIds <span class="op">=</span> <span class="fu"><a href="getDefaultAprioriIds.html">getDefaultAprioriIds</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">)</span>,</span>
 <span>  k <span class="op">=</span> <span class="fl">0.15</span>,</span>
 <span>  AprCelerity <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -134,12 +134,12 @@ Then, each column of the <a href="https://rdrr.io/r/base/matrix.html" class="ext
 <p>Parameter regularization consists of defining a priori parameters which are
 used in a composed criterion based on the formula proposed by
 Lavenne et al. (2019) (See <a href="https://rdrr.io/pkg/airGR/man/CreateInputsCrit_Lavenne.html" class="external-link">airGR::CreateInputsCrit_Lavenne</a>).
-The parameter <code>AprioriIds</code> allows to define which neighbor sub-catchment is
+The parameter <code>AprioriIds</code> allows to define which neighbor sub-catchments are
 used for providing a priori parameters.
 Its format is as follows:
-<code>AprioriIds &lt;- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)</code>
+<code>AprioriIds &lt;- list("Downstream sub-catchment 1" = c("A priori upstream sub-catchment 1", ...))</code>
 where the quoted strings are the ids of the sub-catchments.
-The node providing a priori parameters must be calibrated before the
+The nodes providing a priori parameters must be calibrated before the
 current one.
 The sequence order of calibration can be checked with <a href="getNodeRanking.html">getNodeRanking</a>.
 If the latter is not adequate, this order can be forced by setting the node providing
@@ -147,7 +147,11 @@ a priori parameters as donor of the current node in <a href="CreateGRiwrm.html">
 See vignettes for more details.
 The parameter <code>AprCelerity</code> is a default value used as a priori for the
 parameter 'Celerity' in case of an upstream catchment (without celerity parameter)
-is used as a priori catchment.</p>
+is used as a priori catchment.
+In the calibration process, all a priori parameter sets are tested and the one
+getting the best <code>ErrorCrit</code> score is used for the parameter regularization.
+By default, the immediate upstream catchments are used as a priori catchments,
+as determined by <a href="getDefaultAprioriIds.html">getDefaultAprioriIds</a>.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

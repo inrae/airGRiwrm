@@ -174,10 +174,10 @@ OC_U <- suppressWarnings(
 #>       Crit. KGE2[sqrt(Q)] = 0.9370
 #> Calibration.GRiwrmInputsModel: Processing sub-basins '54001', '54029', '54032' with '54032' as gauged donor...
 #> Parameter regularization: get a priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.871
-#> Crit. KGE2[sqrt(Q)] = 0.9578
-#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9579 
-#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0023 
-#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 
+#> Crit. KGE2[sqrt(Q)] = 0.9418
+#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9638 
+#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9919 
+#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0449 
 #> 
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 #>   Screening completed (243 runs)
@@ -196,10 +196,10 @@ OC_U <- suppressWarnings(
 #> 
 #> Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...
 #> Parameter regularization: get a priori parameters from node 54032: 1.125, 386.196, -0.611, 31.536, 1.669
-#> Crit. KGE2[sqrt(Q)] = 0.9660
-#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9664 
-#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0013 
-#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0050 
+#> Crit. KGE2[sqrt(Q)] = 0.9587
+#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9590 
+#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9948 
+#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0013 
 #> 
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 #>   Screening completed (243 runs)
@@ -208,8 +208,8 @@ OC_U <- suppressWarnings(
 #> Steepest-descent local search in progress
 #>   Calibration completed (23 iterations, 450 runs)
 #>       Param =    1.120,  383.753,   -0.613,   31.500,    1.671
-#>       Crit. Composite    = 0.9647
-#>  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])
+#>       Crit. Composite    = 0.9646
+#>  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
 ```
 
 Hydrological parameters for sub-basins

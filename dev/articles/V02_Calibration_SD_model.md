@@ -453,15 +453,15 @@ str(InputsCrit)
     #>   ..$ Weights : NULL
     #>   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
     #>   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
-    #>   ..- attr(*, "AprioriId")= Named chr "54095"
-    #>   .. ..- attr(*, "names")= chr "54001"
+    #>   ..- attr(*, "AprioriIds")= chr "54095"
     #>   ..- attr(*, "AprCelerity")= num 1
     #>   ..- attr(*, "model")=List of 5
     #>   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
     #>   .. ..$ hasX4             : logi TRUE
     #>   .. ..$ iX4               : num 5
     #>   .. ..$ IsHyst            : logi FALSE
-    #>   .. ..$ X4Ratio           : num 0.58
+    #>   .. ..$ X4Ratio           : Named num 0.58
+    #>   .. .. ..- attr(*, "names")= chr "54095"
     #>  $ 54032:List of 8
     #>   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     #>   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -474,15 +474,15 @@ str(InputsCrit)
     #>   ..$ Weights : NULL
     #>   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
     #>   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
-    #>   ..- attr(*, "AprioriId")= Named chr "54001"
-    #>   .. ..- attr(*, "names")= chr "54032"
+    #>   ..- attr(*, "AprioriIds")= chr "54001"
     #>   ..- attr(*, "AprCelerity")= num 1
     #>   ..- attr(*, "model")=List of 5
     #>   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
     #>   .. ..$ hasX4             : logi TRUE
     #>   .. ..$ iX4               : num 5
     #>   .. ..$ IsHyst            : logi FALSE
-    #>   .. ..$ X4Ratio           : num 1.18
+    #>   .. ..$ X4Ratio           : Named num 1.18
+    #>   .. .. ..- attr(*, "names")= chr "54001"
     #>  $ 54057:List of 8
     #>   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     #>   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -495,15 +495,15 @@ str(InputsCrit)
     #>   ..$ Weights : NULL
     #>   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
     #>   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
-    #>   ..- attr(*, "AprioriId")= Named chr "54032"
-    #>   .. ..- attr(*, "names")= chr "54057"
+    #>   ..- attr(*, "AprioriIds")= chr "54032"
     #>   ..- attr(*, "AprCelerity")= num 1
     #>   ..- attr(*, "model")=List of 5
     #>   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
     #>   .. ..$ hasX4             : logi TRUE
     #>   .. ..$ iX4               : num 5
     #>   .. ..$ IsHyst            : logi FALSE
-    #>   .. ..$ X4Ratio           : num 0.926
+    #>   .. ..$ X4Ratio           : Named num 0.926
+    #>   .. .. ..- attr(*, "names")= chr "54032"
     #>  - attr(*, "class")= chr [1:2] "GRiwrmInputsCrit" "list"
 
 ### GRiwrmCalibOptions object
@@ -558,52 +558,52 @@ OutputsCalib <- suppressWarnings(
     #>       Crit. KGE2[sqrt(Q)] = 0.9696
     #> Calibration.GRiwrmInputsModel: Processing sub-basin '54001'...
     #> Parameter regularization: get a priori parameters from node 54095: 1, 305.633, 0.061, 48.777, 1.587
-    #> Crit. KGE2[sqrt(Q)] = 0.9578
-    #>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9579 
-    #>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0023 
-    #>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 
+    #> Crit. KGE2[sqrt(Q)] = 0.9263
+    #>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9584 
+    #>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9810 
+    #>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0578 
     #> 
     #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     #>   Screening completed (243 runs)
     #>       Param =    1.250,  247.151,   -2.376,   20.697,    1.417
-    #>       Crit. Composite    = 0.9424
+    #>       Crit. Composite    = 0.9426
     #> Steepest-descent local search in progress
-    #>   Calibration completed (24 iterations, 460 runs)
-    #>       Param =    1.210,  301.871,   -3.005,   15.029,    1.622
-    #>       Crit. Composite    = 0.9429
+    #>   Calibration completed (25 iterations, 470 runs)
+    #>       Param =    1.220,  301.871,   -3.134,   14.732,    1.622
+    #>       Crit. Composite    = 0.9432
     #>  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
     #> Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...
-    #> Parameter regularization: get a priori parameters from node 54001: 1.21, 301.871, -3.005, 15.029, 1.913
-    #> Crit. KGE2[sqrt(Q)] = 0.9521
-    #>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9608 
-    #>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9985 
-    #>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0274 
+    #> Parameter regularization: get a priori parameters from node 54001: 1.22, 301.871, -3.134, 14.732, 1.913
+    #> Crit. KGE2[sqrt(Q)] = 0.9370
+    #>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9677 
+    #>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0499 
+    #>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9793 
     #> 
     #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     #>   Screening completed (243 runs)
     #>       Param =    1.250,  432.681,   -2.376,   83.096,    1.944
-    #>       Crit. Composite    = 0.9539
+    #>       Crit. Composite    = 0.9538
     #> Steepest-descent local search in progress
-    #>   Calibration completed (30 iterations, 521 runs)
-    #>       Param =    1.200, 1164.445,   -1.222,   24.047,    1.837
-    #>       Crit. Composite    = 0.9603
+    #>   Calibration completed (27 iterations, 491 runs)
+    #>       Param =    1.200, 1187.969,   -1.222,   23.807,    1.827
+    #>       Crit. Composite    = 0.9602
     #>  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
     #> Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...
-    #> Parameter regularization: get a priori parameters from node 54032: 1.2, 1164.445, -1.222, 24.047, 1.7
-    #> Crit. KGE2[sqrt(Q)] = 0.9673
-    #>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9683 
-    #>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0078 
-    #>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0007 
+    #> Parameter regularization: get a priori parameters from node 54032: 1.2, 1187.969, -1.222, 23.807, 1.691
+    #> Crit. KGE2[sqrt(Q)] = 0.9583
+    #>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9612 
+    #>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9854 
+    #>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9952 
     #> 
     #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     #>   Screening completed (243 runs)
     #>       Param =    1.250,  432.681,   -0.649,   20.697,    1.944
-    #>       Crit. Composite    = 0.9582
+    #>       Crit. Composite    = 0.9581
     #> Steepest-descent local search in progress
-    #>   Calibration completed (29 iterations, 512 runs)
-    #>       Param =    1.200, 1164.445,   -1.222,   24.047,    1.700
-    #>       Crit. Composite    = 0.9645
-    #>  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])
+    #>   Calibration completed (28 iterations, 502 runs)
+    #>       Param =    1.200, 1187.969,   -1.222,   23.807,    1.691
+    #>       Crit. Composite    = 0.9643
+    #>  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
 
 ## Run the model with the optimized model parameters
 

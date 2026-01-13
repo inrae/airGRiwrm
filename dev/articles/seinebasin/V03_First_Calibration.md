@@ -200,7 +200,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:3] "CHAUM_07" "CUSSY_08" "STGER_09"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:3] 2.19 2.1 1.82
+    ##   .. .. ..- attr(*, "names")= chr [1:3] "CHAUM_07" "CUSSY_08" "STGER_09"
     ##  $ BRIEN_03:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -211,7 +221,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr "AISY-_11"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num 1.06
+    ##   .. .. ..- attr(*, "names")= chr "AISY-_11"
     ##  $ CHABL_12:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -222,7 +242,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr "GUILL_10"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num 1.08
+    ##   .. .. ..- attr(*, "names")= chr "GUILL_10"
     ##  $ CHALO_21:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -233,7 +263,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:3] "STDIZ_04" "LOUVE_19" "VITRY_25"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:3] 0.851 1.387 0.879
+    ##   .. .. ..- attr(*, "names")= chr [1:3] "STDIZ_04" "LOUVE_19" "VITRY_25"
     ##  $ MERY-_22:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -244,7 +284,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr "BAR-S_06"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num 0.885
+    ##   .. .. ..- attr(*, "names")= chr "BAR-S_06"
     ##  $ ARCIS_24:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -255,7 +305,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:2] "TRANN_01" "LASSI_20"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:2] 0.916 1.088
+    ##   .. .. ..- attr(*, "names")= chr [1:2] "TRANN_01" "LASSI_20"
     ##  $ NOGEN_13:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -266,7 +326,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:2] "MERY-_22" "ARCIS_24"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:2] 1.02 1.12
+    ##   .. .. ..- attr(*, "names")= chr [1:2] "MERY-_22" "ARCIS_24"
     ##  $ NOISI_17:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -277,7 +347,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:2] "MONTR_18" "CHALO_21"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:2] 1.55 1.48
+    ##   .. .. ..- attr(*, "names")= chr [1:2] "MONTR_18" "CHALO_21"
     ##  $ COURL_23:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -288,7 +368,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:3] "GURGY_02" "BRIEN_03" "CHABL_12"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:3] 0.981 1.173 1.561
+    ##   .. .. ..- attr(*, "names")= chr [1:3] "GURGY_02" "BRIEN_03" "CHABL_12"
     ##  $ MONTE_15:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -299,7 +389,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:2] "NOGEN_13" "COURL_23"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:2] 0.931 0.802
+    ##   .. .. ..- attr(*, "names")= chr [1:2] "NOGEN_13" "COURL_23"
     ##  $ ALFOR_16:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -310,7 +410,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:2] "EPISY_14" "MONTE_15"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:2] 1.12 1.54
+    ##   .. .. ..- attr(*, "names")= chr [1:2] "EPISY_14" "MONTE_15"
     ##  $ PARIS_05:List of 8
     ##   ..$ FUN_CRIT:function (InputsCrit, OutputsModel, warnings = TRUE, verbose = TRUE)  
     ##   .. ..- attr(*, "class")= chr [1:2] "FUN_CRIT" "function"
@@ -321,7 +431,17 @@ str(InputsCrit)
     ##   ..$ transfo : chr ""
     ##   ..$ epsilon : NULL
     ##   ..$ Weights : NULL
-    ##   ..- attr(*, "class")= chr [1:2] "Single" "InputsCrit"
+    ##   ..- attr(*, "class")= chr [1:3] "InputsCritLavenneFunction" "Single" "InputsCrit"
+    ##   ..- attr(*, "Lavenne_FUN")=function (AprParamR, AprCrit)  
+    ##   ..- attr(*, "AprioriIds")= chr [1:2] "NOISI_17" "ALFOR_16"
+    ##   ..- attr(*, "AprCelerity")= num 1
+    ##   ..- attr(*, "model")=List of 5
+    ##   .. ..$ indexParamUngauged: num [1:5] 1 2 3 4 5
+    ##   .. ..$ hasX4             : logi TRUE
+    ##   .. ..$ iX4               : num 5
+    ##   .. ..$ IsHyst            : logi FALSE
+    ##   .. ..$ X4Ratio           : Named num [1:2] 0.497 0.48
+    ##   .. .. ..- attr(*, "names")= chr [1:2] "NOISI_17" "ALFOR_16"
     ##  - attr(*, "class")= chr [1:2] "GRiwrmInputsCrit" "list"
 
 ## GRiwrmCalibOptions object
@@ -611,113 +731,278 @@ OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
     ##       Param =  278.332,   -1.382,   97.715,    5.076
     ##       Crit. KGE2[Q]      = 0.9550
     ## Calibration.GRiwrmInputsModel: Processing sub-basin 'GURGY_02'...
+    ## Parameter regularization: test a priori parameters from node CHAUM_07: 1, 269.272, 0.421, 166.665, 2.753
+    ## Crit. KGE2[Q] = 0.6520
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9585 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9734 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.3445 
+    ## 
+    ## Parameter regularization: test a priori parameters from node CUSSY_08: 1, 214.586, -0.974, 59.761, 4.388
+    ## Crit. KGE2[Q] = 0.7694
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9359 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.1511 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.1620 
+    ## 
+    ## Parameter regularization: test a priori parameters from node STGER_09: 1, 325.478, -0.313, 142.419, 2.082
+    ## Crit. KGE2[Q] = 0.7499
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9586 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9852 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.2462 
+    ## 
+    ## Parameter regularization: set a priori parameters from node CUSSY_08: 1, 214.586, -0.974, 59.761, 4.388
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
     ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
-    ##       Crit. KGE2[Q]      = 0.9499
+    ##       Crit. Composite    = 0.9123
     ## Steepest-descent local search in progress
-    ##   Calibration completed (43 iterations, 669 runs)
-    ##       Param =    0.784,  405.646,   -3.350,  114.106,    2.234
-    ##       Crit. KGE2[Q]      = 0.9623
+    ##   Calibration completed (60 iterations, 845 runs)
+    ##       Param =    1.422,  520.044,   -2.610,  100.230,    4.052
+    ##       Crit. Composite    = 0.9507
+    ##  Formula: sum(0.88 * KGE2[sqrt(Q)], 0.12 * GAPX[ParamT])
     ## Calibration.GRiwrmInputsModel: Processing sub-basin 'BRIEN_03'...
+    ## Parameter regularization: get a priori parameters from node AISY-_11: 1, 172.375, -1.653, 49.462, 2.824
+    ## Crit. KGE2[Q] = 0.8457
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9178 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0549 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 0.8816 
+    ## 
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
-    ##       Param =    1.250,  169.017,   -0.649,   83.096,    2.384
-    ##       Crit. KGE2[Q]      = 0.9229
+    ##       Param =    1.250,  247.151,   -0.649,   83.096,    2.384
+    ##       Crit. Composite    = 0.9456
     ## Steepest-descent local search in progress
-    ##   Calibration completed (43 iterations, 662 runs)
-    ##       Param =    0.664,  209.147,   -0.294,   59.743,    3.341
-    ##       Crit. KGE2[Q]      = 0.9391
+    ##   Calibration completed (24 iterations, 460 runs)
+    ##       Param =    0.540,  219.203,   -0.432,   81.451,    2.813
+    ##       Crit. Composite    = 0.9517
+    ##  Formula: sum(0.87 * KGE2[sqrt(Q)], 0.13 * GAPX[ParamT])
     ## Calibration.GRiwrmInputsModel: Processing sub-basin 'CHABL_12'...
+    ## Parameter regularization: get a priori parameters from node GUILL_10: 1, 183.842, -1.733, 24.004, 2.788
+    ## Crit. KGE2[Q] = 0.8336
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.8707 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.1026 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0215 
+    ## 
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
-    ##       Param =    1.250,  247.151,   -2.376,   42.098,    2.384
-    ##       Crit. KGE2[Q]      = 0.8999
+    ##       Param =    1.250,  169.017,   -2.376,   42.098,    2.384
+    ##       Crit. Composite    = 0.9191
     ## Steepest-descent local search in progress
-    ##   Calibration completed (54 iterations, 780 runs)
-    ##       Param =    0.840,  197.911,   -2.735,   45.323,    5.548
-    ##       Crit. KGE2[Q]      = 0.9385
+    ##   Calibration completed (31 iterations, 531 runs)
+    ##       Param =    0.318,  195.523,   -2.557,   34.220,    3.050
+    ##       Crit. Composite    = 0.9380
+    ##  Formula: sum(0.87 * KGE2[sqrt(Q)], 0.13 * GAPX[ParamT])
     ## Calibration.GRiwrmInputsModel: Processing sub-basin 'CHALO_21'...
+    ## Parameter regularization: test a priori parameters from node STDIZ_04: 1, 161.253, -0.238, 69.848, 3.19
+    ## Crit. KGE2[Q] = 0.8681
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9246 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0701 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0825 
+    ## 
+    ## Parameter regularization: test a priori parameters from node LOUVE_19: 1, 162.39, -1.099, 83.096, 4.767
+    ## Crit. KGE2[Q] = 0.8834
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9356 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0807 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0541 
+    ## 
+    ## Parameter regularization: test a priori parameters from node VITRY_25: 1, 278.332, -1.382, 97.715, 4.463
+    ## Crit. KGE2[Q] = 0.9105
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9406 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0551 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0380 
+    ## 
+    ## Parameter regularization: set a priori parameters from node VITRY_25: 1, 278.332, -1.382, 97.715, 4.463
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   83.096,    1.417
-    ##       Crit. KGE2[Q]      = 0.9247
+    ##       Param =    1.250,  432.681,   -0.649,   83.096,    2.384
+    ##       Crit. Composite    = 0.9372
     ## Steepest-descent local search in progress
-    ##   Calibration completed (79 iterations, 1024 runs)
-    ##       Param =    0.437,  622.380,   -2.780,   96.421,   11.967
-    ##       Crit. KGE2[Q]      = 0.9667
+    ##   Calibration completed (37 iterations, 591 runs)
+    ##       Param =    0.420,  601.845,   -2.060,  113.296,    4.423
+    ##       Crit. Composite    = 0.9658
+    ##  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
     ## Calibration.GRiwrmInputsModel: Processing sub-basin 'MERY-_22'...
-    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
-    ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   42.098,    1.417
-    ##       Crit. KGE2[Q]      = 0.8989
-    ## Steepest-descent local search in progress
-    ##   Calibration completed (44 iterations, 663 runs)
-    ##       Param =    0.269,  724.085,   -2.376,   26.950,    5.557
-    ##       Crit. KGE2[Q]      = 0.9574
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'ARCIS_24'...
+    ## Parameter regularization: get a priori parameters from node BAR-S_06: 1, 247.151, -0.347, 91.836, 4.694
+    ## Crit. KGE2[Q] = 0.7652
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9287 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0475 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.2186 
+    ## 
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
     ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
-    ##       Crit. KGE2[Q]      = 0.9243
+    ##       Crit. Composite    = 0.9225
     ## Steepest-descent local search in progress
-    ##   Calibration completed (49 iterations, 720 runs)
-    ##       Param =    0.326,  411.579,   -6.460,  168.047,    3.999
-    ##       Crit. KGE2[Q]      = 0.9615
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'NOGEN_13'...
+    ##   Calibration completed (40 iterations, 621 runs)
+    ##       Param =    0.330,  749.945,   -3.589,   60.340,    4.638
+    ##       Crit. Composite    = 0.9523
+    ##  Formula: sum(0.88 * KGE2[sqrt(Q)], 0.12 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'ARCIS_24'...
+    ## Parameter regularization: test a priori parameters from node TRANN_01: 1, 202.172, -0.124, 76.792, 5.041
+    ## Crit. KGE2[Q] = 0.8186
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9318 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0529 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.1596 
+    ## 
+    ## Parameter regularization: test a priori parameters from node LASSI_20: 1, 223.632, -1.16, 75.944, 4.738
+    ## Crit. KGE2[Q] = 0.8700
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9328 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0574 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0954 
+    ## 
+    ## Parameter regularization: set a priori parameters from node LASSI_20: 1, 223.632, -1.16, 75.944, 4.738
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   20.697,    1.417
-    ##       Crit. KGE2[Q]      = 0.9253
-    ## Steepest-descent local search in progress
-    ##   Calibration completed (197 iterations, 2307 runs)
-    ##       Param =    0.257, 1128.402,   -6.699,  116.595,    3.572
-    ##       Crit. KGE2[Q]      = 0.9630
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'NOISI_17'...
-    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
-    ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   20.697,    1.417
-    ##       Crit. KGE2[Q]      = 0.8680
-    ## Steepest-descent local search in progress
-    ##   Calibration completed (47 iterations, 696 runs)
-    ##       Param =    0.605, 1502.367,   -2.376,   18.669,    7.424
-    ##       Crit. KGE2[Q]      = 0.9606
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'COURL_23'...
-    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
-    ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   83.096,    1.417
-    ##       Crit. KGE2[Q]      = 0.9260
-    ## Steepest-descent local search in progress
-    ##   Calibration completed (96 iterations, 1240 runs)
-    ##       Param =    1.218,  602.400,   -3.958,  261.056,    2.513
-    ##       Crit. KGE2[Q]      = 0.9656
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'MONTE_15'...
-    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
-    ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   20.697,    1.417
-    ##       Crit. KGE2[Q]      = 0.9602
-    ## Steepest-descent local search in progress
-    ##   Calibration completed (60 iterations, 826 runs)
-    ##       Param =    0.346, 2886.511,   -5.863,   13.161,    1.634
-    ##       Crit. KGE2[Q]      = 0.9762
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'ALFOR_16'...
-    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
-    ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   20.697,    1.417
-    ##       Crit. KGE2[Q]      = 0.9615
+    ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
+    ##       Crit. Composite    = 0.9379
     ## Steepest-descent local search in progress
     ##   Calibration completed (30 iterations, 520 runs)
-    ##       Param =    1.700, 1096.633,   -2.376,   21.542,    2.501
-    ##       Crit. KGE2[Q]      = 0.9783
-    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'PARIS_05'...
+    ##       Param =    0.320,  539.153,   -2.973,   81.451,    4.687
+    ##       Crit. Composite    = 0.9600
+    ##  Formula: sum(0.87 * KGE2[sqrt(Q)], 0.13 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'NOGEN_13'...
+    ## Parameter regularization: test a priori parameters from node MERY-_22: 0.33, 749.945, -3.589, 60.34, 4.75
+    ## Crit. KGE2[Q] = 0.9516
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9582 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0104 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0221 
+    ## 
+    ## Parameter regularization: test a priori parameters from node ARCIS_24: 0.32, 539.153, -2.973, 81.451, 5.244
+    ## Crit. KGE2[Q] = 0.9398
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9591 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0150 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0416 
+    ## 
+    ## Parameter regularization: set a priori parameters from node MERY-_22: 0.33, 749.945, -3.589, 60.34, 4.75
     ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
     ##   Screening completed (243 runs)
-    ##       Param =    1.250,  432.681,   -2.376,   20.697,    2.384
-    ##       Crit. KGE2[Q]      = 0.9709
+    ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
+    ##       Crit. Composite    = 0.9298
     ## Steepest-descent local search in progress
-    ##   Calibration completed (35 iterations, 574 runs)
-    ##       Param =    1.340,  854.059, -2826.665,   22.421,    8.630
-    ##       Crit. KGE2[Q]      = 0.9747
+    ##   Calibration completed (31 iterations, 531 runs)
+    ##       Param =    0.240,  796.319,   -3.780,   59.145,    4.745
+    ##       Crit. Composite    = 0.9674
+    ##  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'NOISI_17'...
+    ## Parameter regularization: test a priori parameters from node MONTR_18: 1, 292.949, -0.578, 40.854, 3.355
+    ## Crit. KGE2[Q] = 0.7547
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9104 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0919 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.2090 
+    ## 
+    ## Parameter regularization: test a priori parameters from node CHALO_21: 0.42, 601.845, -2.06, 113.296, 6.546
+    ## Crit. KGE2[Q] = 0.8469
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9334 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0034 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.1378 
+    ## 
+    ## Parameter regularization: set a priori parameters from node CHALO_21: 0.42, 601.845, -2.06, 113.296, 6.546
+    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+    ##   Screening completed (243 runs)
+    ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
+    ##       Crit. Composite    = 0.8679
+    ## Steepest-descent local search in progress
+    ##   Calibration completed (38 iterations, 602 runs)
+    ##       Param =    0.620, 1718.622,   -5.460,   69.649,    6.458
+    ##       Crit. Composite    = 0.9574
+    ##  Formula: sum(0.87 * KGE2[sqrt(Q)], 0.13 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'COURL_23'...
+    ## Parameter regularization: test a priori parameters from node GURGY_02: 1.422, 520.044, -2.61, 100.23, 3.976
+    ## Crit. KGE2[Q] = 0.9584
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9656 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0205 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 0.9888 
+    ## 
+    ## Parameter regularization: test a priori parameters from node BRIEN_03: 0.54, 219.203, -0.432, 81.451, 3.299
+    ## Crit. KGE2[Q] = 0.8934
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9573 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0607 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0765 
+    ## 
+    ## Parameter regularization: test a priori parameters from node CHABL_12: 0.318, 195.523, -2.557, 34.22, 4.763
+    ## Crit. KGE2[Q] = 0.8870
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9308 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 1.0868 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 0.9788 
+    ## 
+    ## Parameter regularization: set a priori parameters from node GURGY_02: 1.422, 520.044, -2.61, 100.23, 3.976
+    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+    ##   Screening completed (243 runs)
+    ##       Param =    1.250,  432.681,   -0.020,   83.096,    2.384
+    ##       Crit. Composite    = 0.9062
+    ## Steepest-descent local search in progress
+    ##   Calibration completed (48 iterations, 705 runs)
+    ##       Param =    1.495,  960.102,   -2.340,  175.144,    3.966
+    ##       Crit. Composite    = 0.9629
+    ##  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'MONTE_15'...
+    ## Parameter regularization: test a priori parameters from node NOGEN_13: 0.24, 796.319, -3.78, 59.145, 4.418
+    ## Crit. KGE2[Q] = 0.9530
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9745 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9794 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0336 
+    ## 
+    ## Parameter regularization: test a priori parameters from node COURL_23: 1.495, 960.102, -2.34, 175.144, 3.181
+    ## Crit. KGE2[Q] = 0.9392
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9727 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9775 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0495 
+    ## 
+    ## Parameter regularization: set a priori parameters from node NOGEN_13: 0.24, 796.319, -3.78, 59.145, 4.418
+    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+    ##   Screening completed (243 runs)
+    ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
+    ##       Crit. Composite    = 0.9475
+    ## Steepest-descent local search in progress
+    ##   Calibration completed (26 iterations, 481 runs)
+    ##       Param =    0.250,  804.322,   -3.780,   59.145,    4.414
+    ##       Crit. Composite    = 0.9722
+    ##  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'ALFOR_16'...
+    ## Parameter regularization: test a priori parameters from node EPISY_14: 1, 610.285, -0.593, 41.294, 4.195
+    ## Crit. KGE2[Q] = 0.8976
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9759 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9922 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0992 
+    ## 
+    ## Parameter regularization: test a priori parameters from node MONTE_15: 0.25, 804.322, -3.78, 59.145, 6.819
+    ## Crit. KGE2[Q] = 0.9195
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9297 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9886 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0374 
+    ## 
+    ## Parameter regularization: set a priori parameters from node MONTE_15: 0.25, 804.322, -3.78, 59.145, 6.819
+    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+    ##   Screening completed (243 runs)
+    ##       Param =    1.250,  432.681,   -2.376,   83.096,    2.384
+    ##       Crit. Composite    = 0.9048
+    ## Steepest-descent local search in progress
+    ##   Calibration completed (39 iterations, 612 runs)
+    ##       Param =    1.027, 2530.297,   -4.825,   51.309,    6.754
+    ##       Crit. Composite    = 0.9616
+    ##  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
+    ## Calibration.GRiwrmInputsModel: Processing sub-basin 'PARIS_05'...
+    ## Parameter regularization: test a priori parameters from node NOISI_17: 0.62, 1718.622, -5.46, 69.649, 3.208
+    ## Crit. KGE2[Q] = 0.9420
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9752 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9656 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0397 
+    ## 
+    ## Parameter regularization: test a priori parameters from node ALFOR_16: 1.027, 2530.297, -4.825, 51.309, 3.245
+    ## Crit. KGE2[Q] = 0.9421
+    ##  SubCrit. KGE2[Q] cor(sim, obs, "pearson") = 0.9758 
+    ##  SubCrit. KGE2[Q] cv(sim)/cv(obs)          = 0.9653 
+    ##  SubCrit. KGE2[Q] mean(sim)/mean(obs)      = 1.0395 
+    ## 
+    ## Parameter regularization: set a priori parameters from node ALFOR_16: 1.027, 2530.297, -4.825, 51.309, 3.245
+    ## Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
+    ##   Screening completed (243 runs)
+    ##       Param =    1.250,  432.681,   -2.376,   42.098,    2.384
+    ##       Crit. Composite    = 0.9573
+    ## Steepest-descent local search in progress
+    ##   Calibration completed (27 iterations, 492 runs)
+    ##       Param =    1.030, 2540.205,   -4.837,   51.419,    3.242
+    ##       Crit. Composite    = 0.9723
+    ##  Formula: sum(0.86 * KGE2[sqrt(Q)], 0.14 * GAPX[ParamT])
 
 ## Run the GR4J model with parameters obtained from the Michel calibration
 

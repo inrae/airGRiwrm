@@ -9,10 +9,10 @@ object) or for a network (with a *GRiwrmInputsModel* object)
 # S3 method for class 'GRiwrmInputsModel'
 CreateInputsCrit(
   InputsModel,
-  FUN_CRIT = ErrorCrit_NSE,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions,
   Obs,
-  AprioriIds = NULL,
+  AprioriIds = getDefaultAprioriIds(InputsModel),
   k = 0.15,
   AprCelerity = 1,
   ...
@@ -109,10 +109,11 @@ Parameter regularization consists of defining a priori parameters which
 are used in a composed criterion based on the formula proposed by
 Lavenne et al. (2019) (See
 [airGR::CreateInputsCrit_Lavenne](https://rdrr.io/pkg/airGR/man/CreateInputsCrit_Lavenne.html)).
-The parameter `AprioriIds` allows to define which neighbor sub-catchment
-is used for providing a priori parameters. Its format is as follows:
-`AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)`
-where the quoted strings are the ids of the sub-catchments. The node
+The parameter `AprioriIds` allows to define which neighbor
+sub-catchments are used for providing a priori parameters. Its format is
+as follows:
+`AprioriIds <- list("Downstream sub-catchment 1" = c("A priori upstream sub-catchment 1", ...))`
+where the quoted strings are the ids of the sub-catchments. The nodes
 providing a priori parameters must be calibrated before the current one.
 The sequence order of calibration can be checked with
 [getNodeRanking](https://inrae.github.io/airGRiwrm/dev/reference/getNodeRanking.md).
@@ -122,7 +123,11 @@ node providing a priori parameters as donor of the current node in
 See vignettes for more details. The parameter `AprCelerity` is a default
 value used as a priori for the parameter 'Celerity' in case of an
 upstream catchment (without celerity parameter) is used as a priori
-catchment.
+catchment. In the calibration process, all a priori parameter sets are
+tested and the one getting the best `ErrorCrit` score is used for the
+parameter regularization. By default, the immediate upstream catchments
+are used as a priori catchments, as determined by
+[getDefaultAprioriIds](https://inrae.github.io/airGRiwrm/dev/reference/getDefaultAprioriIds.md).
 
 ## References
 

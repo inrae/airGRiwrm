@@ -93,6 +93,9 @@
 - [`extractParam()`](https://inrae.github.io/airGRiwrm/dev/reference/extractParam.md)
   : Extract calibrated parameters
 
+- [`getDefaultAprioriIds()`](https://inrae.github.io/airGRiwrm/dev/reference/getDefaultAprioriIds.md)
+  : Get default AprioriIds from direct upstream nodes of each node
+
 - [`getNextTimeSteps()`](https://inrae.github.io/airGRiwrm/dev/reference/getNextTimeSteps.md)
   : Get the next time steps date/time of a simulation
 

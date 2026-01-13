@@ -168,35 +168,35 @@ OC_OL <- suppressWarnings(
 #>       Crit. KGE2[sqrt(Q)] = 0.9696
 #> Calibration.GRiwrmInputsModel: Processing sub-basin '54032'...
 #> Parameter regularization: get a priori parameters from node 54029: 1, 214.204, -0.119, 46.754, 1.823
-#> Crit. KGE2[sqrt(Q)] = 0.9696
-#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9697 
-#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9975 
-#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9989 
+#> Crit. KGE2[sqrt(Q)] = 0.9723
+#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9907 
+#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0260 
+#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 0.9973 
 #> 
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 #>   Screening completed (243 runs)
 #>       Param =    1.250,  432.681,   -0.020,   42.098,    1.944
 #>       Crit. Composite    = 0.9861
 #> Steepest-descent local search in progress
-#>   Calibration completed (17 iterations, 395 runs)
-#>       Param =    1.110,  395.440,    0.000,   60.340,    1.788
+#>   Calibration completed (18 iterations, 404 runs)
+#>       Param =    1.110,  399.415,    0.000,   59.740,    1.788
 #>       Crit. Composite    = 0.9876
 #>  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])
 #> Calibration.GRiwrmInputsModel: Processing sub-basin '54057'...
-#> Parameter regularization: get a priori parameters from node 54032: 1.11, 395.44, 0, 60.34, 1.655
-#> Crit. KGE2[sqrt(Q)] = 0.9913
-#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9916 
-#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 1.0020 
-#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0010 
+#> Parameter regularization: get a priori parameters from node 54032: 1.11, 399.415, 0, 59.74, 1.655
+#> Crit. KGE2[sqrt(Q)] = 0.9723
+#>  SubCrit. KGE2[sqrt(Q)] cor(sim, obs, "pearson") = 0.9855 
+#>  SubCrit. KGE2[sqrt(Q)] cv(sim)/cv(obs)          = 0.9773 
+#>  SubCrit. KGE2[sqrt(Q)] mean(sim)/mean(obs)      = 1.0067 
 #> 
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
 #>   Screening completed (243 runs)
 #>       Param =    1.250,  247.151,   -0.020,   42.098,    1.944
 #>       Crit. Composite    = 0.9786
 #> Steepest-descent local search in progress
-#>   Calibration completed (23 iterations, 452 runs)
-#>       Param =    1.120,  230.442,   -0.242,   42.521,    1.710
-#>       Crit. Composite    = 0.9797
+#>   Calibration completed (19 iterations, 414 runs)
+#>       Param =    1.120,  228.149,   -0.242,   42.098,    1.710
+#>       Crit. Composite    = 0.9796
 #>  Formula: sum(0.85 * KGE2[sqrt(Q)], 0.15 * GAPX[ParamT])
 ParamV03 <- sapply(griwrmV03$id, function(x) {OC_OL[[x]]$Param})
 ```
