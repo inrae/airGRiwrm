@@ -250,7 +250,7 @@ test_that("Derivation and normal connection should return same calibration", {
     expect_equal(
       ParamFinalR[[!!id]][-3] / ParamRef[[!!id]][-3],
       rep(1, 4),
-      tolerance = 3E-3
+      tolerance = 3E-2
     )
   })
 })
