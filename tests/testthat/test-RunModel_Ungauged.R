@@ -168,7 +168,7 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
   )
   Qinf <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qinf) <- "54095"
-  e <- runCalibration(nodes, Qinf = Qinf)
+  e <- runCalibration(nodes, Qinf = Qinf, use_default_AprioriIds = FALSE)
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
