@@ -40,7 +40,7 @@ nodes <- nodes[nodes$id %in% c("54001", "54029", "54032"), ]
 nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
 nodes$model[nodes$id == "54029"] <- "Ungauged"
 
-e <- runCalibration(nodes)
+e <- runCalibration(nodes, use_default_AprioriIds = FALSE)
 for (x in ls(e)) {
   assign(x, get(x, e))
 }
@@ -78,7 +78,7 @@ test_that("RunModel_Ungauged works with a diversion as donor (#110)", {
   )
   Qinf <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qinf) <- "54032"
-  e <- runCalibration(nodes, Qinf = Qinf)
+  e <- runCalibration(nodes, Qinf = Qinf, use_default_AprioriIds = FALSE)
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
@@ -87,11 +87,7 @@ test_that("RunModel_Ungauged works with a diversion as donor (#110)", {
 })
 
 # 3 nodes on one branch with ungauged node in the middle
-nodes <- loadSevernNodes()
-nodes <- nodes[!nodes$id %in% c("54002", "54057", "54029"), ]
-nodes[nodes$id == "54032", c("down", "length")] <- c(NA, NA)
-nodes$model[nodes$id == "54001"] <- "Ungauged"
-e <- runCalibration(nodes)
+e <- runCalibration(loadUngauged3Nodes(), use_default_AprioriIds = FALSE)
 for (x in ls(e)) {
   assign(x, get(x, e))
 }
@@ -115,27 +111,7 @@ test_that("Ungauged node with gauged upstream node should works", {
 
 test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
   nodes <- rbind(
-    nodes,
-    data.frame(
-      id = "54095",
-      down = "54032",
-      length = 100,
-      area = NA,
-      model = "Diversion"
-    )
-  )
-  Qinf <- matrix(0, ncol = 1, nrow = 11536)
-  colnames(Qinf) <- "54095"
-  e <- runCalibration(nodes, Qinf = Qinf)
-  for (x in ls(e)) {
-    assign(x, get(x, e))
-  }
-  expect_equal(OutputsCalib$`54032`$CritFinal, CritValue)
-})
-
-test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
-  nodes <- rbind(
-    nodes,
+    loadUngauged3Nodes(),
     data.frame(
       id = "54095",
       down = "54001",
@@ -146,7 +122,7 @@ test_that("RunModel_Ungauged works with a diversion as upstream node (#113)", {
   )
   Qinf <- matrix(0, ncol = 1, nrow = 11536)
   colnames(Qinf) <- "54095"
-  e <- runCalibration(nodes, Qinf = Qinf)
+  e <- runCalibration(nodes, Qinf = Qinf, use_default_AprioriIds = FALSE)
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
@@ -160,7 +136,7 @@ test_that("Ungauged node with diversion outside the sub-network should work", {
   nodes$model[nodes$id == "54095"] <- "Ungauged"
 
   # First without Diversion
-  e <- runCalibration(nodes, Qinf = Qinf)
+  e <- runCalibration(nodes, Qinf = Qinf, use_default_AprioriIds = FALSE)
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
@@ -328,7 +304,6 @@ test_that("Cemaneige with hysteresis works", {
   nodes <- nodes[nodes$id %in% c("54057", "54032", "54001"), ]
   nodes$model <- "RunModel_CemaNeigeGR4J"
   nodes$model[nodes$id != 54057] <- "Ungauged"
-  griwrm <- CreateGRiwrm(nodes)
 
   # # The custom ErrorCrit function !!!
   ErrorCrit_KGE3 <- function(
@@ -353,7 +328,7 @@ test_that("Cemaneige with hysteresis works", {
   class(ErrorCrit_KGE3) <- c("FUN_CRIT", class(ErrorCrit_KGE3))
 
   e <- suppressWarnings(
-    setupRunModel(griwrm = griwrm, runRunModel = FALSE, IsHyst = TRUE)
+    setupRunModel(nodes = nodes, runRunModel = FALSE, IsHyst = TRUE)
   )
   for (x in ls(e)) {
     assign(x, get(x, e))
@@ -433,7 +408,7 @@ test_that("Diversion to an ungauged node should works", {
 nupd <- loadSevernNodes()
 nupd$donor[nupd$id == "54032"] <- "54001"
 nupd$model[nupd$id == "54032"] <- "Ungauged"
-e <- runCalibration(nupd)
+e <- runCalibration(nupd, use_default_AprioriIds = FALSE)
 for (x in ls(e)) {
   assign(x, get(x, e))
 }
@@ -487,7 +462,11 @@ test_that("Gauged node inside ungauged cluster must only work if parameters are 
     CreateGRiwrm(ngiuc),
     regexp = "Node '54032' is included in the ungauged node cluster '54057'"
   )
-  e <- suppressWarnings(runCalibration(ngiuc, doCalibration = FALSE))
+  e <- suppressWarnings(runCalibration(
+    ngiuc,
+    doCalibration = FALSE,
+    use_default_AprioriIds = FALSE
+  ))
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
