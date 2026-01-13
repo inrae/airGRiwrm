@@ -1,5 +1,5 @@
 runCalibration <- function(
-  nodes = NULL,
+  nodes = loadSevernNodes(),
   Qinf = NULL,
   InputsCrit = NULL,
   CalibOptions = NULL,
