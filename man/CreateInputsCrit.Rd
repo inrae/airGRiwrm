@@ -9,10 +9,10 @@
 \usage{
 \method{CreateInputsCrit}{GRiwrmInputsModel}(
   InputsModel,
-  FUN_CRIT = ErrorCrit_NSE,
+  FUN_CRIT = ErrorCrit_KGE2,
   RunOptions,
   Obs,
-  AprioriIds = NULL,
+  AprioriIds = getDefaultAprioriIds(InputsModel),
   k = 0.15,
   AprCelerity = 1,
   ...
@@ -60,12 +60,12 @@ With a \emph{GRiwrmInputsModel} object, all arguments are applied on each sub-ca
 Parameter regularization consists of defining a priori parameters which are
 used in a composed criterion based on the formula proposed by
 Lavenne et al. (2019) (See \link[airGR:CreateInputsCrit_Lavenne]{airGR::CreateInputsCrit_Lavenne}).
-The parameter \code{AprioriIds} allows to define which neighbor sub-catchment is
+The parameter \code{AprioriIds} allows to define which neighbor sub-catchments are
 used for providing a priori parameters.
 Its format is as follows:
-\code{AprioriIds <- c("Downstream sub-catchment 1" = "A priori upstream sub-catchment 1", ...)}
+\code{AprioriIds <- list("Downstream sub-catchment 1" = c("A priori upstream sub-catchment 1", ...))}
 where the quoted strings are the ids of the sub-catchments.
-The node providing a priori parameters must be calibrated before the
+The nodes providing a priori parameters must be calibrated before the
 current one.
 The sequence order of calibration can be checked with \link{getNodeRanking}.
 If the latter is not adequate, this order can be forced by setting the node providing
@@ -74,6 +74,8 @@ See vignettes for more details.
 The parameter \code{AprCelerity} is a default value used as a priori for the
 parameter 'Celerity' in case of an upstream catchment (without celerity parameter)
 is used as a priori catchment.
+In the calibration process, all a priori parameter sets are tested and the one
+getting the best \code{ErrorCrit} score is used for the parameter regularization.
 }
 \references{
 De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}
