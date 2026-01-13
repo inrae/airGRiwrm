@@ -223,8 +223,9 @@ test_that("Derivation and normal connection should return same calibration", {
   RO_2ol <- setupRunOptions(IM_2ol)$RunOptions
   IC_2ol <- CreateInputsCrit(
     InputsModel = IM_2ol,
+    FUN_CRIT = ErrorCrit_NSE,
     RunOptions = RO_2ol,
-    Obs = Qobs[IndPeriod_Run, ],
+    Obs = Qobs[IndPeriod_Run, ]
   )
   CO_2ol <- CreateCalibOptions(IM_2ol)
   CO_2ol[["54095"]]$FixedParam[1] <- 1
@@ -234,7 +235,7 @@ test_that("Derivation and normal connection should return same calibration", {
     InputsCrit = IC_2ol,
     CalibOptions = CO_2ol
   )
-  ParamRef <- ParamMichel[names(IM_2ol)]
+  ParamRef <- Param[names(IM_2ol)]
   ParamRef[["54095"]] <- c(1, ParamRef[["54095"]])
   ParamFinalR <- extractParam(OC_2ol)
   lapply(names(ParamFinalR), function(id) {
