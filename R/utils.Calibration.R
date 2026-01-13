@@ -79,7 +79,10 @@ getInputsCrit_Lavenne_AprCrit <- function(
   }
   featMod <- attr(InputsCrit, "model")
   if (featMod$hasX4) {
-    AprParamR[featMod$iX4] <- max(0.5, AprParamR[featMod$iX4] * featMod$X4Ratio)
+    AprParamR[featMod$iX4] <- max(
+      0.5,
+      AprParamR[featMod$iX4] * featMod$X4Ratio[AprioriId]
+    )
   }
   AprParamR <- AprParamR[featMod$indexParamUngauged]
 
