@@ -76,6 +76,8 @@ parameter 'Celerity' in case of an upstream catchment (without celerity paramete
 is used as a priori catchment.
 In the calibration process, all a priori parameter sets are tested and the one
 getting the best \code{ErrorCrit} score is used for the parameter regularization.
+By default, the immediate upstream catchments are used as a priori catchments,
+as determined by \link{getDefaultAprioriIds}.
 }
 \references{
 De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C., 2019. A Regularization Approach to Improve the Sequential Calibration of a Semidistributed Hydrological Model. Water Resources Research 55, 8821–8839. \doi{10.1029/2018WR024266}

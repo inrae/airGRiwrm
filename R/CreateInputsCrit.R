@@ -37,6 +37,8 @@
 #' is used as a priori catchment.
 #' In the calibration process, all a priori parameter sets are tested and the one
 #' getting the best `ErrorCrit` score is used for the parameter regularization.
+#' By default, the immediate upstream catchments are used as a priori catchments,
+#' as determined by [getDefaultAprioriIds].
 #'
 #' @return Depending on the class of `InputsModel` argument (respectively `InputsModel` and `GRiwrmInputsModel` object), the returned value is respectively:
 #' - a `InputsCrit` object (See [airGR::CreateInputsCrit])
