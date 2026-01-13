@@ -184,9 +184,11 @@ getDefaultAprioriIds <- function(InputsModel) {
   return(l)
 }
 
-getDefaultAprioriIds_node <- function(Id, InputsModel, skip_reservoir = TRUE) {
+#' @param original_Id Original Id if the call is done to by-pass a reservoir node
+#' @noRd
+getDefaultAprioriIds_node <- function(Id, InputsModel, original_Id = Id) {
   IM <- InputsModel[[Id]]
-  if (skip_reservoir && IM$isReservoir) {
+  if (Id == original_Id && IM$isReservoir) {
     return(NULL)
   }
   if (is.null(IM$UpstreamNodes)) {
@@ -198,11 +200,11 @@ getDefaultAprioriIds_node <- function(Id, InputsModel, skip_reservoir = TRUE) {
   }
   AprioriIds <- lapply(AprioriIds, function(AprioriId) {
     if (InputsModel[[AprioriId]]$isReservoir) {
-      AprioriId <- getDefaultAprioriIds_node(AprioriId, InputsModel, FALSE)
+      return(getDefaultAprioriIds_node(AprioriId, InputsModel, Id))
     }
     if (
       InputsModel[[AprioriId]]$inUngaugedCluster &
-        InputsModel[[AprioriId]]$gaugedId == IM$id
+        InputsModel[[AprioriId]]$gaugedId == original_Id
     ) {
       return(NULL)
     }
