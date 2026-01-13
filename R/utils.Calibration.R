@@ -79,7 +79,7 @@ getInputsCrit_Lavenne_AprCrit <- function(
   }
   featMod <- attr(InputsCrit, "model")
   if (featMod$hasX4) {
-    AprParamR[featMod$iX4] <- AprParamR[featMod$iX4] * featMod$X4Ratio
+    AprParamR[featMod$iX4] <- max(0.5, AprParamR[featMod$iX4] * featMod$X4Ratio)
   }
   AprParamR <- AprParamR[featMod$indexParamUngauged]
 
@@ -91,7 +91,6 @@ getInputsCrit_Lavenne_AprCrit <- function(
     ": ",
     paste(round(AprParamR, 3), collapse = ", ")
   )
-
   OM_Apriori <- RunModel(InputsModel, RunOptions, AprParamR)
   AprCrit <- ErrorCrit(InputsCrit, OM_Apriori)$CritValue
   return(list(AprParamR = AprParamR, AprCrit = AprCrit))
