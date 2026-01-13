@@ -16,6 +16,7 @@ runCalibration <- function(
     griwrm <- CreateGRiwrm(nodes)
   }
   e <- setupRunModel(
+    nodes = nodes,
     griwrm = griwrm,
     runRunModel = runRunModel,
     Qinf = Qinf,

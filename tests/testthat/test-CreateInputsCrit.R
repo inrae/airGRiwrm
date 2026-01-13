@@ -181,7 +181,7 @@ test_that("Lavenne criterion: not upstream a priori nodes are allow if processed
 test_that("Lavenne criterion: redefined calibration order works #157", {
   nodes$donor <- nodes$id
   nodes$donor[nodes$id == "54095"] <- "54029"
-  e <- setupRunModel(runRunModel = FALSE, griwrm = CreateGRiwrm(nodes))
+  e <- setupRunModel(runRunModel = FALSE, nodes = nodes)
   for (x in ls(e)) {
     assign(x, get(x, e))
   }
