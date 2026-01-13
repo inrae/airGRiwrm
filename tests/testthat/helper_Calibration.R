@@ -4,6 +4,7 @@ runCalibration <- function(
   InputsCrit = NULL,
   CalibOptions = NULL,
   FUN_CRIT = ErrorCrit_KGE2,
+  use_default_AprioriIds = TRUE,
   runRunModel = FALSE,
   IsHyst = FALSE,
   doCalibration = TRUE
@@ -29,6 +30,11 @@ runCalibration <- function(
   np <- getAllNodesProperties(griwrm)
 
   if (is.null(InputsCrit)) {
+    if (use_default_AprioriIds) {
+      AprioriIds <- getDefaultAprioriIds(InputsModel)
+    } else {
+      AprioriIds <- NULL
+    }
     InputsCrit <- CreateInputsCrit(
       InputsModel,
       FUN_CRIT = FUN_CRIT,
@@ -38,6 +44,7 @@ runCalibration <- function(
         np$id[np$calibration == "Gauged"],
         drop = FALSE
       ],
+      AprioriIds = AprioriIds
     )
   }
 
