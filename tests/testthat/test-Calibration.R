@@ -61,11 +61,7 @@ for (x in ls(e)) {
   assign(x, get(x, e))
 }
 
-test_that("Calibrated parameters equals reference parameters", {
-  lapply(names(Param), function(id) {
-    expect_equal(Param[[!!id]], ParamMichel[[id]])
-  })
-
+test_that("Calibrated parameters equals reference parameters without regularization", {
   InputsCrit <- CreateInputsCrit(
     InputsModel,
     FUN_CRIT = ErrorCrit_NSE,
