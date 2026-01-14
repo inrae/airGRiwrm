@@ -220,7 +220,8 @@ getDefaultAprioriIds_node <- function(Id, InputsModel, original_Id = Id) {
     }
     return(AprioriId)
   }) %>%
-    unlist()
+    unlist() %>%
+    unique()
 }
 
 #' Generate a `CreateInputsCrit_Lavenne` function which embeds know parameters
