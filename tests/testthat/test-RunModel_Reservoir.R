@@ -256,3 +256,29 @@ test_that("Reservoir with downstream ungauged node works", {
   )
   expect_true(OC$`54032`$CritFinal > 0.96)
 })
+
+test_that("Flow release is not impacted by reservoir volume during calibration", {
+  Param <- ParamMichel[n_rsrvr$id[-length(n_rsrvr$id)]]
+  Param$Dam <- c(1, 1)
+  e <- setupRunModel(
+    nodes = n_rsrvr,
+    runRunModel = TRUE,
+    Qinf = Qinf_rsrvr,
+    ParamMichel = Param
+  )
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+
+  # On transparent reservoir release should be identical to inflow
+  expect_equal(OM_GriwrmInputs$Dam$Qsim_m3, OM_GriwrmInputs$`54095`$Qsim_m3)
+
+  attr(RunOptions$Dam, "in_Calibration") <- TRUE
+  OM <- RunModel(
+    InputsModel,
+    RunOptions = RunOptions,
+    Param = Param
+  )
+  # In calibration mode, release should still remain unchanged from imposed release
+  expect_equal(OM$Dam$Qsim_m3, rep(0, length(OM$Dam$Qsim_m3)))
+})

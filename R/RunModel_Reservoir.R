@@ -58,6 +58,15 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   # Input checks
   stopifnot(InputsModel$isReservoir, is.numeric(Param), length(Param) == 2)
 
+  if (
+    !is.null(attr(RunOptions, "in_Calibration")) &&
+      attr(RunOptions, "in_Calibration")
+  ) {
+    is_full_model <- FALSE
+  } else {
+    is_full_model <- TRUE
+  }
+
   # Model parameter
   Vmax <- Param[1]
   celerity <- Param[2]
@@ -137,10 +146,12 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   # Time series volume and release calculation
   for (i in iPerTot) {
     Vsim[i] <- V0 + Qinflows_m3[i]
+
     if (Vsim[i] < 0) {
       Qover_m3[i] <- -Vsim[i]
       Vsim[i] <- 0
     }
+
     if (InputsModel$hasDiversion) {
       Qdiv_m3[i] <- min(
         Vsim[i] + InputsModel$Qmin[IndPerTot[i]],
@@ -148,10 +159,19 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
       )
       Vsim[i] <- Vsim[i] - Qdiv_m3[i]
     }
-    Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])
-    Vsim[i] <- Vsim[i] - Qsim_m3[i]
+
+    if (is_full_model) {
+      Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])
+      Vsim[i] <- Vsim[i] - Qsim_m3[i]
+    } else {
+      Qsim_m3[i] <- InputsModel$Qrelease[IndPerTot[i]]
+      Vsim[i] <- max(0, Vsim[i] - Qsim_m3[i])
+    }
+
     if (Vsim[i] > Vmax) {
-      Qsim_m3[i] <- Qsim_m3[i] + Vsim[i] - Vmax
+      if (is_full_model) {
+        Qsim_m3[i] <- Qsim_m3[i] + Vsim[i] - Vmax
+      }
       Vsim[i] <- Vmax
     }
     V0 <- Vsim[i]
