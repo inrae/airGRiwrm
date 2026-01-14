@@ -17,7 +17,7 @@ Calibration(
 )
 
 # S3 method for class 'InputsModel'
-Calibration(InputsModel, CalibOptions, ...)
+Calibration(InputsModel, RunOptions, CalibOptions, ...)
 
 Calibration(InputsModel, ...)
 ```

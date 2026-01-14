@@ -53,9 +53,13 @@ completed with the items:
 
 ## Details
 
-The simulated flow corresponds to the released flow except when the
-reservoir is empty (release flow is limited) or full (release flow is
-completed by inflows excess).
+During calibration, the simulated flow corresponds exactly to the
+released flow in order to get downstream flows corresponding to observed
+flows. On a regular RunModel process, the simulated flow also
+corresponds to the released flow except when the reservoir is empty
+(release flow is limited) or full (release flow is completed by excess
+inflows). The same treatment is applied to diverted flows in case of
+Diversion model applied in the reservoir.
 
 By default, the initial reservoir volume at the beginning of the warm-up
 period is equal to the half of the maximum reservoir capacity.

@@ -107,9 +107,13 @@ that cannot be operated due to an empty reservoir</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The simulated flow corresponds to the released flow except when the reservoir
-is empty (release flow is limited) or full (release flow is completed by inflows
-excess).</p>
+    <p>During calibration, the simulated flow corresponds exactly to the released
+flow in order to get downstream flows corresponding to observed flows.
+On a regular RunModel process, the simulated flow also corresponds to the
+released flow except when the reservoir is empty (release flow is limited) or
+full (release flow is completed by excess inflows).
+The same treatment is applied to diverted flows in case of Diversion model
+applied in the reservoir.</p>
 <p>By default, the initial reservoir volume at the beginning of the warm-up period
 is equal to the half of the maximum reservoir capacity.</p>
 <p>The parameters of the model can't be calibrated and must be fixed during the
