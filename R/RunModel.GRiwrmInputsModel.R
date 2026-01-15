@@ -3,6 +3,9 @@
 #' @param x \[object of class \emph{GRiwrmInputsModel}\] see [CreateInputsModel.GRiwrm] for details
 #' @param RunOptions \[object of class \emph{GRiwrmRunOptions}\] see [CreateRunOptions.GRiwrmInputsModel] for details
 #' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
+#' @param forceReservoirObs boolean indicating if reservoir observed flows
+#' must be forced during the model run. Default is `TRUE` (See details of
+#' [RunModel_Reservoir])
 #' @param ... Further arguments for compatibility with S3 methods
 #'
 #' @return An object of class \emph{GRiwrmOutputsModel}.
@@ -18,7 +21,13 @@
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()]
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
-RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
+RunModel.GRiwrmInputsModel <- function(
+  x,
+  RunOptions,
+  Param,
+  forceReservoirObs = FALSE,
+  ...
+) {
   checkRunModelParameters(x, RunOptions, Param)
 
   OutputsModel <- list()
@@ -30,6 +39,16 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
       x[[id]]$id,
       "..."
     )
+
+    # Set forceReservoirObs attribute if needed
+    if (forceReservoirObs) {
+      if (
+        !is.null(x[[id]]$isReservoir) &&
+          x[[id]]$isReservoir
+      ) {
+        attr(RunOptions[[id]], "forceReservoirObs") <- TRUE
+      }
+    }
 
     # Update x[[id]]$Qupstream with simulated upstream flows
     if (any(x[[id]]$UpstreamIsModeled)) {

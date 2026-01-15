@@ -4,7 +4,7 @@
 \alias{RunModel.GRiwrmInputsModel}
 \title{RunModel function for \emph{GRiwrmInputsModel} object}
 \usage{
-\method{RunModel}{GRiwrmInputsModel}(x, RunOptions, Param, ...)
+\method{RunModel}{GRiwrmInputsModel}(x, RunOptions, Param, forceReservoirObs = FALSE, ...)
 }
 \arguments{
 \item{x}{[object of class \emph{GRiwrmInputsModel}] see \link{CreateInputsModel.GRiwrm} for details}
@@ -12,6 +12,10 @@
 \item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
 
 \item{Param}{\link{list} parameter values. The list item names are the IDs of the sub-basins. Each item is a \link{numeric} \link{vector}}
+
+\item{forceReservoirObs}{boolean indicating if reservoir observed flows
+must be forced during the model run. Default is \code{TRUE} (See details of
+\link{RunModel_Reservoir})}
 
 \item{...}{Further arguments for compatibility with S3 methods}
 }

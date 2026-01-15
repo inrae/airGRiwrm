@@ -23,7 +23,6 @@ Calibration.InputsModel <- function(
       } else {
         FUN_MOD = InputsModel$FUN_MOD
       }
-      attr(RunOptions, "in_Calibration") <- TRUE
       airGR::Calibration(
         InputsModel,
         RunOptions = RunOptions,

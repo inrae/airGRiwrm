@@ -53,7 +53,8 @@ test_that("Calibration with Runmodel_Reservoir works!", {
     InputsModel = InputsModel,
     RunOptions = RunOptions,
     InputsCrit = InputsCrit,
-    CalibOptions = CalibOptions
+    CalibOptions = CalibOptions,
+    forceReservoirObs = FALSE
   )
 
   expect_equal(OC[["Dam"]]$ParamFinalR, CalibOptions[["Dam"]]$FixedParam)
@@ -252,7 +253,8 @@ test_that("Reservoir with downstream ungauged node works", {
     InputsModel = InputsModel,
     RunOptions = RunOptions,
     InputsCrit = InputsCrit,
-    CalibOptions = CalibOptions
+    CalibOptions = CalibOptions,
+    forceReservoirObs = FALSE
   )
   expect_true(OC$`54032`$CritFinal > 0.96)
 })
@@ -273,7 +275,7 @@ test_that("Flow release is not impacted by reservoir volume during calibration",
   # On transparent reservoir release should be identical to inflow
   expect_equal(OM_GriwrmInputs$Dam$Qsim_m3, OM_GriwrmInputs$`54095`$Qsim_m3)
 
-  attr(RunOptions$Dam, "in_Calibration") <- TRUE
+  attr(RunOptions$Dam, "forceReservoirObs") <- TRUE
   OM <- RunModel(
     InputsModel,
     RunOptions = RunOptions,
@@ -281,4 +283,45 @@ test_that("Flow release is not impacted by reservoir volume during calibration",
   )
   # In calibration mode, release should still remain unchanged from imposed release
   expect_equal(OM$Dam$Qsim_m3, rep(0, length(OM$Dam$Qsim_m3)))
+
+  # Simple model with upstream reservoir and direct injection
+  nodes <- data.frame(
+    id = c("DI", "Dam", "54095"),
+    down = c("Dam", "54095", NA),
+    length = c(0, 0, NA),
+    area = c(NA, NA, 3722.68),
+    model = c(NA, "RunModel_Reservoir", "RunModel_GR4J")
+  )
+
+  test_X2_calib_reservoir <- function(Qinf) {
+    Qinf <- data.frame(
+      DI = rep(Qinf, length(DatesR))
+    )
+    Qrelease <- data.frame(
+      Dam = rep(0, length(DatesR))
+    )
+
+    e <- setupRunModel(
+      nodes = nodes,
+      runRunModel = FALSE,
+      Qinf = Qinf,
+      Qrelease = Qrelease
+    )
+    for (x in ls(e)) {
+      assign(x, get(x, e))
+    }
+
+    e <- runCalibration(
+      nodes = nodes,
+      Qinf = Qinf,
+      Qrelease = Qrelease,
+      FUN_CRIT = ErrorCrit_NSE,
+      CalibOptions = CreateCalibOptions(
+        InputsModel,
+        FixedParam = list(Dam = c(1, 1))
+      )
+    )
+    return(e$OutputsCalib$`54095`$ParamFinalR[3])
+  }
+  expect_equal(test_X2_calib_reservoir(1E6), test_X2_calib_reservoir(0))
 })

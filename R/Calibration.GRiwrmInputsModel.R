@@ -1,4 +1,8 @@
-#' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}
+#' @param useUpstreamQsim boolean describing if simulated (`TRUE`) or
+#' observed (`FALSE`) flows are used for calibration. Default is `TRUE`
+#' @param forceReservoirObs boolean indicating if reservoir observed flows
+#' must be forced during the model run. Default is `TRUE` (See details of
+#' [RunModel_Reservoir])
 #' @rdname Calibration
 #' @export
 Calibration.GRiwrmInputsModel <- function(
@@ -7,6 +11,7 @@ Calibration.GRiwrmInputsModel <- function(
   InputsCrit,
   CalibOptions,
   useUpstreamQsim = TRUE,
+  forceReservoirObs = TRUE,
   ...
 ) {
   # Argument checks
@@ -34,6 +39,17 @@ Calibration.GRiwrmInputsModel <- function(
 
   OutputsModel <- list()
   class(OutputsModel) <- append("GRiwrmOutputsModel", class(OutputsModel))
+
+  if (forceReservoirObs) {
+    for (id in names(InputsModel)) {
+      if (
+        !is.null(InputsModel[[id]]$isReservoir) &&
+          InputsModel[[id]]$isReservoir
+      ) {
+        attr(RunOptions[[id]], "forceReservoirObs") <- TRUE
+      }
+    }
+  }
 
   b <- sapply(InputsModel, function(IM) !IM$inUngaugedCluster)
   gaugedIds <- names(b[b])
@@ -91,7 +107,7 @@ Calibration.GRiwrmInputsModel <- function(
       stop(
         "Parameters of node '",
         id,
-        "' using `RunModel_Reservoir` can't be calibrated",
+        "' using `RunModel_Reservoir` can't be calibrated\n",
         "Fix its parameters by using the command:\n",
         "`CalibOptions[['",
         id,

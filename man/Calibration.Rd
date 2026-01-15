@@ -13,6 +13,7 @@
   InputsCrit,
   CalibOptions,
   useUpstreamQsim = TRUE,
+  forceReservoirObs = TRUE,
   ...
 )
 
@@ -29,7 +30,12 @@ Calibration(InputsModel, ...)
 
 \item{CalibOptions}{[object of class \emph{CalibOptions} or \emph{GRiwrmCalibOptions}] see \link{CreateCalibOptions} for details}
 
-\item{useUpstreamQsim}{boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}}
+\item{useUpstreamQsim}{boolean describing if simulated (\code{TRUE}) or
+observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}}
+
+\item{forceReservoirObs}{boolean indicating if reservoir observed flows
+must be forced during the model run. Default is \code{TRUE} (See details of
+\link{RunModel_Reservoir})}
 
 \item{...}{further arguments passed to \link[airGR:Calibration]{airGR::Calibration}, see details}
 }

@@ -61,10 +61,9 @@
 RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   # Input checks
   stopifnot(InputsModel$isReservoir, is.numeric(Param), length(Param) == 2)
-
   if (
-    !is.null(attr(RunOptions, "in_Calibration")) &&
-      attr(RunOptions, "in_Calibration")
+    !is.null(attr(RunOptions, "forceReservoirObs")) &&
+      attr(RunOptions, "forceReservoirObs")
   ) {
     is_full_model <- FALSE
   } else {

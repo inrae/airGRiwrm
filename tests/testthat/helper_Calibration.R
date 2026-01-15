@@ -1,6 +1,7 @@
 runCalibration <- function(
   nodes = loadSevernNodes(),
   Qinf = NULL,
+  Qrelease = NULL,
   InputsCrit = NULL,
   CalibOptions = NULL,
   FUN_CRIT = ErrorCrit_KGE2,
@@ -21,6 +22,7 @@ runCalibration <- function(
     griwrm = griwrm,
     runRunModel = runRunModel,
     Qinf = Qinf,
+    Qrelease = Qrelease,
     IsHyst = IsHyst
   )
   for (x in ls(e)) {
