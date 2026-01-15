@@ -13,6 +13,7 @@ Calibration(
   InputsCrit,
   CalibOptions,
   useUpstreamQsim = TRUE,
+  forceReservoirObs = TRUE,
   ...
 )
 
@@ -49,6 +50,12 @@ Calibration(InputsModel, ...)
 
   boolean describing if simulated (`TRUE`) or observed (`FALSE`) flows
   are used for calibration. Default is `TRUE`
+
+- forceReservoirObs:
+
+  boolean indicating if reservoir observed flows must be forced during
+  the model run. Default is `TRUE` (See details of
+  [RunModel_Reservoir](https://inrae.github.io/airGRiwrm/dev/reference/RunModel_Reservoir.md))
 
 - ...:
 

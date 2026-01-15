@@ -76,6 +76,7 @@ function using the provided functions.</p>
 <span>  <span class="va">InputsCrit</span>,</span>
 <span>  <span class="va">CalibOptions</span>,</span>
 <span>  useUpstreamQsim <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  forceReservoirObs <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -106,7 +107,14 @@ function using the provided functions.</p>
 
 
 <dt id="arg-useupstreamqsim">useUpstreamQsim<a class="anchor" aria-label="anchor" href="#arg-useupstreamqsim"></a></dt>
-<dd><p>boolean describing if simulated (<code>TRUE</code>) or observed (<code>FALSE</code>) flows are used for calibration. Default is <code>TRUE</code></p></dd>
+<dd><p>boolean describing if simulated (<code>TRUE</code>) or
+observed (<code>FALSE</code>) flows are used for calibration. Default is <code>TRUE</code></p></dd>
+
+
+<dt id="arg-forcereservoirobs">forceReservoirObs<a class="anchor" aria-label="anchor" href="#arg-forcereservoirobs"></a></dt>
+<dd><p>boolean indicating if reservoir observed flows
+must be forced during the model run. Default is <code>TRUE</code> (See details of
+<a href="RunModel_Reservoir.html">RunModel_Reservoir</a>)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

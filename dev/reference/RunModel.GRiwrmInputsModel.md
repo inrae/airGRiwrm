@@ -6,7 +6,7 @@ RunModel function for *GRiwrmInputsModel* object
 
 ``` r
 # S3 method for class 'GRiwrmInputsModel'
-RunModel(x, RunOptions, Param, ...)
+RunModel(x, RunOptions, Param, forceReservoirObs = FALSE, ...)
 ```
 
 ## Arguments
@@ -29,6 +29,12 @@ RunModel(x, RunOptions, Param, ...)
   item names are the IDs of the sub-basins. Each item is a
   [numeric](https://rdrr.io/r/base/numeric.html)
   [vector](https://rdrr.io/r/base/vector.html)
+
+- forceReservoirObs:
+
+  boolean indicating if reservoir observed flows must be forced during
+  the model run. Default is `TRUE` (See details of
+  [RunModel_Reservoir](https://inrae.github.io/airGRiwrm/dev/reference/RunModel_Reservoir.md))
 
 - ...:
 
