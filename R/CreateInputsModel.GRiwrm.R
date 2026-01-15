@@ -420,7 +420,7 @@ CreateOneGRiwrmInputsModel <- function(
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
-    if (!is.null(Qrelease) && id %in% names(Qrelease)) {
+    if (!is.null(Qrelease) && id %in% colnames(Qrelease)) {
       # Fill reservoir release with Qinf
       InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
     }
