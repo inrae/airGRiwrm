@@ -59,6 +59,10 @@
 #' `TempMin`, `TempMax` must be the same as the length of `DatesR` (each row
 #' corresponds to a time step defined in `DatesR`).
 #'
+#' `NA` values inside `Qrelease` (for specific time steps and nodes) can be used
+#' to run the corresponding reservoir in pass-through mode, i.e. without any
+#' water storage for those time steps.
+#'
 #' For various examples of use see topics [RunModel.GRiwrmInputsModel()],
 #' [RunModel_Reservoir()], and [RunModel.Supervisor()].
 #'
@@ -423,6 +427,11 @@ CreateOneGRiwrmInputsModel <- function(
     if (!is.null(Qrelease) && id %in% colnames(Qrelease)) {
       # Fill reservoir release with Qinf
       InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+      if (any(is.na(InputsModel$Qrelease))) {
+        message(
+          "NA values detected in Qrelease: on these time steps, the reservoir will operate in pass-through mode and will not apply release constraints."
+        )
+      }
     }
   }
 

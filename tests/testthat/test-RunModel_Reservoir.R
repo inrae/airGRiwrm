@@ -325,3 +325,20 @@ test_that("Flow release is not impacted by reservoir volume during calibration",
   }
   expect_equal(test_X2_calib_reservoir(1E6), test_X2_calib_reservoir(0))
 })
+
+test_that("Qrelease = NA is equivalent to transparent reservoir", {
+  Param <- ParamMichel[n_rsrvr$id[-length(n_rsrvr$id)]]
+  Param$Dam <- c(1E9, 1)
+  Qinf_NA <- Qinf_rsrvr
+  Qinf_NA[] <- NA_real_
+  e <- setupRunModel(
+    nodes = n_rsrvr,
+    runRunModel = TRUE,
+    Qinf = Qinf_NA,
+    ParamMichel = Param
+  )
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  expect_equal(OM_GriwrmInputs$Dam$Qsim_m3, OM_GriwrmInputs$`54095`$Qsim_m3)
+})

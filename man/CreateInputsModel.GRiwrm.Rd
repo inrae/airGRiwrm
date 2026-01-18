@@ -110,6 +110,10 @@ The number of rows of \code{Precip}, \code{PotEvap}, \code{Qinf}, \code{Qmin}, \
 \code{TempMin}, \code{TempMax} must be the same as the length of \code{DatesR} (each row
 corresponds to a time step defined in \code{DatesR}).
 
+\code{NA} values inside \code{Qrelease} (for specific time steps and nodes) can be used
+to run the corresponding reservoir in pass-through mode, i.e. without any
+water storage for those time steps.
+
 For various examples of use see topics \code{\link[=RunModel.GRiwrmInputsModel]{RunModel.GRiwrmInputsModel()}},
 \code{\link[=RunModel_Reservoir]{RunModel_Reservoir()}}, and \code{\link[=RunModel.Supervisor]{RunModel.Supervisor()}}.
 
