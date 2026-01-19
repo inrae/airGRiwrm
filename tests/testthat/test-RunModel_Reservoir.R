@@ -341,4 +341,8 @@ test_that("Qrelease = NA is equivalent to transparent reservoir", {
     assign(x, get(x, e))
   }
   expect_equal(OM_GriwrmInputs$Dam$Qsim_m3, OM_GriwrmInputs$`54095`$Qsim_m3)
+  expect_equal(
+    OM_GriwrmInputs$Dam$Vsim,
+    rep(0, length(OM_GriwrmInputs$Dam$Vsim))
+  )
 })
