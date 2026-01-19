@@ -163,13 +163,14 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
       Vsim[i] <- Vsim[i] - Qdiv_m3[i]
     }
 
-    if (is_full_model) {
+    if (is.na(InputsModel$Qrelease[IndPerTot[i]])) {
+      Qsim_m3[i] <- Vsim[i]
+    } else if (is_full_model) {
       Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])
-      Vsim[i] <- Vsim[i] - Qsim_m3[i]
     } else {
       Qsim_m3[i] <- InputsModel$Qrelease[IndPerTot[i]]
-      Vsim[i] <- max(0, Vsim[i] - Qsim_m3[i])
     }
+    Vsim[i] <- max(0, Vsim[i] - Qsim_m3[i])
 
     if (Vsim[i] > Vmax) {
       if (is_full_model) {
