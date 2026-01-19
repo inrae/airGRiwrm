@@ -209,6 +209,9 @@ argument is optional, only the column or the named item has to be provided.</p>
 <p>The number of rows of <code>Precip</code>, <code>PotEvap</code>, <code>Qinf</code>, <code>Qmin</code>, <code>Qrelease</code>, <code>TempMean</code>,
 <code>TempMin</code>, <code>TempMax</code> must be the same as the length of <code>DatesR</code> (each row
 corresponds to a time step defined in <code>DatesR</code>).</p>
+<p><code>NA</code> values inside <code>Qrelease</code> (for specific time steps and nodes) can be used
+to run the corresponding reservoir in pass-through mode, i.e. without any
+water storage for those time steps.</p>
 <p>For various examples of use see topics <code><a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel()</a></code>,
 <code><a href="RunModel_Reservoir.html">RunModel_Reservoir()</a></code>, and <code><a href="RunModel.Supervisor.html">RunModel.Supervisor()</a></code>.</p>
 <p>For example of use of Direct Injection nodes, see vignettes

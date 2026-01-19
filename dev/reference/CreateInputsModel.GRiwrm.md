@@ -189,6 +189,10 @@ The number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `Qrelease`,
 `TempMean`, `TempMin`, `TempMax` must be the same as the length of
 `DatesR` (each row corresponds to a time step defined in `DatesR`).
 
+`NA` values inside `Qrelease` (for specific time steps and nodes) can be
+used to run the corresponding reservoir in pass-through mode, i.e.
+without any water storage for those time steps.
+
 For various examples of use see topics
 [`RunModel.GRiwrmInputsModel()`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GRiwrmInputsModel.md),
 [`RunModel_Reservoir()`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel_Reservoir.md),

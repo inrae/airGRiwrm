@@ -40,7 +40,12 @@ releases).
 
 The configuration on the lake Seine is similar:
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_true-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 -->|6km| SEINE_P7\n  SEINE_P7 -->|32km| SEINE_R8\n  SEINE_P7 --> SEINE(SEINE)\n  SEINE--> SEINE_R8\n  SEINE_R8 -->|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n  style SEINE fill:#ccf\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png'
 
 which can be translated as:
 
@@ -60,7 +65,12 @@ the flow released by the Pannecière lake, it is acting as an upstream
 node which means that the flow simulated at `CHAUM_07` is no longer
 routed to downstream.
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --> |0km| PANNEC_R\nPANNEC_R --> |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'
 
 The Marne lake can be mapped as:
 
