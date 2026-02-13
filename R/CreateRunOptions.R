@@ -69,6 +69,8 @@ CreateRunOptions.InputsModel <- function(x, ...) {
           "model states initialisation not defined"
         )
       }
+    } else {
+      IniStates <- NULL
     }
   }
   RunOptions <- suppressWarningsRegex(
