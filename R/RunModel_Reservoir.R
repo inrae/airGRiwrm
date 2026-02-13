@@ -23,10 +23,8 @@
 #' `CalibOptions[[id_of_the_reservoir]]$FixedParam <- c(Vmax, celerity)`
 #'
 #' Initial states of the model consists in the initial volume storage in the
-#' reservoir and can be defined with the following instruction after the call to
-#' [CreateRunOptions.GRiwrmInputsModel]:
-#'
-#' `RunOptions[[id_of_the_reservoir]]$IniStates <- c("Reservoir.V" = initial_volume_m3)`
+#' reservoir and can be defined with the `IniStates` in the call to
+#' [CreateRunOptions.GRiwrmInputsModel] (See example below).
 #'
 #' The final state of the reservoir is stored in `OutputsModel$StateEnd` and
 #' can be reused for starting a new simulation with the following instruction:
