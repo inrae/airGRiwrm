@@ -53,10 +53,32 @@ CreateRunOptions.InputsModel <- function(x, ...) {
     dots$IsHyst <- x$model$IsHyst
   }
 
-  suppressWarningsRegex(
+  warning_pattern <- "does not require .* Values? set to NA"
+  if (!is.null(x$isReservoir) && x$isReservoir) {
+    # Bypass airGR::CreateRunOptions for reservoir models with Inistates argument
+    # because it is not designed for this type of model and crashes
+    if (!is.null(dots$IniStates)) {
+      if (!is.numeric(dots$IniStates)) {
+        stop("For reservoir models, `IniStates` must be a numeric vector")
+      } else {
+        IniStates <- dots$IniStates
+        dots$IniStates <- NULL
+        warning_pattern <- sprintf(
+          "(%s)|(%s)",
+          warning_pattern,
+          "model states initialisation not defined"
+        )
+      }
+    }
+  }
+  RunOptions <- suppressWarningsRegex(
     do.call(airGR::CreateRunOptions, dots),
-    pattern = "does not require .*\\. Values? set to NA"
+    pattern = warning_pattern
   )
+  if (!is.null(x$isReservoir) && x$isReservoir) {
+    RunOptions$IniStates <- IniStates
+  }
+  return(RunOptions)
 }
 
 #' @rdname CreateRunOptions
