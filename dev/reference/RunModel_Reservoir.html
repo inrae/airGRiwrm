@@ -121,9 +121,8 @@ calibration process by using this instruction after the call to
 <a href="CreateCalibOptions.html">CreateCalibOptions</a>:</p>
 <p><code>CalibOptions[[id_of_the_reservoir]]$FixedParam &lt;- c(Vmax, celerity)</code></p>
 <p>Initial states of the model consists in the initial volume storage in the
-reservoir and can be defined with the following instruction after the call to
-<a href="CreateRunOptions.html">CreateRunOptions.GRiwrmInputsModel</a>:</p>
-<p><code>RunOptions[[id_of_the_reservoir]]$IniStates &lt;- c("Reservoir.V" = initial_volume_m3)</code></p>
+reservoir and can be defined with the <code>IniStates</code> in the call to
+<a href="CreateRunOptions.html">CreateRunOptions.GRiwrmInputsModel</a> (See example below).</p>
 <p>The final state of the reservoir is stored in <code>OutputsModel$StateEnd</code> and
 can be reused for starting a new simulation with the following instruction:</p>
 <p><code>RunOptions[[id_of_the_reservoir]]$IniStates &lt;- unlist(OutputsModel[[id_of_the_reservoir]]$StateEnd)</code></p>
@@ -196,17 +195,13 @@ item <code>Qover_m3</code> in the returned <em>OutputsModel</em> object.</p>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>, format <span class="op">=</span> <span class="st">"%Y-%m-%d"</span><span class="op">)</span> <span class="op">==</span> <span class="st">"1999-12-31"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Creation of the GRiwmRunOptions object</span></span></span>
+<span class="r-in"><span><span class="co"># Creation of the GRiwmRunOptions object with the initial states of the reservoir set to 0 (empty reservoir)</span></span></span>
 <span class="r-in"><span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">InputsModel</span>,</span></span>
 <span class="r-in"><span>  IndPeriod_Run <span class="op">=</span> <span class="va">Ind_Run</span>,</span></span>
-<span class="r-in"><span>  IndPeriod_WarmUp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq.int</a></span><span class="op">(</span><span class="va">Ind_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">365</span>, length.out <span class="op">=</span> <span class="fl">365</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  IndPeriod_WarmUp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq.int</a></span><span class="op">(</span><span class="va">Ind_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">365</span>, length.out <span class="op">=</span> <span class="fl">365</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  IniStates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reservoir.V"</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>model states initialisation not defined: default configuration used</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Initial states of the reservoir can be provided by the user</span></span></span>
-<span class="r-in"><span><span class="co"># For example for starting with an empty reservoir...</span></span></span>
-<span class="r-in"><span><span class="va">RunOptions</span><span class="op">[[</span><span class="st">"Reservoir"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">IniStates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reservoir.V"</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># calibration criterion: preparation of the InputsCrit object</span></span></span>
 <span class="r-in"><span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"L0123001"</span> <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">Qmm</span><span class="op">[</span><span class="va">Ind_Run</span><span class="op">]</span><span class="op">)</span></span></span>

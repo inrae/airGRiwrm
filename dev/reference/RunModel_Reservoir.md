@@ -71,11 +71,9 @@ the calibration process by using this instruction after the call to
 `CalibOptions[[id_of_the_reservoir]]$FixedParam <- c(Vmax, celerity)`
 
 Initial states of the model consists in the initial volume storage in
-the reservoir and can be defined with the following instruction after
-the call to
-[CreateRunOptions.GRiwrmInputsModel](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md):
-
-`RunOptions[[id_of_the_reservoir]]$IniStates <- c("Reservoir.V" = initial_volume_m3)`
+the reservoir and can be defined with the `IniStates` in the call to
+[CreateRunOptions.GRiwrmInputsModel](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+(See example below).
 
 The final state of the reservoir is stored in `OutputsModel$StateEnd`
 and can be reused for starting a new simulation with the following
@@ -153,17 +151,13 @@ Ind_Run <- seq(
   which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31")
 )
 
-# Creation of the GRiwmRunOptions object
+# Creation of the GRiwmRunOptions object with the initial states of the reservoir set to 0 (empty reservoir)
 RunOptions <- CreateRunOptions(
   InputsModel,
   IndPeriod_Run = Ind_Run,
-  IndPeriod_WarmUp = seq.int(Ind_Run[1] - 365, length.out = 365)
+  IndPeriod_WarmUp = seq.int(Ind_Run[1] - 365, length.out = 365),
+  IniStates = list(Reservoir = c("Reservoir.V" = 0))
 )
-#> Warning: model states initialisation not defined: default configuration used
-
-# Initial states of the reservoir can be provided by the user
-# For example for starting with an empty reservoir...
-RunOptions[["Reservoir"]]$IniStates <- c("Reservoir.V" = 0)
 
 # calibration criterion: preparation of the InputsCrit object
 Qobs <- data.frame("L0123001" = BasinObs$Qmm[Ind_Run])
