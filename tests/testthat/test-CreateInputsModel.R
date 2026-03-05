@@ -377,3 +377,25 @@ test_that("Use of Qinf for Qrelease should raise a warning", {
     Qinf = Qinf_rsrvr
   ))
 })
+
+test_that("PrecipScale should accept assignation by node #187", {
+  InputsModels <- suppressWarnings(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      PrecipScale = c(
+        '54057' = TRUE,
+        '54032' = TRUE,
+        '54001' = FALSE,
+        '54095' = FALSE,
+        '54002' = TRUE,
+        '54029' = TRUE
+      ),
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    )
+  )
+})
