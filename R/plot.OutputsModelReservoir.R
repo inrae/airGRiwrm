@@ -2,15 +2,21 @@
 #'
 #' @param x Object returned by [RunModel_Reservoir]
 #' @param Qobs (optional) [numeric] time series of targeted released flow \[m3/time step\]
-#' @param Vobs (optional) [numeric] time series of observed or targeted volume
-#' curve \[m3\]
+#' @param Vobs (optional) [numeric] time series of observed or targeted volume curve \[m3\]
+#' @param which Not used (for compatibility with [airGR::plot.OutputsModel])
 #' @param ... Further arguments passed to [plot.Qm3s]
 #'
 #' @return Function used for side effect.
 #' @export
 #'
 #' @example man-examples/RunModel_Reservoir.R
-plot.OutputsModelReservoir <- function(x, Qobs = NULL, Vobs = NULL, ...) {
+plot.OutputsModelReservoir <- function(
+  x,
+  Qobs = NULL,
+  Vobs = NULL,
+  which = NULL,
+  ...
+) {
   # Argument checks
   if (!is.null(Qobs)) {
     stopifnot(is.numeric(Qobs), length(Qobs) == length(x$Qsim_m3))

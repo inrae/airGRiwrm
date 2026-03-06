@@ -4,15 +4,16 @@
 \alias{plot.OutputsModelReservoir}
 \title{Plot simulated reservoir volume, inflows and released flows time series on a reservoir node}
 \usage{
-\method{plot}{OutputsModelReservoir}(x, Qobs = NULL, Vobs = NULL, ...)
+\method{plot}{OutputsModelReservoir}(x, Qobs = NULL, Vobs = NULL, which = NULL, ...)
 }
 \arguments{
 \item{x}{Object returned by \link{RunModel_Reservoir}}
 
 \item{Qobs}{(optional) \link{numeric} time series of targeted released flow [m3/time step]}
 
-\item{Vobs}{(optional) \link{numeric} time series of observed or targeted volume
-curve [m3]}
+\item{Vobs}{(optional) \link{numeric} time series of observed or targeted volume curve [m3]}
+
+\item{which}{Not used (for compatibility with \link[airGR:plot.OutputsModel]{airGR::plot.OutputsModel})}
 
 \item{...}{Further arguments passed to \link{plot.Qm3s}}
 }
