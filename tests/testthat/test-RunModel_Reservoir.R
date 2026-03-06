@@ -104,20 +104,8 @@ test_that("Calibration with ungauged node and reservoir filled by a diversion wo
 })
 
 test_that("Diversion on a reservoir works #146", {
-  Qrelease <- data.frame(Dam = rep(3508465, length(DatesR)))
-  Param <- c(
-    ParamMichel[names(ParamMichel) %in% griwrm$id],
-    list(Dam = c(10E6, 1))
-  )
-  e <- setupRunModel(
-    runRunModel = FALSE,
-    griwrm = CreateGRiwrm(n_rsrvr),
-    Qrelease = Qrelease
-  )
-  for (x in ls(e)) {
-    assign(x, get(x, e))
-  }
-  OM_resOnly <- RunModel(InputsModel, RunOptions = RunOptions, Param = Param)
+  Qrelease = data.frame(Dam = rep(3508465, length(DatesR)))
+  OM_resOnly <- get_OM(nodes = n_rsrvr, Qrelease = Qrelease)
   nodes <- rbind(
     n_rsrvr,
     data.frame(
@@ -129,18 +117,7 @@ test_that("Diversion on a reservoir works #146", {
     )
   )
   Qinf <- Qrelease * 0.1
-  g <- CreateGRiwrm(nodes)
-  e <- setupRunModel(
-    griwrm = g,
-    runRunModel = FALSE,
-    Qinf = Qinf,
-    Qrelease = Qrelease
-  )
-  for (x in ls(e)) {
-    assign(x, get(x, e))
-  }
-
-  OM <- RunModel(InputsModel, RunOptions = RunOptions, Param = Param)
+  OM <- get_OM(nodes = nodes, Qrelease = Qrelease, Qinf = Qinf)
   expect_true(max(OM$Dam$Vsim) - min(OM$Dam$Vsim) > 0)
   expect_false(all(OM$Dam$Vsim == OM_resOnly$Dam$Vsim))
 })
@@ -178,16 +155,11 @@ test_that("Withdrawal on a reservoir works #147", {
 
   nodes$model[nodes$id == "54095"] <- NA
   Qinf <- cbind(Qinf, "54095" = Qobs[, "54095"])
-  e <- setupRunModel(
+  OM <- get_OM(
     nodes = nodes,
-    runRunModel = FALSE,
     Qinf = Qinf,
     Qrelease = Qrelease
   )
-  for (x in ls(e)) {
-    assign(x, get(x, e))
-  }
-  OM <- RunModel(InputsModel, RunOptions = RunOptions, Param = Param)
   expect_equal(which(OM$Dam$Qsim_m3 < 1E6), which(OM$Dam$Vsim == 0))
   expect_true(all(which(OM$Dam$Qover_m3 > 0) %in% which(OM$Dam$Qsim_m3 < 1E6)))
   expect_equal(OM$`54095`$Qsim_m3, OM$Dam$Qinflows_m3)
@@ -345,4 +317,10 @@ test_that("Qrelease = NA is equivalent to transparent reservoir", {
     OM_GriwrmInputs$Dam$Vsim,
     rep(0, length(OM_GriwrmInputs$Dam$Vsim))
   )
+})
+
+test_that("plot.OutputsModelReservoir should handle parameter 'which'", {
+  Qrelease = data.frame(Dam = rep(3508465, length(DatesR)))
+  OM <- get_OM(nodes = n_rsrvr, Qrelease = Qrelease)
+  expect_no_error(plot(OM, which = "Regime"))
 })
