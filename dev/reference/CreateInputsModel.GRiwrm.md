@@ -21,7 +21,7 @@ CreateInputsModel(
   TempMax = NULL,
   ZInputs = NULL,
   HypsoData = NULL,
-  NLayers = 5,
+  NLayers = 5L,
   IsHyst = FALSE,
   FUN_REGUL = NULL,
   ...
@@ -95,8 +95,8 @@ CreateInputsModel(
   [vector](https://rdrr.io/r/base/vector.html) indicating if the mean of
   the precipitation interpolated on the elevation layers must be kept or
   not, required to create CemaNeige module inputs, default `TRUE` (the
-  mean of the precipitation is kept to the original value). Column names
-  correspond to node IDs
+  mean of the precipitation is kept to the original value). Optional
+  names cames correspond to node IDs
 
 - TempMean:
 
@@ -124,8 +124,8 @@ CreateInputsModel(
   (optional) [numeric](https://rdrr.io/r/base/numeric.html)
   [vector](https://rdrr.io/r/base/vector.html) giving the mean elevation
   of the Precip and Temp series (before extrapolation) \[m\], possibly
-  used to create the CemaNeige module input. Column names correspond to
-  node IDs
+  used to create the CemaNeige module input. Names correspond to node
+  IDs
 
 - HypsoData:
 
@@ -140,7 +140,7 @@ CreateInputsModel(
 
   (optional) [numeric](https://rdrr.io/r/base/numeric.html) vector
   (integer) giving the number of elevation layers requested \[-\],
-  required to create CemaNeige module inputs, default=5. Column names
+  required to create CemaNeige module inputs, default=5. Optional names
   correspond to node IDs
 
 - IsHyst:

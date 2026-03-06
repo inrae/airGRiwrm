@@ -82,7 +82,7 @@
 <span>  TempMax <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ZInputs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  HypsoData <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  NLayers <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  NLayers <span class="op">=</span> <span class="fl">5L</span>,</span>
 <span>  IsHyst <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  FUN_REGUL <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -142,7 +142,8 @@ targeted release flows by nodes using the <a href="RunModel_Reservoir.html">RunM
 <dd><p>(optional) <a href="https://rdrr.io/r/base/logical.html" class="external-link">logical</a> <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> indicating if the
 mean of the precipitation interpolated on the elevation layers must be
 kept or not, required to create CemaNeige module inputs, default <code>TRUE</code>
-(the mean of the precipitation is kept to the original value). Column names correspond to node IDs</p></dd>
+(the mean of the precipitation is kept to the original value).
+Optional names cames correspond to node IDs</p></dd>
 
 
 <dt id="arg-tempmean">TempMean<a class="anchor" aria-label="anchor" href="#arg-tempmean"></a></dt>
@@ -163,7 +164,7 @@ air temperature [°C], possibly used to create the CemaNeige module inputs. Colu
 <dt id="arg-zinputs">ZInputs<a class="anchor" aria-label="anchor" href="#arg-zinputs"></a></dt>
 <dd><p>(optional) <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> giving the mean
 elevation of the Precip and Temp series (before extrapolation) [m],
-possibly used to create the CemaNeige module input. Column names correspond to node IDs</p></dd>
+possibly used to create the CemaNeige module input. Names correspond to node IDs</p></dd>
 
 
 <dt id="arg-hypsodata">HypsoData<a class="anchor" aria-label="anchor" href="#arg-hypsodata"></a></dt>
@@ -175,7 +176,7 @@ if not defined a single elevation is used for CemaNeige. Column names correspond
 <dt id="arg-nlayers">NLayers<a class="anchor" aria-label="anchor" href="#arg-nlayers"></a></dt>
 <dd><p>(optional) <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> vector (integer) giving the number
 of elevation layers requested [-], required to create CemaNeige module
-inputs, default=5. Column names correspond to node IDs</p></dd>
+inputs, default=5. Optional names correspond to node IDs</p></dd>
 
 
 <dt id="arg-ishyst">IsHyst<a class="anchor" aria-label="anchor" href="#arg-ishyst"></a></dt>
