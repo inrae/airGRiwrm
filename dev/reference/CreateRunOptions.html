@@ -90,7 +90,9 @@
 
 
 <dt id="arg-inistates">IniStates<a class="anchor" aria-label="anchor" href="#arg-inistates"></a></dt>
-<dd><p>(optional) <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> object or <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> object of class <em>IniStates</em>, see <a href="https://rdrr.io/pkg/airGR/man/CreateIniStates.html" class="external-link">airGR::CreateIniStates</a> for details</p></dd>
+<dd><p>(optional) object containing initial model states. Can be:</p><ul><li><p>A single <code><a href="https://rdrr.io/pkg/airGR/man/CreateIniStates.html" class="external-link">IniStates</a></code> object when calling CreateRunOptions.InputsModel</p></li>
+<li><p>A named <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of <code><a href="https://rdrr.io/pkg/airGR/man/CreateIniStates.html" class="external-link">IniStates</a></code> objects when calling CreateRunOptions.GRiwrmInputsModel, with names matching node IDs</p></li>
+</ul><p>See <a href="https://rdrr.io/pkg/airGR/man/CreateIniStates.html" class="external-link">airGR::CreateIniStates</a> for details</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

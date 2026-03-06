@@ -35,10 +35,18 @@ CreateRunOptions(x, InputsModel, ...)
 
 - IniStates:
 
-  (optional) [numeric](https://rdrr.io/r/base/numeric.html) object or
-  [list](https://rdrr.io/r/base/list.html) of
-  [numeric](https://rdrr.io/r/base/numeric.html) object of class
-  *IniStates*, see
+  (optional) object containing initial model states. Can be:
+
+  - A single
+    [`IniStates`](https://rdrr.io/pkg/airGR/man/CreateIniStates.html)
+    object when calling CreateRunOptions.InputsModel
+
+  - A named [list](https://rdrr.io/r/base/list.html) of
+    [`IniStates`](https://rdrr.io/pkg/airGR/man/CreateIniStates.html)
+    objects when calling CreateRunOptions.GRiwrmInputsModel, with names
+    matching node IDs
+
+  See
   [airGR::CreateIniStates](https://rdrr.io/pkg/airGR/man/CreateIniStates.html)
   for details
 
