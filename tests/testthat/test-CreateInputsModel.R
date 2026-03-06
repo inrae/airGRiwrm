@@ -378,8 +378,46 @@ test_that("Use of Qinf for Qrelease should raise a warning", {
   ))
 })
 
-test_that("PrecipScale should accept assignation by node #187", {
-  InputsModels <- suppressWarnings(
+test_that("ZInputs, PrecipScale, Nlayers with no names should trigger an error", {
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      PrecipScale = c(TRUE, FALSE),
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "PrecipScale.*no names found"
+  )
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      NLayers = c(5, 5),
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "NLayers.*no names found"
+  )
+  expect_error(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      ZInputs = 100,
+      HypsoData = l$HypsoData
+    ),
+    regexp = "ZInputs.*no names found"
+  )
+  expect_error(
     CreateInputsModel(
       l$griwrm,
       DatesR = l$DatesR,
@@ -396,6 +434,38 @@ test_that("PrecipScale should accept assignation by node #187", {
       ),
       ZInputs = l$ZInputs,
       HypsoData = l$HypsoData
+    ),
+    regexp = "All 'PrecipScale' names"
+  )
+})
+
+test_that("PrecipScale should accept assignation by node #187", {
+  PrecipScale <- c(
+    'Up1' = TRUE,
+    'Up2' = TRUE,
+    'Down' = FALSE
+  )
+  InputsModel <- suppressWarnings(
+    CreateInputsModel(
+      l$griwrm,
+      DatesR = l$DatesR,
+      Precip = l$Precip,
+      PotEvap = l$PotEvap,
+      TempMean = l$TempMean,
+      PrecipScale = PrecipScale,
+      ZInputs = l$ZInputs,
+      HypsoData = l$HypsoData
     )
+  )
+  expect_equal(InputsModel$Up1$LayerPrecip, InputsModel$Up2$LayerPrecip)
+  # LayerPrecip should be different for Up1 and Down
+  expect_false(all(
+    rowMeans(as.data.frame(InputsModel$Down$LayerPrecip)) ==
+      rowMeans(as.data.frame(InputsModel$Up1$LayerPrecip))
+  ))
+  # PrecipScale = TRUE => mean of the precipitation is kept to the original value
+  expect_equal(
+    rowMeans(as.data.frame(InputsModel$Up1$LayerPrecip)),
+    l$Precip[, "Up1"]
   )
 })

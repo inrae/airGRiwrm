@@ -19,7 +19,7 @@
   TempMax = NULL,
   ZInputs = NULL,
   HypsoData = NULL,
-  NLayers = 5,
+  NLayers = 5L,
   IsHyst = FALSE,
   FUN_REGUL = NULL,
   ...
@@ -58,7 +58,8 @@ targeted release flows by nodes using the \link{RunModel_Reservoir} model
 \item{PrecipScale}{(optional) \link{logical} \link{vector} indicating if the
 mean of the precipitation interpolated on the elevation layers must be
 kept or not, required to create CemaNeige module inputs, default \code{TRUE}
-(the mean of the precipitation is kept to the original value). Column names correspond to node IDs}
+(the mean of the precipitation is kept to the original value).
+Optional names cames correspond to node IDs}
 
 \item{TempMean}{(optional) \link{matrix} or \link{data.frame} of time series of mean
 air temperature [°C], required to create the CemaNeige module inputs. Column names correspond to node IDs}
@@ -71,7 +72,7 @@ air temperature [°C], possibly used to create the CemaNeige module inputs. Colu
 
 \item{ZInputs}{(optional) \link{numeric} \link{vector} giving the mean
 elevation of the Precip and Temp series (before extrapolation) [m],
-possibly used to create the CemaNeige module input. Column names correspond to node IDs}
+possibly used to create the CemaNeige module input. Names correspond to node IDs}
 
 \item{HypsoData}{(optional) \link{matrix} or \link{data.frame} containing 101 \link{numeric}
 rows: min, q01 to q99 and max of catchment elevation distribution [m],
@@ -79,7 +80,7 @@ if not defined a single elevation is used for CemaNeige. Column names correspond
 
 \item{NLayers}{(optional) \link{numeric} vector (integer) giving the number
 of elevation layers requested [-], required to create CemaNeige module
-inputs, default=5. Column names correspond to node IDs}
+inputs, default=5. Optional names correspond to node IDs}
 
 \item{IsHyst}{\link{logical} indicating if the hysteresis version of
 CemaNeige is used. See details of \code{\link[airGR:CreateRunOptions]{airGR::CreateRunOptions()}}.}
