@@ -18,9 +18,15 @@ This package is developed by:
 # Stable version from CRAN
 install.packages("airGRiwrm")
 
-# Development version from GitHub
-# install.packages("devtools")
-devtools::install_github("inrae/airGRiwrm", ref = "dev")
+# Development version from R-universe
+install.packages(
+   'airGRiwrm',
+   repos = c('https://inrae.r-universe.dev', 'https://cloud.r-project.org')
+)
+
+# Development version from github
+# install.packages("remotes")
+remotes::install_github("inrae/airGRiwrm", ref = "dev")
 ```
 
 ## 🚀 Getting Started
