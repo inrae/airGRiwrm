@@ -7,7 +7,7 @@ on a reservoir node
 
 ``` r
 # S3 method for class 'OutputsModelReservoir'
-plot(x, Qobs = NULL, Vobs = NULL, ...)
+plot(x, Qobs = NULL, Vobs = NULL, which = NULL, ...)
 ```
 
 ## Arguments
@@ -26,6 +26,11 @@ plot(x, Qobs = NULL, Vobs = NULL, ...)
 
   (optional) [numeric](https://rdrr.io/r/base/numeric.html) time series
   of observed or targeted volume curve \[m3\]
+
+- which:
+
+  Not used (for compatibility with
+  [airGR::plot.OutputsModel](https://rdrr.io/pkg/airGR/man/plot.OutputsModel.html))
 
 - ...:
 
