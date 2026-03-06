@@ -3,9 +3,22 @@
 #'   * A named [list] of [`IniStates`][airGR::CreateIniStates] objects when calling [CreateRunOptions.GRiwrmInputsModel], with names matching node IDs
 #'
 #'   See [airGR::CreateIniStates] for details
+#'
+#' @param Outputs_Sim (optional) outputs to be returned by the model run. Can be:
+#'   * `"all"` to return all available simulated outputs for each node
+#'   * A named [list] (names matching node IDs) to define outputs per node
+#'
+#'   In the case of a [list], each item must be a [character] vector.
+#'   See [airGR::CreateRunOptions] for the list of supported output names.
+#'
 #' @rdname CreateRunOptions
 #' @export
-CreateRunOptions.GRiwrmInputsModel <- function(x, IniStates = NULL, ...) {
+CreateRunOptions.GRiwrmInputsModel <- function(
+  x,
+  IniStates = NULL,
+  Outputs_Sim = "all",
+  ...
+) {
   if (!is.null(IniStates)) {
     if (!is.list(IniStates)) {
       stop("'IniStates' must be a list of IniStates objects")
@@ -23,6 +36,29 @@ CreateRunOptions.GRiwrmInputsModel <- function(x, IniStates = NULL, ...) {
       )
     }
   }
+
+  if (
+    !is.character(Outputs_Sim) ||
+      length(Outputs_Sim) != 1 ||
+      Outputs_Sim != "all"
+  ) {
+    if (!is.list(Outputs_Sim)) {
+      stop("'Outputs_Sim' must be either the string 'all' or a named list")
+    }
+    if (is.null(names(Outputs_Sim))) {
+      stop("'Outputs_Sim' must be a named list with names matching node IDs")
+    }
+    invalid_output_ids <- setdiff(names(Outputs_Sim), names(x))
+    if (length(invalid_output_ids) > 0) {
+      stop(
+        "'Outputs_Sim' contains invalid node IDs: ",
+        paste(invalid_output_ids, collapse = ", "),
+        ". Valid IDs are: ",
+        paste(names(x), collapse = ", ")
+      )
+    }
+  }
+
   RunOptions <- list()
   class(RunOptions) <- append(class(RunOptions), "GRiwrmRunOptions")
 
@@ -30,6 +66,11 @@ CreateRunOptions.GRiwrmInputsModel <- function(x, IniStates = NULL, ...) {
     RunOptions[[id]] <- CreateRunOptions(
       x[[id]],
       IniStates = IniStates[[id]],
+      Outputs_Sim = if (is.character(Outputs_Sim) && Outputs_Sim == "all") {
+        Outputs_Sim
+      } else {
+        Outputs_Sim[[id]]
+      },
       ...
     )
     RunOptions[[id]]$id <- id

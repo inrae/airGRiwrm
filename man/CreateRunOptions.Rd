@@ -9,7 +9,7 @@
 \alias{CreateRunOptions.function}
 \title{Creation of the RunOptions object}
 \usage{
-\method{CreateRunOptions}{GRiwrmInputsModel}(x, IniStates = NULL, ...)
+\method{CreateRunOptions}{GRiwrmInputsModel}(x, IniStates = NULL, Outputs_Sim = "all", ...)
 
 CreateRunOptions(x, ...)
 
@@ -29,6 +29,15 @@ CreateRunOptions(x, ...)
 }
 
 See \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
+
+\item{Outputs_Sim}{(optional) outputs to be returned by the model run. Can be:
+\itemize{
+\item \code{"all"} to return all available simulated outputs for each node
+\item A named \link{list} (names matching node IDs) to define outputs per node
+}
+
+In the case of a \link{list}, each item must be a \link{character} vector.
+See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for the list of supported output names.}
 
 \item{...}{arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}, see details}
 
