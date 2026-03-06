@@ -12,7 +12,7 @@ output: github_document
 [![CRAN version](https://www.r-pkg.org/badges/version-ago/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
 [![Total downloads](https://cranlogs.r-pkg.org/badges/grand-total/airGRiwrm)](https://cran.r-project.org/package=airGRiwrm)
 [![License: AGPL-3](https://img.shields.io/badge/license-AGPL--3-orange.svg)](https://cran.r-project.org/web/licenses/AGPL-3)
-[![DOI: 10.15454/3CVD1I](https://img.shields.io/badge/doi-10.15454%2F3CVD1I-purple)](https://doi.org/10.15454/3CVD1I)
+[![DOI:10.32614/CRAN.package.airGRiwrm](https://img.shields.io/badge/doi-10.32614/CRAN.package.airGRiwrm-purple)](https://doi.org/10.32614/CRAN.package.airGRiwrm)
 [![Dev pipeline](https://gitlab.irstea.fr/in-wop/airGRiwrm/badges/dev/pipeline.svg)](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/pipelines)
 <!-- badges: end -->
 
@@ -29,9 +29,15 @@ This package is developed by:
 # Stable version from CRAN
 install.packages("airGRiwrm")
 
-# Development version from GitHub
-# install.packages("devtools")
-devtools::install_github("inrae/airGRiwrm", ref = "dev")
+# Development version from R-universe
+install.packages(
+   'airGRiwrm',
+   repos = c('https://inrae.r-universe.dev', 'https://cloud.r-project.org')
+)
+
+# Development version from github
+# install.packages("remotes")
+remotes::install_github("inrae/airGRiwrm", ref = "dev")
 ```
 
 ## 🚀 Getting Started
