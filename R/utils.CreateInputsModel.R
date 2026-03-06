@@ -115,10 +115,7 @@ checkInputsModelArguments <- function(x, DatesR, ...) {
             paste(colnames(v)[duplicated(colnames(v))], collapse = "', '")
           ))
         }
-        if (
-          !varName %in% c("ZInputs", "NLayers", "HypsoData") &&
-            nrow(v) != length(DatesR)
-        ) {
+        if (!varName %in% "HypsoData" && nrow(v) != length(DatesR)) {
           stop(sprintf(
             "'%s' number of rows and the length of 'DatesR' must be equal",
             varName
@@ -138,8 +135,36 @@ checkInputsModelArguments <- function(x, DatesR, ...) {
             ))
           }
         }
-      } else if (!varName %in% c("ZInputs", "NLayers")) {
-        stop(sprintf("'%s' must be a matrix or a data.frame", varName))
+      } else {
+        if (!varName %in% c("ZInputs", "NLayers", "PrecipScale")) {
+          stop(sprintf("'%s' must be a matrix or a data.frame", varName))
+        }
+        if (!is.null(names(v)) && !all(names(v) %in% x$id)) {
+          stop(
+            sprintf(
+              "All '%s' names must be included in 'id's of the GRiwrm object",
+              varName
+            ),
+            "\n",
+            sprintf(
+              "These names are not known: %s",
+              paste(names(v)[!names(v) %in% x$id], collapse = ", ")
+            )
+          )
+        }
+        if (is.null(names(v)) && varName == "ZInputs") {
+          stop(
+            "'ZInputs' should be named with 'id's of the GRiwrm object (no names found)"
+          )
+        }
+        if (is.null(names(v)) && length(v) > 1) {
+          stop(
+            sprintf(
+              "'%s' of length > 1 should be named with 'id's of the GRiwrm object (no names found)",
+              varName
+            )
+          )
+        }
       }
     }
   })

@@ -24,7 +24,8 @@
 #' @param PrecipScale (optional) [logical] [vector] indicating if the
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
-#'        (the mean of the precipitation is kept to the original value). Column names correspond to node IDs
+#'        (the mean of the precipitation is kept to the original value).
+#'        Optional names cames correspond to node IDs
 #' @param TempMean (optional) [matrix] or [data.frame] of time series of mean
 #'        air temperature \[°C\], required to create the CemaNeige module inputs. Column names correspond to node IDs
 #' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum
@@ -33,13 +34,13 @@
 #'        air temperature \[°C\], possibly used to create the CemaNeige module inputs. Column names correspond to node IDs
 #' @param ZInputs (optional) [numeric] [vector] giving the mean
 #'        elevation of the Precip and Temp series (before extrapolation) \[m\],
-#'        possibly used to create the CemaNeige module input. Column names correspond to node IDs
+#'        possibly used to create the CemaNeige module input. Names correspond to node IDs
 #' @param HypsoData (optional) [matrix] or [data.frame] containing 101 [numeric]
 #'        rows: min, q01 to q99 and max of catchment elevation distribution \[m\],
 #'        if not defined a single elevation is used for CemaNeige. Column names correspond to node IDs
 #' @param NLayers (optional) [numeric] vector (integer) giving the number
 #'        of elevation layers requested \[-\], required to create CemaNeige module
-#'        inputs, default=5. Column names correspond to node IDs
+#'        inputs, default=5. Optional names correspond to node IDs
 #' @param IsHyst [logical] indicating if the hysteresis version of
 #'        CemaNeige is used. See details of [airGR::CreateRunOptions()].
 #' @param FUN_REGUL [list] of functions for local regulation (See details)
@@ -136,7 +137,7 @@ CreateInputsModel.GRiwrm <- function(
   TempMax = NULL,
   ZInputs = NULL,
   HypsoData = NULL,
-  NLayers = 5,
+  NLayers = 5L,
   IsHyst = FALSE,
   FUN_REGUL = NULL,
   ...
@@ -148,6 +149,15 @@ CreateInputsModel.GRiwrm <- function(
   if (!is.null(Qobs)) {
     warning("The usage of 'Qobs' is deprecated, use 'Qinf' instead")
     Qinf <- Qobs
+  }
+  if (!is.null(ZInputs) && !is.numeric(ZInputs)) {
+    stop("'ZInputs' must be a numeric vector")
+  }
+  if (!is.logical(PrecipScale)) {
+    stop("'PrecipScale' must be logical")
+  }
+  if (!is.numeric(NLayers)) {
+    stop("'NLayers' must be numeric")
   }
 
   checkInputsModelArguments(
@@ -162,7 +172,8 @@ CreateInputsModel.GRiwrm <- function(
     TempMax = TempMax,
     ZInputs = ZInputs,
     HypsoData = HypsoData,
-    NLayers = NLayers
+    NLayers = NLayers,
+    PrecipScale = PrecipScale
   )
 
   if (is.null(Qinf)) {
@@ -229,7 +240,7 @@ CreateInputsModel.GRiwrm <- function(
         griwrm = x,
         DatesR = DatesR,
         Precip = getInputBV(Precip, id),
-        PrecipScale,
+        PrecipScale = getInputBV(PrecipScale, id, TRUE),
         PotEvap = getInputBV(PotEvap, id),
         TempMean = getInputBV(TempMean, id),
         TempMin = getInputBV(TempMin, id),
@@ -490,7 +501,7 @@ getInputBV <- function(x, id, unset = NULL) {
       return(unset)
     }
   } else {
-    # vector (for ZInputs and NLayers)
+    # vector (for PrecipScale, ZInputs and NLayers)
     if (length(x) == 1 && is.null(names(x))) {
       return(x)
     } else if (!id %in% names(x)) {
