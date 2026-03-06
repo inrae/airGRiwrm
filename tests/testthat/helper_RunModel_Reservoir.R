@@ -87,3 +87,23 @@ testDerivedUngauged <- function(donorByDerivation) {
     Param[[ifelse(donorByDerivation, "54029", "54001")]][2:4]
   )
 }
+
+get_OM <- function(
+  nodes,
+  ...,
+  ParamMichel = getDefaultParamMichel(),
+  Param = c(
+    ParamMichel[names(ParamMichel) %in% griwrm$id],
+    list(Dam = c(10E6, 1))
+  )
+) {
+  e <- setupRunModel(
+    runRunModel = FALSE,
+    griwrm = CreateGRiwrm(nodes),
+    ...
+  )
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  RunModel(InputsModel, RunOptions = RunOptions, Param = Param)
+}
