@@ -16,7 +16,7 @@
 CreateRunOptions.GRiwrmInputsModel <- function(
   x,
   IniStates = NULL,
-  Outputs_Sim = "all",
+  Outputs_Sim = c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3"),
   ...
 ) {
   if (!is.null(IniStates)) {
@@ -37,13 +37,9 @@ CreateRunOptions.GRiwrmInputsModel <- function(
     }
   }
 
-  if (
-    !is.character(Outputs_Sim) ||
-      length(Outputs_Sim) != 1 ||
-      Outputs_Sim != "all"
-  ) {
+  if (!is.character(Outputs_Sim)) {
     if (!is.list(Outputs_Sim)) {
-      stop("'Outputs_Sim' must be either the string 'all' or a named list")
+      stop("'Outputs_Sim' must be either a character vector or a named list")
     }
     if (is.null(names(Outputs_Sim))) {
       stop("'Outputs_Sim' must be a named list with names matching node IDs")
@@ -66,7 +62,7 @@ CreateRunOptions.GRiwrmInputsModel <- function(
     RunOptions[[id]] <- CreateRunOptions(
       x[[id]],
       IniStates = IniStates[[id]],
-      Outputs_Sim = if (is.character(Outputs_Sim) && Outputs_Sim == "all") {
+      Outputs_Sim = if (is.character(Outputs_Sim)) {
         Outputs_Sim
       } else {
         Outputs_Sim[[id]]

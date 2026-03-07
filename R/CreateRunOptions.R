@@ -35,50 +35,21 @@ CreateRunOptions <- function(x, ...) {
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.InputsModel <- function(x, ...) {
-  dots <- list(...)
-  dots$InputsModel <- x
-
-  # Add FUN_MOD in parameters if carried by InputsModel
-  FUN_MOD <- attr(x, "FeatFUN_MOD")$NameFunMod
-  if ("FUN_MOD" %in% names(dots)) {
-    if (!identical(match.fun(dots$FUN_MOD), match.fun(FUN_MOD))) {
-      stop(
-        "The parameter `FUN_MOD` differe from the one defined in `InputsModel`"
-      )
-    }
-  }
-  dots$FUN_MOD <- FUN_MOD
+  dots <- CreateRunOptions_prepare_inputs(x, ...)
   # Add IsHyst in parameters if carried by InputsModel
   if (!is.null(x$model$IsHyst)) {
     dots$IsHyst <- x$model$IsHyst
   }
-
   warning_pattern <- "does not require .* Values? set to NA"
-  if (!is.null(x$isReservoir) && x$isReservoir) {
-    # Bypass airGR::CreateRunOptions for reservoir models with Inistates argument
-    # because it is not designed for this type of model and crashes
-    if (!is.null(dots$IniStates)) {
-      if (!is.numeric(dots$IniStates)) {
-        stop("For reservoir models, `IniStates` must be a numeric vector")
-      } else {
-        IniStates <- dots$IniStates
-        dots$IniStates <- NULL
-        warning_pattern <- sprintf(
-          "(%s)|(%s)",
-          warning_pattern,
-          "model states initialisation not defined"
-        )
-      }
-    } else {
-      IniStates <- NULL
-    }
+  # ClodoFix: airGR does not accept Qsim_m3 on upstream nodes :(
+  if (!inherits(x, "SD") && "Qsim_m3" %in% dots$Outputs_Sim) {
+    Outputs_Sim <- dots$Outputs_Sim
+    dots$Outputs_Sim <- setdiff(dots$Outputs_Sim, "Qsim_m3")
   }
-  RunOptions <- suppressWarningsRegex(
-    do.call(airGR::CreateRunOptions, dots),
-    pattern = warning_pattern
-  )
-  if (!is.null(x$isReservoir) && x$isReservoir) {
-    RunOptions$IniStates <- IniStates
+  RunOptions <- CreateRunOptions_runAirGR(dots, warning_pattern)
+  # ClodoFix: airGR does not accept Qsim_m3 on upstream nodes :(
+  if (exists("Outputs_Sim")) {
+    RunOptions$Outputs_Sim <- Outputs_Sim
   }
   return(RunOptions)
 }
@@ -93,4 +64,65 @@ CreateRunOptions.character <- function(x, InputsModel, ...) {
 #' @export
 CreateRunOptions.function <- function(x, InputsModel, ...) {
   CreateRunOptions(x = InputsModel, FUN_MOD = x, ...)
+}
+
+#' @rdname CreateRunOptions
+#' @export
+CreateRunOptions.RunModel_Reservoir <- function(x, ...) {
+  dots <- CreateRunOptions_prepare_inputs(x, ...)
+  # Bypass Outputs_Sim and Outputs_Cal
+  Outputs_Sim <- dots$Outputs_Sim
+  dots$Outputs_Sim <- "all"
+  Outputs_Cal <- dots$Outputs_Cal
+  dots$Outputs_Cal <- NULL
+  # Bypass airGR::CreateRunOptions for reservoir models with Inistates argument
+  # because it is not designed for this type of model and crashes
+  if (!is.null(dots$IniStates)) {
+    if (!is.numeric(dots$IniStates)) {
+      stop("For reservoir models, `IniStates` must be a numeric vector")
+      warning_pattern <- ""
+    } else {
+      IniStates <- dots$IniStates
+      dots$IniStates <- NULL
+      warning_pattern <- sprintf(
+        "(%s)|(%s)",
+        warning_pattern,
+        "model states initialisation not defined"
+      )
+    }
+  } else {
+    IniStates <- NULL
+  }
+  RunOptions <- CreateRunOptions_runAirGR(dots, warning_pattern)
+  if (!is.null(IniStates)) {
+    RunOptions$IniStates <- IniStates
+  }
+  RunOptions$Outputs_Sim <- Outputs_Sim
+  RunOptions$Outputs_Cal <- Outputs_Cal
+  return(RunOptions)
+}
+
+CreateRunOptions_prepare_inputs <- function(x, ...) {
+  dots <- list(...)
+  dots$InputsModel <- x
+
+  # Add FUN_MOD in parameters if carried by InputsModel
+  FUN_MOD <- attr(x, "FeatFUN_MOD")$NameFunMod
+  if ("FUN_MOD" %in% names(dots)) {
+    if (!identical(match.fun(dots$FUN_MOD), match.fun(FUN_MOD))) {
+      stop(
+        "The parameter `FUN_MOD` differe from the one defined in `InputsModel`"
+      )
+    }
+  }
+  dots$FUN_MOD <- FUN_MOD
+  return(dots)
+}
+
+CreateRunOptions_runAirGR <- function(dots, warning_pattern) {
+  RunOptions <- suppressWarningsRegex(
+    do.call(airGR::CreateRunOptions, dots),
+    pattern = warning_pattern
+  )
+  return(RunOptions)
 }
