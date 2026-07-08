@@ -11,9 +11,9 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../../favicon.ico">
 <link rel="manifest" href="../../site.webmanifest">
-<script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="../../lightswitch.js"></script><script src="../../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../../deps/headroom-0.11.0/headroom.min.js"></script><script src="../../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../../deps/search-1.0.0/fuse.min.js"></script><script src="../../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../../pkgdown.js"></script><meta property="og:title" content="Seine_05b: Calibration of an open-loop influenced flow semi-distributed GR6J model network">
 <meta name="robots" content="noindex">
@@ -22,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../../index.html">airGRiwrm</a>
 
@@ -125,15 +125,8 @@ Marne system:</p>
 <span><span class="va">griwrm3</span> <span class="op">&lt;-</span> <span class="va">griwrm2</span><span class="op">[</span><span class="va">griwrm2</span><span class="op">$</span><span class="va">id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selectedNodes</span>,<span class="op">]</span></span>
 <span><span class="va">griwrm3</span><span class="op">$</span><span class="va">model</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">$</span><span class="va">model</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR6J"</span></span>
 <span><span class="va">griwrm3</span><span class="op">[</span><span class="va">griwrm3</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"NOISI_17"</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"down"</span>, <span class="st">"length"</span><span class="op">)</span><span class="op">]</span> <span class="op">=</span> <span class="cn">NA</span> <span class="co"># Downstream station instead of PARIS_05</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; downloaded length 0 != reported length 21</span></span>
-<span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
-<span><span class="co">#&gt; cannot open URL</span></span>
-<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNrNVU1PwkAU_CubGsKlJNL6UXswMWK0CYIpYKLVNBv6FlbbQtpFTYD_7gp9dbuCBE9emtfM7LyZ2SadG8NJBIZr1GpznnLhknldjCGBukvqKcxERuP6kixrtaf0KR1ldDombf9r5lHY67e8x_DwKMDhuQBuu52-HzadAAcE2t3B_VXYPAtwQODe6_sPoXUc4IDA5c1FuxtazQAHBDpdr-eFzdMAh-d_7er2wu9chXeWHZSTDjkl5FQhXzooJz0maTTOF8Q5Ia_JgijWtNBrmu0gDf1pFexQwx50NY2Gr2uatXVrWUWhhzTMphdUuLO2ZcWO1rzj0028YUzzXF1iKgRT8Ui8VECWQMSpgGs6G0FUOY_Nmkp9ptrRYJqLDGiy6SwGN9V4ZiVDi2cwFF76Ip98kpbnW8BIBIzOYkHkgskruAe2bVdwXD1IR6vlhPE4dg8A2EbatUqitEpSa9D1GGylVjUZrRB9yCF7m_CswM-iqpCWvWAxSn9N2eJvkOXffBnXLCuSh_Gl8c4jMXbt6ccvbehispZ9xDa19sMfg79KbvHI6D6C5S3oOvI6dugYppFIM5RHhjs3Vn8M-RMpPktjufwEFnwn1Q?type=png':</span></span>
-<span><span class="co">#&gt; HTTP status was '500 Internal Server Error'</span></span>
-<span><span class="co">#&gt; Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:</span></span>
-<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNrNVU1PwkAU_CubGsKlJNL6UXswMWK0CYIpYKLVNBv6FlbbQtpFTYD_7gp9dbuCBE9emtfM7LyZ2SadG8NJBIZr1GpznnLhknldjCGBukvqKcxERuP6kixrtaf0KR1ldDombf9r5lHY67e8x_DwKMDhuQBuu52-HzadAAcE2t3B_VXYPAtwQODe6_sPoXUc4IDA5c1FuxtazQAHBDpdr-eFzdMAh-d_7er2wu9chXeWHZSTDjkl5FQhXzooJz0maTTOF8Q5Ia_JgijWtNBrmu0gDf1pFexQwx50NY2Gr2uatXVrWUWhhzTMphdUuLO2ZcWO1rzj0028YUzzXF1iKgRT8Ui8VECWQMSpgGs6G0FUOY_Nmkp9ptrRYJqLDGiy6SwGN9V4ZiVDi2cwFF76Ip98kpbnW8BIBIzOYkHkgskruAe2bVdwXD1IR6vlhPE4dg8A2EbatUqitEpSa9D1GGylVjUZrRB9yCF7m_CswM-iqpCWvWAxSn9N2eJvkOXffBnXLCuSh_Gl8c4jMXbt6ccvbehispZ9xDa19sMfg79KbvHI6D6C5S3oOvI6dugYppFIM5RHhjs3Vn8M-RMpPktjufwEFnwn1Q?type=png'</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrm3</span><span class="op">)</span></span></code></pre></div>
+<p><img src="V05b_Open-loop_influenced_flow_calibration_GR6J_files/figure-html/griwrm3-1.png" class="r-plt" alt="" width="700"></p>
 <p>We can now generate the new <code>GRiwrmInputsModel</code>
 object:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -382,7 +375,7 @@ measurements:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

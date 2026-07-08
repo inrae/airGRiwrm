@@ -1,6 +1,7 @@
 # Seine_05b: Calibration of an open-loop influenced flow semi-distributed GR6J model network
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -22,6 +23,7 @@ outlets.
 Loading naturalized data and influenced flow configuration:
 
 ``` r
+
 #load("_cache/V01.RData")
 load("_cache/V04.RData")
 ```
@@ -30,24 +32,20 @@ We remove extra items from a complete configuration to keep only the
 Marne system:
 
 ``` r
+
 selectedNodes <- c("MARNE_P23", "STDIZ_04", "LOUVE_19", "VITRY_25", "MARNE_P28", "MARNE_R25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm3 <- griwrm2[griwrm2$id %in% selectedNodes,]
 griwrm3$model[!is.na(griwrm3$model)] <- "RunModel_GR6J"
 griwrm3[griwrm3$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
 plot(griwrm3)
-#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-#> downloaded length 0 != reported length 21
-#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-#> cannot open URL
-#> 'https://mermaid.ink/img/pako:eNrNVU1PwkAU_CubGsKlJNL6UXswMWK0CYIpYKLVNBv6FlbbQtpFTYD_7gp9dbuCBE9emtfM7LyZ2SadG8NJBIZr1GpznnLhknldjCGBukvqKcxERuP6kixrtaf0KR1ldDombf9r5lHY67e8x_DwKMDhuQBuu52-HzadAAcE2t3B_VXYPAtwQODe6_sPoXUc4IDA5c1FuxtazQAHBDpdr-eFzdMAh-d_7er2wu9chXeWHZSTDjkl5FQhXzooJz0maTTOF8Q5Ia_JgijWtNBrmu0gDf1pFexQwx50NY2Gr2uatXVrWUWhhzTMphdUuLO2ZcWO1rzj0028YUzzXF1iKgRT8Ui8VECWQMSpgGs6G0FUOY_Nmkp9ptrRYJqLDGiy6SwGN9V4ZiVDi2cwFF76Ip98kpbnW8BIBIzOYkHkgskruAe2bVdwXD1IR6vlhPE4dg8A2EbatUqitEpSa9D1GGylVjUZrRB9yCF7m_CswM-iqpCWvWAxSn9N2eJvkOXffBnXLCuSh_Gl8c4jMXbt6ccvbehispZ9xDa19sMfg79KbvHI6D6C5S3oOvI6dugYppFIM5RHhjs3Vn8M-RMpPktjufwEFnwn1Q?type=png':
-#> HTTP status was '500 Internal Server Error'
-#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
-#> cannot open URL 'https://mermaid.ink/img/pako:eNrNVU1PwkAU_CubGsKlJNL6UXswMWK0CYIpYKLVNBv6FlbbQtpFTYD_7gp9dbuCBE9emtfM7LyZ2SadG8NJBIZr1GpznnLhknldjCGBukvqKcxERuP6kixrtaf0KR1ldDombf9r5lHY67e8x_DwKMDhuQBuu52-HzadAAcE2t3B_VXYPAtwQODe6_sPoXUc4IDA5c1FuxtazQAHBDpdr-eFzdMAh-d_7er2wu9chXeWHZSTDjkl5FQhXzooJz0maTTOF8Q5Ia_JgijWtNBrmu0gDf1pFexQwx50NY2Gr2uatXVrWUWhhzTMphdUuLO2ZcWO1rzj0028YUzzXF1iKgRT8Ui8VECWQMSpgGs6G0FUOY_Nmkp9ptrRYJqLDGiy6SwGN9V4ZiVDi2cwFF76Ip98kpbnW8BIBIzOYkHkgskruAe2bVdwXD1IR6vlhPE4dg8A2EbatUqitEpSa9D1GGylVjUZrRB9yCF7m_CswM-iqpCWvWAxSn9N2eJvkOXffBnXLCuSh_Gl8c4jMXbt6ccvbehispZ9xDa19sMfg79KbvHI6D6C5S3oOvI6dugYppFIM5RHhjs3Vn8M-RMpPktjufwEFnwn1Q?type=png'
 ```
+
+![](V05b_Open-loop_influenced_flow_calibration_GR6J_files/figure-html/griwrm3-1.png)
 
 We can now generate the new `GRiwrmInputsModel` object:
 
 ``` r
+
 library(seinebasin)
 data(QOBS)
 iEnd <- which(DatesR == as.POSIXct("2008-07-31", tz = "UTC"))
@@ -73,6 +71,7 @@ InputsModel3 <- CreateInputsModel(griwrm3,
 We first define the run period:
 
 ``` r
+
 IndPeriod_Run <- seq.int(
   which(DatesR == (DatesR[1] + 365 * 24 * 60 * 60)), # Set aside warm-up period
   iEnd # Until the end of the time series
@@ -83,10 +82,12 @@ We define the (optional but recommended) warm up period as a one-year
 period before the run period:
 
 ``` r
+
 IndPeriod_WarmUp <- seq.int(1,IndPeriod_Run[1] - 1)
 ```
 
 ``` r
+
 RunOptions <- CreateRunOptions(
   InputsModel3,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -99,6 +100,7 @@ RunOptions <- CreateRunOptions(
 We define the objective function for the calibration:
 
 ``` r
+
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel3,
   FUN_CRIT = ErrorCrit_KGE2,
@@ -109,6 +111,7 @@ InputsCrit <- CreateInputsCrit(
 ## GRiwrmCalibOptions object
 
 ``` r
+
 CalibOptions <- CreateCalibOptions(InputsModel3)
 str(CalibOptions)
 #> List of 6
@@ -156,6 +159,7 @@ str(CalibOptions)
 The optimization (i.e. calibration) of parameters can now be performed:
 
 ``` r
+
 OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 #> Calibration.GRiwrmInputsModel: Processing sub-basin 'STDIZ_04'...
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
@@ -253,6 +257,7 @@ Now that the model is calibrated, we can run it with the optimized
 parameter values:
 
 ``` r
+
 Param5 <- extractParam(OutputsCalib)
 
 OutputsModels3 <- RunModel(
@@ -276,6 +281,7 @@ We can compare these simulated flows with influenced discharge
 measurements:
 
 ``` r
+
 htmltools::tagList(lapply(
   griwrm3$id[!is.na(griwrm3$model)],
   function(x) {

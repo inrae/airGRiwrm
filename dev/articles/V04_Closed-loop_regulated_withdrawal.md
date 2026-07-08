@@ -1,6 +1,7 @@
 # Severn_04: Modeling a regulated withdrawal (closed-loop control)
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -22,6 +23,7 @@ The following code chunk resumes the procedure of the vignette
 “V02_Calibration_SD_model”:
 
 ``` r
+
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
@@ -35,6 +37,7 @@ The intake points are located:
 We have to add this 2 nodes in the network:
 
 ``` r
+
 nodes <- rbind(
   nodes,
   data.frame(
@@ -61,6 +64,7 @@ nodes
 And we create the `GRiwrm` object from this new network:
 
 ``` r
+
 griwrmV04 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 plot(griwrmV04)
 ```
@@ -93,6 +97,7 @@ of the 8^(th) decile of monthly water needed given meteorological data
 of catchments “54001” and “54032” (unit mm/day) :
 
 ``` r
+
 # Formatting climatic data for CreateInputsModel (See vignette V01_Structure_SD_model for details)
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
@@ -131,6 +136,7 @@ We restrict the irrigation season between March and September As a
 consequence, the crop requirement can be expressed in m³/s as follows:
 
 ``` r
+
 irrigationObjective <- monthlyWaterNeed
 # Conversion in m3/day
 irrigationObjective$"54001" <- monthlyWaterNeed$"54001" * 15 * 1E3
@@ -157,11 +163,11 @@ irrigationObjective
 ```
 
 We assume that the efficiency of the irrigation systems is equal to 50%
-as proposed by Seckler, Molden, and Sakthivadivel (2003). as a
-consequence, the flow demand at intake for each irrigation system is as
-follows (unit: m³/s):
+as proposed by Seckler et al. (2003). as a consequence, the flow demand
+at intake for each irrigation system is as follows (unit: m³/s):
 
 ``` r
+
 # Application of the 50% irrigation system efficiency on the water demand
 irrigationObjective[,seq(2,4)] <- irrigationObjective[,seq(2,4)] / 0.5
 # Display result in m3/s
@@ -193,6 +199,7 @@ available flow for abstraction in function of the current flow regime
 classified “ASB3”).
 
 ``` r
+
 restriction_rule <- data.frame(quantile_natural_flow = c(.05, .3, 0.5, 0.7),
                                abstraction_rate = c(0.1, 0.15, 0.20, 0.24))
 ```
@@ -203,6 +210,7 @@ flow corresponding to the quantiles of natural flow and flow available
 for abstraction in each case.
 
 ``` r
+
 quant_m3s32 <- quantile(
   Qobs[,"54032"] * griwrmV04[griwrmV04$id == "54032", "area"] / 86.4,
   restriction_rule$quantile_natural_flow,
@@ -232,6 +240,7 @@ The water availability or abstraction restriction depending on the
 natural flow is calculated with the function below:
 
 ``` r
+
 # A function to enclose the parameters in the function (See: http://adv-r.had.co.nz/Functional-programming.html#closures)
 getAvailableAbstractionEnclosed <- function(restriction_rule_m3s) {
   function(Qnat) approx(restriction_rule_m3s$threshold_natural_flow,
@@ -264,36 +273,47 @@ turn several days a week based on the mean flow of the previous week.
 
 The number of authorized days per week for irrigation can be calculated
 as follows. All calculations are based on the mean flow measured the
-week previous the current time step. First, the naturalized flow $N$ is
-equal to
+week previous the current time step. First, the naturalized flow $`N`$
+is equal to
 
-$$N = M + I_{l}$$ with:
+``` math
+ N = M + I_l 
+```
+with:
 
-- $M$, the measured flow at the downstream gauging station
-- $I_{l}$, the total abstracted flow for irrigation for the last week
+- $`M`$, the measured flow at the downstream gauging station
+- $`I_l`$, the total abstracted flow for irrigation for the last week
 
-Available flow for abstraction $A$ is:
+Available flow for abstraction $`A`$ is:
 
-$$A = f_{a}(N)$$
+``` math
+A = f_{a}(N)
+```
 
-with $f_{a}$ the availability function calculated from quantiles of
+with $`f_a`$ the availability function calculated from quantiles of
 natural flow and related restriction rates.
 
-The flow planned for irrigation $Ip$ is then:
+The flow planned for irrigation $`Ip`$ is then:
 
-$$I_{p} = \min(O,A)$$
+``` math
+ I_p = \min (O, A)
+```
 
-with $O$ the irrigation objective flow.
+with $`O`$ the irrigation objective flow.
 
-The number of days for irrigation $n$ per week is then equal to:
+The number of days for irrigation $`n`$ per week is then equal to:
 
-$$n = \lfloor\frac{I_{p}}{O} \times 7\rfloor$$ with $\lfloor x\rfloor$
-the function that returns the largest integers not greater than $x$
+``` math
+ n = \lfloor \frac{I_p}{O} \times 7 \rfloor
+```
+with $`\lfloor x \rfloor`$ the function that returns the largest
+integers not greater than $`x`$
 
 The rotation of restriction days between the 2 irrigation perimeters is
 operated as follows:
 
 ``` r
+
 restriction_rotation <- matrix(c(5,7,6,4,2,1,3,3,1,2,4,6,7,5), ncol = 2)
 m <- do.call(
   rbind,
@@ -321,6 +341,7 @@ As for the previous model, we need to set up an `GRiwrmInputsModel`
 object containing all the model inputs:
 
 ``` r
+
 # Flow time series are needed for all direct injection nodes in the network
 # even if they may be overwritten after by a controller
 QinfIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)),
@@ -346,6 +367,7 @@ measurement are taken on the last 7 days and decisions are taken for
 each time step for the next seven days.
 
 ``` r
+
 sv <- CreateSupervisor(IM_Irrig, TimeStep = 7L)
 ```
 
@@ -376,6 +398,7 @@ In this example, the logic function must do the following tasks:
     restriction days
 
 ``` r
+
 fIrrigationFactory <- function(supervisor,
                                irrigationObjective,
                                restriction_rule_m3s,
@@ -418,6 +441,7 @@ arguments currently in memory saves these variables in the environment
 of the function:
 
 ``` r
+
 fIrrigation <- fIrrigationFactory(supervisor = sv,
                                   irrigationObjective = irrigationObjective,
                                   restriction_rule_m3s = restriction_rule_m3s,
@@ -428,9 +452,10 @@ You can see what data are available in the environment of the function
 with:
 
 ``` r
+
 str(as.list(environment(fIrrigation)))
 #> List of 4
-#>  $ supervisor          :Classes 'Supervisor', 'environment' <environment: 0x556059c9e170> 
+#>  $ supervisor          :Classes 'Supervisor', 'environment' <environment: 0x55ccac54bb68> 
 #>  $ irrigationObjective :'data.frame':    12 obs. of  4 variables:
 #>   ..$ month: num [1:12] 1 2 3 4 5 6 7 8 9 10 ...
 #>   ..$ 54001: num [1:12] 0 0 0.4 0.8 1 1.2 1.2 1 0.6 0 ...
@@ -462,6 +487,7 @@ The controller contains:
 - the logic control function
 
 ``` r
+
 CreateController(sv,
                  ctrl.id = "Irrigation",
                  Y = "54032",
@@ -476,6 +502,7 @@ First we need to create a `GRiwrmRunOptions` object and load the
 parameters calibrated in the vignette “V02_Calibration_SD_model”:
 
 ``` r
+
 IndPeriod_Run <- seq(
   which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(DatesR) # Until the end of the time series
@@ -491,6 +518,7 @@ For running a model with a supervision, you only need to substitute
 `InputsModel` by a `Supervisor` in the `RunModel` function call.
 
 ``` r
+
 OM_Irrig <- RunModel(sv, RunOptions = RunOptions, Param = ParamV02)
 #> Processing: 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
 ```
@@ -499,6 +527,7 @@ Simulated flows during irrigation season can be extracted and plot as
 follows:
 
 ``` r
+
 Qm3s <- attr(OM_Irrig, "Qm3s")
 Qm3s <- Qm3s[Qm3s$DatesR > "2003-02-25" & Qm3s$DatesR < "2003-10-05",]
 oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
@@ -509,6 +538,7 @@ plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "", le
 ![](V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-15-1.png)
 
 ``` r
+
 par(oldpar)
 ```
 
@@ -517,10 +547,9 @@ days a week when the flow at node “54032” becomes low.
 
 ## References
 
-Burt, C. M., A. J. Clemmens, T. S. Strelkoff, K. H. Solomon, R. D.
-Bliesner, L. A. Hardy, T. A. Howell, and D. E. Eisenhauer. 1997.
-“Irrigation Performance Measures: Efficiency and Uniformity.” *Journal
-of Irrigation and Drainage Engineering* 123 (6): 423–42.
+Burt, C. M., A. J. Clemmens, T. S. Strelkoff, et al. 1997. “Irrigation
+Performance Measures: Efficiency and Uniformity.” *Journal of Irrigation
+and Drainage Engineering* 123 (6): 423–42.
 <https://doi.org/10.1061/(ASCE)0733-9437(1997)123:6(423)>.
 
 Klaar, Megan J., Michael J. Dunbar, Mark Warren, and Rob Soley. 2014.
@@ -531,5 +560,5 @@ Standards: A Case Study from England.” *WIREs Water* 1 (2): 207–17.
 Seckler, D., D. Molden, and R. Sakthivadivel. 2003. “The Concept of
 Efficiency in Water-Resources Management and Policy.” In *Water
 Productivity in Agriculture: Limits and Opportunities for Improvement*,
-edited by J. W. Kijne, R. Barker, and D. Molden, 37–51. Wallingford:
-CABI. <https://doi.org/10.1079/9780851996691.0037>.
+edited by J. W. Kijne, R. Barker, and D. Molden. CABI.
+<https://doi.org/10.1079/9780851996691.0037>.

@@ -6,6 +6,7 @@ semi-distributed model of the Seine River with naturalized flows.
 ## Load libraries
 
 ``` r
+
 library(airGRiwrm)
 ```
 
@@ -28,6 +29,7 @@ It is necessary to run the
 order to create the Rdata file loaded below:
 
 ``` r
+
 load("_cache/V01.RData")
 ```
 
@@ -37,6 +39,7 @@ GR4J parameters come from a calibration realized during the ClimAware
 project using naturalized flows.
 
 ``` r
+
 library(seinebasin)
 data(ClimAwareParams)
 names(ClimAwareParams) <- c("id_sgl", "Tau0", "K0", "X1", "X2", "X3", "X4", "NashId")
@@ -70,17 +73,18 @@ ClimAwareParams
     ## 24 NOISI_17 36.4 57.6  26.2  -95.21 1568.5  4.2  96.68
     ## 25 PARIS_05 12.0  0.0 750.3 -100.00  921.0  0.0  99.82
 
-The lag $\tau_{0}$ and routing $K_{0}$ parameters of TGR are expressed
+The lag $`\tau_0`$ and routing $`K_0`$ parameters of TGR are expressed
 as time delay in hours corresponding to the delay time between the
 farthest upstream inlet and the outlet of the sub-basin. Almost all sub
 basins have a routing parameter equal to 0. The only exception is for La
 Marne à Noisiel (NOISI_17) that has a routing parameter that can be
-approximated to a single lag parameter equal to $\tau_{0} + K_{0}$.
+approximated to a single lag parameter equal to $`\tau_0 + K_0`$.
 
 This lag parameter has to be converted in a speed in m/s used in the
 **airGR** lag model:
 
 ``` r
+
 # Convert TGR routing parameter into speed
 params <- merge(griwrm, ClimAwareParams, by.x = "id", by.y = "id_sgl")
 
@@ -115,6 +119,7 @@ The user must at least define the following arguments:
 - IndPeriod_Run: the period on which the model is run
 
 ``` r
+
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside a one-year period for warm up
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
@@ -125,10 +130,12 @@ We define the (optional but recommended) warm up period as a one-year
 period before the run period:
 
 ``` r
+
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
 
 ``` r
+
 RunOptions <- CreateRunOptions(
   InputsModel,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -139,6 +146,7 @@ RunOptions <- CreateRunOptions(
 ## Run the SD model for the whole basin
 
 ``` r
+
 OutputsModelsClimAware <- RunModel(
   InputsModel,
   RunOptions = RunOptions,
@@ -210,6 +218,7 @@ OutputsModelsClimAware <- RunModel(
 We plot the simulated discharges against the naturalized ones.
 
 ``` r
+
 data(QNAT)
 plot(OutputsModelsClimAware, Qobs = Qnat[IndPeriod_Run,])
 ```
@@ -219,5 +228,6 @@ plot(OutputsModelsClimAware, Qobs = Qnat[IndPeriod_Run,])
 ## Save data for next vignettes
 
 ``` r
+
 save(RunOptions, ParamClimAware, IndPeriod_Run, file = "_cache/V02.RData")
 ```

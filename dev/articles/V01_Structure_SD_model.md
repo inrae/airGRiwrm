@@ -1,6 +1,7 @@
 # Severn_01: Set up of a semi-distributed GR model network
 
 ``` r
+
 library(airGRiwrm)
 ```
 
@@ -36,6 +37,7 @@ United Kingdom. The data set comes from the CAMELS GB database (see
 Coxon et al. 2020).
 
 ``` r
+
 data(Severn)
 Severn$BasinsInfo
 ```
@@ -83,6 +85,7 @@ Below, we constitute a `data.frame` bringing together all this
 information for the tutorial example:
 
 ``` r
+
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
 ```
@@ -104,6 +107,7 @@ The `GRiwrm` function helps to create an object of class `GRiwrm`. It
 renames the columns of the `data.frame`.
 
 ``` r
+
 griwrm <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
 griwrm
 ```
@@ -121,6 +125,7 @@ the upstream nodes with a GR4J model and in green the intermediate nodes
 with an SD (GR4J + LAG) model.
 
 ``` r
+
 plot(griwrm)
 ```
 
@@ -133,6 +138,7 @@ flows) should be formatted in a separate data.frame with one column of
 data per sub-catchment.
 
 ``` r
+
 BasinsObs <- Severn$BasinsObs
 str(BasinsObs)
 ```
@@ -170,6 +176,7 @@ str(BasinsObs)
     #>   ..$ discharge_spec: num [1:11536] 0.9 0.9 0.94 0.87 0.86 0.81 0.76 0.73 0.7 0.69 ...
 
 ``` r
+
 DatesR <- BasinsObs[[1]]$DatesR
 
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
@@ -183,6 +190,7 @@ scale. The function `ConvertMeteoSD` calculates these values for
 downstream sub-basins:
 
 ``` r
+
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 ```
@@ -197,6 +205,7 @@ The **airGR** `CreateInputsModel` function is extended in order to
 handle the `GRiwrm` object that describes the basin diagram:
 
 ``` r
+
 InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 ```
 
@@ -219,8 +228,7 @@ Coron, L., G. Thirel, O. Delaigue, C. Perrin, and V. Andréassian. 2017.
 *Environmental Modelling & Software* 94 (August): 166–71.
 <https://doi.org/10.1016/j.envsoft.2017.05.002>.
 
-Coxon, G., N. Addor, J. P. Bloomfield, J. Freer, M. Fry, J. Hannaford,
-N. J. K. Howden, et al. 2020. “Catchment Attributes and
-Hydro-Meteorological Timeseries for 671 Catchments Across Great Britain
-(CAMELS-GB).” NERC Environmental Information Data Centre.
+Coxon, G., N. Addor, J. P. Bloomfield, et al. 2020. *Catchment
+Attributes and Hydro-Meteorological Timeseries for 671 Catchments Across
+Great Britain (CAMELS-GB)*. NERC Environmental Information Data Centre.
 <https://doi.org/10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9>.

@@ -1,6 +1,7 @@
 # Severn_03: Calibration of an open-loop influenced flow model network
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -42,6 +43,7 @@ The creation of the `GRiwrm` object is detailed in the vignette
 resumes all the necessary steps:
 
 ``` r
+
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
@@ -52,6 +54,7 @@ directly used instead of an hydrological model, one only needs to
 declare its model as `NA`:
 
 ``` r
+
 nodes$model[nodes$gauge_id == "54002"] <- NA
 nodes$model[nodes$gauge_id == "54001"] <- NA
 griwrmV03 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
@@ -77,6 +80,7 @@ The diagram of the network structure is represented below with:
 - in red, the node with direct flow injection (no hydrological model)
 
 ``` r
+
 plot(griwrmV03)
 ```
 
@@ -89,6 +93,7 @@ The formatting of the input data is described in the vignette
 formatting procedure:
 
 ``` r
+
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
@@ -102,6 +107,7 @@ This time, we need to provide observed flows as inputs for the nodes
 ‘54002’ and ‘54095’:
 
 ``` r
+
 QobsInputs <- Qobs[, c("54001", "54002")]
 ```
 
@@ -109,6 +115,7 @@ Then, the `GRiwrmInputsModel` object can be generated taking into
 account the new `GRiwrm` object:
 
 ``` r
+
 IM_OL <- CreateInputsModel(griwrmV03, DatesR, Precip, PotEvap, QobsInputs)
 #> CreateInputsModel.GRiwrm: Processing sub-basin 54095...
 #> CreateInputsModel.GRiwrm: Processing sub-basin 54029...
@@ -125,6 +132,7 @@ simulated catchment is available.
 The following code chunk resumes this procedure:
 
 ``` r
+
 IndPeriod_Run <- seq(
   which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(DatesR) # Until the end of the time series
@@ -146,6 +154,7 @@ The **airGR** calibration process is applied on each hydrological node
 of the `GRiwrm` network from upstream nodes to downstream nodes.
 
 ``` r
+
 OC_OL <- suppressWarnings(
   Calibration(IM_OL, RunOptions, InputsCrit, CalibOptions))
 #> Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...
@@ -204,6 +213,7 @@ ParamV03 <- sapply(griwrmV03$id, function(x) {OC_OL[[x]]$Param})
 ### Run of the model with this newly calibrated parameters
 
 ``` r
+
 OM_OL <- RunModel(
   IM_OL,
   RunOptions = RunOptions,
@@ -223,6 +233,7 @@ influenced basins largely improves the model performance at downstream
 stations (better low-flow simulations).
 
 ``` r
+
 plot(OM_OL, Qobs = Qobs[IndPeriod_Run, ], which = "Regime")
 ```
 
@@ -232,6 +243,7 @@ The resulting flows of each node in m³/s are directly available and can
 be plotted with these commands:
 
 ``` r
+
 Qm3s <- attr(OM_OL, "Qm3s")
 plot(Qm3s[1:150, ])
 ```

@@ -15,6 +15,7 @@ This package is developed by:
 ## 🔧 Installation
 
 ``` r
+
 # Stable version from CRAN
 install.packages("airGRiwrm")
 

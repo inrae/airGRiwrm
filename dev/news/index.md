@@ -242,9 +242,8 @@ CRAN release: 2022-03-08
   ([\#33](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/33))
 - `CreateInputsModel`: Error when using data.frame for Qobs
   ([\#37](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/37))
-- `RunModel.Supervisor`: Error in
-  ctrlr$U\lbrack seq.int(length(sv$ts.index), i\]
-  ([\#39](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/39))
+- `RunModel.Supervisor`: Error in ctrlr$`U[seq.int(length(sv`$ts.index),
+  i\] ([\#39](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/39))
 - Supervisor: measurement on network downstream node returns `NULL`
   ([\#40](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/40))
 - `RunModel`: Suspected bug on `OutputsModel$Qsim` in the training

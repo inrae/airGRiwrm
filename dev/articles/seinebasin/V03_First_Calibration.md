@@ -10,6 +10,7 @@ Run `vignette("01_First_network", package = "airGRiwrm")` and
 order to create the Rdata files loaded below:
 
 ``` r
+
 library(airGRiwrm)
 ```
 
@@ -24,6 +25,7 @@ library(airGRiwrm)
     ##     CreateInputsModel, CreateRunOptions, RunModel
 
 ``` r
+
 load("_cache/V01.RData")
 load("_cache/V02.RData")
 library(seinebasin)
@@ -37,6 +39,7 @@ define the calibration objective function. We chose here the KGE’
 criterion:
 
 ``` r
+
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = ErrorCrit_KGE2,
@@ -447,6 +450,7 @@ str(InputsCrit)
 ## GRiwrmCalibOptions object
 
 ``` r
+
 CalibOptions <- CreateCalibOptions(InputsModel)
 str(CalibOptions)
 ```
@@ -609,6 +613,7 @@ str(CalibOptions)
 The optimization (i.e. calibration) of parameters can now be performed:
 
 ``` r
+
 OutputsCalib <- Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions)
 ```
 
@@ -1010,6 +1015,7 @@ Now that the model is calibrated, we can run it with the optimized
 parameter values:
 
 ``` r
+
 ParamMichel <- extractParam(OutputsCalib)
 
 OutputsModels <- RunModel(
@@ -1072,6 +1078,7 @@ OutputsModels <- RunModel(
 ## Plot the result for each basin
 
 ``` r
+
 plot(OutputsModels, Qobs = Qnat[IndPeriod_Run,])
 ```
 
@@ -1080,5 +1087,6 @@ plot(OutputsModels, Qobs = Qnat[IndPeriod_Run,])
 ## Save calibration data for next vignettes
 
 ``` r
+
 save(ParamMichel, file = "_cache/V03.RData")
 ```

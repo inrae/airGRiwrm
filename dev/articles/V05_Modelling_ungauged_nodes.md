@@ -1,6 +1,7 @@
 # Severn_05: Modeling ungauged stations
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -20,12 +21,12 @@ flows are available for calibration.
 different goals:
 
 - increase spatial resolution of the rain fall to improve streamflow
-  simulation (F. Lobligeois et al. 2014).
+  simulation (Lobligeois et al. 2014).
 - simulate streamflows in location of interest for management purpose
 
 This vignette introduces the implementation in airGRiwrm of the method
-developed by Florent Lobligeois (2014) for calibrating *Ungauged* nodes
-in a semi-distributed model.
+developed by Lobligeois (2014) for calibrating *Ungauged* nodes in a
+semi-distributed model.
 
 ### Presentation of the study case
 
@@ -38,13 +39,15 @@ gauged node `54032`.
 
 Hydrological parameters at the ungauged nodes will be the same as the
 one at the gauged node `54032` except for the unit hydrograph parameter
-which depend on the area of the sub-basin. Florent Lobligeois (2014)
-provides the following conversion formula for this parameter:
+which depend on the area of the sub-basin. Lobligeois (2014) provides
+the following conversion formula for this parameter:
 
-$$x_{4i} = \left( \frac{S_{i}}{S_{BV}} \right)^{0.3}X_{4}$$ With $X_{4}$
-the unit hydrograph parameter for the entire basin at `54032` which as
-an area of $S_{BV}$; $S_{i}$ the area and $x_{4i}$ the parameter for the
-sub-basin $i$.
+``` math
+x_{4i} = \left( \dfrac{S_i}{S_{BV}} \right) ^ {0.3} X_4
+```
+With $`X_4`$ the unit hydrograph parameter for the entire basin at
+`54032` which as an area of $`S_{BV}`$; $`S_i`$ the area and $`x_{4i}`$
+the parameter for the sub-basin $`i`$.
 
 ### Using *Ungauged* stations in the airGRiwrm model
 
@@ -52,6 +55,7 @@ sub-basin $i$.
 `model` column provided in the `CreateGRiwrm` function:
 
 ``` r
+
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
@@ -85,6 +89,7 @@ gauged ones with the same color (blue for upstream nodes and green for
 intermediate and downstream nodes)
 
 ``` r
+
 plot(griwrmV05)
 ```
 
@@ -97,6 +102,7 @@ The formatting of the input data is described in the vignette
 formatting procedure:
 
 ``` r
+
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
 PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
@@ -109,6 +115,7 @@ Then, the `GRiwrmInputsModel` object can be generated taking into
 account the new `GRiwrm` object:
 
 ``` r
+
 IM_U <- CreateInputsModel(griwrmV05, DatesR, Precip, PotEvap)
 #> CreateInputsModel.GRiwrm: Processing sub-basin 54095...
 #> CreateInputsModel.GRiwrm: Processing sub-basin 54002...
@@ -127,6 +134,7 @@ simulated catchment is available.
 The following code chunk resumes this procedure:
 
 ``` r
+
 IndPeriod_Run <- seq(
   which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(DatesR) # Until the end of the time series
@@ -152,6 +160,7 @@ model composed of the nodes `54029`, `54001` and `54032` sharing the
 same parameters.
 
 ``` r
+
 OC_U <- suppressWarnings(
   Calibration(IM_U, RunOptions, InputsCrit, CalibOptions))
 #> Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...
@@ -221,6 +230,7 @@ the gauged sub-basin `54032` for the *Ungauged* nodes `54001` and
 `54029`:
 
 ``` r
+
 ParamV05 <- sapply(griwrmV05$id, function(x) {OC_U[[x]]$Param})
 dfParam <- do.call(
   rbind,
@@ -243,6 +253,7 @@ knitr::kable(round(dfParam, 3))
 We can run the model with these calibrated parameters:
 
 ``` r
+
 OutputsModels <- RunModel(
   IM_U,
   RunOptions = RunOptions,
@@ -260,6 +271,7 @@ and plot the comparison of the modeled and the observed flows including
 the so-called *Ungauged* stations :
 
 ``` r
+
 plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,], which = c("Regime", "CumFreq"))
 ```
 

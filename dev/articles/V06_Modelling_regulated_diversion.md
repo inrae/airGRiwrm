@@ -1,6 +1,7 @@
 # Severn_06: Modeling a regulated diversion
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -26,6 +27,7 @@ of the flow downstream the station “54001”.
 Let’s compute the flow quantiles at each station in m3/s:
 
 ``` r
+
 Qobs <- cbind(sapply(Severn$BasinsObs, function(x) {x$discharge_spec}))
 Qobs <- Qobs[, Severn$BasinsInfo$gauge_id]
 Qobs_m3s <- t(apply(Qobs, 1, function(r) r * Severn$BasinsInfo$area * 1E3 / 86400))
@@ -54,6 +56,7 @@ The rule to apply is expressed as follow:
 
 ``` r
 
+
 nodes_div <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes_div$model <- "RunModel_GR4J"
 nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54001",
@@ -74,6 +77,7 @@ We produce below the same operations as in the vignette
 “V02_Calibration_SD_model” to prepare the input data:
 
 ``` r
+
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
@@ -92,6 +96,7 @@ be calculated during simulation, we provide a initial diverted flow
 equals to zero for all the time steps.
 
 ``` r
+
 Qdiv <- matrix(rep(0, length(DatesR)), ncol = 1)
 colnames(Qdiv) <- "54001"
 Qmin <- matrix(rep(11.5 * 86400, length(DatesR)), ncol = 1)
@@ -115,6 +120,7 @@ the simulation time step: 1 day. Each day, the decision is taken for the
 current day from the measurement simulated the previous time step.
 
 ``` r
+
 sv <- CreateSupervisor(IM_div, TimeStep = 1L)
 ```
 
@@ -129,6 +135,7 @@ We need to enclose the logic function in a function factory providing
 the Supervisor in the environment of the function:
 
 ``` r
+
 #' @param sv the Supervisor environment
 logicFunFactory <- function(sv) {
   #' @param Y Flow measured at "54002" the previous time step
@@ -150,6 +157,7 @@ We declare the controller which defines where is the measurement `Y` ,
 where to apply the decision `U` with which logic function:
 
 ``` r
+
 CreateController(sv,
                  ctrl.id = "Low flow support",
                  Y = "54029",
@@ -164,6 +172,7 @@ First we need to create a `GRiwrmRunOptions` object and load the
 parameters calibrated in the vignette “V02_Calibration_SD_model”:
 
 ``` r
+
 # Running simulation on year 2003
 IndPeriod_Run <- which(
   DatesR >= as.POSIXct("2003-03-01", tz = "UTC") &
@@ -182,12 +191,14 @@ routing its upstream flows. We arbitrary say that the velocity in the
 channel between “54001” and “54029” is 1 m/s.
 
 ``` r
+
 ParamV02$`54029` <- c(1, ParamV02$`54029`)
 ```
 
 And we run the supervised model:
 
 ``` r
+
 OM_div <- RunModel(sv, RunOptions = RunOptions, Param = ParamV02)
 #> Processing: 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%
 ```
@@ -197,6 +208,7 @@ model without the supervision (remember that we have set the diverted
 flow at zero in the inputs):
 
 ``` r
+
 OM_nat <- RunModel(IM_div, RunOptions = RunOptions, Param = ParamV02)
 #> RunModel.GRiwrmInputsModel: Processing sub-basin 54095...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin 54002...
@@ -212,6 +224,7 @@ Let’s plot the diverted flow, and compare the flow at stations 54029 and
 54001, with and without low-flow support at station 54001:
 
 ``` r
+
 dfQdiv <- data.frame(DatesR = OM_div[[1]]$DatesR,
                      Diverted_flow = OM_div$`54001`$Qdiv_m3 / 86400)
 

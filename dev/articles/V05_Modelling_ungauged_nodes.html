@@ -11,9 +11,9 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Severn_05: Modeling ungauged stations">
 <meta name="robots" content="noindex">
@@ -22,7 +22,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-primary" data-bs-theme="dark" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
@@ -114,15 +114,13 @@ model?<a class="anchor" aria-label="anchor" href="#why-modeling-ungauged-station
 reach two different goals:</p>
 <ul>
 <li>increase spatial resolution of the rain fall to improve streamflow
-simulation <span class="citation">(F. Lobligeois et al.
-2014)</span>.</li>
+simulation <span class="citation">(Lobligeois et al. 2014)</span>.</li>
 <li>simulate streamflows in location of interest for management
 purpose</li>
 </ul>
 <p>This vignette introduces the implementation in airGRiwrm of the
-method developed by <span class="citation">Florent Lobligeois
-(2014)</span> for calibrating <em>Ungauged</em> nodes in a
-semi-distributed model.</p>
+method developed by <span class="citation">Lobligeois (2014)</span> for
+calibrating <em>Ungauged</em> nodes in a semi-distributed model.</p>
 </div>
 <div class="section level3">
 <h3 id="presentation-of-the-study-case">Presentation of the study case<a class="anchor" aria-label="anchor" href="#presentation-of-the-study-case"></a>
@@ -135,9 +133,9 @@ sharing hydrological parameters of the gauged node
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/network-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 <p>Hydrological parameters at the ungauged nodes will be the same as the
 one at the gauged node <code>54032</code> except for the unit hydrograph
-parameter which depend on the area of the sub-basin. <span class="citation">Florent Lobligeois (2014)</span> provides the following
+parameter which depend on the area of the sub-basin. <span class="citation">Lobligeois (2014)</span> provides the following
 conversion formula for this parameter:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mn>4</mn><mi>i</mi></mrow></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mfrac displaystyle="true"><msub><mi>S</mi><mi>i</mi></msub><msub><mi>S</mi><mrow><mi>B</mi><mi>V</mi></mrow></msub></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mn>0.3</mn></msup><msub><mi>X</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mrow><mn>4</mn><mi>i</mi></mrow></msub><mo>=</mo><msup><mrow><mo stretchy="true" form="prefix">(</mo><mstyle displaystyle="true"><mfrac><msub><mi>S</mi><mi>i</mi></msub><msub><mi>S</mi><mrow><mi>B</mi><mi>V</mi></mrow></msub></mfrac></mstyle><mo stretchy="true" form="postfix">)</mo></mrow><mn>0.3</mn></msup><msub><mi>X</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">
 x_{4i} = \left( \dfrac{S_i}{S_{BV}} \right) ^ {0.3} X_4
 </annotation></semantics></math> With
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>X</mi><mn>4</mn></msub><annotation encoding="application/x-tex">X_4</annotation></semantics></math>
@@ -400,7 +398,7 @@ including the so-called <em>Ungauged</em> stations :</p>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-lobligeoisWhenDoesHigher2014" class="csl-entry">
 Lobligeois, F., V. Andréassian, C. Perrin, P. Tabary, and C. Loumagne.
 2014. <span>“When Does Higher Spatial Resolution Rainfall Information
@@ -427,7 +425,7 @@ thesis, AgroParisTech. <a href="https://pastel.hal.science/tel-01134990/document
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

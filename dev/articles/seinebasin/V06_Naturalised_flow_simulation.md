@@ -1,6 +1,7 @@
 # Seine_06: Simulate naturalized flows with a model network calibrated with influenced flows
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -27,6 +28,7 @@ parameters (for GR4J, see
 `vignette("V05_Open-loop_influenced_flow_calibration", package = "airGRiwrm")`):
 
 ``` r
+
 # Input data for the model
 load("_cache/V01.RData")
 # Calibration in influenced flows
@@ -38,6 +40,7 @@ is no longer upstream node on it since we remove the only upstream
 element for this station, a reservoir uptake:
 
 ``` r
+
 Param6 <- Param5
 Param6$STDIZ_04 <- Param6$STDIZ_04[-1]
 ```
@@ -46,6 +49,7 @@ We remove extra items from a complete configuration to keep only the
 Marne system:
 
 ``` r
+
 selectedNodes <- c("STDIZ_04", "LOUVE_19", "VITRY_25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm4 <- griwrm[griwrm$id %in% selectedNodes,]
 griwrm4[griwrm4$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
@@ -57,6 +61,7 @@ plot(griwrm4)
 We can now generate the new `GRiwrmInputsModel` object:
 
 ``` r
+
 data(QNAT)
 InputsModel4 <- CreateInputsModel(griwrm4,
                                   DatesR,
@@ -75,6 +80,7 @@ InputsModel4 <- CreateInputsModel(griwrm4,
 We first define the run period:
 
 ``` r
+
 IndPeriod_Run <- seq(366, length(DatesR)) # Until the end of the time series
 ```
 
@@ -82,10 +88,12 @@ We define the (optional but recommended) warm up period as a one-year
 period before the run period:
 
 ``` r
+
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
 
 ``` r
+
 RunOptions <- CreateRunOptions(
   InputsModel4,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -100,6 +108,7 @@ We keep the optimized parameter values obtained in
 and run the model:
 
 ``` r
+
 OutputsModels4 <- RunModel(
   InputsModel4,
   RunOptions = RunOptions,
@@ -119,6 +128,7 @@ We can finally compare the simulated naturalized flow with the ones
 given by Hydratec (2011):
 
 ``` r
+
 plot(OutputsModels4, Qobs = Qnat[IndPeriod_Run,])
 ```
 
@@ -126,10 +136,10 @@ plot(OutputsModels4, Qobs = Qnat[IndPeriod_Run,])
 
 ## References
 
-Hydratec. 2011. “Actualisation de La Base de Données Des Débits
-Journaliers ‘Naturalisés’ - Phase 2.” 26895 - LME/TL.
+Hydratec. 2011. *Actualisation de La Base de Données Des Débits
+Journaliers “Naturalisés” - Phase 2.* 26895 - LME/TL.
 
 Terrier, Morgane, Charles Perrin, Alban de Lavenne, Vazken Andréassian,
 Julien Lerat, and Jai Vaze. 2020. “Streamflow Naturalization Methods: A
-Review.” *Hydrological Sciences Journal*, November, 1–25.
+Review.” *Hydrological Sciences Journal*, November 26, 1–25.
 <https://doi.org/10.1080/02626667.2020.1839080>.

@@ -7,6 +7,7 @@ the ones of ‘airGR’.
 ## Load library
 
 ``` r
+
 library(airGRiwrm)
 ```
 
@@ -51,6 +52,7 @@ in the vignette “V01_Structure_SD_model” of the package. The following
 code chunk resumes all the steps of this vignette:
 
 ``` r
+
 data(Severn)
 nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
 nodes$model <- "RunModel_GR4J"
@@ -78,6 +80,7 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
     #> CreateInputsModel.GRiwrm: Processing sub-basin 54057...
 
 ``` r
+
 str(InputsModel)
 ```
 
@@ -337,6 +340,7 @@ Below, we define a one-year warm up period and we start the run period
 just after the warm up period.
 
 ``` r
+
 IndPeriod_Run <- seq(
   which(InputsModel[[1]]$DatesR == (InputsModel[[1]]$DatesR[1] + 365*24*60*60)), # Set aside warm-up period
   length(InputsModel[[1]]$DatesR) # Until the end of the time series
@@ -349,6 +353,7 @@ same as for the function in **airGR** and are copied for each node
 running a rainfall-runoff model.
 
 ``` r
+
 RunOptions <- CreateRunOptions(
   InputsModel,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -391,6 +396,7 @@ It needs the following arguments:
   Lavenne regularization)
 
 ``` r
+
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel,
   FUN_CRIT = ErrorCrit_KGE2,
@@ -515,6 +521,7 @@ function. The `GRiwrmInputsModel` argument contains all the necessary
 information:
 
 ``` r
+
 CalibOptions <- CreateCalibOptions(InputsModel)
 ```
 
@@ -524,6 +531,7 @@ The **airGR** calibration process is applied on each node of the
 `GRiwrm` network from upstream nodes to downstream nodes.
 
 ``` r
+
 OutputsCalib <- suppressWarnings(
   Calibration(InputsModel, RunOptions, InputsCrit, CalibOptions))
 ```
@@ -608,6 +616,7 @@ OutputsCalib <- suppressWarnings(
 ## Run the model with the optimized model parameters
 
 ``` r
+
 OutputsModels <- RunModel(
   InputsModel,
   RunOptions = RunOptions,
@@ -630,6 +639,7 @@ OutputsModels <- RunModel(
 ## Plot the results for each basin
 
 ``` r
+
 plot(OutputsModels, Qobs = Qobs[IndPeriod_Run,])
 ```
 
@@ -639,6 +649,7 @@ The resulting flows of each node in m³/s are directly available and can
 be plotted with these commands:
 
 ``` r
+
 Qm3s <- attr(OutputsModels, "Qm3s")
 plot(Qm3s[1:150,])
 ```

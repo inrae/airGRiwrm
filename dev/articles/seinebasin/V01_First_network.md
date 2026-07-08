@@ -1,6 +1,7 @@
 # Seine_01: Structuration of a semi-distributed GR4J model network
 
 ``` r
+
 library(airGRiwrm)
 ```
 
@@ -29,6 +30,7 @@ Dorchies et al. (2014).
 First, we must read the list of nodes and the associated metadata:
 
 ``` r
+
 seine_nodes <- read.table(
   file = system.file("seine_data", "network_gauging_stations.txt", package = "seinebasin"),
   sep = ";", header = TRUE, fileEncoding = "UTF-8", quote = "\"", stringsAsFactors = FALSE
@@ -105,6 +107,7 @@ The `CreateGRiwrm` function helps to rename the columns of the dataframe
 and assign the variable classes.
 
 ``` r
+
 seine_nodes$id_aval[seine_nodes$id_aval == ""] <- NA
 seine_nodes$distance_aval <- as.double(seine_nodes$distance_aval) / 1000
 seine_nodes$model <- "RunModel_GR4J"
@@ -148,6 +151,7 @@ the upstream nodes with a GR4J model and in green the intermediate nodes
 with an SD (GR4J + LAG) model.
 
 ``` r
+
 plot(griwrm)
 ```
 
@@ -165,6 +169,7 @@ These data are embedded in the R package ‘seinebasin’, which is not
 publicly available.
 
 ``` r
+
 library(seinebasin)
 data(QNAT)
 ```
@@ -179,6 +184,7 @@ The **airGR** CreateInputsModel function is extended in order to handle
 the GRiwrm object that describes the basin diagram:
 
 ``` r
+
 InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 ```
 
@@ -235,26 +241,26 @@ InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
 ### Save data for next vignettes
 
 ``` r
+
 dir.create("_cache", showWarnings = FALSE)
 save(seine_nodes, griwrm, InputsModel, file = "_cache/V01.RData")
 ```
 
 ## References
 
-Dorchies, David, Guillaume Thirel, Maxime Jay-Allemand, Mathilde
-Chauveau, Florine Dehay, Pierre-Yves Bourgin, Charles Perrin, et al.
-2014. “Climate Change Impacts on Multi-Objective Reservoir Management:
-Case Study on the Seine River Basin, France.” *International Journal of
-River Basin Management* 12 (3): 265–83.
+Dorchies, David, Guillaume Thirel, Maxime Jay-Allemand, et al. 2014.
+“Climate Change Impacts on Multi-Objective Reservoir Management: Case
+Study on the Seine River Basin, France.” *International Journal of River
+Basin Management* 12 (3): 265–83.
 <https://doi.org/10.1080/15715124.2013.865636>.
 
-Hydratec. 2011. “Actualisation de La Base de Données Des Débits
-Journaliers ‘Naturalisés’ - Phase 2.” 26895 - LME/TL.
+Hydratec. 2011. *Actualisation de La Base de Données Des Débits
+Journaliers “Naturalisés” - Phase 2.* 26895 - LME/TL.
 
-Theobald, S., K. Träbing, K. Kehr, V. Aufenanger, M. Flörke, C.
-Schneider, C. Perrin, et al. 2014. “ClimAware: Impacts of Climate Change
-on Water Resources Management. Regional Strategies and European View.
-Final Report.” <http://irsteadoc.irstea.fr/cemoa/PUB00040932>.
+Theobald, S., K. Träbing, K. Kehr, et al. 2014. *ClimAware: Impacts of
+Climate Change on Water Resources Management. Regional Strategies and
+European View. Final Report*.
+<http://irsteadoc.irstea.fr/cemoa/PUB00040932>.
 
 Vidal, Jean-Philippe, Eric Martin, Laurent Franchistéguy, Martine
 Baillon, and Jean-Michel Soubeyroux. 2010. “A 50-Year High-Resolution

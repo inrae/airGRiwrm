@@ -1,6 +1,7 @@
 # Seine_04: Running open-loop influenced flow semi-distributed model network
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -45,32 +46,22 @@ The configuration on the lake Seine is similar:
 which can be translated as:
 
     #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
+    #> URL
     #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png':
-    #> HTTP status was '503 Service Unavailable'
+    #> Timeout of 60 seconds was reached
     #> Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 -->|79.7km| MERY-_22\n  SEINE_P7 -->|73.7km| MERY-_22\n  SEINE_R8 -->|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n"): Mermaid diagram generation failed with error:
     #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png'
 
 The Pannecière lake is an inline reservoir:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 -->|0km| P\nP --> |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_true-1.png)
 
 We can keep the same structure to model it. `PANNEC_R` corresponds to
 the flow released by the Pannecière lake, it is acting as an upstream
 node which means that the flow simulated at `CHAUM_07` is no longer
 routed to downstream.
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --> |0km| PANNEC_R\nPANNEC_R --> |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png)
 
 The Marne lake can be mapped as:
 
@@ -78,17 +69,13 @@ The Marne lake can be mapped as:
 
 And can be modeled as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nMARNE_P23 -->|3km| STDIZ_04\nLOUVE_19 -->|83km| CHALO_21\nMARNE_P28 -->|82.5km| CHALO_21\nSTDIZ_04 -->|85.6km| CHALO_21\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_model-1.png)
 
 Hence the topological connection to the reservoirs is described in the
 model as below:
 
 ``` r
+
 reservoir_connections <- read.table(
   file = system.file("seine_data", "network_reservoir_connections.txt", package = "seinebasin"),
   sep = ";", header = TRUE
@@ -108,6 +95,7 @@ reservoir_connections
 Reservoir connections are added to the GRiwrm object:
 
 ``` r
+
 reservoir_connections$length <- reservoir_connections$length / 1000
 reservoir_connections$model <- NA
 reservoir_connections$area <- NA
@@ -130,6 +118,7 @@ Description of the files, the columns and the type of connection (inlet
 / outlet) are defined in the list below:
 
 ``` r
+
 lCfgReservoirs <- jsonlite::read_json(system.file("seine_data", "config_reservoirs.json", package = "seinebasin"))
 str(lCfgReservoirs)
 #> List of 4
@@ -174,6 +163,7 @@ str(lCfgReservoirs)
 Then, we load observation data for each reservoir and each connection:
 
 ``` r
+
 library(seinebasin)
 data(QNAT)
 data(Qreservoirs)
@@ -182,6 +172,7 @@ data(Qreservoirs)
 ### Create the InputsModel object
 
 ``` r
+
 InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
 #> CreateInputsModel.GRiwrm: Processing sub-basin TRANN_01...
 #> CreateInputsModel.GRiwrm: Processing sub-basin STDIZ_04...
@@ -215,6 +206,7 @@ InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
 #### Load calibration parameters
 
 ``` r
+
 # Load RunOptions
 load("_cache/V02.RData")
 # Load calibrated parameters with Michel's method
@@ -227,6 +219,7 @@ A lag parameter is now mandatory for these sub-basins. As no calibration
 is possible at that stage an arbitrary one will be used (1 m/s).
 
 ``` r
+
 ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
 ```
 
@@ -235,6 +228,7 @@ ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
 We can now run the model, using the parameters previously obtained:
 
 ``` r
+
 RunOptions <- CreateRunOptions(
   InputsModel2,
   IndPeriod_Run = IndPeriod_Run
@@ -330,6 +324,7 @@ OutputsModels2 <- RunModel(
 #### Load observed flows
 
 ``` r
+
 data(QOBS)
 ```
 
@@ -339,6 +334,7 @@ We can compare these simulated flows with influenced discharge
 measurements:
 
 ``` r
+
 ReduceOutputsModel <- function(OutputsModels, IndPeriod) {
   items <- names(OutputsModels)
   OutputsModelsOut <- sapply(items, function(x) {
@@ -379,6 +375,7 @@ htmltools::tagList(lapply(
 ### Save data for next vignettes
 
 ``` r
+
 save(griwrm2, ReduceOutputsModel, file = "_cache/V04.RData")
 ```
 

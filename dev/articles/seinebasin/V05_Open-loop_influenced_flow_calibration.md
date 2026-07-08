@@ -1,6 +1,7 @@
 # Seine_05: Calibration of an open-loop influenced flow semi-distributed model network
 
 ``` r
+
 library(airGRiwrm)
 #> Loading required package: airGR
 #> 
@@ -21,6 +22,7 @@ gauging stations and flows recorded at reservoir inlets and outlets.
 Loading naturalized data and influenced flows configuration:
 
 ``` r
+
 load("_cache/V04.RData")
 ```
 
@@ -28,6 +30,7 @@ We remove extra items from a complete configuration to keep only the
 Marne system:
 
 ``` r
+
 selectedNodes <- c("MARNE_P23", "STDIZ_04", "LOUVE_19", "VITRY_25", "MARNE_P28", "MARNE_R25", "CHALO_21", "MONTR_18", "NOISI_17")
 griwrm3 <- griwrm2[griwrm2$id %in% selectedNodes,]
 griwrm3[griwrm3$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
@@ -39,6 +42,7 @@ plot(griwrm3)
 We can now generate the new `GRiwrmInputsModel` object:
 
 ``` r
+
 library(seinebasin)
 data(QOBS)
 iEnd <- which(DatesR == as.POSIXct("2008-07-31", tz = "UTC"))
@@ -64,6 +68,7 @@ InputsModel3 <- CreateInputsModel(griwrm3,
 We first define the run period:
 
 ``` r
+
 IndPeriod_Run <- seq.int(
   which(DatesR == (DatesR[1] + 365 * 24 * 60 * 60)), # Set aside warm-up period
   iEnd # Until the end of the time series
@@ -74,10 +79,12 @@ We define the (optional but recommended) warm up period as a one-year
 period before the run period:
 
 ``` r
+
 IndPeriod_WarmUp <- seq.int(1, IndPeriod_Run[1] - 1)
 ```
 
 ``` r
+
 RunOptions <- CreateRunOptions(
   InputsModel3,
   IndPeriod_WarmUp = IndPeriod_WarmUp,
@@ -90,6 +97,7 @@ RunOptions <- CreateRunOptions(
 We define the objective function for the calibration:
 
 ``` r
+
 InputsCrit <- CreateInputsCrit(
   InputsModel = InputsModel3,
   FUN_CRIT = ErrorCrit_KGE2,
@@ -100,6 +108,7 @@ InputsCrit <- CreateInputsCrit(
 ### GRiwrmCalibOptions object
 
 ``` r
+
 CalibOptions <- CreateCalibOptions(InputsModel3)
 str(CalibOptions)
 #> List of 6
@@ -147,6 +156,7 @@ str(CalibOptions)
 The optimization (i.e. calibration) of parameters can now be performed:
 
 ``` r
+
 OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 #> Calibration.GRiwrmInputsModel: Processing sub-basin 'STDIZ_04'...
 #> Grid-Screening in progress (0% 20% 40% 60% 80% 100%)
@@ -244,6 +254,7 @@ Now that the model is calibrated, we can run it with the optimized
 parameter values:
 
 ``` r
+
 Param5 <- extractParam(OutputsCalib)
 
 OutputsModels3 <- RunModel(
@@ -267,6 +278,7 @@ We can compare these simulated flows with influenced discharge
 measurements:
 
 ``` r
+
 htmltools::tagList(lapply(
   griwrm3$id[!is.na(griwrm3$model)],
   function(x) {
@@ -287,5 +299,6 @@ htmltools::tagList(lapply(
 ## Save data for following vignettes
 
 ``` r
+
 save(Param5, file = "_cache/V05.RData")
 ```
