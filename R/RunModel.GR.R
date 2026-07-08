@@ -13,8 +13,7 @@
 #' @param ... further arguments passed to or from other methods
 #'
 #' @inherit airGR::RunModel description details return
-#' @noRd
-#'
+#' @export
 RunModel.GR <- function(x, RunOptions, Param, ...) {
   if (inherits(x, "SD")) {
     # Lag model take one parameter at the beginning of the vector

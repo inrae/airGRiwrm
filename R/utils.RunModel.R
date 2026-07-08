@@ -132,7 +132,7 @@ calcOverAbstraction <- function(O, WarmUp) {
 #' @param TimeStep [integer] number of time steps to get after the end of the
 #' simulation
 #'
-#' @return A [POSIXct] containing the date/time of the time steps following
+#' @return A `base::POSIXct` vector containing the date/time of the time steps following
 #' the end of the simulation.
 #' @export
 #'

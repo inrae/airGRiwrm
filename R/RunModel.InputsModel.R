@@ -143,6 +143,7 @@ calc_Qdiv <- function(Qnat, Qdiv, Qmin) {
   return(list(Qsim = Qsim, Qdiv = Qnat - Qsim))
 }
 
+#' @export
 #' @noRd
 RunModel.Ungauged <- function(InputsModel, ...) {
   RunModel_Ungauged(InputsModel, ...)
