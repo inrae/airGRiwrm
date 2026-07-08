@@ -316,4 +316,147 @@ OM_reg <- RunModel(IM_reg, RunOptions, Param)
 
 # And plot the new result
 plot(OM_reg$Reservoir, Vobs = Vobj$y[lubridate::yday(OM_reg$Reservoir$DatesR)])
+
+
+#############################################################
+# Supervised reservoir management tracking an objective     #
+# filling curve using a PID Controller with Vsim as         #
+# controlled variable: Y = Reservoir$Vsim                   #
+#############################################################
+
+# The objective here is to use a Supervisor with a Controller
+# that regulates the reservoir to follow an annual objective
+# filling curve defined by Vobj.
+#
+# This example demonstrates the Supervisor pattern for reservoir
+# regulation, where the control logic is called at each time step
+# during the simulation, using actual model outputs as feedback.
+#
+# The key difference from the local regulation example above is that
+# in the Supervisor pattern, the control function receives actual
+# simulated values from the model at each step, enabling true
+# closed-loop control.
+
+# PID control logic factory:
+# Creates a control function that uses Proportional-Derivative (PD)
+# control to track the objective volume curve.
+#
+# Parameters enclosed in the function environment:
+# - Vobj: objective filling curve (volume by day of year)
+# - Qmin: minimum release flow (m3/day)
+# - Qmax: maximum release flow (m3/day)
+#
+# PID formula: U = Kp * error + Kd * dError
+# where:
+#   error = Vsim - Vobj_ts (volume error)
+#   dError = error - prevError (rate of change of error)
+#   Kp = proportional gain, Kd = derivative gain
+#
+# The derivative term compensates for the one-step delay in the
+# Supervisor loop (Y values are from ts.previous) by anticipating
+# the error trend and providing preemptive correction.
+factoryReservoirLogic <- function(Vobj, Qmin, Qmax) {
+  # PID control gains
+  Kp <- 1 # Proportional gain: reacts to current volume error
+  Kd <- 1 # Derivative gain: anticipates future error trend
+  prevError <- 0 # Previous time step error (for derivative term)
+
+  # Control logic function called by the Supervisor at each time step
+  #
+  # Input: Y = matrix of controlled variables from the model
+  #        Y[1] = Vsim from the Reservoir node (simulated volume)
+  #
+  # Output: U = control action (release flow to apply)
+  function(Y) {
+    # Read simulated volume from the model
+    Vsim <- Y[1]
+
+    # Get day-of-year for the objective curve lookup
+    j <- as.numeric(format(sv$ts.date, "%j"))
+    Vobj_ts <- approx(Vobj, xout = j)$y
+
+    # Compute volume error: positive means Vsim > Vobj (excess water)
+    error <- Vsim - Vobj_ts
+
+    # PD control action:
+    # P term: proportional to current error
+    # D term: proportional to error rate of change (dError)
+    # The D term provides preemptive correction based on error trend
+    dError <- error - prevError
+    U <- Kp * error + Kd * dError
+
+    # Store error for next time step derivative calculation
+    prevError <- error
+
+    # Apply physical constraints on release
+    U <- max(Qmin, U)
+    U <- min(Qmax, U)
+
+    return(U)
+  }
+}
+
+# Build the control logic function with parameters enclosed in environment
+ReservoirLogic <- factoryReservoirLogic(
+  Vobj = Vobj,
+  Qmin = Qmin,
+  Qmax = Qmax
+)
+
+# Create InputsModel with zero Qrelease (will be controlled by the Controller)
+QreleaseEmpty <- data.frame(Reservoir = rep(0, length(BasinObs$DatesR)))
+IM_Sup <- CreateInputsModel(
+  griwrm,
+  DatesR = BasinObs$DatesR,
+  Precip = Precip,
+  PotEvap = PotEvap,
+  Qrelease = QreleaseEmpty
+)
+#> CreateInputsModel.GRiwrm: Processing sub-basin L0123001...
+#> CreateInputsModel.GRiwrm: Processing sub-basin Reservoir...
+
+# Create the Supervisor object from InputsModel
+sv <- CreateSupervisor(IM_Sup)
+
+# Create the Controller:
+# Y = "Reservoir$Vsim": reads simulated volume from Reservoir node
+# U = "Reservoir$Qrelease": sets release flow for Reservoir node
+# FUN = ReservoirLogic: the PD control function defined above
+CreateController(
+  sv,
+  ctrl.id = "ReservoirObjectiveCurve",
+  Y = "Reservoir$Vsim",
+  U = "Reservoir$Qrelease",
+  FUN = ReservoirLogic
+)
+#> The controller 'ReservoirObjectiveCurve' has been added to the supervisor
+
+# Run options with warm-up period starting from empty reservoir
+RO_Sup <- CreateRunOptions(
+  IM_Sup,
+  IndPeriod_Run = Ind_Run,
+  IndPeriod_WarmUp = seq.int(Ind_Run[1] - 365, length.out = 365),
+  IniStates = list(Reservoir = c("Reservoir.V" = 0))
+)
+
+# Run the supervised simulation
+OM_Sup <- RunModel(sv, RunOptions = RO_Sup, Param = Param)
+#> Processing: 0%
+#>  10%
+#>  20%
+#>  30%
+#>  40%
+#>  50%
+#>  60%
+#>  70%
+#>  80%
+#>  90%
+#>  100%
+
+# Plot the supervised simulation results
+# Compare Vsim with the objective filling curve
+plot(
+  OM_Sup$Reservoir,
+  Vobs = Vobj$y[lubridate::yday(OM_Sup$Reservoir$DatesR)]
+)
 ```

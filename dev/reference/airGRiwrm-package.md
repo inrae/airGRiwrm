@@ -97,6 +97,11 @@ Useful links:
 **Maintainer**: David Dorchies <david.dorchies@inrae.fr>
 ([ORCID](https://orcid.org/0000-0002-6595-7984))
 
+Authors:
+
+- David Dorchies <david.dorchies@inrae.fr>
+  ([ORCID](https://orcid.org/0000-0002-6595-7984))
+
 Other contributors:
 
 - Olivier Delaigue <airGR@inrae.fr>

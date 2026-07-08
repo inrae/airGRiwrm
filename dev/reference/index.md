@@ -52,6 +52,9 @@
 - [`CreateSupervisor()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md)
   : Creation of a Supervisor for handling regulation in a model
 
+- [`RunModel(`*`<GR>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GR.md)
+  : Run of a rainfall-runoff model on a sub-basin
+
 - [`RunModel(`*`<GRiwrmInputsModel>`*`)`](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GRiwrmInputsModel.md)
   :
 

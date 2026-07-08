@@ -23,8 +23,9 @@ a [list](https://rdrr.io/r/base/list.html) with 2 items:
 - "BasinObs" which contains a [list](https://rdrr.io/r/base/list.html)
   with an item by gauging station which contains a
   [data.frame](https://rdrr.io/r/base/data.frame.html) with
-  lubridate::POSIXct dates, precipitations (mm/time step), potential
-  evapotranspiration (mm/time step) and measured flows (mm/time step)
+  [base::POSIXct](https://rdrr.io/r/base/DateTimeClasses.html) dates,
+  precipitations (mm/time step), potential evapotranspiration (mm/time
+  step) and measured flows (mm/time step)
 
 ## Source
 

@@ -25,5 +25,6 @@ getNextTimeSteps(x, TimeStep = 1L)
 
 ## Value
 
-A lubridate::POSIXct containing the date/time of the time steps
-following the end of the simulation.
+A [`base::POSIXct`](https://rdrr.io/r/base/DateTimeClasses.html) vector
+containing the date/time of the time steps following the end of the
+simulation.

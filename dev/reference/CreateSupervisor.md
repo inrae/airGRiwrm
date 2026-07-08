@@ -25,7 +25,8 @@ A `Supervisor` object which is an
 [environment](https://rdrr.io/r/base/environment.html) containing all
 the necessary variables to run a supervised simulation, such as:
 
-- `DatesR` lubridate::POSIXct: vector of date from `InputsModel`
+- `DatesR` [base::POSIXct](https://rdrr.io/r/base/DateTimeClasses.html):
+  vector of date from `InputsModel`
 
 - `InputsModel`: a copy of `InputsModel` provided by
   [CreateInputsModel.GRiwrm](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.GRiwrm.md)

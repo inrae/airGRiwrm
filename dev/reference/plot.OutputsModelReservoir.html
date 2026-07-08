@@ -327,6 +327,149 @@
 <span class="r-in"><span><span class="co"># And plot the new result</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OM_reg</span><span class="op">$</span><span class="va">Reservoir</span>, Vobs <span class="op">=</span> <span class="va">Vobj</span><span class="op">$</span><span class="va">y</span><span class="op">[</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">yday</a></span><span class="op">(</span><span class="va">OM_reg</span><span class="op">$</span><span class="va">Reservoir</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.OutputsModelReservoir-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">#############################################################</span></span></span>
+<span class="r-in"><span><span class="co"># Supervised reservoir management tracking an objective     #</span></span></span>
+<span class="r-in"><span><span class="co"># filling curve using a PID Controller with Vsim as         #</span></span></span>
+<span class="r-in"><span><span class="co"># controlled variable: Y = Reservoir$Vsim                   #</span></span></span>
+<span class="r-in"><span><span class="co">#############################################################</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The objective here is to use a Supervisor with a Controller</span></span></span>
+<span class="r-in"><span><span class="co"># that regulates the reservoir to follow an annual objective</span></span></span>
+<span class="r-in"><span><span class="co"># filling curve defined by Vobj.</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># This example demonstrates the Supervisor pattern for reservoir</span></span></span>
+<span class="r-in"><span><span class="co"># regulation, where the control logic is called at each time step</span></span></span>
+<span class="r-in"><span><span class="co"># during the simulation, using actual model outputs as feedback.</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># The key difference from the local regulation example above is that</span></span></span>
+<span class="r-in"><span><span class="co"># in the Supervisor pattern, the control function receives actual</span></span></span>
+<span class="r-in"><span><span class="co"># simulated values from the model at each step, enabling true</span></span></span>
+<span class="r-in"><span><span class="co"># closed-loop control.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># PID control logic factory:</span></span></span>
+<span class="r-in"><span><span class="co"># Creates a control function that uses Proportional-Derivative (PD)</span></span></span>
+<span class="r-in"><span><span class="co"># control to track the objective volume curve.</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># Parameters enclosed in the function environment:</span></span></span>
+<span class="r-in"><span><span class="co"># - Vobj: objective filling curve (volume by day of year)</span></span></span>
+<span class="r-in"><span><span class="co"># - Qmin: minimum release flow (m3/day)</span></span></span>
+<span class="r-in"><span><span class="co"># - Qmax: maximum release flow (m3/day)</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># PID formula: U = Kp * error + Kd * dError</span></span></span>
+<span class="r-in"><span><span class="co"># where:</span></span></span>
+<span class="r-in"><span><span class="co">#   error = Vsim - Vobj_ts (volume error)</span></span></span>
+<span class="r-in"><span><span class="co">#   dError = error - prevError (rate of change of error)</span></span></span>
+<span class="r-in"><span><span class="co">#   Kp = proportional gain, Kd = derivative gain</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># The derivative term compensates for the one-step delay in the</span></span></span>
+<span class="r-in"><span><span class="co"># Supervisor loop (Y values are from ts.previous) by anticipating</span></span></span>
+<span class="r-in"><span><span class="co"># the error trend and providing preemptive correction.</span></span></span>
+<span class="r-in"><span><span class="va">factoryReservoirLogic</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">Vobj</span>, <span class="va">Qmin</span>, <span class="va">Qmax</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="co"># PID control gains</span></span></span>
+<span class="r-in"><span>  <span class="va">Kp</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># Proportional gain: reacts to current volume error</span></span></span>
+<span class="r-in"><span>  <span class="va">Kd</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># Derivative gain: anticipates future error trend</span></span></span>
+<span class="r-in"><span>  <span class="va">prevError</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co"># Previous time step error (for derivative term)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Control logic function called by the Supervisor at each time step</span></span></span>
+<span class="r-in"><span>  <span class="co">#</span></span></span>
+<span class="r-in"><span>  <span class="co"># Input: Y = matrix of controlled variables from the model</span></span></span>
+<span class="r-in"><span>  <span class="co">#        Y[1] = Vsim from the Reservoir node (simulated volume)</span></span></span>
+<span class="r-in"><span>  <span class="co">#</span></span></span>
+<span class="r-in"><span>  <span class="co"># Output: U = control action (release flow to apply)</span></span></span>
+<span class="r-in"><span>  <span class="kw">function</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="co"># Read simulated volume from the model</span></span></span>
+<span class="r-in"><span>    <span class="va">Vsim</span> <span class="op">&lt;-</span> <span class="va">Y</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># Get day-of-year for the objective curve lookup</span></span></span>
+<span class="r-in"><span>    <span class="va">j</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">sv</span><span class="op">$</span><span class="va">ts.date</span>, <span class="st">"%j"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">Vobj_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">approx</a></span><span class="op">(</span><span class="va">Vobj</span>, xout <span class="op">=</span> <span class="va">j</span><span class="op">)</span><span class="op">$</span><span class="va">y</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># Compute volume error: positive means Vsim &gt; Vobj (excess water)</span></span></span>
+<span class="r-in"><span>    <span class="va">error</span> <span class="op">&lt;-</span> <span class="va">Vsim</span> <span class="op">-</span> <span class="va">Vobj_ts</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># PD control action:</span></span></span>
+<span class="r-in"><span>    <span class="co"># P term: proportional to current error</span></span></span>
+<span class="r-in"><span>    <span class="co"># D term: proportional to error rate of change (dError)</span></span></span>
+<span class="r-in"><span>    <span class="co"># The D term provides preemptive correction based on error trend</span></span></span>
+<span class="r-in"><span>    <span class="va">dError</span> <span class="op">&lt;-</span> <span class="va">error</span> <span class="op">-</span> <span class="va">prevError</span></span></span>
+<span class="r-in"><span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="va">Kp</span> <span class="op">*</span> <span class="va">error</span> <span class="op">+</span> <span class="va">Kd</span> <span class="op">*</span> <span class="va">dError</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># Store error for next time step derivative calculation</span></span></span>
+<span class="r-in"><span>    <span class="va">prevError</span> <span class="op">&lt;-</span> <span class="va">error</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="co"># Apply physical constraints on release</span></span></span>
+<span class="r-in"><span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">Qmin</span>, <span class="va">U</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">Qmax</span>, <span class="va">U</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">U</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Build the control logic function with parameters enclosed in environment</span></span></span>
+<span class="r-in"><span><span class="va">ReservoirLogic</span> <span class="op">&lt;-</span> <span class="fu">factoryReservoirLogic</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Vobj <span class="op">=</span> <span class="va">Vobj</span>,</span></span>
+<span class="r-in"><span>  Qmin <span class="op">=</span> <span class="va">Qmin</span>,</span></span>
+<span class="r-in"><span>  Qmax <span class="op">=</span> <span class="va">Qmax</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create InputsModel with zero Qrelease (will be controlled by the Controller)</span></span></span>
+<span class="r-in"><span><span class="va">QreleaseEmpty</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">IM_Sup</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">griwrm</span>,</span></span>
+<span class="r-in"><span>  DatesR <span class="op">=</span> <span class="va">BasinObs</span><span class="op">$</span><span class="va">DatesR</span>,</span></span>
+<span class="r-in"><span>  Precip <span class="op">=</span> <span class="va">Precip</span>,</span></span>
+<span class="r-in"><span>  PotEvap <span class="op">=</span> <span class="va">PotEvap</span>,</span></span>
+<span class="r-in"><span>  Qrelease <span class="op">=</span> <span class="va">QreleaseEmpty</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin L0123001...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin Reservoir...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create the Supervisor object from InputsModel</span></span></span>
+<span class="r-in"><span><span class="va">sv</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateSupervisor.html">CreateSupervisor</a></span><span class="op">(</span><span class="va">IM_Sup</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Create the Controller:</span></span></span>
+<span class="r-in"><span><span class="co"># Y = "Reservoir$Vsim": reads simulated volume from Reservoir node</span></span></span>
+<span class="r-in"><span><span class="co"># U = "Reservoir$Qrelease": sets release flow for Reservoir node</span></span></span>
+<span class="r-in"><span><span class="co"># FUN = ReservoirLogic: the PD control function defined above</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="CreateController.html">CreateController</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">sv</span>,</span></span>
+<span class="r-in"><span>  ctrl.id <span class="op">=</span> <span class="st">"ReservoirObjectiveCurve"</span>,</span></span>
+<span class="r-in"><span>  Y <span class="op">=</span> <span class="st">"Reservoir$Vsim"</span>,</span></span>
+<span class="r-in"><span>  U <span class="op">=</span> <span class="st">"Reservoir$Qrelease"</span>,</span></span>
+<span class="r-in"><span>  FUN <span class="op">=</span> <span class="va">ReservoirLogic</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The controller 'ReservoirObjectiveCurve' has been added to the supervisor</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run options with warm-up period starting from empty reservoir</span></span></span>
+<span class="r-in"><span><span class="va">RO_Sup</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">IM_Sup</span>,</span></span>
+<span class="r-in"><span>  IndPeriod_Run <span class="op">=</span> <span class="va">Ind_Run</span>,</span></span>
+<span class="r-in"><span>  IndPeriod_WarmUp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq.int</a></span><span class="op">(</span><span class="va">Ind_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">365</span>, length.out <span class="op">=</span> <span class="fl">365</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  IniStates <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Reservoir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reservoir.V"</span> <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run the supervised simulation</span></span></span>
+<span class="r-in"><span><span class="va">OM_Sup</span> <span class="op">&lt;-</span> <span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">sv</span>, RunOptions <span class="op">=</span> <span class="va">RO_Sup</span>, Param <span class="op">=</span> <span class="va">Param</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Processing: 0%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  10%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  20%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  30%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  40%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  50%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  60%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  70%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  80%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  90%</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>  100%</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot the supervised simulation results</span></span></span>
+<span class="r-in"><span><span class="co"># Compare Vsim with the objective filling curve</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">OM_Sup</span><span class="op">$</span><span class="va">Reservoir</span>,</span></span>
+<span class="r-in"><span>  Vobs <span class="op">=</span> <span class="va">Vobj</span><span class="op">$</span><span class="va">y</span><span class="op">[</span><span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/day.html" class="external-link">yday</a></span><span class="op">(</span><span class="va">OM_Sup</span><span class="op">$</span><span class="va">Reservoir</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.OutputsModelReservoir-6.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

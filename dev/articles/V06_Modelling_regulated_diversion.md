@@ -67,9 +67,13 @@ nodes_div <- rbind(nodes_div, data.frame(gauge_id = "54001",
 renameCols <- list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
 griwrmV06 <- CreateGRiwrm(nodes_div, renameCols)
 plot(griwrmV06)
+#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+#> URL
+#> 'https://mermaid.ink/img/pako:eNqtlF9rwjAUxb9KqIgvFTRZkHawJ0GEPTl8cmNczI1mtlHS6Cbqd1_XtTWtf5jDl0t78zuHc29Kd950KdALvWZzp7SyIdm17BxjbIWkpXFtDUStAzk0m6_6Vc8MrObkefTzrMQ7f-gEfJLVt2OrQydZdVvdrNV9u4OQBpOsOi2WCZkr5L1JVu8hDDhpt5_25IGSRbwnRTI3eA4wB-A9d4wc4A7A6ClAXYAGbvhfgNELDizP0OUnGaYRJAkpZvHLzONVYg1CPID1DEWd7HT9MttQWzQxCgUWf-m-2qBJ1FLXZTTwi0B-EeKMvpT1URKBEtaRJWmc5QLDBmOscl4EHetZJiZSRVHYQJRnsYELAVQhN0rdT-JFtOopoQKOMEGzWSqTnweiatRXBqd2qD_Smq4spyTA1SnLFR_H9csVpeLipf2phJ2HbPV1ZRt1s3Qtt5id29pJPon_tbyQUcIthuUt1H3S6_iDT6T04sVuIyTsCkxXX37eEJDMwRjYhoQT_uj5XpwOBEp44c7L_qHpbzX_tL3D4Rv7v9Ne?type=png':
+#> Timeout of 60 seconds was reached
+#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
+#> cannot open URL 'https://mermaid.ink/img/pako:eNqtlF9rwjAUxb9KqIgvFTRZkHawJ0GEPTl8cmNczI1mtlHS6Cbqd1_XtTWtf5jDl0t78zuHc29Kd950KdALvWZzp7SyIdm17BxjbIWkpXFtDUStAzk0m6_6Vc8MrObkefTzrMQ7f-gEfJLVt2OrQydZdVvdrNV9u4OQBpOsOi2WCZkr5L1JVu8hDDhpt5_25IGSRbwnRTI3eA4wB-A9d4wc4A7A6ClAXYAGbvhfgNELDizP0OUnGaYRJAkpZvHLzONVYg1CPID1DEWd7HT9MttQWzQxCgUWf-m-2qBJ1FLXZTTwi0B-EeKMvpT1URKBEtaRJWmc5QLDBmOscl4EHetZJiZSRVHYQJRnsYELAVQhN0rdT-JFtOopoQKOMEGzWSqTnweiatRXBqd2qD_Smq4spyTA1SnLFR_H9csVpeLipf2phJ2HbPV1ZRt1s3Qtt5id29pJPon_tbyQUcIthuUt1H3S6_iDT6T04sVuIyTsCkxXX37eEJDMwRjYhoQT_uj5XpwOBEp44c7L_qHpbzX_tL3D4Rv7v9Ne?type=png'
 ```
-
-![](V06_Modelling_regulated_diversion_files/figure-html/unnamed-chunk-3-1.png)
 
 ## GRiwrmInputsModel object
 
