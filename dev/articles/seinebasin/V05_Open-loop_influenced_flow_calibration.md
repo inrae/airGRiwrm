@@ -35,13 +35,9 @@ selectedNodes <- c("MARNE_P23", "STDIZ_04", "LOUVE_19", "VITRY_25", "MARNE_P28",
 griwrm3 <- griwrm2[griwrm2$id %in% selectedNodes,]
 griwrm3[griwrm3$id == "NOISI_17", c("down", "length")] = NA # Downstream station instead of PARIS_05
 plot(griwrm3)
-#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-#> URL
-#> 'https://mermaid.ink/img/pako:eNrNVU1PwkAU_CubGsKlJNL6UXswMWK0CYIpYKLVNBv6FlbbQtpFTYD_7gp9dbuCBE9emtfM7LyZ2SadG8NJBIZr1GpznnLhknldjCGBukvqKcxERuP6kixrtaf0KR1ldDombf9r5lHY67e8x_DwKMDhuQBuu52-HzadAAcE2t3B_VXYPAtwQODe6_sPoXUc4IDA5c1FuxtazQAHBDpdr-eFzdMAh-d_7er2wu9chXeWHZSTDjkl5FQhXzooJz0maTTOF8Q5Ia_JgijWtNBrmu0gDf1pFexQwx50NY2Gr2uatXVrWUWhhzTMphdUuLO2ZcWO1rzj0028YUzzXF1iKgRT8Ui8VECWQMSpgGs6G0FUOY_Nmkp9ptrRYJqLDGiy6SwGN9V4ZiVDi2cwFF76Ip98kpbnW8BIBIzOYkHkgskruAe2bVdwXD1IR6vlhPE4dg8A2EbatUqitEpSa9D1GGylVjUZrRB9yCF7m_CswM-iqpCWvWAxSn9N2eJvkOXffBnXLCuSh_Gl8c4jMXbt6ccvbehispZ9xDa19sMfg79KbvHI6D6C5S3oOvI6dugYppFIM5RHhjs3Vn8M-RMpPktjufwEFnwn1Q?type=png':
-#> Timeout of 60 seconds was reached
-#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
-#> cannot open URL 'https://mermaid.ink/img/pako:eNrNVU1PwkAU_CubGsKlJNL6UXswMWK0CYIpYKLVNBv6FlbbQtpFTYD_7gp9dbuCBE9emtfM7LyZ2SadG8NJBIZr1GpznnLhknldjCGBukvqKcxERuP6kixrtaf0KR1ldDombf9r5lHY67e8x_DwKMDhuQBuu52-HzadAAcE2t3B_VXYPAtwQODe6_sPoXUc4IDA5c1FuxtazQAHBDpdr-eFzdMAh-d_7er2wu9chXeWHZSTDjkl5FQhXzooJz0maTTOF8Q5Ia_JgijWtNBrmu0gDf1pFexQwx50NY2Gr2uatXVrWUWhhzTMphdUuLO2ZcWO1rzj0028YUzzXF1iKgRT8Ui8VECWQMSpgGs6G0FUOY_Nmkp9ptrRYJqLDGiy6SwGN9V4ZiVDi2cwFF76Ip98kpbnW8BIBIzOYkHkgskruAe2bVdwXD1IR6vlhPE4dg8A2EbatUqitEpSa9D1GGylVjUZrRB9yCF7m_CswM-iqpCWvWAxSn9N2eJvkOXffBnXLCuSh_Gl8c4jMXbt6ccvbehispZ9xDa19sMfg79KbvHI6D6C5S3oOvI6dugYppFIM5RHhjs3Vn8M-RMpPktjufwEFnwn1Q?type=png'
 ```
+
+![](V05_Open-loop_influenced_flow_calibration_files/figure-html/griwrm3-1.png)
 
 We can now generate the new `GRiwrmInputsModel` object:
 
