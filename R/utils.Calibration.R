@@ -334,6 +334,7 @@ transferGRparams <- function(
       "'"
     )
   }
+  Param2 <- Param
   if (length(missing_params) > 0) {
     if (is.null(default_param)) {
       stop(
@@ -365,13 +366,10 @@ transferGRparams <- function(
     )
     Param2[InputsModel[[donor]]$model$indexParamUngauged] <- Param
     Param2[missing_params] <- default_param[missing_params]
-    Param <- Param2
   }
 
-  p <- Param
-  if (
-    length(Param) > length(InputsModel[[receiver]]$model$indexParamUngauged)
-  ) {
+  p <- Param2
+  if (length(p) > length(InputsModel[[receiver]]$model$indexParamUngauged)) {
     # Transfer from intermediate node to upstream node
     p <- p[InputsModel[[receiver]]$model$indexParamUngauged]
   }
