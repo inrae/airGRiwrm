@@ -458,6 +458,10 @@ test_that("Ungauged with upstream donor without hydraulic routing parameters", {
     ),
     Params_54032_ref
   )
+  expect_equal(
+    OutputsCalib$`54032`$ParamFinalR,
+    Params_54032_ref
+  )
 })
 
 test_that("Ungauged upstream node with upstream donor works", {
