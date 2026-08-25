@@ -336,6 +336,11 @@ transferGRparams <- function(
   }
   Param2 <- Param
   if (length(missing_params) > 0) {
+    missing_params_txt <- paste(missing_params, collapse = ", ")
+    max_params <- max(
+      max(InputsModel[[receiver]]$model$indexParamUngauged),
+      max(InputsModel[[donor]]$model$indexParamUngauged)
+    )
     if (is.null(default_param)) {
       stop(
         "Missing parameters in transfer between nodes '",
@@ -343,21 +348,30 @@ transferGRparams <- function(
         "' and '",
         receiver,
         "'\n",
-        "Fix the missing parameters with the argument `FixedParam` of `CreateCalibOptions`"
+        "Missing parameter indices: ",
+        missing_params_txt,
+        "\n",
+        "Fix the missing parameters with the argument `FixedParam` of `CreateCalibOptions`\n",
+        "(e.g. `CalibOptions[['",
+        receiver,
+        "']]$FixedParam`),\n",
+        "or by passing a `default_param` argument when calling `transferGRparams` directly"
       )
     }
-    max_params <- max(
-      max(InputsModel[[receiver]]$model$indexParamUngauged),
-      max(InputsModel[[donor]]$model$indexParamUngauged)
-    )
     if (length(default_param) < max_params) {
       stop(
         "Error in parameter transfer between nodes '",
         donor,
         "' and '",
         receiver,
-        "'\n`default_params` should have a minimum length of ",
-        max_params
+        "'\n",
+        "`default_param` should have a length of at least ",
+        max_params,
+        " (supplied: ",
+        length(default_param),
+        ").\n",
+        "Provide values for the missing parameter indices: ",
+        missing_params_txt
       )
     }
     Param2 <- rep(

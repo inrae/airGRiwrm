@@ -464,6 +464,32 @@ test_that("Ungauged with upstream donor without hydraulic routing parameters", {
   )
 })
 
+test_that("transferGRparams error messages report missing parameter indices", {
+  InputsModel_mock <- list(
+    `54029` = list(model = list(indexParamUngauged = 1:5)),
+    `54032` = list(model = list(indexParamUngauged = 1:6))
+  )
+  expect_error(
+    transferGRparams(
+      InputsModel_mock,
+      Param = 1:5,
+      donor = "54029",
+      receiver = "54032"
+    ),
+    regexp = "Missing parameter indices: 6.*FixedParam.*default_param"
+  )
+  expect_error(
+    transferGRparams(
+      InputsModel_mock,
+      Param = 1:5,
+      donor = "54029",
+      receiver = "54032",
+      default_param = 1:4
+    ),
+    regexp = "default_param` should have a length of at least 6 \\(supplied: 4\\).*indices: 6"
+  )
+})
+
 test_that("Ungauged upstream node with upstream donor works", {
   nup2up <- loadSevernNodes()
   nup2up$model[nup2up$id == "54095"] <- "Ungauged"
