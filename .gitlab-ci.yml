@@ -74,11 +74,11 @@ increment_dev_version:
   before_script: []
 
   script:
-    # Checkout main branch instead of detached HEAD
-    - git checkout -B main origin/main
+    # Checkout dev branch instead of detached HEAD
+    - git checkout -B dev origin/dev
 
     # Make sure we are up to date
-    - git pull --rebase origin main
+    - git pull --rebase origin dev
 
     # Increment development version if appropriate
     - Rscript dev/increment_dev_version.R
@@ -99,7 +99,7 @@ increment_dev_version:
 
         # Tag and push the new version
         git tag -f "v${NEW_VERSION}"
-        git push origin HEAD:refs/heads/main
+        git push origin HEAD:refs/heads/dev
         git push -f origin "v${NEW_VERSION}"
       else
         echo "[dev-version] No changes to commit (version unchanged)."
