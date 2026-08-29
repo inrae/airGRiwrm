@@ -7,7 +7,7 @@
 #' @param TimeStep [integer] number of time steps between each supervision
 #'
 #' @return A `Supervisor` object which is an [environment] containing all the necessary variables to run a supervised simulation, such as:
-#' - `DatesR` [POSIXct]: vector of date from `InputsModel`
+#' - `DatesR` [base::POSIXct]: vector of date from `InputsModel`
 #' - `InputsModel`: a copy of `InputsModel` provided by [CreateInputsModel.GRiwrm]
 #' - `griwrm`: a copy of `griwrm` provided by [CreateGRiwrm]
 #' - `Controllers` [list]: list of the controllers used in the supervised simulation (See [CreateController])

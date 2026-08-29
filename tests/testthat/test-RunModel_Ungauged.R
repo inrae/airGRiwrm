@@ -268,7 +268,7 @@ test_that("Ungauged node with upstream node with diversion should work", {
   )
 
   CO <- CreateCalibOptions(InputsModel)
-  CO[["P"]]$FixedParam = 1
+  CO[["P"]]$FixedParam <- 1
   OC_Lag <- Calibration(InputsModel, RunOptions, IC, CO)
   Param_Lag <- extractParam(OC_Lag)
   expect_equal(Param_Lag, ParamRef[names(Param_Lag)])
@@ -434,6 +434,59 @@ test_that("Ungauged with upstream donor without hydraulic routing parameters", {
   expect_equal(
     OutputsCalib$`54032`$ParamFinalR[1:4],
     c(1, OutputsCalib$`54029`$ParamFinalR[1:3])
+  )
+  area_54029 <- griwrm$area[griwrm$id == "54029"]
+  sub_area_54032 <- InputsModel$`54032`$BasinAreas[length(
+    InputsModel$`54032`$BasinAreas
+  )]
+  Params_54032_ref <- c(
+    1,
+    OutputsCalib$`54029`$ParamFinalR[1:3],
+    max(
+      OutputsCalib$`54029`$ParamFinalR[4] *
+        (sub_area_54032 / area_54029)^0.3,
+      0.5
+    )
+  )
+  expect_equal(
+    transferGRparams(
+      InputsModel = InputsModel,
+      Param = OutputsCalib$`54029`$ParamFinalR,
+      donor = "54029",
+      receiver = "54032",
+      default_param = c(1, rep(NA, 4))
+    ),
+    Params_54032_ref
+  )
+  expect_equal(
+    OutputsCalib$`54032`$ParamFinalR,
+    Params_54032_ref
+  )
+})
+
+test_that("transferGRparams error messages report missing parameter indices", {
+  InputsModel_mock <- list(
+    `54029` = list(model = list(indexParamUngauged = 1:5)),
+    `54032` = list(model = list(indexParamUngauged = 1:6))
+  )
+  expect_error(
+    transferGRparams(
+      InputsModel_mock,
+      Param = 1:5,
+      donor = "54029",
+      receiver = "54032"
+    ),
+    regexp = "Missing parameter indices: 6.*FixedParam.*default_param"
+  )
+  expect_error(
+    transferGRparams(
+      InputsModel_mock,
+      Param = 1:5,
+      donor = "54029",
+      receiver = "54032",
+      default_param = 1:4
+    ),
+    regexp = "default_param` should have a length of at least 6 \\(supplied: 4\\).*indices: 6"
   )
 })
 

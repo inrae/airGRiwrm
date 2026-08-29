@@ -4,8 +4,8 @@ development:
 
 template:
   bootstrap: 5
-  params:
-    bootswatch: cerulean
+  bootswatch: cerulean
+  light-switch: true
 
 navbar:
   structure:

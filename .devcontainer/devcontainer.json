@@ -9,6 +9,6 @@
 		}
 	},
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "R -q -e 'install.packages(\"pak\")'",
+	"postCreateCommand": "R -q -e 'install.packages(\"pak\", \"btw\")'",
 	"postStartCommand": "R -q -e 'pak::local_install()'"
 }

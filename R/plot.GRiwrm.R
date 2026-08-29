@@ -154,7 +154,7 @@ plot.GRiwrm <- function(
 #' This sort algorithm respects the original order of nodes but reorder nodes
 #' by donor groups by conserving the sort of first nodes by donor groups.
 #'
-#' @param g
+#' @param g an object of class *GRiwrm*
 #'
 #' @return *GRiwrm*
 #' @noRd
@@ -331,9 +331,9 @@ mermaid_gen_link <- function(
     list(code = diagram, mermaid = list(theme = theme)) |>
     jsonlite::toJSON(auto_unbox = TRUE)
   deflated <- pako_deflate(jGraph)
-  dEncode = gsub("\n", "", jsonlite::base64url_enc(deflated))
+  dEncode <- gsub("\n", "", jsonlite::base64url_enc(deflated))
   mode <- ifelse(format != "svg", "img", "svg")
-  link = sprintf("%s/%s/pako:%s", server, mode, dEncode)
+  link <- sprintf("%s/%s/pako:%s", server, mode, dEncode)
   if (format != "svg") {
     link <- paste0(link, "?type=", format)
   }
