@@ -18,13 +18,13 @@ Source:
 
 Dorchies, D., Delaigue, O. and Thirel, G. (). airGRiwrm: Modeling of
 Integrated Water Resources Management based on airGR. R package version
-0.7.0.9000, doi: 10.32614/CRAN.package.airGRiwrm, URL:
+0.7.0.9001, doi: 10.32614/CRAN.package.airGRiwrm, URL:
 https://cran.r-project.org/package=airGRiwrm
 
     @Manual{,
       title = {airGRiwrm: Modeling of Integrated Water Resources Management based on airGR},
       author = {D. Dorchies and O. Delaigue and G. Thirel},
-      note = {R package version 0.7.0.9000},
+      note = {R package version 0.7.0.9001},
       doi = {10.32614/CRAN.package.airGRiwrm},
       url = {https://cran.r-project.org/package=airGRiwrm},
     }
