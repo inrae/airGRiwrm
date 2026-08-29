@@ -150,8 +150,15 @@ CreateInputsModel.GRiwrm <- function(
     warning("The usage of 'Qobs' is deprecated, use 'Qinf' instead")
     Qinf <- Qobs
   }
-  if (!is.null(ZInputs) && !is.numeric(ZInputs)) {
-    stop("'ZInputs' must be a numeric vector")
+  if (!is.null(ZInputs)) {
+    if (is.data.frame(ZInputs) && nrow(ZInputs) == 1) {
+      ZInputs <- as.numeric(unlist(ZInputs[1, ], use.names = TRUE))
+    } else if (is.list(ZInputs) && !is.data.frame(ZInputs)) {
+      ZInputs <- as.numeric(unlist(ZInputs, use.names = TRUE))
+    }
+    if (!is.numeric(ZInputs)) {
+      stop("'ZInputs' must be a numeric vector")
+    }
   }
   if (!is.logical(PrecipScale)) {
     stop("'PrecipScale' must be logical")
