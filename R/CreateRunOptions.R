@@ -40,17 +40,29 @@ CreateRunOptions.InputsModel <- function(x, ...) {
   if (!is.null(x$model$IsHyst)) {
     dots$IsHyst <- x$model$IsHyst
   }
-  warning_pattern <- "does not require .* Values? set to NA"
-  # ClodoFix: airGR does not accept Qsim_m3 on upstream nodes :(
-  if (!inherits(x, "SD") && "Qsim_m3" %in% dots$Outputs_Sim) {
-    Outputs_Sim <- dots$Outputs_Sim
-    dots$Outputs_Sim <- setdiff(dots$Outputs_Sim, "Qsim_m3")
+  # airGR 1.7.9 validates Outputs_Sim against the model's supported outputs.
+  # Some outputs are computed by airGRiwrm (not airGR) and must be stripped
+  # before calling airGR::CreateRunOptions, then restored afterwards:
+  #   - Qsim_m3: always computed by airGRiwrm's complete_OutputsModel
+  #   - Qsim, QsimDown: for Lag (routing) models, computed by
+  #     airGRiwrm's RunModel_Lag_enhanced
+  #   - QsimDown: only valid for SD inputs in airGR; airGRiwrm adds it for
+  #     routing nodes regardless
+  Outputs_Sim_full <- dots$Outputs_Sim
+  # Always strip Qsim_m3 (airGRiwrm-specific) and QsimDown (SD-only in airGR)
+  # before calling airGR::CreateRunOptions
+  dots$Outputs_Sim <- setdiff(Outputs_Sim_full, c("Qsim_m3", "QsimDown"))
+  if (identical(dots$FUN_MOD, "RunModel_Lag")) {
+    # Lag model doesn't support Qsim in airGR either
+    dots$Outputs_Sim <- setdiff(dots$Outputs_Sim, "Qsim")
   }
-  RunOptions <- CreateRunOptions_runAirGR(dots, warning_pattern)
-  # ClodoFix: airGR does not accept Qsim_m3 on upstream nodes :(
-  if (exists("Outputs_Sim")) {
-    RunOptions$Outputs_Sim <- Outputs_Sim
-  }
+  RunOptions <- CreateRunOptions_runAirGR(
+    dots,
+    "does not require .* Values? set to NA"
+  )
+  # Always restore the full Outputs_Sim so downstream code can check
+  # which outputs should be populated.
+  RunOptions$Outputs_Sim <- Outputs_Sim_full
   return(RunOptions)
 }
 
@@ -70,26 +82,27 @@ CreateRunOptions.function <- function(x, InputsModel, ...) {
 #' @export
 CreateRunOptions.RunModel_Reservoir <- function(x, ...) {
   dots <- CreateRunOptions_prepare_inputs(x, ...)
-  # Bypass Outputs_Sim and Outputs_Cal
+  # Bypass `Outputs_Sim` and `Outputs_Cal` because `RunModel_Reservoir` has
+  # its own output set (Qinflows_m3, Vsim, Qsim_m3...) that is not in the
+  # airGR generic list. Restore them in the returned object.
   Outputs_Sim <- dots$Outputs_Sim
   dots$Outputs_Sim <- "all"
   Outputs_Cal <- dots$Outputs_Cal
   dots$Outputs_Cal <- NULL
-  # Bypass airGR::CreateRunOptions for reservoir models with Inistates argument
-  # because it is not designed for this type of model and crashes
+  # Bypass airGR::CreateRunOptions for reservoir models with `IniStates`
+  # argument because it is not designed for this type of model and crashes
+  warning_pattern <- "does not require .* Values? set to NA"
   if (!is.null(dots$IniStates)) {
     if (!is.numeric(dots$IniStates)) {
       stop("For reservoir models, `IniStates` must be a numeric vector")
-      warning_pattern <- ""
-    } else {
-      IniStates <- dots$IniStates
-      dots$IniStates <- NULL
-      warning_pattern <- sprintf(
-        "(%s)|(%s)",
-        warning_pattern,
-        "model states initialisation not defined"
-      )
     }
+    IniStates <- dots$IniStates
+    dots$IniStates <- NULL
+    warning_pattern <- paste0(
+      "(",
+      warning_pattern,
+      ")|model states initialisation not defined"
+    )
   } else {
     IniStates <- NULL
   }
@@ -116,6 +129,23 @@ CreateRunOptions_prepare_inputs <- function(x, ...) {
     }
   }
   dots$FUN_MOD <- FUN_MOD
+
+  # Set minimal Outputs_Sim default when not explicitly provided by user.
+  # This reduces memory by avoiding "all" which returns every internal
+  # simulation variable.  Qsim_m3 and QsimDown are stripped before calling
+  # airGR (they are airGRiwrm-specific), and restored afterwards.
+  if (!"Outputs_Sim" %in% names(dots)) {
+    dots$Outputs_Sim <- c(
+      "DatesR",
+      "WarmUpQsim",
+      "Qsim",
+      "Qsim_m3",
+      "QsimDown",
+      "Param",
+      "StateEnd"
+    )
+  }
+
   return(dots)
 }
 

@@ -20,12 +20,25 @@ Ind_WarmUp <- seq(
 )
 
 ## preparation of RunOptions object
+## airGRiwrm's CreateRunOptions adds airGRiwrm-specific outputs (Qsim_m3,
+## QsimDown) to Outputs_Sim.  Build a reference RunOptions that includes them
+## so the equality tests below pass.
 RunOptions <- airGR::CreateRunOptions(
   RunModel_GR4J,
   InputsModel = InputsModel,
   IndPeriod_Run = Ind_Run,
   IndPeriod_WarmUp = Ind_WarmUp,
   warnings = FALSE
+)
+## Restore airGRiwrm-specific outputs that airGR doesn't know about
+RunOptions$Outputs_Sim <- c(
+  "DatesR",
+  "WarmUpQsim",
+  "Qsim",
+  "Qsim_m3",
+  "QsimDown",
+  "Param",
+  "StateEnd"
 )
 
 
@@ -39,7 +52,7 @@ test_that("CreateRunOptions.InputsModel works", {
     ),
     RunOptions
   )
-  InputsModel$FUN_MOD = RunModel_GR4J
+  InputsModel$FUN_MOD <- RunModel_GR4J
   expect_equal(
     CreateRunOptions(
       InputsModel,

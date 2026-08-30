@@ -7,9 +7,16 @@
 \alias{CreateRunOptions.InputsModel}
 \alias{CreateRunOptions.character}
 \alias{CreateRunOptions.function}
+\alias{CreateRunOptions.RunModel_Reservoir}
 \title{Creation of the RunOptions object}
 \usage{
-\method{CreateRunOptions}{GRiwrmInputsModel}(x, IniStates = NULL, Outputs_Sim = "all", ...)
+\method{CreateRunOptions}{GRiwrmInputsModel}(
+  x,
+  IniStates = NULL,
+  Outputs_Sim = c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param",
+    "StateEnd"),
+  ...
+)
 
 CreateRunOptions(x, ...)
 
@@ -18,6 +25,8 @@ CreateRunOptions(x, ...)
 \method{CreateRunOptions}{character}(x, InputsModel, ...)
 
 \method{CreateRunOptions}{`function`}(x, InputsModel, ...)
+
+\method{CreateRunOptions}{RunModel_Reservoir}(x, ...)
 }
 \arguments{
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
@@ -30,14 +39,30 @@ CreateRunOptions(x, ...)
 
 See \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
 
-\item{Outputs_Sim}{(optional) outputs to be returned by the model run. Can be:
+\item{Outputs_Sim}{(optional) outputs to be returned by the model run.
+Can be:
 \itemize{
 \item \code{"all"} to return all available simulated outputs for each node
-\item A named \link{list} (names matching node IDs) to define outputs per node
+(previous default behaviour, but not recommended for large networks)
+\item A \link{character} vector, applied to every node, to restrict the returned
+outputs (default: \code{c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "Param", "StateEnd")}).
+\item A named \link{list} (names matching node IDs) to define outputs per node,
+each item being a \link{character} vector.
 }
 
-In the case of a \link{list}, each item must be a \link{character} vector.
-See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for the list of supported output names.}
+See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for the list of output names supported by
+each rainfall-runoff model.
+
+@details The default output selection has been reduced compared to
+previous versions of the package (where it was \code{"all"}) in order to keep
+the size of the resulting \emph{GRiwrmOutputsModel} object reasonable for a
+network with a large number of nodes (See issue inrae/airGRiwrm#141).
+The default keeps only the outputs required to propagate simulated flows
+to downstream nodes (\code{Qsim}, \code{Qsim_m3}), to warm-up semi-distributed
+nodes correctly (\code{WarmUpQsim}), to carry the model parameters
+(\code{Param}) and the model states at the end of the run (\code{StateEnd}) which
+are needed for De Lavenne parameter regularization and hot restart.
+Use \code{Outputs_Sim = "all"} to restore the previous behaviour.}
 
 \item{...}{arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}, see details}
 

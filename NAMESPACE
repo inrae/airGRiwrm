@@ -18,6 +18,7 @@ S3method(CreateInputsModel,default)
 S3method(CreateRunOptions,"function")
 S3method(CreateRunOptions,GRiwrmInputsModel)
 S3method(CreateRunOptions,InputsModel)
+S3method(CreateRunOptions,RunModel_Reservoir)
 S3method(CreateRunOptions,character)
 S3method(RunModel,GR)
 S3method(RunModel,GRiwrmInputsModel)
@@ -71,10 +72,14 @@ export(transferGRparams)
 import(airGR)
 import(dplyr)
 importFrom(dplyr,"%>%")
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,title)
+importFrom(graphics,
+  par,
+  plot,
+  title
+)
 importFrom(rlang,.data)
 importFrom(stats,setNames)
-importFrom(utils,read.table)
-importFrom(utils,tail)
+importFrom(utils,
+  read.table,
+  tail
+)
