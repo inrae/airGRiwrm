@@ -20,7 +20,6 @@ before_script:
   - echo "R_LIBS='$R_LIBS_USER'" > .Renviron
   - echo "options(repos = c(CRAN = 'https://packagemanager.posit.co/cran/latest'))" >> .Rprofile
   - R -e 'install.packages("pak")'
-  - R -e 'pak::pak("git::https://forge.inrae.fr/hydroGR/airgrgalaxy/airgr.git", ref = "dev")'
   - R -e 'pak::local_install_dev_deps()'
 
 test_all:
