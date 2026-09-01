@@ -96,8 +96,8 @@ n_div <- rbind(
   )
 )
 g_div <- CreateGRiwrm(n_div)
-Qmin = matrix(1E5, nrow = length(DatesR), ncol = 1)
-colnames(Qmin) = "54029"
+Qmin <- matrix(1E5, nrow = length(DatesR), ncol = 1)
+colnames(Qmin) <- "54029"
 Qinf <- -Qmin
 IM_div <- CreateInputsModel(
   g_div,
@@ -230,7 +230,7 @@ test_that("Upstream node - equal Diversion should return same results", {
 
   # Add upstream flow on 54095 that is removed by the Diversion
   # and derive previously simulated flow in order to get the same Qsim as before
-  Qinf = matrix(0, nrow = length(DatesR), ncol = 2)
+  Qinf <- matrix(0, nrow = length(DatesR), ncol = 2)
   Qinf[IndPeriod_Run, 1] <- OM_GriwrmInputs[["54095"]]$Qsim_m3
   Qinf[IndPeriod_Run, 2] <- -OM_GriwrmInputs[["54095"]]$Qsim_m3
   Qinf[IndPeriod_WarmUp, 1] <- OM_GriwrmInputs[[
@@ -242,7 +242,7 @@ test_that("Upstream node - equal Diversion should return same results", {
 
   colnames(Qinf) <- c("upstream", "54095")
 
-  Qmin = matrix(0, nrow = length(DatesR), ncol = 1)
+  Qmin <- matrix(0, nrow = length(DatesR), ncol = 1)
   colnames(Qmin) <- "54095"
 
   IM_2ol <- CreateInputsModel(
