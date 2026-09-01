@@ -40,29 +40,47 @@ CreateRunOptions.InputsModel <- function(x, ...) {
   if (!is.null(x$model$IsHyst)) {
     dots$IsHyst <- x$model$IsHyst
   }
-  # airGR 1.7.9 validates Outputs_Sim against the model's supported outputs.
-  # Some outputs are computed by airGRiwrm (not airGR) and must be stripped
-  # before calling airGR::CreateRunOptions, then restored afterwards:
+  # airGR 1.7.9 validates both Outputs_Sim and Outputs_Cal against the
+  # model's supported outputs. Some outputs are computed by airGRiwrm
+  # (not airGR) and must be stripped before calling airGR::CreateRunOptions,
+  # then restored afterwards:
   #   - Qsim_m3: always computed by airGRiwrm's complete_OutputsModel
   #   - Qsim, QsimDown: for Lag (routing) models, computed by
   #     airGRiwrm's RunModel_Lag_enhanced
   #   - QsimDown: only valid for SD inputs in airGR; airGRiwrm adds it for
   #     routing nodes regardless
+  #   - CemaNeigeLayers: airGRiwrm-specific, not validated by airGR
+  #     CreateRunOptions for CemaNeige models
+  #   - Gratio: airGRiwrm-specific, not in airGR's output list
   Outputs_Sim_full <- dots$Outputs_Sim
-  # Always strip Qsim_m3 (airGRiwrm-specific) and QsimDown (SD-only in airGR)
-  # before calling airGR::CreateRunOptions
-  dots$Outputs_Sim <- setdiff(Outputs_Sim_full, c("Qsim_m3", "QsimDown"))
+  Outputs_Cal_full <- dots$Outputs_Cal
+  # Strip airGRiwrm-specific and airGR-unsupported outputs from Outputs_Sim:
+  dots$Outputs_Sim <- setdiff(
+    Outputs_Sim_full,
+    c("Qsim_m3", "QsimDown", "CemaNeigeLayers")
+  )
   if (identical(dots$FUN_MOD, "RunModel_Lag")) {
     # Lag model doesn't support Qsim in airGR either
     dots$Outputs_Sim <- setdiff(dots$Outputs_Sim, "Qsim")
   }
+  # Strip airGRiwrm-specific outputs from Outputs_Cal too:
+  dots$Outputs_Cal <- setdiff(
+    Outputs_Cal_full,
+    c("CemaNeigeLayers", "Gratio")
+  )
   RunOptions <- CreateRunOptions_runAirGR(
     dots,
     "does not require .* Values? set to NA"
   )
-  # Always restore the full Outputs_Sim so downstream code can check
-  # which outputs should be populated.
+  # Always restore the full Outputs_Sim so downstream
+  # code can check which outputs should be populated.
   RunOptions$Outputs_Sim <- Outputs_Sim_full
+  # Only restore Outputs_Cal if it was explicitly set (non-NULL).
+  # When not provided, airGR computes the appropriate default and
+  # we should not overwrite it with NULL.
+  if (!is.null(Outputs_Cal_full)) {
+    RunOptions$Outputs_Cal <- Outputs_Cal_full
+  }
   return(RunOptions)
 }
 
@@ -144,6 +162,39 @@ CreateRunOptions_prepare_inputs <- function(x, ...) {
       "Param",
       "StateEnd"
     )
+  }
+
+  # For CemaNeige models, ensure both Outputs_Sim and Outputs_Cal include
+  # "CemaNeigeLayers".
+  # (airGR defaults don't include these, but SCA-based error criteria
+  # need OutputsModel$CemaNeigeLayers[[1]]$Gratio).
+  # CemaNeigeLayers must be in Outputs_Cal because calibration uses that
+  # list (not Outputs_Sim) to decide what RunModel produces.
+  # This check is unconditional because CreateRunOptions.GRiwrmInputsModel
+  # always passes Outputs_Sim, so the guard above would skip it.
+  if (grepl("CemaNeige", FUN_MOD, fixed = TRUE)) {
+    if (!"CemaNeigeLayers" %in% dots$Outputs_Sim) {
+      dots$Outputs_Sim <- c(dots$Outputs_Sim, "CemaNeigeLayers")
+    }
+    if (!"Outputs_Cal" %in% names(dots)) {
+      # Use airGR's default CemaNeige Outputs_Cal augmented with
+      # "CemaNeigeLayers" (contains Gratio) and "Gratio".
+      # airGR default for CemaNeige is c("PliqAndMelt", "Qsim", "Param").
+      dots$Outputs_Cal <- c(
+        "CemaNeigeLayers",
+        "Gratio",
+        "PliqAndMelt",
+        "Qsim",
+        "Param"
+      )
+    } else {
+      if (!"CemaNeigeLayers" %in% dots$Outputs_Cal) {
+        dots$Outputs_Cal <- c(dots$Outputs_Cal, "CemaNeigeLayers")
+      }
+      if (!"Gratio" %in% dots$Outputs_Cal) {
+        dots$Outputs_Cal <- c(dots$Outputs_Cal, "Gratio")
+      }
+    }
   }
 
   return(dots)
