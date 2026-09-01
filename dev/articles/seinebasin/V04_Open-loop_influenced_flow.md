@@ -75,16 +75,16 @@ routed to downstream.
 
 The Marne lake can be mapped as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nLOUVE_19 -->|0.5km| MARNE_P28\nMARNE_P23 -->|3km| STDIZ_04\nMARNE_P23 --> M(MARNE)\nMARNE_P28 --> M\nMARNE_P28 -->|25.6km| MARNE_R25\nM --> MARNE_R25\nSTDIZ_04 -->|28.7km| MARNE_R25\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\nstyle M fill:#ccf\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_true-1.png)
 
 And can be modeled as:
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_model-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\nMARNE_P23 -->|3km| STDIZ_04\nLOUVE_19 -->|83km| CHALO_21\nMARNE_P28 -->|82.5km| CHALO_21\nSTDIZ_04 -->|85.6km| CHALO_21\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png'
 
 Hence the topological connection to the reservoirs is described in the
 model as below:
