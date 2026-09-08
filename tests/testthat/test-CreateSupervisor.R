@@ -2,62 +2,88 @@
 e <- setupRunModel(runInputsModel = FALSE)
 # variables are copied from environment 'e' to the current environment
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
-for(x in ls(e)) assign(x, get(x, e))
+for (x in ls(e)) {
+  assign(x, get(x, e))
+}
 
 # Add 2 nodes to the network
-nodes2 <- rbind(nodes,
-                data.frame(
-                  id = c("R1", "R2"),
-                  down = "54057",
-                  length = 100,
-                  area = NA,
-                  model = NA
-                ))
+nodes2 <- rbind(
+  nodes,
+  data.frame(
+    id = c("R1", "R2"),
+    down = "54057",
+    length = 100,
+    area = NA,
+    model = NA
+  )
+)
 griwrm2 <- CreateGRiwrm(nodes2)
 
 # Add Qinf for the 2 new nodes and create InputsModel
-Qinf <- matrix(data = rep(0, 2*nrow(Qobs)), ncol = 2)
+Qinf <- matrix(data = rep(0, 2 * nrow(Qobs)), ncol = 2)
 colnames(Qinf) <- c("R1", "R2")
 InputsModel <-
   CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qinf)
 sv <- CreateSupervisor(InputsModel)
 
 test_that("Checks in CreateSupervisor", {
-  expect_error(CreateSupervisor(InputsModel, 3.14), regexp  = "integer")
+  expect_error(CreateSupervisor(InputsModel, 3.14), regexp = "integer")
   expect_error(CreateSupervisor(InputsModel, 0L), regexp = "positive")
   expect_s3_class(sv, "Supervisor")
 })
 
-test_that("Checks in CreateController",  {
+test_that("Checks in CreateControl", {
+  Y <- CreateControl(c("R1", "R2"), sv, isU = FALSE)
+  expect_equal(attr(Y, "nodes"), c("R1", "R2"))
+  expect_equal(attr(Y, "vars"), rep("Qupstream", 2))
+})
+
+test_that("Checks in CreateController", {
   FUN <- function(Y) return(0)
-  expect_error(CreateController(sv, 0, "54057", "R1", FUN),
-               regexp = "character")
-  expect_error(CreateController(sv, c("toto1", "toto2"), "54057", "R1", FUN),
-               regexp = "length")
-  expect_error(CreateController(sv, "toto", "fake", "R1", FUN),
-               regexp = "GRiwrm")
-  expect_error(CreateController(sv, "toto", "54057", "54057", FUN),
-               regexp = "DirectInjection")
+  expect_error(
+    CreateController(sv, 0, "54057", "R1", FUN),
+    regexp = "character"
+  )
+  expect_error(
+    CreateController(sv, c("toto1", "toto2"), "54057", "R1", FUN),
+    regexp = "length"
+  )
+  expect_error(
+    CreateController(sv, "toto", "fake", "R1", FUN),
+    regexp = "GRiwrm"
+  )
+  expect_error(
+    CreateController(sv, "toto", "54057", "54057", FUN),
+    regexp = "DirectInjection"
+  )
   CreateController(sv, "toto", "54057", "R1", FUN)
   expect_s3_class(sv$controllers, "Controllers")
   expect_s3_class(sv$controllers$toto, "Controller")
+  expect_equal(sv$controllers$toto$id, "toto")
+  expect_equal(sv$controllers$toto$Unodes, "R1")
+  expect_equal(sv$controllers$toto$Ynodes, "54057")
+  expect_equal(sv$controllers$toto$Uvars, "Qupstream")
+  expect_equal(sv$controllers$toto$Yvars, "Qsim_m3")
 })
 
 test_that("CreateSupervisor using reservoir and diversion", {
   nodes <- loadSevernNodes()
-  nodes <- rbind(nodes, data.frame(
-    id     = c("54029"     , "Reservoir"         ),
-    down   = c("Reservoir" , "54032"             ),
-    length = c(20          , 15                  ),
-    area   = c(NA, NA                 ),
-    model  = c("Diversion" , "RunModel_Reservoir")
-  ))
+  nodes <- rbind(
+    nodes,
+    data.frame(
+      id = c("54029", "Reservoir"),
+      down = c("Reservoir", "54032"),
+      length = c(20, 15),
+      area = c(NA, NA),
+      model = c("Diversion", "RunModel_Reservoir")
+    )
+  )
   g <- CreateGRiwrm(nodes)
   # Add Qinf for the 2 new nodes and create InputsModel
   Qinf <- matrix(data = 0, ncol = 2, nrow = length(DatesR))
   colnames(Qinf) <- c("54029", "Reservoir")
   InputsModel <- suppressWarnings(
-      CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf)
+    CreateInputsModel(g, DatesR, Precip, PotEvap, Qinf)
   )
   sv <- CreateSupervisor(InputsModel)
   expect_equal(sv$griwrm4U$id, c("54029", "Reservoir"))

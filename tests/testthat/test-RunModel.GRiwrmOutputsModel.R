@@ -11,7 +11,9 @@ test_that("Single node returns same result as RunModel.GRiwrmInputsModel", {
     runRunOptions = FALSE,
     griwrm = CreateGRiwrm(nodes)
   )
-  for (x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
   ROref <- CreateRunOptions(
     InputsModel,
     IndPeriod_WarmUp = 1:364,
@@ -23,9 +25,9 @@ test_that("Single node returns same result as RunModel.GRiwrmInputsModel", {
     Param = ParamMichel
   )
   ROwarmUp <- CreateRunOptions(
-      InputsModel,
-      IndPeriod_WarmUp = 1:364,
-      IndPeriod_Run = 365L
+    InputsModel,
+    IndPeriod_WarmUp = 1:364,
+    IndPeriod_Run = 365L
   )
   OMwarmUp <- RunModel(
     InputsModel,
@@ -33,10 +35,10 @@ test_that("Single node returns same result as RunModel.GRiwrmInputsModel", {
     Param = ParamMichel
   )
   ROhotStart <- CreateRunOptions(
-    InputsModel, 
-    IniStates = lapply(OMwarmUp, "[[", "StateEnd"), 
+    InputsModel,
+    IniStates = lapply(OMwarmUp, "[[", "StateEnd"),
     IndPeriod_WarmUp = 0L,
-    IndPeriod_Run = 366L 
+    IndPeriod_Run = 366L
   )
   ROhotStart$`54029`$IniResLevels <- NULL
   # State Initiation
@@ -44,16 +46,20 @@ test_that("Single node returns same result as RunModel.GRiwrmInputsModel", {
   for (id in names(ROtest)) {
     # Run model for the sub-basin and one time step
     ROtest[[id]]$IniResLevels <- NULL
-    ROtest[[id]]$IniStates <- serializeIniStates(OMwarmUp[[id]]$StateEnd, InputsModel[[id]])
+    ROtest[[id]]$IniStates <- serializeIniStates(
+      OMwarmUp[[id]]$StateEnd,
+      InputsModel[[id]]
+    )
     ROtest[[id]]$IndPeriod_WarmUp <- 0L
     ROtest[[id]]$IndPeriod_Run <- 366L
   }
   expect_equal(ROtest$`54029`, ROhotStart$`54029`)
-  OMtest <- RunModel(OMwarmUp,
+  OMtest <- RunModel(
+    OMwarmUp,
     InputsModel = InputsModel,
     RunOptions = ROwarmUp,
     IndPeriod_Run = 366L
-  )  
+  )
   expect_equal(OMtest$`54029`, OMref$`54029`)
 })
 
@@ -88,7 +94,9 @@ e <- setupRunModel(
   Qrelease = Qrelease,
   Qmin = Qmin
 )
-for (x in ls(e)) assign(x, get(x, e))
+for (x in ls(e)) {
+  assign(x, get(x, e))
+}
 
 # Simulation periods up to 31/12/1986
 dfTS <- data.frame(
@@ -98,12 +106,25 @@ dfTS <- data.frame(
 dfTS <- dfTS[1:(which(dfTS$yearmonth == "1987-01")[1] - 1), ]
 
 # Run simulation in "normal" mode
-Param <- c(ParamMichel[names(ParamMichel) %in% griwrm$id], list(Dam = c(100E6, 1)))
-ROref <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365:nrow(dfTS))
+Param <- c(
+  ParamMichel[names(ParamMichel) %in% griwrm$id],
+  list(Dam = c(100E6, 1))
+)
+ROref <- CreateRunOptions(
+  InputsModel,
+  IndPeriod_WarmUp = 1:364,
+  IndPeriod_Run = 365:nrow(dfTS),
+  warnings = FALSE # Warn: model states initialisation not defined: default configuration used
+)
 OMref <- RunModel(InputsModel, ROref, Param)
 
 # Set up initial conditions
-ROO <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365L)
+ROO <- CreateRunOptions(
+  InputsModel,
+  IndPeriod_WarmUp = 1:364,
+  IndPeriod_Run = 365L,
+  warnings = FALSE # Warn: model states initialisation not defined: default configuration used
+)
 OM <- RunModel(InputsModel, ROO, Param)
 
 test_that("RunModel.GRiwrmOutputsModel works with InputsModel", {
@@ -118,11 +139,13 @@ test_that("RunModel.GRiwrmOutputsModel works with InputsModel", {
     # if (nb_remain_days < 180) {
     #   ym_Qinf$`WD` <- -(max(0, OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam))) / 365
     # }
-    OM <- RunModel(OM,
-                   InputsModel = InputsModel,
-                   RunOptions = RunOptions,
-                   IndPeriod_Run = ym_IndPeriod_Run,
-                   Qinf = ym_Qinf)
+    OM <- RunModel(
+      OM,
+      InputsModel = InputsModel,
+      RunOptions = RunOptions,
+      IndPeriod_Run = ym_IndPeriod_Run,
+      Qinf = ym_Qinf
+    )
   }
 
   expect_equal(nrow(attr(OM, "Qm3s")), nrow(dfTS) - 364)
@@ -133,9 +156,11 @@ test_that("RunModel.GRiwrmOutputsModel works with InputsModel", {
 test_that("RunModel.GRiwrmOutputsModel works with Supervisor", {
   sv <- CreateSupervisor(InputsModel)
 
-  curve <- approx(x = c(31*11 - 365, 30 * 6, 31 * 11, 366 + 30 * 6),
-                  y = c(20E6, 90E6, 20E6, 90E6),
-                  xout = 1:366)$y
+  curve <- approx(
+    x = c(31 * 11 - 365, 30 * 6, 31 * 11, 366 + 30 * 6),
+    y = c(20E6, 90E6, 20E6, 90E6),
+    xout = 1:366
+  )$y
 
   fn_guide_curve_factory <- function(sv, curve) {
     function(y) {
@@ -147,10 +172,7 @@ test_that("RunModel.GRiwrmOutputsModel works with Supervisor", {
   }
   fn_guide_curve <- fn_guide_curve_factory(sv, curve)
 
-  CreateController(sv, "dam_filling_curve",
-                   Y = NULL,
-                   U = "Dam",
-                   fn_guide_curve)
+  CreateController(sv, "dam_filling_curve", Y = NULL, U = "Dam", fn_guide_curve)
 
   for (ym in unique(dfTS$yearmonth[dfTS$DatesR > OM[[1]]$DatesR])) {
     message("Processing period ", ym)
@@ -160,15 +182,22 @@ test_that("RunModel.GRiwrmOutputsModel works with Supervisor", {
     ym_Qrelease <- Qrelease[ym_IndPeriod_Run, , drop = FALSE]
 
     # 50% Restriction on reservoir withdrawals if remaining less than 90 days of water
-    nb_remain_days <- OM$Dam$StateEnd$Reservoir$V / (-ym_Qinf$`WD`[1] + ym_Qrelease$Dam[1])
+    nb_remain_days <- OM$Dam$StateEnd$Reservoir$V /
+      (-ym_Qinf$`WD`[1] + ym_Qrelease$Dam[1])
     if (nb_remain_days < 180) {
-      ym_Qinf$`WD` <- -(max(0, OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam))) / 365
+      ym_Qinf$`WD` <- -(max(
+        0,
+        OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam)
+      )) /
+        365
     }
-    OM <- RunModel(OM,
-                   InputsModel = sv,
-                   RunOptions = RunOptions,
-                   IndPeriod_Run = ym_IndPeriod_Run,
-                   Qinf = ym_Qinf)
+    OM <- RunModel(
+      OM,
+      InputsModel = sv,
+      RunOptions = RunOptions,
+      IndPeriod_Run = ym_IndPeriod_Run,
+      Qinf = ym_Qinf
+    )
   }
   expect_gte(sum(attr(OM, "Qm3s")$WD), sum(Qinf$WD[1:(nrow(dfTS) - 364)]))
 })

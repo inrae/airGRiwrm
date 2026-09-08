@@ -11,16 +11,18 @@
 #' for (x in ls(e)) assign(x, get(x, e))
 #'
 setupRunModel <-
-  function(runInputsModel = TRUE,
-           runRunOptions = TRUE,
-           runRunModel = TRUE,
-           griwrm = NULL,
-           Qinf = NULL,
-           Qrelease = NULL,
-           Qmin = NULL,
-           IsHyst = FALSE, 
-           ParamMichel = getDefaultParamMichel()) {
-
+  function(
+    runInputsModel = TRUE,
+    runRunOptions = TRUE,
+    runRunModel = TRUE,
+    nodes = loadSevernNodes(),
+    griwrm = CreateGRiwrm(nodes),
+    Qinf = NULL,
+    Qrelease = NULL,
+    Qmin = NULL,
+    IsHyst = FALSE,
+    ParamMichel = getDefaultParamMichel()
+  ) {
     data(Severn)
 
     # Format observation
@@ -37,57 +39,67 @@ setupRunModel <-
       x$discharge_spec
     }))
 
-    # Set network
-    if (is.null(griwrm)) {
-      nodes <- loadSevernNodes()
-      griwrm <-
-        CreateGRiwrm(nodes)
-    }
-
     # Convert meteo data to SD (remove upstream areas)
     Precip <- ConvertMeteoSD(griwrm, PrecipTot)
     PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
     if (IsHyst) {
-      TempMean <- PotEvap+5 # Fake temperatures
+      TempMean <- PotEvap + 5 # Fake temperatures
     } else {
       TempMean <- NULL
     }
 
     # set up inputs
-    if (!runInputsModel)
+    if (!runInputsModel) {
       return(environment())
+    }
     InputsModel <-
-      suppressWarnings(CreateInputsModel(griwrm, DatesR, Precip, PotEvap,
-                                         TempMean = TempMean,
-                                         Qinf = Qinf,
-                                         Qrelease = Qrelease,
-                                         Qmin = Qmin,
-                                         IsHyst = IsHyst))
+      suppressWarnings(CreateInputsModel(
+        griwrm,
+        DatesR,
+        Precip,
+        PotEvap,
+        TempMean = TempMean,
+        Qinf = Qinf,
+        Qrelease = Qrelease,
+        Qmin = Qmin,
+        IsHyst = IsHyst
+      ))
 
     # RunOptions
-    if (!runRunOptions)
+    if (!runRunOptions) {
       return(environment())
+    }
     e <- setupRunOptions(InputsModel)
-    for (x in ls(e)) assign(x, get(x, e))
+    for (x in ls(e)) {
+      assign(x, get(x, e))
+    }
     rm(e)
 
     # RunModel.GRiwrmInputsModel
-    if (!runRunModel)
+    if (!runRunModel) {
       return(environment())
-    OM_GriwrmInputs <- RunModel(InputsModel,
-                                RunOptions = RunOptions,
-                                Param = ParamMichel)
+    }
+    OM_GriwrmInputs <- RunModel(
+      InputsModel,
+      RunOptions = RunOptions,
+      Param = ParamMichel
+    )
     return(environment())
   }
 
 setupRunOptions <- function(InputsModel) {
   nTS <- 365
-  IndPeriod_Run <- seq(length(InputsModel[[1]]$DatesR) - nTS + 1,
-                       length(InputsModel[[1]]$DatesR))
+  IndPeriod_Run <- seq(
+    length(InputsModel[[1]]$DatesR) - nTS + 1,
+    length(InputsModel[[1]]$DatesR)
+  )
   IndPeriod_WarmUp = seq(IndPeriod_Run[1] - 365, IndPeriod_Run[1] - 1)
-  RunOptions <- CreateRunOptions(InputsModel,
-                                 IndPeriod_WarmUp = IndPeriod_WarmUp,
-                                 IndPeriod_Run = IndPeriod_Run)
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    warnings = FALSE
+  )
   return(environment())
 }
 

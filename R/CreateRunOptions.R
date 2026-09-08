@@ -39,36 +39,58 @@ CreateRunOptions.InputsModel <- function(x, ...) {
   dots$InputsModel <- x
 
   # Add FUN_MOD in parameters if carried by InputsModel
-  if (!"FUN_MOD" %in% names(dots)) {
-    if (!is.null(x$FUN_MOD)) {
-      dots$FUN_MOD <- x$FUN_MOD
-    } else {
-      stop(" The parameter `FUN_MOD` must be defined")
+  FUN_MOD <- attr(x, "FeatFUN_MOD")$NameFunMod
+  if ("FUN_MOD" %in% names(dots)) {
+    if (!identical(match.fun(dots$FUN_MOD), match.fun(FUN_MOD))) {
+      stop(
+        "The parameter `FUN_MOD` differe from the one defined in `InputsModel`"
+      )
     }
   }
+  dots$FUN_MOD <- FUN_MOD
   # Add IsHyst in parameters if carried by InputsModel
-  if (!is.null(x$model$IsHyst)) dots$IsHyst <- x$model$IsHyst
-
-  # Temporary fix waiting for resolution of HYCAR-Hydro/airgr#167
-  if (identical(match.fun(dots$FUN_MOD), RunModel_Lag)) {
-    dots$IniStates <- CreateIniStates(RunModel_Lag, x)
+  if (!is.null(x$model$IsHyst)) {
+    dots$IsHyst <- x$model$IsHyst
   }
-  # End of temporary fix HYCAR-Hydro/airgr#167
-  do.call(airGR::CreateRunOptions, dots)
+
+  warning_pattern <- "does not require .* Values? set to NA"
+  if (!is.null(x$isReservoir) && x$isReservoir) {
+    # Bypass airGR::CreateRunOptions for reservoir models with Inistates argument
+    # because it is not designed for this type of model and crashes
+    if (!is.null(dots$IniStates)) {
+      if (!is.numeric(dots$IniStates)) {
+        stop("For reservoir models, `IniStates` must be a numeric vector")
+      } else {
+        IniStates <- dots$IniStates
+        dots$IniStates <- NULL
+        warning_pattern <- sprintf(
+          "(%s)|(%s)",
+          warning_pattern,
+          "model states initialisation not defined"
+        )
+      }
+    } else {
+      IniStates <- NULL
+    }
+  }
+  RunOptions <- suppressWarningsRegex(
+    do.call(airGR::CreateRunOptions, dots),
+    pattern = warning_pattern
+  )
+  if (!is.null(x$isReservoir) && x$isReservoir) {
+    RunOptions$IniStates <- IniStates
+  }
+  return(RunOptions)
 }
 
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.character <- function(x, InputsModel, ...) {
-  CreateRunOptions(x = InputsModel,
-                   FUN_MOD = x,
-                   ...)
+  CreateRunOptions(x = InputsModel, FUN_MOD = x, ...)
 }
 
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.function <- function(x, InputsModel, ...) {
-  CreateRunOptions(x = InputsModel,
-                   FUN_MOD = x,
-                   ...)
+  CreateRunOptions(x = InputsModel, FUN_MOD = x, ...)
 }

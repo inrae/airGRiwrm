@@ -22,8 +22,8 @@ isNodeUpstream(x, current_node, candidate_node)
 \method{isNodeUpstream}{GRiwrmInputsModel}(x, current_node, candidate_node)
 }
 \arguments{
-\item{x}{[\code{GRiwrmInputsModel} object] (see \link{CreateInputsModel.GRiwrm}) or
-[\code{GRiwrm} object] (See \link{CreateGRiwrm})}
+\item{x}{\link[=CreateInputsModel.GRiwrm]{GRiwrmInputsModel} object (see \link{CreateInputsModel.GRiwrm}) or
+\link[=CreateGRiwrm]{GRiwrm} (See \link{CreateGRiwrm})}
 
 \item{current_node}{\link{character} with the id of the current node}
 

@@ -1,7 +1,6 @@
 Package: airGRiwrm
 Title: 'airGR' Integrated Water Resource Management
-Version: 0.7.0.9000
-Date: 2024-09-22
+Version: 0.7.0.9001
 Authors@R: c(
     person("David", "Dorchies", , "david.dorchies@inrae.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6595-7984")),
@@ -44,4 +43,4 @@ Encoding: UTF-8
 Language: en-US
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+Config/roxygen2/version: 8.0.0

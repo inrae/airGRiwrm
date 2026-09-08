@@ -3,8 +3,9 @@ development:
   mode: devel
 
 template:
-  params:
-    bootswatch: cerulean
+  bootstrap: 5
+  bootswatch: cerulean
+  light-switch: true
 
 navbar:
   structure:

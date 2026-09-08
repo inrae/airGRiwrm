@@ -22,7 +22,13 @@ CreateRunOptions(x, ...)
 \arguments{
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
-\item{IniStates}{(optional) \link{numeric} object or \link{list} of \link{numeric} object of class \emph{IniStates}, see \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
+\item{IniStates}{(optional) object containing initial model states. Can be:
+\itemize{
+\item A single \code{\link[airGR:CreateIniStates]{IniStates}} object when calling \link{CreateRunOptions.InputsModel}
+\item A named \link{list} of \code{\link[airGR:CreateIniStates]{IniStates}} objects when calling \link{CreateRunOptions.GRiwrmInputsModel}, with names matching node IDs
+}
+
+See \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
 
 \item{...}{arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}, see details}
 

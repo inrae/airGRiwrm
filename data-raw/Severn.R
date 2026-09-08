@@ -14,19 +14,27 @@ files <- file.path(
 
 read_CAMELS_ts <- function(file, cut) {
   if (!file.exists(file)) {
-    stop("File not found: ", file, "\n",
-         "Please download it from:\n",
-         "https://catalogue.ceh.ac.uk/documents/8344e4f3-d2ea-44f5-8afa-86d2987543a9")
+    stop(
+      "File not found: ",
+      file,
+      "\n",
+      "Please download it from:\n",
+      "https://catalogue.ceh.ac.uk/documents/8344e4f3-d2ea-44f5-8afa-86d2987543a9"
+    )
   }
   df <- read.csv(file)
   iCut <- which(df$date == cut)
-  df <- df[iCut:nrow(df),]
+  df <- df[iCut:nrow(df), ]
   df$DatesR <- as.POSIXct(df$date, tz = "UTC")
 
-  return(df[,c("DatesR", "precipitation", "peti", "discharge_spec")])
+  return(df[, c("DatesR", "precipitation", "peti", "discharge_spec")])
 }
 
-BasinsObs <- lapply(files, read_CAMELS_ts, cut = max(BasinsInfo$flow_period_start))
+BasinsObs <- lapply(
+  files,
+  read_CAMELS_ts,
+  cut = max(BasinsInfo$flow_period_start)
+)
 names(BasinsObs) <- stations
 
 Severn <- list(BasinsInfo = BasinsInfo, BasinsObs = BasinsObs)

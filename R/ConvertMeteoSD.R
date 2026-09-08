@@ -20,8 +20,10 @@ ConvertMeteoSD.GRiwrm <- function(x, meteo, ...) {
   np <- getAllNodesProperties(x)
   id_runoff <- np$id[np$RunOff]
   if (any(!id_runoff %in% colnames(meteo))) {
-    stop("`meteo` column names should contain at least: ",
-         paste(id_runoff, collapse = ", "))
+    stop(
+      "`meteo` column names should contain at least: ",
+      paste(id_runoff, collapse = ", ")
+    )
   }
   output <- lapply(id_runoff, ConvertMeteoSD, griwrm = x, meteo = meteo, ...)
   meteoOut <- do.call(cbind, output)
@@ -36,7 +38,7 @@ ConvertMeteoSD.character <- function(x, griwrm, meteo, ...) {
   griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
   upperIDs <- getUpstreamRunOffIds(x, griwrm)
   if (length(upperIDs) == 1) {
-    return(meteo[,x])
+    return(meteo[, x])
   }
   areas <- griwrm$area[match(upperIDs, griwrm$id)]
   output <- ConvertMeteoSD(
@@ -57,10 +59,14 @@ ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {
     stop("Meteorological data matrix should contain more than one row")
   }
   if (length(areas) != ncol(x)) {
-    stop("'areas' length and meteo data matrix number of columns should be equal")
+    stop(
+      "'areas' length and meteo data matrix number of columns should be equal"
+    )
   }
   if (areas[1] <= sum(areas[-1])) {
-    stop("Basin area 'areas[1]' should be greater than the sum of the upstream sub-basin areas")
+    stop(
+      "Basin area 'areas[1]' should be greater than the sum of the upstream sub-basin areas"
+    )
   }
   if (ncol(x) == 1) {
     return(x)
@@ -69,13 +75,15 @@ ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {
   V <- x * rep(areas, rep(nrow(x), length(areas)))
   # Sum upstream data
   if (ncol(x) > 2) {
-    Vup <- rowSums(V[,-1])
+    Vup <- rowSums(V[, -1])
   } else {
-    Vup <- V[,2]
+    Vup <- V[, 2]
   }
   # Remove to basin to get downstream data
-  Vdown <- V[,1] - Vup
-  if (!temperature) Vdown[Vdown < 0] <- 0
+  Vdown <- V[, 1] - Vup
+  if (!temperature) {
+    Vdown[Vdown < 0] <- 0
+  }
   # Convert to mm
   meteoDown <- Vdown / (areas[1] - sum(areas[-1]))
   return(as.matrix(meteoDown, ncol = 1))
@@ -84,14 +92,18 @@ ConvertMeteoSD.matrix <- function(x, areas, temperature = FALSE, ...) {
 getUpstreamRunOffIds <- function(id, griwrm) {
   griwrm <- griwrm[getDiversionRows(griwrm, inverse = TRUE), ]
   upstreamNodeIds <- griwrm$id[griwrm$down == id & !is.na(griwrm$down)]
-  upstreamRunOffIds <- griwrm$id[griwrm$id %in% upstreamNodeIds & !is.na(griwrm$area)]
+  upstreamRunOffIds <- griwrm$id[
+    griwrm$id %in% upstreamNodeIds & !is.na(griwrm$area)
+  ]
   upstreamNaAreaIds <- upstreamNodeIds[!upstreamNodeIds %in% upstreamRunOffIds]
   if (length(upstreamNaAreaIds) > 0) {
-    upstreamRunOffIds <-  c(
+    upstreamRunOffIds <- c(
       upstreamRunOffIds,
       unlist(sapply(upstreamNaAreaIds, getUpstreamRunOffIds, griwrm = griwrm))
     )
-    upstreamRunOffIds <- upstreamRunOffIds[!is.na(griwrm$area[griwrm$id %in% upstreamRunOffIds])]
+    upstreamRunOffIds <- upstreamRunOffIds[
+      !is.na(griwrm$area[griwrm$id %in% upstreamRunOffIds])
+    ]
   }
 
   if (is.na(griwrm$area[griwrm$id == id])) {

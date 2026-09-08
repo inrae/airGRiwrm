@@ -1,13 +1,19 @@
-#' @param useUpstreamQsim boolean describing if simulated (\code{TRUE}) or observed (\code{FALSE}) flows are used for calibration. Default is \code{TRUE}
+#' @param useUpstreamQsim boolean describing if simulated (`TRUE`) or
+#' observed (`FALSE`) flows are used for calibration. Default is `TRUE`
+#' @param forceReservoirObs boolean indicating if reservoir observed flows
+#' must be forced during the model run. Default is `TRUE` (See details of
+#' [RunModel_Reservoir])
 #' @rdname Calibration
 #' @export
-Calibration.GRiwrmInputsModel <- function(InputsModel,
-                                          RunOptions,
-                                          InputsCrit,
-                                          CalibOptions,
-                                          useUpstreamQsim = TRUE,
-                                          ...) {
-
+Calibration.GRiwrmInputsModel <- function(
+  InputsModel,
+  RunOptions,
+  InputsCrit,
+  CalibOptions,
+  useUpstreamQsim = TRUE,
+  forceReservoirObs = TRUE,
+  ...
+) {
   # Argument checks
 
   # We invoke the mandatory arguments here for avoiding
@@ -21,7 +27,10 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   vars2check <- c("InputsModel", "RunOptions", "InputsCrit", "CalibOptions")
   lapply(vars2check, function(x) {
     if (!inherits(get(x), paste0("GRiwrm", x))) {
-      stop(sprintf("'%1$s' must be of class GRiwrm%1$s, type '?Create%1$s' for help", x))
+      stop(sprintf(
+        "'%1$s' must be of class GRiwrm%1$s, type '?Create%1$s' for help",
+        x
+      ))
     }
   })
 
@@ -31,6 +40,17 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   OutputsModel <- list()
   class(OutputsModel) <- append("GRiwrmOutputsModel", class(OutputsModel))
 
+  if (forceReservoirObs) {
+    for (id in names(InputsModel)) {
+      if (
+        !is.null(InputsModel[[id]]$isReservoir) &&
+          InputsModel[[id]]$isReservoir
+      ) {
+        attr(RunOptions[[id]], "forceReservoirObs") <- TRUE
+      }
+    }
+  }
+
   b <- sapply(InputsModel, function(IM) !IM$inUngaugedCluster)
   gaugedIds <- names(b[b])
 
@@ -39,18 +59,29 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
 
     hasUngauged <- IM$hasUngaugedNodes
     if (hasUngauged) {
-      l  <- updateParameters4Ungauged(id,
-                                      InputsModel,
-                                      RunOptions,
-                                      CalibOptions,
-                                      OutputsModel,
-                                      useUpstreamQsim)
+      l <- updateParameters4Ungauged(
+        id,
+        InputsModel,
+        RunOptions,
+        CalibOptions,
+        OutputsModel,
+        useUpstreamQsim
+      )
       IM <- l$InputsModel
-      message("Calibration.GRiwrmInputsModel: Processing sub-basins '",
-              paste(names(IM), collapse = "', '"), "' with '", id, "' as gauged donor...")
+      message(
+        "Calibration.GRiwrmInputsModel: Processing sub-basins '",
+        paste(names(IM), collapse = "', '"),
+        "' with '",
+        id,
+        "' as gauged donor..."
+      )
       attr(RunOptions[[id]], "GRiwrmRunOptions") <- l$RunOptions
     } else {
-      message("Calibration.GRiwrmInputsModel: Processing sub-basin '", id, "'...")
+      message(
+        "Calibration.GRiwrmInputsModel: Processing sub-basin '",
+        id,
+        "'..."
+      )
       if (useUpstreamQsim && any(IM$UpstreamIsModeled)) {
         # Update InputsModel$Qupstream with simulated upstream flows
         IM <- UpdateQsimUpstream(IM, RunOptions[[id]], OutputsModel)
@@ -58,26 +89,43 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
     }
 
     if (inherits(InputsCrit[[id]], "InputsCritLavenneFunction")) {
-      IC <- getInputsCrit_Lavenne(id, OutputsModel, InputsCrit)
+      IC <- getInputsCrit_Lavenne(
+        IM,
+        RunOptions[[id]],
+        OutputsModel,
+        InputsCrit[[id]]
+      )
     } else {
       IC <- InputsCrit[[id]]
     }
 
-    if (!is.null(IM$isReservoir) && IM$isReservoir & any(is.na(CalibOptions[[id]]$FixedParam))) {
-      stop("Parameters of node '", id, "' using `RunModel_Reservoir` can't be calibrated",
-           "Fix its parameters by using the command:\n",
-           "`CalibOptions[['", id, "']]$FixedParam <- c(Vmax, celerity)`")
+    if (
+      !is.null(IM$isReservoir) &&
+        IM$isReservoir &
+        any(is.na(CalibOptions[[id]]$FixedParam))
+    ) {
+      stop(
+        "Parameters of node '",
+        id,
+        "' using `RunModel_Reservoir` can't be calibrated\n",
+        "Fix its parameters by using the command:\n",
+        "`CalibOptions[['",
+        id,
+        "']]$FixedParam <- c(Vmax, celerity)`"
+      )
     }
 
     if (!hasUngauged && IM$isReceiver) {
       # Ungauged node receiving parameters from upstream or sibling node
       OutputsCalib[[id]] <- list(
-        ParamFinalR = transferGRparams(InputsModel,
-                                       OutputsCalib[[IM$gaugedId]]$ParamFinalR,
-                                       IM$gaugedId,
-                                       id,
-                                       CalibOptions[[id]]$FixedParam,
-                                       verbose = TRUE)
+        ParamFinalR = transferGRparams(
+          InputsModel,
+          OutputsCalib[[IM$gaugedId]]$ParamFinalR,
+          IM$gaugedId,
+          id,
+          CalibOptions[[id]]$FixedParam,
+          verbose = TRUE
+        )
       )
       class(OutputsCalib[[id]]) <- c("OutputsCalib", class(OutputsCalib[[id]]))
     } else {
@@ -98,11 +146,13 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         if (IM[[uId]]$gaugedId == id) {
           # Add OutputsCalib for ungauged nodes
           OutputsCalib[[uId]] <- list(
-            ParamFinalR = transferGRparams(InputsModel,
-                                           OutputsCalib[[id]]$ParamFinalR,
-                                           id,
-                                           uId,
-                                           verbose = TRUE)
+            ParamFinalR = transferGRparams(
+              InputsModel,
+              OutputsCalib[[id]]$ParamFinalR,
+              id,
+              uId,
+              verbose = TRUE
+            )
           )
           class(OutputsCalib[[uId]]) <- class(OutputsCalib[[id]])
         } else {
@@ -116,10 +166,12 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
         }
       }
       if (useUpstreamQsim) {
-        OM_subnet <- RunModel_Ungauged(IM,
-                                       RunOptions[[id]],
-                                       OutputsCalib[[id]]$ParamFinalR,
-                                       output.all = TRUE)
+        OM_subnet <- RunModel_Ungauged(
+          IM,
+          RunOptions[[id]],
+          OutputsCalib[[id]]$ParamFinalR,
+          output.all = TRUE
+        )
         OutputsModel <- c(OutputsModel, OM_subnet)
       }
       IM <- IM[[id]]
@@ -134,5 +186,4 @@ Calibration.GRiwrmInputsModel <- function(InputsModel,
   }
 
   return(OutputsCalib)
-
 }

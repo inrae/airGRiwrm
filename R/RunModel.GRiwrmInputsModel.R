@@ -3,6 +3,9 @@
 #' @param x \[object of class \emph{GRiwrmInputsModel}\] see [CreateInputsModel.GRiwrm] for details
 #' @param RunOptions \[object of class \emph{GRiwrmRunOptions}\] see [CreateRunOptions.GRiwrmInputsModel] for details
 #' @param Param [list] parameter values. The list item names are the IDs of the sub-basins. Each item is a [numeric] [vector]
+#' @param forceReservoirObs boolean indicating if reservoir observed flows
+#' must be forced during the model run. Default is `TRUE` (See details of
+#' [RunModel_Reservoir])
 #' @param ... Further arguments for compatibility with S3 methods
 #'
 #' @return An object of class \emph{GRiwrmOutputsModel}.
@@ -18,15 +21,34 @@
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()]
 #' @example man-examples/RunModel.GRiwrmInputsModel.R
-RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
-
+RunModel.GRiwrmInputsModel <- function(
+  x,
+  RunOptions,
+  Param,
+  forceReservoirObs = FALSE,
+  ...
+) {
   checkRunModelParameters(x, RunOptions, Param)
 
   OutputsModel <- list()
   class(OutputsModel) <- c("GRiwrmOutputsModel", class(OutputsModel))
 
   for (id in names(x)) {
-    message("RunModel.GRiwrmInputsModel: Processing sub-basin ", x[[id]]$id, "...")
+    message(
+      "RunModel.GRiwrmInputsModel: Processing sub-basin ",
+      x[[id]]$id,
+      "..."
+    )
+
+    # Set forceReservoirObs attribute if needed
+    if (forceReservoirObs) {
+      if (
+        !is.null(x[[id]]$isReservoir) &&
+          x[[id]]$isReservoir
+      ) {
+        attr(RunOptions[[id]], "forceReservoirObs") <- TRUE
+      }
+    }
 
     # Update x[[id]]$Qupstream with simulated upstream flows
     if (any(x[[id]]$UpstreamIsModeled)) {
@@ -34,7 +56,12 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
     }
     # Run node regulation if any
     if (!is.null(x[[id]]$FUN_REGUL)) {
-      x[[id]] <- x[[id]]$FUN_REGUL(x[[id]], RunOptions[[id]], OutputsModel, e = environment())
+      x[[id]] <- x[[id]]$FUN_REGUL(
+        x[[id]],
+        RunOptions[[id]],
+        OutputsModel,
+        e = environment()
+      )
     }
     # Run the model for the sub-basin
     OutputsModel[[id]] <- RunModel.InputsModel(
@@ -43,6 +70,10 @@ RunModel.GRiwrmInputsModel <- function(x, RunOptions, Param, ...) {
       Param = Param[[id]]
     )
   }
-  OutputsModel <- add_OutputsModel_attributes(x, OutputsModel, RunOptions[[1]]$IndPeriod_Run)
+  OutputsModel <- add_OutputsModel_attributes(
+    x,
+    OutputsModel,
+    RunOptions[[1]]$IndPeriod_Run
+  )
   return(OutputsModel)
 }

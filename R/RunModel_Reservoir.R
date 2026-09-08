@@ -5,9 +5,13 @@
 #' from the `Qrelease` parameter of [CreateInputsModel.GRiwrm].
 #'
 #' @details
-#' The simulated flow corresponds to the released flow except when the reservoir
-#' is empty (release flow is limited) or full (release flow is completed by inflows
-#' excess).
+#' During calibration, the simulated flow corresponds exactly to the released
+#' flow in order to get downstream flows corresponding to observed flows.
+#' On a regular RunModel process, the simulated flow also corresponds to the
+#' released flow except when the reservoir is empty (release flow is limited) or
+#' full (release flow is completed by excess inflows).
+#' The same treatment is applied to diverted flows in case of Diversion model
+#' applied in the reservoir.
 #'
 #' By default, the initial reservoir volume at the beginning of the warm-up period
 #' is equal to the half of the maximum reservoir capacity.
@@ -19,10 +23,8 @@
 #' `CalibOptions[[id_of_the_reservoir]]$FixedParam <- c(Vmax, celerity)`
 #'
 #' Initial states of the model consists in the initial volume storage in the
-#' reservoir and can be defined with the following instruction after the call to
-#' [CreateRunOptions.GRiwrmInputsModel]:
-#'
-#' `RunOptions[[id_of_the_reservoir]]$IniStates <- c("Reservoir.V" = initial_volume_m3)`
+#' reservoir and can be defined with the `IniStates` in the call to
+#' [CreateRunOptions.GRiwrmInputsModel] (See example below).
 #'
 #' The final state of the reservoir is stored in `OutputsModel$StateEnd` and
 #' can be reused for starting a new simulation with the following instruction:
@@ -55,11 +57,16 @@
 #' @example man-examples/RunModel_Reservoir.R
 #'
 RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
-
   # Input checks
-  stopifnot(InputsModel$isReservoir,
-            is.numeric(Param),
-            length(Param) == 2)
+  stopifnot(InputsModel$isReservoir, is.numeric(Param), length(Param) == 2)
+  if (
+    !is.null(attr(RunOptions, "forceReservoirObs")) &&
+      attr(RunOptions, "forceReservoirObs")
+  ) {
+    is_full_model <- FALSE
+  } else {
+    is_full_model <- TRUE
+  }
 
   # Model parameter
   Vmax <- Param[1]
@@ -67,28 +74,46 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
 
   # Time parameters
   IndPerWarmUp <- RunOptions$IndPeriod_WarmUp[RunOptions$IndPeriod_WarmUp > 0]
-  IndPerTot   <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
+  IndPerTot <- c(IndPerWarmUp, RunOptions$IndPeriod_Run)
   iPerTot <- seq(length(IndPerTot))
 
   # Relocate upstream direct injection into the reservoir
-  Qdirect <- InputsModel$Qupstream[IndPerTot, !InputsModel$UpstreamIsModeled, drop = FALSE]
-  InputsModel$Qupstream <-  InputsModel$Qupstream[, InputsModel$UpstreamIsModeled, drop = FALSE]
-  InputsModel$LengthHydro <- InputsModel$LengthHydro[InputsModel$UpstreamIsModeled]
-  InputsModel$BasinAreas <- InputsModel$BasinAreas[c(InputsModel$UpstreamIsModeled, TRUE)]
-  InputsModel$UpstreamNodes <- InputsModel$UpstreamNodes[InputsModel$UpstreamIsModeled]
-  InputsModel$UpstreamVarQ <- InputsModel$UpstreamVarQ[InputsModel$UpstreamIsModeled]
-  InputsModel$UpstreamIsModeled <- InputsModel$UpstreamIsModeled[InputsModel$UpstreamIsModeled]
+  Qdirect <- InputsModel$Qupstream[
+    IndPerTot,
+    !InputsModel$UpstreamIsModeled,
+    drop = FALSE
+  ]
+  InputsModel$Qupstream <- InputsModel$Qupstream[,
+    InputsModel$UpstreamIsModeled,
+    drop = FALSE
+  ]
+  InputsModel$LengthHydro <- InputsModel$LengthHydro[
+    InputsModel$UpstreamIsModeled
+  ]
+  InputsModel$BasinAreas <- InputsModel$BasinAreas[c(
+    InputsModel$UpstreamIsModeled,
+    TRUE
+  )]
+  InputsModel$UpstreamNodes <- InputsModel$UpstreamNodes[
+    InputsModel$UpstreamIsModeled
+  ]
+  InputsModel$UpstreamVarQ <- InputsModel$UpstreamVarQ[
+    InputsModel$UpstreamIsModeled
+  ]
+  InputsModel$UpstreamIsModeled <- InputsModel$UpstreamIsModeled[
+    InputsModel$UpstreamIsModeled
+  ]
 
   # Compute inflows with RunModel_Lag
   if (ncol(InputsModel$Qupstream) > 0) {
-    OutputsModel <- RunModel_Routing(InputsModel,
-                                RunOptions,
-                                Param = celerity)
+    OutputsModel <- RunModel_Routing(InputsModel, RunOptions, Param = celerity)
     names(OutputsModel)[names(OutputsModel) == "Qsim_m3"] <- "Qinflows_m3"
     OutputsModel$Qsim <- NULL
     OutputsModel$RunOptions$WarmUpQsim <- NULL
-    Qinflows_m3 <- c(OutputsModel$RunOptions$WarmUpQsim_m3,
-                     OutputsModel$Qinflows_m3)
+    Qinflows_m3 <- c(
+      OutputsModel$RunOptions$WarmUpQsim_m3,
+      OutputsModel$Qinflows_m3
+    )
   } else {
     OutputsModel <- list(
       DatesR = InputsModel$DatesR[RunOptions$IndPeriod_Run]
@@ -97,7 +122,9 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
     Qinflows_m3 <- rep(0, length(IndPerTot))
   }
   if (ncol(Qdirect) > 0) {
-    if (ncol(Qdirect) > 1) Qdirect <- rowSums(Qdirect)
+    if (ncol(Qdirect) > 1) {
+      Qdirect <- rowSums(Qdirect)
+    }
     Qinflows_m3 <- Qinflows_m3 + Qdirect
   } else {
     Qdirect <- NULL
@@ -120,18 +147,33 @@ RunModel_Reservoir <- function(InputsModel, RunOptions, Param) {
   # Time series volume and release calculation
   for (i in iPerTot) {
     Vsim[i] <- V0 + Qinflows_m3[i]
+
     if (Vsim[i] < 0) {
       Qover_m3[i] <- -Vsim[i]
       Vsim[i] <- 0
     }
+
     if (InputsModel$hasDiversion) {
-      Qdiv_m3[i] <- min(Vsim[i] + InputsModel$Qmin[IndPerTot[i]], InputsModel$Qdiv[IndPerTot[i]])
+      Qdiv_m3[i] <- min(
+        Vsim[i] + InputsModel$Qmin[IndPerTot[i]],
+        InputsModel$Qdiv[IndPerTot[i]]
+      )
       Vsim[i] <- Vsim[i] - Qdiv_m3[i]
     }
-    Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])
-    Vsim[i] <- Vsim[i] - Qsim_m3[i]
+
+    if (is.na(InputsModel$Qrelease[IndPerTot[i]])) {
+      Qsim_m3[i] <- Vsim[i]
+    } else if (is_full_model) {
+      Qsim_m3[i] <- min(Vsim[i], InputsModel$Qrelease[IndPerTot[i]])
+    } else {
+      Qsim_m3[i] <- InputsModel$Qrelease[IndPerTot[i]]
+    }
+    Vsim[i] <- max(0, Vsim[i] - Qsim_m3[i])
+
     if (Vsim[i] > Vmax) {
-      Qsim_m3[i] <- Qsim_m3[i] + Vsim[i] - Vmax
+      if (is_full_model) {
+        Qsim_m3[i] <- Qsim_m3[i] + Vsim[i] - Vmax
+      }
       Vsim[i] <- Vmax
     }
     V0 <- Vsim[i]

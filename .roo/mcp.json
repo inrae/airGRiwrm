@@ -1,0 +1,28 @@
+{
+	"mcpServers": {
+		"r-btw": {
+			"command": "Rscript",
+			"args": [
+				"-e",
+				"btw::btw_mcp_server(list('docs', 'pkg', 'env', 'run', 'cran', 'web', 'git'))"
+			],
+			"alwaysAllow": [
+				"btw_tool_docs_help_page",
+				"btw_tool_docs_available_vignettes",
+				"btw_tool_docs_package_help_topics",
+				"btw_tool_cran_package",
+				"btw_tool_cran_search",
+				"btw_tool_pkg_test",
+				"btw_tool_pkg_load_all",
+				"btw_tool_env_describe_environment",
+				"btw_tool_run_r",
+				"btw_tool_docs_vignette",
+				"btw_tool_git_status",
+				"btw_tool_git_diff"
+			],
+			"timeout": 300,
+			"disabledTools": [
+			]
+		}
+	}
+}

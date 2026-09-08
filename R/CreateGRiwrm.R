@@ -61,17 +61,18 @@
 #' @export
 #' @example man-examples/CreateGRiwrm.R
 #'
-CreateGRiwrm <- function(db,
-                   cols = list(
-                     id = "id",
-                     down = "down",
-                     length = "length",
-                     area = "area",
-                     model = "model",
-                     donor = "donor"
-                   ),
-                   keep_all = FALSE) {
-
+CreateGRiwrm <- function(
+  db,
+  cols = list(
+    id = "id",
+    down = "down",
+    length = "length",
+    area = "area",
+    model = "model",
+    donor = "donor"
+  ),
+  keep_all = FALSE
+) {
   stopifnot(inherits(db, "data.frame"))
 
   colsDefault <-
@@ -85,7 +86,9 @@ CreateGRiwrm <- function(db,
     )
   cols <- utils::modifyList(colsDefault, as.list(cols))
 
-  if (is.null(db[[cols$donor]])) db[[cols$donor]] <- as.character(NA)
+  if (is.null(db[[cols$donor]])) {
+    db[[cols$donor]] <- as.character(NA)
+  }
 
   griwrm <- dplyr::rename(db, unlist(cols))
 
@@ -93,14 +96,18 @@ CreateGRiwrm <- function(db,
     griwrm <- dplyr::select(griwrm, names(cols))
   }
 
-  CheckColumnTypes(griwrm,
-                   list(id = "character",
-                        down = "character",
-                        length = "double",
-                        model = "character",
-                        area = "double",
-                        donor = "character"),
-                   keep_all)
+  CheckColumnTypes(
+    griwrm,
+    list(
+      id = "character",
+      down = "character",
+      length = "double",
+      model = "character",
+      area = "double",
+      donor = "character"
+    ),
+    keep_all
+  )
 
   checkNetworkConsistency(griwrm)
 
@@ -155,24 +162,35 @@ CheckColumnTypes <- function(df, coltypes, keep_all) {
 checkNetworkConsistency <- function(db) {
   db2 <- db[getDiversionRows(db, TRUE), ]
   if (any(duplicated(db2$id))) {
-    stop("Duplicated nodes detected: ",
-         paste(db2$id[duplicated(db2$id)], collapse = "\n"),
-         "\nNodes `id` must be unique (except for `Diversion` nodes)")
+    stop(
+      "Duplicated nodes detected: ",
+      paste(db2$id[duplicated(db2$id)], collapse = "\n"),
+      "\nNodes `id` must be unique (except for `Diversion` nodes)"
+    )
   }
   dbDiv <- db[getDiversionRows(db), ]
   if (any(duplicated(dbDiv$id))) {
-    stop("Duplicated Diversion nodes detected: ",
-         paste(dbDiv$id[duplicated(dbDiv$id)], collapse = "\n"),
-         "\nThere can only be one Diversion per node")
+    stop(
+      "Duplicated Diversion nodes detected: ",
+      paste(dbDiv$id[duplicated(dbDiv$id)], collapse = "\n"),
+      "\nThere can only be one Diversion per node"
+    )
   }
   if (sum(is.na(db$down)) == 0) {
-    stop("At least one node must be a network downstream node",
-      " specified by 'down = NA'")
+    stop(
+      "At least one node must be a network downstream node",
+      " specified by 'down = NA'"
+    )
   }
   lapply(which(!is.na(db$down)), function(i) {
     node <- db[i, ]
     if (!(node$down %in% db$id)) {
-      nodeError(node, "The 'down' id ", node$down, " is not found in the 'id' column")
+      nodeError(
+        node,
+        "The 'down' id ",
+        node$down,
+        " is not found in the 'id' column"
+      )
     }
   })
   db3 <- db2[!is.na(db2$model), ]
@@ -180,30 +198,52 @@ checkNetworkConsistency <- function(db) {
   lapply(which(!is.na(db3$donor)), function(i) {
     node <- db3[i, ]
     if (!(node$donor %in% db2$id)) {
-      nodeError(node, "The 'donor' id ", node$donor, " is not found in the 'id' column")
+      nodeError(
+        node,
+        "The 'donor' id ",
+        node$donor,
+        " is not found in the 'id' column"
+      )
     }
     donor_model <- db2$model[db2$id == node$donor]
-    if (is.na(donor_model) || donor_model %in% c("RunModel_Reservoir", "Ungauged")) {
-      if (!(node$model == "RunModel_Reservoir" &&
-            !is.na(donor_model) && donor_model == "RunModel_Reservoir")) {
+    if (
+      is.na(donor_model) || donor_model %in% c("RunModel_Reservoir", "Ungauged")
+    ) {
+      if (
+        !(node$model == "RunModel_Reservoir" &&
+          !is.na(donor_model) &&
+          donor_model == "RunModel_Reservoir")
+      ) {
         # This error is for GR and RunModel_Reservoir that are in an ungauged cluster
-        nodeError(node, "The 'donor' node ", node$donor, " must be an hydrological model",
-                  " (Found model = '", donor_model, "')")
+        nodeError(
+          node,
+          "The 'donor' node ",
+          node$donor,
+          " must be an hydrological model",
+          " (Found model = '",
+          donor_model,
+          "')"
+        )
       }
     }
   })
   sapply(db$id[getDiversionRows(db)], function(x) {
     i <- which(db$id == x & db$model == "Diversion")[1]
     if (length(which(db3$id == x)) != 1) {
-      nodeError(db[i, ],
-                "A Diversion node must have the same `id` of one (and only one) node with a model")
+      nodeError(
+        db[i, ],
+        "A Diversion node must have the same `id` of one (and only one) node with a model"
+      )
     }
   })
   id_reservoirs <- db3$id[db3$model == "RunModel_Reservoir"]
   sapply(id_reservoirs, function(id) {
     if (length(db$id[!is.na(db$down) & db$down == id]) == 0) {
-      stop("The reservoir ", id,
-           " must have at least one upstream node as inflows.")
+      stop(
+        "The reservoir ",
+        id,
+        " must have at least one upstream node as inflows."
+      )
     }
   })
   apply(db, 1, checkNode, simplify = FALSE)
@@ -218,14 +258,23 @@ checkNode <- function(node) {
       }
     } else if (length(grep("RunModel_GR", node$model)) > 0 & is.na(node$area)) {
       # TODO This test should be extended to airGRplus models
-      nodeError(node, "A node using an hydrological model must have a numeric area")
+      nodeError(
+        node,
+        "A node using an hydrological model must have a numeric area"
+      )
     }
   }
   if (is.na(node$down) & !is.na(node$length)) {
-    nodeError(node, "A downstream end node defined by `down=NA` must have `length=NA`")
+    nodeError(
+      node,
+      "A downstream end node defined by `down=NA` must have `length=NA`"
+    )
   }
   if (is.na(node$length) & !is.na(node$down)) {
-    nodeError(node, "A node with a defined downstream node must have a numeric `length`")
+    nodeError(
+      node,
+      "A node with a defined downstream node must have a numeric `length`"
+    )
   }
 }
 
@@ -233,9 +282,7 @@ displayNodeDetails <- function(node) {
   s <- sapply(names(node), function(x) {
     sprintf("%s: %s", x, node[x])
   })
-  paste("Error on the node:",
-        paste(s, collapse = "\n"),
-        sep = "\n")
+  paste("Error on the node:", paste(s, collapse = "\n"), sep = "\n")
 }
 
 nodeError <- function(node, ...) {
@@ -274,7 +321,6 @@ getDonor <- function(id, griwrm) {
 }
 
 getDiversionRows <- function(griwrm, inverse = FALSE) {
-
   rows <- which(!is.na(griwrm$model) & griwrm$model == "Diversion")
   if (inverse) {
     if (length(rows) == 0) {
@@ -301,8 +347,10 @@ setDonor <- function(griwrm) {
     if (model == "RunModel_Reservoir") {
       return(id)
     }
-    if (model != "Ungauged" &&
-        (is.na(griwrm$down[i]) || !any(!is.na(griwrm$down) & griwrm$down == id))) {
+    if (
+      model != "Ungauged" &&
+        (is.na(griwrm$down[i]) || !any(!is.na(griwrm$down) & griwrm$down == id))
+    ) {
       # Downstream or upstream gauged nodes can't be in ungauged node cluster
       return(id)
     }
@@ -319,20 +367,35 @@ setDonor <- function(griwrm) {
       d <- refineDonor(i, g)
       if (!is.na(d) && (is.na(oDonors[i]) || d != oDonors[i]) && d != g$id[i]) {
         if (g$model[i] == "Ungauged") {
-          message("Ungauged node '", g$id[i], "' automatically gets the node '",
-                  d, "' as parameter donor")
+          message(
+            "Ungauged node '",
+            g$id[i],
+            "' automatically gets the node '",
+            d,
+            "' as parameter donor"
+          )
         } else if (g$model[i] == "RunModel_Reservoir") {
-          message("Node '", g$id[i], "' is included in the ungauged node cluster '",
-                  d, "'")
-
+          message(
+            "Node '",
+            g$id[i],
+            "' is included in the ungauged node cluster '",
+            d,
+            "'"
+          )
         } else {
-          warning("Node '", g$id[i], "' is included in the ungauged node cluster '",
-                  d, "': it should have fixed parameters at Calibration")
+          warning(
+            "Node '",
+            g$id[i],
+            "' is included in the ungauged node cluster '",
+            d,
+            "': it should have fixed parameters at Calibration"
+          )
         }
       }
       return(d)
     },
-    g = griwrm)
+    g = griwrm
+  )
   return(donors)
 }
 
@@ -344,10 +407,16 @@ setDonor <- function(griwrm) {
 #' @return [character] [vector] of donor ids
 #' @noRd
 refineDonor <- function(i, g) {
-  if (is.na(g$model[i]) || g$model[i] == "Diversion") return(as.character(NA))
-  if (g$model[i] == "Ungauged") return(g$donor[i])
+  if (is.na(g$model[i]) || g$model[i] == "Diversion") {
+    return(as.character(NA))
+  }
+  if (g$model[i] == "Ungauged") {
+    return(g$donor[i])
+  }
   id <- g$id[i]
-  if (is.na(g$donor[i])) g$donor[i] <- id
+  if (is.na(g$donor[i])) {
+    g$donor[i] <- id
+  }
   # Search if the gauged node is in an ungauged node cluster
   # Search all ungauged nodes upstream
   g2 <- g[!is.na(g$model) & g$model != "Diversion", ] # Remove duplicates for node search
@@ -374,9 +443,14 @@ refineDonor <- function(i, g) {
     if (length(ungaugedDonors) == 1) {
       return(ungaugedDonors)
     } else if (length(ungaugedDonors) > 1) {
-      warning("The node '", id, "' is embedded in several ungauged node clusters: '",
-           paste(ungaugedDonors, collapse = "', '"), "'\n",
-           "Calibration of both ungauged node clusters is impossible")
+      warning(
+        "The node '",
+        id,
+        "' is embedded in several ungauged node clusters: '",
+        paste(ungaugedDonors, collapse = "', '"),
+        "'\n",
+        "Calibration of both ungauged node clusters is impossible"
+      )
     }
   }
 

@@ -33,8 +33,7 @@
 #'
 #' @example man-examples/getNodeProperties.R
 getNodeProperties <- function(id, griwrm) {
-  stopifnot(inherits(griwrm, "GRiwrm"),
-            "donor" %in% names(griwrm))
+  stopifnot(inherits(griwrm, "GRiwrm"), "donor" %in% names(griwrm))
   g2 <- griwrm[getDiversionRows(griwrm, TRUE), , drop = FALSE]
   upstreamIds <- griwrm$id[!griwrm$id %in% griwrm$down]
   model <- g2$model[g2$id == id]
@@ -61,7 +60,10 @@ getNodeProperties <- function(id, griwrm) {
         p$calibration <- "Gauged"
       }
     } else {
-      if (is.na(griwrm$donor[id]) || isNodeDownstream(griwrm, id, griwrm$donor[id])) {
+      if (
+        is.na(griwrm$donor[id]) ||
+          isNodeDownstream(griwrm, id, griwrm$donor[id])
+      ) {
         p$calibration <- "Ungauged"
       } else {
         p$calibration <- "Receiver"
@@ -69,7 +71,9 @@ getNodeProperties <- function(id, griwrm) {
     }
   }
   p$Upstream <- p$position == "Upstream"
-  p$RunOff <- !p$DirectInjection && !p$Reservoir && donor_model != "RunModel_Lag"
+  p$RunOff <- !p$DirectInjection &&
+    !p$Reservoir &&
+    donor_model != "RunModel_Lag"
   return(p)
 }
 
@@ -80,9 +84,7 @@ getNodeProperties <- function(id, griwrm) {
 getAllNodesProperties <- function(griwrm) {
   stopifnot(inherits(griwrm, "GRiwrm"))
   uids <- griwrm$id[getDiversionRows(griwrm, TRUE)]
-  nodeProperties <- lapply(uids,
-                           getNodeProperties,
-                           griwrm = griwrm)
+  nodeProperties <- lapply(uids, getNodeProperties, griwrm = griwrm)
   df <- do.call(rbind, lapply(nodeProperties, dplyr::bind_cols))
   df <- cbind(id = uids, df)
   rownames(df) <- uids
@@ -102,6 +104,8 @@ isNodeGauged <- function(id, griwrm, skip_reservoirs = FALSE) {
   g2 <- griwrm[getDiversionRows(griwrm, inverse = TRUE), , drop = FALSE]
   model <- g2$model[g2$id == id]
   ungaugedModels <- c("Ungauged")
-  if (skip_reservoirs) ungaugedModels <- c(ungaugedModels, "RunModel_Reservoir")
+  if (skip_reservoirs) {
+    ungaugedModels <- c(ungaugedModels, "RunModel_Reservoir")
+  }
   return(!is.na(model) && !model %in% ungaugedModels)
 }

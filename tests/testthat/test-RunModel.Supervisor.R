@@ -4,7 +4,9 @@ skip_on_cran()
 e <- setupRunModel()
 # variables are copied from environment 'e' to the current environment
 # https://stackoverflow.com/questions/9965577/r-copy-move-one-environment-to-another
-for(x in ls(e)) assign(x, get(x, e))
+for (x in ls(e)) {
+  assign(x, get(x, e))
+}
 
 test_that("RunModel.Supervisor with no regulation should returns same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel)
@@ -14,27 +16,32 @@ test_that("RunModel.Supervisor with no regulation should returns same results as
     Param = ParamMichel
   )
   lapply(griwrm$id, function(id) {
-    expect_equal(sort(names(OM_GriwrmInputs[[!!id]])),
-                 sort(names(OM_Supervisor[[!!id]])))
+    expect_equal(
+      sort(names(OM_GriwrmInputs[[!!id]])),
+      sort(names(OM_Supervisor[[!!id]]))
+    )
     lapply(names(OM_Supervisor[[id]]), function(x) {
       expect_equal(OM_Supervisor[[!!id]][[!!x]], OM_GriwrmInputs[[!!id]][[!!x]])
     })
-  }) |> invisible()
+  }) |>
+    invisible()
 })
 
 # Add 2 nodes to the network
-nodes2 <- rbind(nodes,
-                data.frame(
-                  id = c("R1", "R2"),
-                  down = "54057",
-                  length = 100,
-                  area = NA,
-                  model = NA
-                ))
+nodes2 <- rbind(
+  nodes,
+  data.frame(
+    id = c("R1", "R2"),
+    down = "54057",
+    length = 100,
+    area = NA,
+    model = NA
+  )
+)
 griwrm2 <- CreateGRiwrm(nodes2)
 
 # Add Qinf for the 2 new nodes and create InputsModel
-Qinf <- matrix(data = rep(0, 2*length(DatesR)), ncol = 2)
+Qinf <- matrix(data = rep(0, 2 * length(DatesR)), ncol = 2)
 colnames(Qinf) <- c("R1", "R2")
 InputsModel <-
   CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qinf)
@@ -43,11 +50,21 @@ test_that("RunModel.Supervisor with two regulations that cancel each other out s
   # Create Supervisor
   sv <- CreateSupervisor(InputsModel)
   # Function to withdraw half of the measured flow
-  fWithdrawal <- function(y) { -y/2 }
+  fWithdrawal <- function(y) {
+    -y / 2
+  }
   # Function to release half of the the measured flow
-  fRelease <- function(y) { y/2 }
+  fRelease <- function(y) {
+    y / 2
+  }
   # Controller that withdraw half of the flow measured at node "54002" at location "R1"
-  CreateController(sv, "Withdrawal", Y = c("54002"), U = c("R1"), FUN = fWithdrawal)
+  CreateController(
+    sv,
+    "Withdrawal",
+    Y = c("54002"),
+    U = c("R1"),
+    FUN = fWithdrawal
+  )
   # Controller that release half of the flow measured at node "54002" at location "R2"
   CreateController(sv, "Release", Y = c("54002"), U = c("R2"), FUN = fRelease)
 
@@ -64,9 +81,15 @@ test_that("RunModel.Supervisor with multi time steps controller, two regulations
           same results as RunModel.GRiwrmInputsModel", {
   sv <- CreateSupervisor(InputsModel, TimeStep = 10L)
   fEverything <- function(y) {
-    m <- matrix(c(y[,1]/2, -y[,1]/2), ncol = 2)
+    m <- matrix(c(y[, 1] / 2, -y[, 1] / 2), ncol = 2)
   }
-  CreateController(sv, "Everything", Y = c("54002", "54032"), U = c("R1", "R2"), FUN = fEverything)
+  CreateController(
+    sv,
+    "Everything",
+    Y = c("54002", "54032"),
+    U = c("R1", "R2"),
+    FUN = fEverything
+  )
   OM_Supervisor <- RunModel(
     sv,
     RunOptions = RunOptions,
@@ -80,11 +103,21 @@ test_that("RunModel.Supervisor with NA values in Qupstream", {
   InputsModel$`54057`$Qupstream[, c("R1", "R2")] <- NA
   sv <- CreateSupervisor(InputsModel)
   # Function to withdraw half of the measured flow
-  fWithdrawal <- function(y) { -y/2 }
+  fWithdrawal <- function(y) {
+    -y / 2
+  }
   # Function to release half of the the measured flow
-  fRelease <- function(y) { y/2 }
+  fRelease <- function(y) {
+    y / 2
+  }
   # Controller that withdraw half of the flow measured at node "54002" at location "R1"
-  CreateController(sv, "Withdrawal", Y = c("54002"), U = c("R1"), FUN = fWithdrawal)
+  CreateController(
+    sv,
+    "Withdrawal",
+    Y = c("54002"),
+    U = c("R1"),
+    FUN = fWithdrawal
+  )
   # Controller that release half of the flow measured at node "54002" at location "R2"
   CreateController(sv, "Release", Y = c("54002"), U = c("R2"), FUN = fRelease)
 
@@ -93,24 +126,33 @@ test_that("RunModel.Supervisor with NA values in Qupstream", {
     RunOptions = RunOptions,
     Param = ParamMichel
   )
-  expect_equal(OM_Supervisor[["54057"]]$Qsim[1:3], rep(as.double(NA),3))
-  expect_equal(OM_Supervisor[["54057"]]$Qsim[4:length(IndPeriod_Run)],
-               OM_GriwrmInputs[["54057"]]$Qsim[4:length(IndPeriod_Run)])
+  expect_equal(OM_Supervisor[["54057"]]$Qsim[1:3], rep(as.double(NA), 3))
+  expect_equal(
+    OM_Supervisor[["54057"]]$Qsim[4:length(IndPeriod_Run)],
+    OM_GriwrmInputs[["54057"]]$Qsim[4:length(IndPeriod_Run)]
+  )
 })
 
 test_that("RunModel.Supervisor with diversion node should not produce NAs", {
   nodes_div <- nodes
-  nodes_div <- rbind(nodes_div, data.frame(id = "54001",
-                                           down = "54029",
-                                           length = 25,
-                                           model = "Diversion",
-                                           area = NA))
+  nodes_div <- rbind(
+    nodes_div,
+    data.frame(
+      id = "54001",
+      down = "54029",
+      length = 25,
+      model = "Diversion",
+      area = NA
+    )
+  )
   nodes_div <- nodes_div[order(nodes_div$model), ]
   g_div <- CreateGRiwrm(nodes_div)
   Qinf <- matrix(data = rep(0, length(DatesR)), ncol = 1)
   colnames(Qinf) <- "54001"
   e <- setupRunModel(griwrm = g_div, runRunModel = FALSE, Qinf = Qinf)
-  for (x in ls(e)) assign(x, get(x, e))
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
   sv <- CreateSupervisor(InputsModel, TimeStep = 1L)
   logicFunFactory <- function(sv) {
     #' @param Y Flow measured at "54002" the previous time step
@@ -124,11 +166,13 @@ test_that("RunModel.Supervisor with diversion node should not produce NAs", {
       return(-max(5.3 * 86400 - Qnat, 0))
     }
   }
-  CreateController(sv,
-                   ctrl.id = "Low flow support",
-                   Y = "54029",
-                   U = "54001",
-                   FUN = logicFunFactory(sv))
+  CreateController(
+    sv,
+    ctrl.id = "Low flow support",
+    Y = "54029",
+    U = "54001",
+    FUN = logicFunFactory(sv)
+  )
   ParamMichel$`54029` <- c(1, ParamMichel$`54029`)
   OM_Supervisor <- RunModel(
     sv,
@@ -136,6 +180,26 @@ test_that("RunModel.Supervisor with diversion node should not produce NAs", {
     Param = ParamMichel
   )
   expect_true(all(OM_Supervisor$`54001`$Qdiv_m3 >= 0))
+  lapply(OM_Supervisor, function(OM) {
+    expect_false(any(is.na(OM$Qsim)))
+    expect_false(any(is.na(OM$Qsim_m3)))
+  })
+})
+
+test_that("RunModel.Supervisor should be able to run without warm-up period", {
+  sv <- CreateSupervisor(InputsModel)
+  RO <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = 1:165
+  )
+  Param <- ParamMichel
+  Param$`54057`[1] <- 0.01 # Low velocity to having several time steps in the lag
+  OM_Supervisor <- RunModel(
+    sv,
+    RunOptions = RO,
+    Param = Param
+  )
   lapply(OM_Supervisor, function(OM) {
     expect_false(any(is.na(OM$Qsim)))
     expect_false(any(is.na(OM$Qsim_m3)))
