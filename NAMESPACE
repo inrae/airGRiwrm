@@ -71,10 +71,14 @@ export(transferGRparams)
 import(airGR)
 import(dplyr)
 importFrom(dplyr,"%>%")
-importFrom(graphics,par)
-importFrom(graphics,plot)
-importFrom(graphics,title)
+importFrom(graphics,
+  par,
+  plot,
+  title
+)
 importFrom(rlang,.data)
 importFrom(stats,setNames)
-importFrom(utils,read.table)
-importFrom(utils,tail)
+importFrom(utils,
+  read.table,
+  tail
+)
