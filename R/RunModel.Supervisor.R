@@ -217,14 +217,16 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]
     }
-    x$OutputsModel[[id]]$Qsim <-
-      x$storedOutputs$Qsim_m3[, id] /
-      sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
-      1e3
+    if (sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) > 0) {
+      x$OutputsModel[[id]]$Qsim <-
+        x$storedOutputs$Qsim_m3[, id] /
+        sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
+        1e3
+      x$OutputsModel[[id]]$RunOptions$WarmUpQsim <- OM_WarmUp[[id]]$Qsim_m3 /
+        sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
+        1e3
+    }
     x$OutputsModel[[id]]$RunOptions$WarmUpQsim_m3 <- OM_WarmUp[[id]]$Qsim_m3
-    x$OutputsModel[[id]]$RunOptions$WarmUpQsim <- OM_WarmUp[[id]]$Qsim_m3 /
-      sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
-      1e3
     x$OutputsModel[[id]]$RunOptions$Param <- Param[[id]]
   }
 
