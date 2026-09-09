@@ -10,122 +10,575 @@ vignette: >
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   comment = "#>",
-  fig.width = 6,
+  fig.width = 9,
   fig.asp = 0.68,
-  out.width = "70%",
+  out.width = "90%",
   fig.align = "center"
 )
 ```
 
-Watershed-scale water resource management involves balancing ecological, social, 
-and economic needs through structured planning approaches. 
-Tactical and operational planning play distinct but complementary roles in 
-achieving sustainable water use, flood control, and ecosystem health.
-Tactical planning in watershed management focuses on mid-term strategies like 
-infrastructure development, policy creation, and risk mitigation to ensure 
-sustainable water use. 
-Operational planning handles short-term, day-to-day activities such as water 
-allocation, monitoring, and emergency response. 
-
-**airGRiwrm** offers various tools for introducing human influences into 
-catchment hydrological modelling, which can be combined to represent these 
-different planning levels.
-
-```{r setup}
+```{r setup-lib}
 library(airGRiwrm)
+library(lubridate)
 ```
 
-## Introducing time loop simulation
+# Introduction
 
-```{r}
-# Setup model
-griwrm <- CreateGRiwrm(rbind(
+Watershed-scale water resource management involves balancing ecological, social,
+and economic needs through structured planning approaches.
+**Tactical** and **operational** planning play distinct but complementary roles in
+achieving sustainable water use, flood control, and ecosystem health.
+
+*Tactical planning* in watershed management focuses on mid-term strategies, such as
+infrastructure development, policy creation, and risk mitigation to ensure
+sustainable water use over seasons or years.
+
+*Operational planning* handles short-term, day-to-day activities such as water
+allocation, reservoir release decisions, monitoring, and emergency response.
+
+**airGRiwrm** offers various tools for introducing human influences into
+catchment hydrological modelling, which can be combined to represent these
+different planning levels. This vignette demonstrates how to integrate both
+approaches in a single simulation workflow, using a derived reservoir project on
+the Severn River as a case study.
+
+# Study Case Presentation
+
+## Project scenario
+
+The example in this tutorial takes place on the Severn River in the United Kingdom.
+The data is extracted from the CAMELS-GB database [Coxon et al. (2020)](https://doi.org/10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9),
+which provides catchment attributes and hydro-meteorological timeseries for 671
+catchments across Great Britain.
+
+We consider a **derived reservoir project** located upstream of gauge "54001".
+The project has two objectives:
+
+| Objective            | Description                                                        |
+|----------------------|----------------------------------------------------------------------|
+| **Water supply**     | Store diverted water to meet demand at a withdrawal point nearby     |
+| **Environmental flow** | Maintain minimum river flow at the diversion point for ecology    |
+
+The reservoir is managed through two control layers:
+
+| Planning Level   | Mechanism                  | Time Scale | Purpose                              |
+|------------------|----------------------------|------------|--------------------------------------|
+| **Operational**  | Filling curve (controller) | Daily      | Guide reservoir releases toward annual volume targets |
+| **Tactical**     | Monthly restrictions       | Monthly    | Limit water supply withdrawals when reservoir is low |
+
+## How it works
+
+1. **Filling mechanism**: Water is diverted from the river at node "54095" and transferred to the reservoir ("Reservoir"). The diversion is limited by a minimum environmental flow requirement at the diversion point.
+
+2. **Release mechanism**: The reservoir releases water back to the river at node "54001", guided by an annual filling curve that defines target storage volumes throughout the year.
+
+3. **Tactical adjustment**: At each monthly step, the remaining reservoir volume is assessed and water supply withdrawals may be restricted if the reservoir approaches a depletion threshold.
+
+```{r load-data}
+data(Severn)
+Severn$BasinsInfo
+```
+
+# Network Setup
+
+We construct a self-contained network from the `Severn` dataset. The network
+includes only two gauged stations (`54095` and `54001`), a diversion point,
+a withdrawal node, and a reservoir.
+
+## Building the node table
+
+```{r build-nodes}
+# Extract base node information from Severn data
+nodes_Severn <- Severn$BasinsInfo[, c("gauge_id", "downstream_id",
+                                      "distance_downstream", "area")]
+names(nodes_Severn) <- c("id", "down", "length", "area")
+nodes_Severn$model <- "RunModel_GR4J"
+
+# Reduce to the two nodes of interest: 54095 (upstream) and 54001 (downstream)
+n_derived_rsrvr <- nodes_Severn[nodes_Severn$id %in% c("54095", "54001"), ]
+
+# Node 54001 becomes the outlet -- no further downstream connection
+n_derived_rsrvr$down[n_derived_rsrvr$id == "54001"] <- NA
+n_derived_rsrvr$length[n_derived_rsrvr$id == "54001"] <- NA
+
+# Add a Diversion row for "54095" that extracts water and sends it to the Reservoir.
+# The gauged RunModel_GR4J row of 54095 (above) keeps its original downstream
+# connection to 54001, so non-diverted flow still reaches the outlet naturally.
+# Add a Withdrawal (WD) node connected to the Reservoir for water supply abstraction.
+n_derived_rsrvr <- rbind(
   n_derived_rsrvr,
   data.frame(
-    id = "WD",
-    down = "Dam",
-    length = 0,
-    area = NA,
-    model = NA
+    id = c("54095", "Reservoir", "WD"),
+    down = c("Reservoir", "54001", "Reservoir"),
+    length = c(0, 42, 0),
+    area = c(NA, NA, NA),
+    model = c("Diversion", "RunModel_Reservoir", NA),
+    stringsAsFactors = FALSE
   )
-))
-data(Severn)
-DatesR <-  Severn$BasinsObs[[1]]$DatesR
-Qinf <- data.frame(
-  # Diversion to the dam
-  `54095` = rep(-1E6, length(DatesR)),
-  # Withdrawal in the dam
-  WD = rep(-250000, length(DatesR))
 )
-names(Qinf)[1] <- "54095"
-# Release of the dam back to the river
-Qrelease <- data.frame(Dam = rep(100E3, length(DatesR)))
-# Diversion limited by fixed minimum flow to let in the river
-Qmin <- data.frame("54095" = rep(3E6, length(DatesR)))
-names(Qmin) <- "54095"
-e <- setupRunModel(
-  runRunModel = FALSE,
-  griwrm = griwrm,
-  Qinf = Qinf,
-  Qrelease = Qrelease,
-  Qmin = Qmin
-)
-for (x in ls(e)) assign(x, get(x, e))
 
-# Simulation periods up to 31/12/1986
+n_derived_rsrvr
+```
+
+In this network:
+
+- **"54095"** is the upstream gauged station where water is diverted from the river.
+- **Reservoir** is the reservoir that stores diverted water and releases it downstream.
+- **WD** is the withdrawal node connected to the Reservoir, representing the water
+  supply abstraction point located at the dam. The reservoir's first objective
+  is securing water for this withdrawal point.
+- **"54001"** is the downstream gauged station receiving both the residual flow
+  from upstream via the Reservoir release.
+
+## Creating the GRiwrm object
+
+```{r create-griwrm}
+griwrm <- CreateGRiwrm(n_derived_rsrvr)
+griwrm
+```
+
+## Visualising the network
+
+```{r plot-network, fig.asp = 0.7}
+plot(griwrm)
+```
+
+The diagram shows the upstream gauged node (`54095`), the reservoir (`Reservoir`),
+the withdrawal node (`WD`), and the downstream gauged node (`54001`).
+Flow from the river at `54095` feeds into the reservoir, which supplies
+the withdrawal point and releases water back at `54001`.
+
+# Base Simulation
+
+Before introducing closed-loop control, we set up the meteorological inputs, model
+parameters, and run a preliminary open-loop simulation to establish the reservoir's
+initial state.
+
+## Meteorological and observation data
+
+```{r prepare-meteo}
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+
+PrecipTot <- cbind(sapply(BasinsObs, function(x) x$precipitation))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) x$peti))
+Qobs <- cbind(sapply(BasinsObs, function(x) x$discharge_spec))
+
+# Convert to sub-catchment scale
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+```
+
+## Human influence inputs
+
+We initialise the diversion and release time series to zero; the PD controller
+will dynamically set the diversion at node `54095` and the reservoir release
+at each time step. Only the withdrawal at the `WD` node and the minimum
+environmental flow at the diversion point remain as fixed inputs:
+
+- **Qinf (diversion):** Initialised to `0` at node `54095` — the controller
+  will compute the actual diversion rate to track the filling curve.
+- **Qinf (withdrawal):** A constant withdrawal of 500 000 m³/day from the `WD`
+  node, abstracting water from the Reservoir for water supply.
+- **Qrelease (dam release):** Initialised to `0` — the controller will compute
+  the release rate when the reservoir is above the filling-curve target.
+- **Qmin (minimum flow):** A minimum environmental flow of 3 × 10⁶ m³/day must
+  be maintained at the diversion point `54095`.
+
+```{r prepare-quantities}
+Qinf <- data.frame(
+  `54095` = rep(0, length(DatesR)),
+  WD = rep(-100E3, length(DatesR)),
+  check.names = FALSE
+)
+
+Qrelease <- data.frame(Reservoir = rep(0, length(DatesR)))
+
+Qmin <- data.frame(
+  `54095` = rep(3E6, length(DatesR)),
+  check.names = FALSE
+)
+```
+
+## Creating the InputsModel object
+
+```{r create-inputs}
+InputsModel <- suppressWarnings(
+  CreateInputsModel(
+    griwrm,
+    DatesR,
+    Precip,
+    PotEvap,
+    Qinf = Qinf,
+    Qrelease = Qrelease,
+    Qmin = Qmin
+  )
+)
+str(InputsModel, max.level = 1)
+```
+
+## Run options and calibration parameters
+
+We define a warm-up period covering the initial years of the dataset, followed by
+a simulation period from 1990 to 1999. The full simulation will be extended month
+by month in the time-loop section below.
+
+```{r run-options}
+IndPeriod_Run <- seq(
+  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2000-01-01"),
+  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2009-12-31")
+)
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
+```
+
+Default (Michel) calibration parameters are provided for the gauged stations.
+We also add a parameter set for the Reservoir: `c(Vmax, celerity)`, where
+`Vmax = 10 × 10⁶ m³` is the maximum reservoir capacity and `celerity = 1`
+is the inflow time-lag parameter.
+
+```{r params}
+Param <- list(
+  `54095` = c(256.84415, 0.065046, 57.52368, 2.718095),
+  `54001` = c(1.03, 24.77909, -1.904302, 21.75840, 1.378378),
+  Reservoir = c(100E6, 1)
+)
+```
+
+# Operational Control: The Filling Curve
+
+## What is a filling curve?
+
+A *filling curve* is a tactical-Operational planning tool used by reservoir
+operators to define target storage volumes throughout the year. It typically
+prescribes higher volumes during the dry season (to ensure water supply) and
+lower volumes during the wet season (to reserve spillway capacity for flood
+events).
+
+## Defining the annual targets
+
+We define a yearly filling curve that oscillates between 20 × 10⁶ m³ (winter
+| minimum) and 80 × 10⁶ m³ (summer maximum), staying within the reservoir capacity
+of 100 × 10⁶ m³:
+
+```{r filling-curve}
+curve <- approx(
+  x = c(31 * 11 - 365, 30 * 6, 31 * 11, 366 + 30 * 6),
+  y = c(20E6, 80E6, 20E6, 80E6),
+  xout = 1:366
+)$y
+
+# Visualise the filling curve
+plot(1:366, curve / 1E6, type = "l", lwd = 2,
+     xlab = "Day of Year",
+     ylab = expression("Target Volume (10" ^ 6 * " m" ^ 3 * ")"),
+     main = "Annual Filling Curve",
+     col = "steelblue")
+abline(h = 100, lty = 2, col = "red")  # Vmax reference
+abline(h = 80, lty = 3, col = "darkgreen")
+abline(h = 20, lty = 3, col = "darkgreen")
+legend("topright",
+       legend = c("Target curve", "Vmax = 100 hm³", "Operating band"),
+       col = c("steelblue", "red", "darkgreen"),
+       lty = c(1, 2, 3), lwd = c(2, 1, 1))
+```
+
+## The PD controller
+
+A proportional-derivative (PD) controller compares the current reservoir volume to
+the filling-curve target and drives **two** commands:
+
+1. **Diversion** at node `"54095"` (`U[,"54095$Qdiv"]`) — used to fill the reservoir
+   when the volume is below the filling-curve target.
+2. **Release** from the `"Reservoir"` node (`U[,"Reservoir$Qrelease"]`) — used to
+   drain the reservoir when the volume is above the target.
+
+At every time step exactly one command is active (non-zero) and the other is set
+to zero:
+
+| Condition              | Diversion (`54095$Qdiv`) | Release (`Reservoir$Qrelease`) |
+|------------------------|--------------------------|-------------------------------|
+| Volume **below** target | Positive (filling rate)  | 0                             |
+| Volume **above** target | 0                        | Positive (draining rate)      |
+
+```{r controller-factory}
+fn_filling_curve_factory <- function(sv, curve, QdivMax, QrelMax) {
+  # Shared state across controller calls
+  if (is.null(sv$state)) {
+    sv$state <- list(prevError = 0)
+  }
+
+  # PD gains
+  Kp <- 1
+  Kd <- 1
+
+  function(Y) {
+    Vsim <- Y[1]  # Current simulated volume
+    j <- as.numeric(format(sv$ts.date, "%j"))  # Day of year
+    Vobj_ts <- approx(x = 1:366, y = curve, xout = j)$y  # Target for today
+
+    error <- Vsim - Vobj_ts
+    dError <- error - sv$state$prevError
+
+    ctrl_action <- Kp * error + Kd * dError
+    sv$state$prevError <- error
+
+    if (error > 0) {
+      # Reservoir above target -> release water, diversion off
+      Qrel <- max(0, min(QrelMax, ctrl_action))
+      Qdiv <- 0
+    } else {
+      # Reservoir below target -> divert water, release off
+      Qdiv <- -max(0, min(QdivMax, -ctrl_action))
+      Qrel <- 0
+    }
+
+    # Return a two-column matrix: [Qdiv, Qrelease]
+    return(cbind(Qdiv, Qrel))
+  }
+}
+```
+
+## Setting up the Supervisor
+
+```{r supervisor}
+sv <- CreateSupervisor(InputsModel)
+```
+
+Instantiate the controller function with the supervisor and filling curve:
+
+```{r controller-fun}
+fn_filling_curve <- fn_filling_curve_factory(
+  sv = sv,
+  curve = curve,
+  QdivMax = 10E6,   # Maximum diversion rate (m³/day)
+  QrelMax = 500E3   # Maximum release rate (m³/day)
+)
+```
+
+The factory pattern ensures the controller:
+
+- Reads the current reservoir volume through `Y = "Reservoir$Vsim"`.
+- Computes the PD control action and decides whether to divert or release.
+- Returns a two-column matrix with columns for `"54095$Qdiv"` and
+  `"Reservoir$Qrelease"`, so that exactly one command is active per step.
+- Maintains internal state (previous error) across time-steps.
+
+Register the filling-curve controller with the supervisor:
+
+```{r controller}
+CreateController(
+  sv,
+  ctrl.id = "FillingCurve",
+  Y = "Reservoir$Vsim",                        # Read current reservoir volume
+  U = c("54095$Qdiv", "Reservoir$Qrelease"),   # Diversion and release commands
+  FUN = fn_filling_curve                       # PD control logic
+)
+```
+
+# Tactical Management: Monthly Restrictions
+
+## Diversion restriction rule
+
+In addition to the filling-curve controller, we implement a tactical rule: at the start of each
+month, if the remaining reservoir volume would last less than 90 days at the current
+net outflow rate, the **maximum diversion rate** of the controller is reduced by 50%
+to prevent rapid depletion.
+
+## Month-by-month time-loop simulation
+
+The simulation runs in a time loop, processing one month at a time. At each
+iteration:
+
+1. The tactical restriction is checked and the controller's diversion limit is
+   adjusted if needed.
+2. The controller determines whether to divert or release at each daily time step
+   to track the filling curve.
+3. The model advances through the month's time steps.
+
+```{r time-loop}
+# Define simulation period: from 01/01/2000 up to 31/12/2009
 dfTS <- data.frame(
   DatesR = DatesR,
   yearmonth = format(DatesR, "%Y-%m")
 )
-dfTS <- dfTS[1:(which(dfTS$yearmonth == "1987-01")[1] - 1), ]
+tactical_months <- unique(dfTS$yearmonth[dfTS$yearmonth >= "2000-01" &
+                                        dfTS$yearmonth <= "2009-12"])
 
-# Set up initial conditions
-ROO <- CreateRunOptions(InputsModel, IndPeriod_WarmUp = 1:364, IndPeriod_Run = 365L)
-OM <- RunModel(InputsModel, ROO, Param)
+first_run <- TRUE
+
+for (ym in tactical_months) {
+  message(sprintf("Processing period: %s", ym), appendLF = FALSE)
+
+  # Extract the current month's indices
+  ym_IndPeriod_Run <- which(dfTS$yearmonth == ym)
+
+  if (first_run) {
+    RunOptions <- CreateRunOptions(
+      InputsModel,
+      IndPeriod_WarmUp = IndPeriod_WarmUp,
+      IndPeriod_Run = ym_IndPeriod_Run,
+      warnings = FALSE
+    )
+    OM <- RunModel(
+      sv,
+      RunOptions = RunOptions,
+      Param = Param
+    )
+    first_run <- FALSE
+  } else {
+    # --- Tactical rule: check depletion risk ---
+    Q_WD <- Qinf$WD[ym_IndPeriod_Run]
+
+    current_volume_variation <- max(
+      0,
+      OM$Reservoir$Vsim[length(OM$Reservoir$Vsim)-1] - OM$Reservoir$Vsim[length(OM$Reservoir$Vsim)])
+    V_current <- OM$Reservoir$StateEnd$Reservoir$V
+
+    nb_remain_days <- V_current / current_volume_variation
+
+    if (nb_remain_days < 90) {
+      # Reduce the withdrawals by 50%
+      Q_WD <- Q_WD * 0.5
+      message(sprintf("  -> Diversion restricted (remaining: %.1f days)", nb_remain_days))
+    } else {
+      message(sprintf("  -> Diversion unrestricted (remaining: %.1f days)", nb_remain_days))
+    }
+
+    # Run the model for the current month with supervisor control
+    OM <- suppressWarnings(
+      RunModel(
+        OM,
+        InputsModel = sv,
+        RunOptions = RunOptions,
+        IndPeriod_Run = ym_IndPeriod_Run,
+        Qinf = data.frame(WD = Q_WD)
+      )
+    )
+  }
+}
 ```
 
-## Combining time loop simulation and supervisor
+# Results
 
+## Reservoir volume tracking
 
+We can visualise how the simulated reservoir volume follows (or deviates from) the
+filling curve target over the simulation period:
 
-```{r}
-  sv <- CreateSupervisor(InputsModel)
+```{r plot-results, fig.asp = 0.7}
+# Extract simulated reservoir volumes
+Vsim <- OM$Reservoir$Vsim
+sim_dates <- as.Date(OM[[1]]$DatesR)
 
-  curve <- approx(x = c(31*11 - 365, 30 * 6, 31 * 11, 366 + 30 * 6),
-                  y = c(20E6, 90E6, 20E6, 90E6),
-                  xout = 1:366)$y
+# Expand the annual filling curve to cover the full simulation period
+# by repeating it for each year
+ydoys <- as.numeric(format(sim_dates, "%j"))
+curve_full <- approx(x = 1:366, y = curve, xout = ydoys)$y
 
-  fn_guide_curve_factory <- function(sv, curve) {
-    function(y) {
-      # How much to release for reaching the filling curve ?
-      deltaV <- sv$OutputsModel$Dam$Vsim - curve[lubridate::yday(sv$ts.date)]
-      # Minimum 500L/s and max 1E6 m3
-      return(max(86400 / 2, min(1E6, deltaV)))
-    }
-  }
-  fn_guide_curve <- fn_guide_curve_factory(sv, curve)
+par(mar = c(5, 4, 2, 2) + 0.1)
 
-  CreateController(sv, "dam_filling_curve",
-                   Y = NULL,
-                   U = "Dam",
-                   fn_guide_curve)
+plot(sim_dates, Vsim / 1E6, type = "l", lwd = 1.5, col = "darkgreen",
+     xlab = "",
+     ylab = expression("Volume (10" ^ 6 * " m" ^ 3 * ")"),
+     main = "Simulated Reservoir Volume",
+     xaxt = "n")
 
-  for(ym in unique(dfTS$yearmonth[dfTS$DatesR > OM[[1]]$DatesR])) {
-    message("Processing period ", ym)
-    # Preparing extract of Qinf for the current run
-    ym_IndPeriod_Run <- which(dfTS$yearmonth == ym)
-    ym_Qinf <- Qinf[ym_IndPeriod_Run, , drop = FALSE]
-    ym_Qrelease <- Qrelease[ym_IndPeriod_Run, , drop = FALSE]
+# X-axis ticks every 3 months with horizontal labels
+at_dates <- seq(min(sim_dates), max(sim_dates), by = "3 months")
+axis.Date(1, at = at_dates, format = "%Y-%m", cex.axis = 0.8)
 
-    # 50% Restriction on reservoir withdrawals if remaining less than 90 days of water
-    nb_remain_days <- OM$Dam$StateEnd$Reservoir$V / (-ym_Qinf$`WD`[1] + ym_Qrelease$Dam[1])
-    if (nb_remain_days < 180) {
-      ym_Qinf$`WD` <- -(max(0, OM$Dam$StateEnd$Reservoir$V - sum(ym_Qrelease$Dam))) / 365
-    }
-    OM <- RunModel(OM,
-                   InputsModel = sv,
-                   RunOptions = RunOptions,
-                   IndPeriod_Run = ym_IndPeriod_Run,
-                   Qinf = ym_Qinf)
-  }
+# Overlay the filling curve target
+lines(sim_dates, curve_full / 1E6, col = "steelblue", lwd = 2, lty = 2)
+abline(h = 10, lty = 3, col = "red")  # Vmax reference
+
+legend("topright",
+       legend = c("Simulated volume", "Filling curve target",
+                  "Vmax = 10×10⁶ m³"),
+       col = c("darkgreen", "steelblue", "red"),
+       lty = c(1, 2, 3), lwd = c(1.5, 2, 1))
 ```
+
+## Flow components at the downstream gauge
+
+```{r plot-downstream, fig.asp = 0.6}
+sim_dates <- as.Date(OM[[1]]$DatesR)
+
+# Flow at 54001 (downstream outlet)
+Q_downstream <- OM[["54001"]]$Qsim_m3
+
+# Flow at 54095: before diversion (naturalized) = Qsim_m3 + Qdiv_m3
+Q_54095_before <- OM[["54095"]]$Qsim_m3 + OM[["54095"]]$Qdiv_m3
+
+# Flow at 54095: after diversion (river flow remaining)
+Q_54095_after <- OM[["54095"]]$Qsim_m3
+
+par(mar = c(5, 4, 2, 2) + 0.1)
+
+plot(sim_dates, Q_downstream / 1E6, type = "l", lwd = 1, col = "navy",
+     xlab = "",
+     ylab = expression("Discharge (10" ^ 6 * " m" ^ 3 * "/day)"),
+     main = "Downstream and Diversion Point Flows",
+     xaxt = "n",
+     ylim = range(c(Q_downstream, Q_54095_before, Q_54095_after) / 1E6, na.rm = TRUE))
+
+# X-axis ticks every 3 months with horizontal labels
+at_dates <- seq(min(sim_dates), max(sim_dates), by = "3 months")
+axis.Date(1, at = at_dates, format = "%Y-%m", cex.axis = 0.8)
+
+# Add flow at 54095 before diversion (naturalized)
+lines(sim_dates, Q_54095_before / 1E6, col = "orange", lwd = 1)
+
+# Add flow at 54095 after diversion
+lines(sim_dates, Q_54095_after / 1E6, col = "forestgreen", lwd = 1)
+
+abline(h = 0, lty = 3, col = "grey")
+
+legend("topright",
+       legend = c("Flow at 54001 (downstream)",
+                  "Flow at 54095 before diversion",
+                  "Flow at 54095 after diversion"),
+       col = c("navy", "orange", "forestgreen"),
+       lwd = 1)
+```
+
+# Key Takeaways
+
+This vignette demonstrated how **tactical** and **operational** planning layers
+can be integrated in airGRiwrm through a derived reservoir project:
+
+| Planning Level   | Tool                          | Purpose                                                  |
+|------------------|-------------------------------|----------------------------------------------------------|
+| **Tactical**     | Monthly diversion restriction | Mid-term safeguard against reservoir depletion            |
+| **Operational**  | Filling curve (PD controller) | Daily volume tracking to maintain annual storage targets |
+
+The `Supervisor` / `Controller` architecture in airGRiwrm provides a flexible
+framework for implementing custom water management rules. Controllers can read
+simulated states (flows, volumes, etc.) and adjust multiple model inputs
+(diversions, releases, withdrawals) at each time step, enabling realistic closed-loop
+simulations of regulated water systems.
+
+In this example, a single controller drives **two commands** simultaneously:
+diversion into the reservoir and release from the reservoir.  At each time step,
+the controller decides which lever to act on based on the sign of the filling-curve
+error, ensuring that only one action is active at a time.
+
+## Summary of the control workflow
+
+1. The **base simulation** (initial run) sets up the reservoir from an empty
+   starting state and provides the hydrological context.
+2. The **operational controller** runs at every time step, comparing the current
+   volume to the filling curve and deciding whether to divert (when below target)
+   or release (when above target).
+3. The **tactical layer** interrupts the monthly cycle to assess reservoir status
+   and reduces the controller's maximum diversion rate if the water level is
+   critically low.
+4. The combined control ensures both daily responsiveness and mid-term
+   sustainability.
+
+# References
+
+Coxon, G., Addor, N., Bloomfield, J.P., Freer, J., Fry, M., Hannaford, J.,
+Howden, N.J.K., Lane, R., Lewis, M., Robinson, E.L., Wagener, T. and Woods, R.
+(2020). Catchment attributes and hydro-meteorological timeseries for 671
+catchments across Great Britain (CAMELS-GB). NERC Environmental Information Data
+Centre. \doi{10.5285/8344E4F3-D2EA-44F5-8AFA-86D2987543A9}
