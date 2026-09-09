@@ -10,13 +10,22 @@
 #' @param Param [list] of parameter values (See .
 #' The list item names are the IDs of the sub-basins.
 #' Each item is a vector of numerical parameters
+#' @param Yinit [list] of initial values for the Y variables of the controllers
+#' (See details)
 #' @param ... Further arguments for compatibility with S3 methods
+#'
+#' @details
+#' `Yinit` is used for allowing to run the supervisor at the first supervision
+#' time step when no simulation data are available.
+#' It's a list with items named by the controller ids, and each item is a
+#' matrix with one column by controlled and/or measured variable `Y` for this
+#' controller and one row by supervision time step (See [CreateSupervisor]).
 #'
 #' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model
 #' @export
 #'
 #' @example man-examples/RunModel.Supervisor.R
-RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
+RunModel.Supervisor <- function(x, RunOptions, Param, Yinit = NULL, ...) {
   stopifnot(is.Supervisor(x), inherits(RunOptions, "GRiwrmRunOptions"))
 
   # Save InputsModel for restoration at the end (Supervisor is an environment...)
@@ -141,8 +150,13 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     x$ts.index <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
     # Regulation occurs from second time step
-    if (iTS[1] > ts.start) {
-      doSupervision(x)
+    if (iTS[1] > ts.start || !is.null(Yinit)) {
+      if (iTS[1] == ts.start) {
+        checkYinit(x, Yinit)
+        doSupervision(x, Yinit)
+      } else {
+        doSupervision(x)
+      }
     }
     # Loop over sub-basin using SD model
     for (id in SD_Ids) {

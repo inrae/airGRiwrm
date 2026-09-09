@@ -205,3 +205,31 @@ test_that("RunModel.Supervisor should be able to run without warm-up period", {
     expect_false(any(is.na(OM$Qsim_m3)))
   })
 })
+
+test_that("RunModel.Supervisor should be able to run with Yinit", {
+  sv <- CreateSupervisor(InputsModel)
+  CreateController(
+    sv,
+    "Controller1",
+    Y = c("54002"),
+    U = c("R1"),
+    FUN = function(Y) -Y
+  )
+  RO <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = 1:165
+  )
+  Param <- ParamMichel
+  Param$`54057`[1] <- 0.01 # Low velocity to having several time steps in the lag
+  Yinit <- lapply(sv$controllers, function(ctrl) {
+    matrix(123, nrow = sv$.TimeStep, ncol = length(ctrl$Ynodes))
+  })
+  OM_Supervisor <- RunModel(
+    sv,
+    RunOptions = RO,
+    Param = Param,
+    Yinit = Yinit
+  )
+  expect_equal(attr(OM_Supervisor, "Qm3s")[1, "R1"], -123 / 86400)
+})

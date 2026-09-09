@@ -65,12 +65,16 @@ setDataToLocation <- function(ctrlr, sv) {
 #'
 #' @param supervisor `Supervisor` (See [CreateSupervisor])
 #' @noRd
-doSupervision <- function(supervisor) {
+doSupervision <- function(supervisor, Yinit = NULL) {
   for (id in names(supervisor$controllers)) {
     supervisor$controller.id <- id
     # Read Y from locations in the model
-    supervisor$controllers[[id]]$Y <-
-      getDataFromLocation(supervisor$controllers[[id]], sv = supervisor)
+    if (!is.null(Yinit)) {
+      supervisor$controllers[[id]]$Y <- Yinit[[id]]
+    } else {
+      supervisor$controllers[[id]]$Y <-
+        getDataFromLocation(supervisor$controllers[[id]], sv = supervisor)
+    }
     # Run logic
     supervisor$controllers[[id]]$U <-
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
@@ -124,4 +128,28 @@ initStoredOutputs <- function(x, outputVars) {
   })
   so$QcontribDown <- QcontribDown
   return(so)
+}
+
+checkYinit <- function(sv, Yinit) {
+  lapply(names(sv$controllers), function(id) {
+    if (!id %in% names(Yinit)) {
+      stop("Missing Yinit for controller ", id)
+    }
+    if (!is.matrix(Yinit[[id]])) {
+      stop("Yinit for controller ", id, " should be a matrix")
+    }
+    if (
+      ncol(Yinit[[id]]) != length(sv$controllers[[id]]$Ynodes) ||
+        (nrow(Yinit[[id]]) != sv$.TimeStep)
+    ) {
+      stop(
+        "Yinit for controller ",
+        id,
+        " should be a matrix of dimension ",
+        sv$.TimeStep,
+        ", ",
+        length(sv$controllers[[id]]$Ynodes)
+      )
+    }
+  })
 }
