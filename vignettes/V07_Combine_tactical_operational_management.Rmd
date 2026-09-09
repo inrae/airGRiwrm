@@ -39,7 +39,7 @@ allocation, reservoir release decisions, monitoring, and emergency response.
 **airGRiwrm** offers various tools for introducing human influences into
 catchment hydrological modelling, which can be combined to represent these
 different planning levels. This vignette demonstrates how to integrate both
-approaches in a single simulation workflow, using a derived reservoir project on
+approaches in a single simulation workflow, using a reservoir (dam) project on
 the Severn River as a case study.
 
 # Study Case Presentation
@@ -51,28 +51,28 @@ The data is extracted from the CAMELS-GB database [Coxon et al. (2020)](https://
 which provides catchment attributes and hydro-meteorological timeseries for 671
 catchments across Great Britain.
 
-We consider a **derived reservoir project** located upstream of gauge "54001".
-The project has two objectives:
+We consider a **reservoir (dam)** built directly on the river at gauging station "54095",
+located upstream of gauge "54001".
+The dam has one objective:
 
-| Objective            | Description                                                        |
-|----------------------|----------------------------------------------------------------------|
-| **Water supply**     | Store diverted water to meet demand at a withdrawal point nearby     |
-| **Environmental flow** | Maintain minimum river flow at the diversion point for ecology    |
+| Objective        | Description                                                        |
+|------------------|----------------------------------------------------------------------|
+| **Water supply** | Maintain a minimum daily release of 700,000 m3/day for downstream supply |
 
 The reservoir is managed through two control layers:
 
 | Planning Level   | Mechanism                  | Time Scale | Purpose                              |
 |------------------|----------------------------|------------|--------------------------------------|
-| **Operational**  | Filling curve (controller) | Daily      | Guide reservoir releases toward annual volume targets |
-| **Tactical**     | Monthly restrictions       | Monthly    | Limit water supply withdrawals when reservoir is low |
+| **Operational**  | Filling curve (controller) | Daily      | Guide reservoir releases toward annual volume targets with constrained minimum release |
+| **Tactical**     | Monthly restrictions       | Monthly    | Set release fraction based on reservoir volume relative to objective |
 
 ## How it works
 
-1. **Filling mechanism**: Water is diverted from the river at node "54095" and transferred to the reservoir ("Reservoir"). The diversion is limited by a minimum environmental flow requirement at the diversion point.
+1. **Storage mechanism**: Water flowing through gauging station "54095" enters the reservoir directly. The reservoir stores water according to an annual filling curve that defines target storage volumes throughout the year.
 
-2. **Release mechanism**: The reservoir releases water back to the river at node "54001", guided by an annual filling curve that defines target storage volumes throughout the year.
+2. **Release mechanism**: The reservoir releases water downstream to node "54001". A PD controller computes the desired release rate to track the filling curve, then clamps it between a scaled minimum and a hard maximum. The minimum scales with the reservoir fill ratio.
 
-3. **Tactical adjustment**: At each monthly step, the remaining reservoir volume is assessed and water supply withdrawals may be restricted if the reservoir approaches a depletion threshold.
+3. **Tactical adjustment**: At each monthly step, the reservoir volume is assessed relative to the filling-curve objective. The ratio `release_fraction = min(1, V_current / V_objective)` is computed and stored, proportionally scaling the minimum allowed release for that month.
 
 ```{r load-data}
 data(Severn)
@@ -82,58 +82,60 @@ Severn$BasinsInfo
 # Network Setup
 
 We construct a self-contained network from the `Severn` dataset. The network
-includes only two gauged stations (`54095` and `54001`), a diversion point,
-a withdrawal node, and a reservoir.
+includes two gauged stations (`54095` and `54001`) and a reservoir built
+directly on the river at gauging station `54095`.
 
 ## Building the node table
 
 ```{r build-nodes}
 # Extract base node information from Severn data
-nodes_Severn <- Severn$BasinsInfo[, c("gauge_id", "downstream_id",
-                                      "distance_downstream", "area")]
+nodes_Severn <- Severn$BasinsInfo[, c(
+  "gauge_id",
+  "downstream_id",
+  "distance_downstream",
+  "area"
+)]
 names(nodes_Severn) <- c("id", "down", "length", "area")
 nodes_Severn$model <- "RunModel_GR4J"
 
 # Reduce to the two nodes of interest: 54095 (upstream) and 54001 (downstream)
-n_derived_rsrvr <- nodes_Severn[nodes_Severn$id %in% c("54095", "54001"), ]
+nodes <- nodes_Severn[nodes_Severn$id %in% c("54095", "54001"), ]
 
 # Node 54001 becomes the outlet -- no further downstream connection
-n_derived_rsrvr$down[n_derived_rsrvr$id == "54001"] <- NA
-n_derived_rsrvr$length[n_derived_rsrvr$id == "54001"] <- NA
+nodes$down[nodes$id == "54001"] <- NA
+nodes$length[nodes$id == "54001"] <- NA
 
-# Add a Diversion row for "54095" that extracts water and sends it to the Reservoir.
-# The gauged RunModel_GR4J row of 54095 (above) keeps its original downstream
-# connection to 54001, so non-diverted flow still reaches the outlet naturally.
-# Add a Withdrawal (WD) node connected to the Reservoir for water supply abstraction.
-n_derived_rsrvr <- rbind(
-  n_derived_rsrvr,
+# Add the Reservoir row: dam built directly on the river at 0 km downstream of 54095.
+# The RunModel_GR4J row for 54095 now feeds into the Reservoir instead of 54001.
+nodes <- rbind(
+  nodes,
   data.frame(
-    id = c("54095", "Reservoir", "WD"),
-    down = c("Reservoir", "54001", "Reservoir"),
-    length = c(0, 42, 0),
-    area = c(NA, NA, NA),
-    model = c("Diversion", "RunModel_Reservoir", NA),
+    id = "Reservoir",
+    down = "54001",
+    length = 42,
+    area = NA,
+    model = "RunModel_Reservoir",
     stringsAsFactors = FALSE
   )
 )
 
-n_derived_rsrvr
+# Update 54095 to feed into the Reservoir (dam built at 0 km downstream)
+nodes$down[nodes$id == "54095"] <- "Reservoir"
+nodes$length[nodes$id == "54095"] <- 0
+
+nodes
 ```
 
 In this network:
 
-- **"54095"** is the upstream gauged station where water is diverted from the river.
-- **Reservoir** is the reservoir that stores diverted water and releases it downstream.
-- **WD** is the withdrawal node connected to the Reservoir, representing the water
-  supply abstraction point located at the dam. The reservoir's first objective
-  is securing water for this withdrawal point.
-- **"54001"** is the downstream gauged station receiving both the residual flow
-  from upstream via the Reservoir release.
+- **"54095"** is the upstream gauged station where the dam/reservoir is built directly downstream. The GR4J model simulates the naturalized runoff here.
+- **Reservoir** is the dam that stores water from the river and releases it downstream. It receives all flow from `54095` and releases to `54001`.
+- **"54001"** is the downstream gauged station receiving the regulated release from the Reservoir.
 
 ## Creating the GRiwrm object
 
 ```{r create-griwrm}
-griwrm <- CreateGRiwrm(n_derived_rsrvr)
+griwrm <- CreateGRiwrm(nodes)
 griwrm
 ```
 
@@ -143,10 +145,10 @@ griwrm
 plot(griwrm)
 ```
 
-The diagram shows the upstream gauged node (`54095`), the reservoir (`Reservoir`),
-the withdrawal node (`WD`), and the downstream gauged node (`54001`).
-Flow from the river at `54095` feeds into the reservoir, which supplies
-the withdrawal point and releases water back at `54001`.
+The diagram shows the upstream gauged node (`54095`), the reservoir (`Reservoir`)
+built directly on the river, and the downstream gauged node (`54001`).
+All flow from the catchment at `54095` passes through the reservoir before
+reaching the outlet at `54001`.
 
 # Base Simulation
 
@@ -171,33 +173,16 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 
 ## Human influence inputs
 
-We initialise the diversion and release time series to zero; the PD controller
-will dynamically set the diversion at node `54095` and the reservoir release
-at each time step. Only the withdrawal at the `WD` node and the minimum
-environmental flow at the diversion point remain as fixed inputs:
+We initialise the reservoir release time series to zero; the PD controller
+will dynamically compute the release rate at each time step:
 
-- **Qinf (diversion):** Initialised to `0` at node `54095` — the controller
-  will compute the actual diversion rate to track the filling curve.
-- **Qinf (withdrawal):** A constant withdrawal of 500 000 m³/day from the `WD`
-  node, abstracting water from the Reservoir for water supply.
-- **Qrelease (dam release):** Initialised to `0` — the controller will compute
-  the release rate when the reservoir is above the filling-curve target.
-- **Qmin (minimum flow):** A minimum environmental flow of 3 × 10⁶ m³/day must
-  be maintained at the diversion point `54095`.
+- **Qrelease (dam release):** Initialised to `1E15` for keeping the reservoir
+  empty during warm-up simulation period — the controller will compute
+  the release rate, clamped between a scaled minimum and a hard maximum
+  (see Operational Control section below).
 
 ```{r prepare-quantities}
-Qinf <- data.frame(
-  `54095` = rep(0, length(DatesR)),
-  WD = rep(-100E3, length(DatesR)),
-  check.names = FALSE
-)
-
-Qrelease <- data.frame(Reservoir = rep(0, length(DatesR)))
-
-Qmin <- data.frame(
-  `54095` = rep(3E6, length(DatesR)),
-  check.names = FALSE
-)
+Qrelease <- data.frame(Reservoir = rep(1E15, length(DatesR)))
 ```
 
 ## Creating the InputsModel object
@@ -209,9 +194,7 @@ InputsModel <- suppressWarnings(
     DatesR,
     Precip,
     PotEvap,
-    Qinf = Qinf,
-    Qrelease = Qrelease,
-    Qmin = Qmin
+    Qrelease = Qrelease
   )
 )
 str(InputsModel, max.level = 1)
@@ -220,20 +203,20 @@ str(InputsModel, max.level = 1)
 ## Run options and calibration parameters
 
 We define a warm-up period covering the initial years of the dataset, followed by
-a simulation period from 1990 to 1999. The full simulation will be extended month
+a simulation period from 2000 to 2009. The full simulation will be extended month
 by month in the time-loop section below.
 
 ```{r run-options}
 IndPeriod_Run <- seq(
-  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2000-01-01"),
-  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2009-12-31")
+  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2002-01-01"),
+  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2005-12-31")
 )
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
 
 Default (Michel) calibration parameters are provided for the gauged stations.
 We also add a parameter set for the Reservoir: `c(Vmax, celerity)`, where
-`Vmax = 10 × 10⁶ m³` is the maximum reservoir capacity and `celerity = 1`
+`Vmax = 100 × 10⁶ m³` is the maximum reservoir capacity and `celerity = 1`
 is the inflow time-lag parameter.
 
 ```{r params}
@@ -257,7 +240,7 @@ events).
 ## Defining the annual targets
 
 We define a yearly filling curve that oscillates between 20 × 10⁶ m³ (winter
-| minimum) and 80 × 10⁶ m³ (summer maximum), staying within the reservoir capacity
+minimum) and 80 × 10⁶ m³ (summer maximum), staying within the reservoir capacity
 of 100 × 10⁶ m³:
 
 ```{r filling-curve}
@@ -268,72 +251,90 @@ curve <- approx(
 )$y
 
 # Visualise the filling curve
-plot(1:366, curve / 1E6, type = "l", lwd = 2,
-     xlab = "Day of Year",
-     ylab = expression("Target Volume (10" ^ 6 * " m" ^ 3 * ")"),
-     main = "Annual Filling Curve",
-     col = "steelblue")
-abline(h = 100, lty = 2, col = "red")  # Vmax reference
+plot(
+  1:366,
+  curve / 1E6,
+  type = "l",
+  lwd = 2,
+  xlab = "Day of Year",
+  ylab = expression("Target Volume (10"^6 * " m"^3 * ")"),
+  main = "Annual Filling Curve",
+  col = "steelblue"
+)
+abline(h = 100, lty = 2, col = "red") # Vmax reference
 abline(h = 80, lty = 3, col = "darkgreen")
 abline(h = 20, lty = 3, col = "darkgreen")
-legend("topright",
-       legend = c("Target curve", "Vmax = 100 hm³", "Operating band"),
-       col = c("steelblue", "red", "darkgreen"),
-       lty = c(1, 2, 3), lwd = c(2, 1, 1))
+legend(
+  "topright",
+  legend = c("Target curve", "Vmax = 100 hm3", "Operating band"),
+  col = c("steelblue", "red", "darkgreen"),
+  lty = c(1, 2, 3),
+  lwd = c(2, 1, 1)
+)
 ```
 
-## The PD controller
+## The PD controller with hard constraints
 
 A proportional-derivative (PD) controller compares the current reservoir volume to
-the filling-curve target and drives **two** commands:
+the filling-curve target and computes a **release** command. The computed release
+is then clamped between a minimum and maximum bound:
 
-1. **Diversion** at node `"54095"` (`U[,"54095$Qdiv"]`) — used to fill the reservoir
-   when the volume is below the filling-curve target.
-2. **Release** from the `"Reservoir"` node (`U[,"Reservoir$Qrelease"]`) — used to
-   drain the reservoir when the volume is above the target.
+| Bound      | Value                                                        |
+|------------|---------------------------------------------------------------------|
+| **Maximum**  | `QrelMax` = 50 x 106 m3/day (physical release capacity)            |
+| **Minimum**  | `release_fraction x QrelMin` where `QrelMin` = 700 x 103 m3/day   |
 
-At every time step exactly one command is active (non-zero) and the other is set
-to zero:
-
-| Condition              | Diversion (`54095$Qdiv`) | Release (`Reservoir$Qrelease`) |
-|------------------------|--------------------------|-------------------------------|
-| Volume **below** target | Positive (filling rate)  | 0                             |
-| Volume **above** target | 0                        | Positive (draining rate)      |
+The key mechanism is the `release_fraction`, computed monthly by the tactical
+layer as `min(1, V_current / V_objective)`. When the reservoir volume is below
+the filling-curve target, the fraction is less than 1, proportionally reducing
+the allowed minimum release. When the volume meets or exceeds the target,
+the full mandatory minimum of 700,000 m3/day applies.
 
 ```{r controller-factory}
-fn_filling_curve_factory <- function(sv, curve, QdivMax, QrelMax) {
+fn_filling_curve_factory <- function(sv, curve, QrelMax, QrelMin) {
   # Shared state across controller calls
   if (is.null(sv$state)) {
-    sv$state <- list(prevError = 0)
+    sv$state <- list(prevError = 0, release_fraction = 1.0)
   }
 
   # PD gains
   Kp <- 1
-  Kd <- 1
+  Kd <- 0.1
 
   function(Y) {
-    Vsim <- Y[1]  # Current simulated volume
-    j <- as.numeric(format(sv$ts.date, "%j"))  # Day of year
-    Vobj_ts <- approx(x = 1:366, y = curve, xout = j)$y  # Target for today
+    Vsim <- Y[1] + Y[2] # Current simulated volume with inflows
+    j <- as.numeric(format(sv$ts.date, "%j")) # Day of year
+    Vobj_ts <- approx(x = 1:366, y = curve, xout = j)$y # Target for today
 
     error <- Vsim - Vobj_ts
     dError <- error - sv$state$prevError
 
+    # Step 1: Compute Qrelease from PD controller
     ctrl_action <- Kp * error + Kd * dError
     sv$state$prevError <- error
+    Qrelease <- ctrl_action
 
-    if (error > 0) {
-      # Reservoir above target -> release water, diversion off
-      Qrel <- max(0, min(QrelMax, ctrl_action))
-      Qdiv <- 0
-    } else {
-      # Reservoir below target -> divert water, release off
-      Qdiv <- -max(0, min(QdivMax, -ctrl_action))
-      Qrel <- 0
-    }
+    # Step 2: Apply hard constraints -- clamp between scaled minimum and maximum
+    frac <- sv$state$release_fraction
+    cat(
+      "Vsim:",
+      Vsim / 1E6,
+      "Vobj:",
+      Vobj_ts / 1E6,
+      "Error:",
+      error / 1E6,
+      "dError:",
+      dError / 1E6,
+      "CtrlAction:",
+      ctrl_action / 1E6,
+      "ReleaseFraction:",
+      frac,
+      "\n"
+    )
+    Qrelease <- max(frac * QrelMin, min(QrelMax, Qrelease))
 
-    # Return a two-column matrix: [Qdiv, Qrelease]
-    return(cbind(Qdiv, Qrel))
+    # Return a single-column matrix with the release command
+    return(cbind(Qrelease))
   }
 }
 ```
@@ -350,18 +351,18 @@ Instantiate the controller function with the supervisor and filling curve:
 fn_filling_curve <- fn_filling_curve_factory(
   sv = sv,
   curve = curve,
-  QdivMax = 10E6,   # Maximum diversion rate (m³/day)
-  QrelMax = 500E3   # Maximum release rate (m³/day)
+  QrelMax = 200 * 86400, # Maximum release rate (m3/day)
+  QrelMin = 30 * 86400 # Mandatory minimum release rate (m3/day)
 )
 ```
 
 The factory pattern ensures the controller:
 
 - Reads the current reservoir volume through `Y = "Reservoir$Vsim"`.
-- Computes the PD control action and decides whether to divert or release.
-- Returns a two-column matrix with columns for `"54095$Qdiv"` and
-  `"Reservoir$Qrelease"`, so that exactly one command is active per step.
-- Maintains internal state (previous error) across time-steps.
+- Computes the PD control action based on the filling-curve error.
+- Clamps the computed release between `release_fraction * QrelMin` and `QrelMax`.
+- Returns a single-column matrix with the release command for `"Reservoir$Qrelease"`.
+- Maintains internal state (previous error and release fraction) across time-steps.
 
 Register the filling-curve controller with the supervisor:
 
@@ -369,30 +370,46 @@ Register the filling-curve controller with the supervisor:
 CreateController(
   sv,
   ctrl.id = "FillingCurve",
-  Y = "Reservoir$Vsim",                        # Read current reservoir volume
-  U = c("54095$Qdiv", "Reservoir$Qrelease"),   # Diversion and release commands
-  FUN = fn_filling_curve                       # PD control logic
+  Y = c("Reservoir$Vsim", "54095"), # Read current reservoir volume with inflows
+  U = "Reservoir$Qrelease", # Release command only
+  FUN = fn_filling_curve # PD control logic
 )
 ```
 
 # Tactical Management: Monthly Restrictions
 
-## Diversion restriction rule
+## Volume-based restriction rule
 
-In addition to the filling-curve controller, we implement a tactical rule: at the start of each
-month, if the remaining reservoir volume would last less than 90 days at the current
-net outflow rate, the **maximum diversion rate** of the controller is reduced by 50%
-to prevent rapid depletion.
+In addition to the filling-curve controller, we implement a tactical rule: at the
+start of each month, the ratio of the current reservoir volume to the
+filling-curve objective volume is computed. This ratio, called `release_fraction`,
+scales the minimum allowed release for the upcoming month.
+
+The release fraction is computed as:
+
+`release_fraction = min(1, V_current / V_objective)`
+
+When `V_current < V_objective`, the fraction is less than 1, proportionally
+reducing the minimum release below QrelMin (potentially to near zero when the
+reservoir is nearly empty). When `V_current` meets or exceeds the objective,
+the fraction is 1, so the full mandatory minimum of 700,000 m3/day applies.
+
+The final daily release is then computed as:
+
+`Qrelease = max(release_fraction * QrelMin,  min(QrelMax,  PD_controller_output))`
+
+This ensures that when the reservoir is below target, both the controller output
+and the minimum floor are reduced, allowing the reservoir to recover more quickly.
 
 ## Month-by-month time-loop simulation
 
 The simulation runs in a time loop, processing one month at a time. At each
 iteration:
 
-1. The tactical restriction is checked and the controller's diversion limit is
-   adjusted if needed.
-2. The controller determines whether to divert or release at each daily time step
-   to track the filling curve.
+1. The tactical restriction is checked and the release fraction is computed as
+   `min(1, V_current / V_objective)`.
+2. The controller determines the release rate at each daily time step, clamping
+   the PD output between the scaled minimum and hard maximum.
 3. The model advances through the month's time steps.
 
 ```{r time-loop}
@@ -401,10 +418,15 @@ dfTS <- data.frame(
   DatesR = DatesR,
   yearmonth = format(DatesR, "%Y-%m")
 )
-tactical_months <- unique(dfTS$yearmonth[dfTS$yearmonth >= "2000-01" &
-                                        dfTS$yearmonth <= "2009-12"])
+tactical_months <- unique(dfTS$yearmonth[
+  dfTS$yearmonth >= "2002-01" &
+    dfTS$yearmonth <= "2005-12"
+])
 
 first_run <- TRUE
+
+# Store the tactical release fraction; default to 1 (unrestricted)
+release_fraction <- 1.0
 
 for (ym in tactical_months) {
   message(sprintf("Processing period: %s", ym), appendLF = FALSE)
@@ -413,36 +435,45 @@ for (ym in tactical_months) {
   ym_IndPeriod_Run <- which(dfTS$yearmonth == ym)
 
   if (first_run) {
+    message(" -> Release fraction = 1.0 (initial run)")
     RunOptions <- CreateRunOptions(
       InputsModel,
       IndPeriod_WarmUp = IndPeriod_WarmUp,
       IndPeriod_Run = ym_IndPeriod_Run,
+      IniStates = list(Reservoir = c("Reservoir.V" = 0)),
       warnings = FALSE
     )
-    OM <- RunModel(
-      sv,
-      RunOptions = RunOptions,
-      Param = Param
+    OM <- suppressMessages(
+      RunModel(
+        sv,
+        RunOptions = RunOptions,
+        Param = Param
+      )
     )
     first_run <- FALSE
   } else {
-    # --- Tactical rule: check depletion risk ---
-    Q_WD <- Qinf$WD[ym_IndPeriod_Run]
-
-    current_volume_variation <- max(
-      0,
-      OM$Reservoir$Vsim[length(OM$Reservoir$Vsim)-1] - OM$Reservoir$Vsim[length(OM$Reservoir$Vsim)])
+    # --- Tactical rule: compute release fraction from volume ratio ---
     V_current <- OM$Reservoir$StateEnd$Reservoir$V
 
-    nb_remain_days <- V_current / current_volume_variation
+    # Get the day-of-year for the first day of this month
+    first_day_ym <- as.Date(paste0(ym, "-01"))
+    j_first <- as.numeric(format(first_day_ym, "%j"))
+    V_objective <- approx(x = 1:366, y = curve, xout = j_first)$y
 
-    if (nb_remain_days < 90) {
-      # Reduce the withdrawals by 50%
-      Q_WD <- Q_WD * 0.5
-      message(sprintf("  -> Diversion restricted (remaining: %.1f days)", nb_remain_days))
-    } else {
-      message(sprintf("  -> Diversion unrestricted (remaining: %.1f days)", nb_remain_days))
-    }
+    # Compute the release fraction: ratio of current to objective volume
+    # When V_current < V_objective, fraction < 1, reducing the minimum release
+    # When V_current >= V_objective, fraction = 1, full minimum applies
+    release_fraction <- min(1, V_current / V_objective)
+
+    # Update the supervisor state so the controller reads the new fraction
+    sv$state$release_fraction <- release_fraction
+
+    message(sprintf(
+      " -> Release fraction: %.2f (V_cur=%.1f, V_obj=%.1f)",
+      release_fraction,
+      V_current / 1E6,
+      V_objective / 1E6
+    ))
 
     # Run the model for the current month with supervisor control
     OM <- suppressWarnings(
@@ -450,8 +481,7 @@ for (ym in tactical_months) {
         OM,
         InputsModel = sv,
         RunOptions = RunOptions,
-        IndPeriod_Run = ym_IndPeriod_Run,
-        Qinf = data.frame(WD = Q_WD)
+        IndPeriod_Run = ym_IndPeriod_Run
       )
     )
   }
@@ -466,114 +496,58 @@ We can visualise how the simulated reservoir volume follows (or deviates from) t
 filling curve target over the simulation period:
 
 ```{r plot-results, fig.asp = 0.7}
-# Extract simulated reservoir volumes
-Vsim <- OM$Reservoir$Vsim
-sim_dates <- as.Date(OM[[1]]$DatesR)
-
 # Expand the annual filling curve to cover the full simulation period
 # by repeating it for each year
-ydoys <- as.numeric(format(sim_dates, "%j"))
+ydoys <- as.numeric(format(as.Date(OM[[1]]$DatesR), "%j"))
 curve_full <- approx(x = 1:366, y = curve, xout = ydoys)$y
-
-par(mar = c(5, 4, 2, 2) + 0.1)
-
-plot(sim_dates, Vsim / 1E6, type = "l", lwd = 1.5, col = "darkgreen",
-     xlab = "",
-     ylab = expression("Volume (10" ^ 6 * " m" ^ 3 * ")"),
-     main = "Simulated Reservoir Volume",
-     xaxt = "n")
-
-# X-axis ticks every 3 months with horizontal labels
-at_dates <- seq(min(sim_dates), max(sim_dates), by = "3 months")
-axis.Date(1, at = at_dates, format = "%Y-%m", cex.axis = 0.8)
-
-# Overlay the filling curve target
-lines(sim_dates, curve_full / 1E6, col = "steelblue", lwd = 2, lty = 2)
-abline(h = 10, lty = 3, col = "red")  # Vmax reference
-
-legend("topright",
-       legend = c("Simulated volume", "Filling curve target",
-                  "Vmax = 10×10⁶ m³"),
-       col = c("darkgreen", "steelblue", "red"),
-       lty = c(1, 2, 3), lwd = c(1.5, 2, 1))
+# Plot Reservoir volume, inflows, and release
+plot(OM$Reservoir, Vobs = curve_full)
 ```
 
 ## Flow components at the downstream gauge
 
 ```{r plot-downstream, fig.asp = 0.6}
-sim_dates <- as.Date(OM[[1]]$DatesR)
-
-# Flow at 54001 (downstream outlet)
-Q_downstream <- OM[["54001"]]$Qsim_m3
-
-# Flow at 54095: before diversion (naturalized) = Qsim_m3 + Qdiv_m3
-Q_54095_before <- OM[["54095"]]$Qsim_m3 + OM[["54095"]]$Qdiv_m3
-
-# Flow at 54095: after diversion (river flow remaining)
-Q_54095_after <- OM[["54095"]]$Qsim_m3
-
-par(mar = c(5, 4, 2, 2) + 0.1)
-
-plot(sim_dates, Q_downstream / 1E6, type = "l", lwd = 1, col = "navy",
-     xlab = "",
-     ylab = expression("Discharge (10" ^ 6 * " m" ^ 3 * "/day)"),
-     main = "Downstream and Diversion Point Flows",
-     xaxt = "n",
-     ylim = range(c(Q_downstream, Q_54095_before, Q_54095_after) / 1E6, na.rm = TRUE))
-
-# X-axis ticks every 3 months with horizontal labels
-at_dates <- seq(min(sim_dates), max(sim_dates), by = "3 months")
-axis.Date(1, at = at_dates, format = "%Y-%m", cex.axis = 0.8)
-
-# Add flow at 54095 before diversion (naturalized)
-lines(sim_dates, Q_54095_before / 1E6, col = "orange", lwd = 1)
-
-# Add flow at 54095 after diversion
-lines(sim_dates, Q_54095_after / 1E6, col = "forestgreen", lwd = 1)
-
-abline(h = 0, lty = 3, col = "grey")
-
-legend("topright",
-       legend = c("Flow at 54001 (downstream)",
-                  "Flow at 54095 before diversion",
-                  "Flow at 54095 after diversion"),
-       col = c("navy", "orange", "forestgreen"),
-       lwd = 1)
+plot(attr(OM, "Qm3s"))
 ```
 
 # Key Takeaways
 
 This vignette demonstrated how **tactical** and **operational** planning layers
-can be integrated in airGRiwrm through a derived reservoir project:
+can be integrated in airGRiwrm through a dam/reservoir project:
 
-| Planning Level   | Tool                          | Purpose                                                  |
-|------------------|-------------------------------|----------------------------------------------------------|
-| **Tactical**     | Monthly diversion restriction | Mid-term safeguard against reservoir depletion            |
-| **Operational**  | Filling curve (PD controller) | Daily volume tracking to maintain annual storage targets |
+| Planning Level   | Tool                               | Purpose                                                  |
+|------------------|-------------------------------------|----------------------------------------------------------|
+| **Tactical**     | Monthly release fraction            | Scale minimum release based on volume ratio to objective |
+| **Operational**  | Filling curve (PD controller)       | Daily volume tracking with constrained release bounds    |
 
 The `Supervisor` / `Controller` architecture in airGRiwrm provides a flexible
 framework for implementing custom water management rules. Controllers can read
-simulated states (flows, volumes, etc.) and adjust multiple model inputs
-(diversions, releases, withdrawals) at each time step, enabling realistic closed-loop
+simulated states (flows, volumes, etc.) and adjust model inputs
+(releases) at each time step, enabling realistic closed-loop
 simulations of regulated water systems.
 
-In this example, a single controller drives **two commands** simultaneously:
-diversion into the reservoir and release from the reservoir.  At each time step,
-the controller decides which lever to act on based on the sign of the filling-curve
-error, ensuring that only one action is active at a time.
+In this example, a single controller manages the dam release with a key design
+feature: the release is clamped between a scaled minimum and a hard maximum.
+The scaling factor (`release_fraction`) is computed monthly as
+`min(1, V_current / V_objective)`. When the reservoir volume is below the
+filling-curve target, both the controller's computed output and the minimum
+floor are proportionally reduced, allowing the reservoir to recover faster.
+When the volume meets or exceeds the target, the full release range
+from QrelMin to QrelMax is available.
 
 ## Summary of the control workflow
 
 1. The **base simulation** (initial run) sets up the reservoir from an empty
    starting state and provides the hydrological context.
 2. The **operational controller** runs at every time step, comparing the current
-   volume to the filling curve and deciding whether to divert (when below target)
-   or release (when above target).
-3. The **tactical layer** interrupts the monthly cycle to assess reservoir status
-   and reduces the controller's maximum diversion rate if the water level is
-   critically low.
-4. The combined control ensures both daily responsiveness and mid-term
-   sustainability.
+   volume to the filling curve via a PD controller, then clamping the computed
+   release between `release_fraction * QrelMin` and `QrelMax`.
+3. The **tactical layer** interrupts the monthly cycle to compute
+   `release_fraction = min(1, V_current / V_objective)`, storing it in the
+   supervisor state for the controller to use during the month.
+4. The combined control ensures both daily responsiveness (filling curve tracking)
+   and mid-term sustainability (tactical volume-based restrictions), while
+   adapting the minimum release to the actual reservoir state.
 
 # References
 
