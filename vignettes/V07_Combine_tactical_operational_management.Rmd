@@ -207,9 +207,11 @@ a simulation period from 2000 to 2009. The full simulation will be extended mont
 by month in the time-loop section below.
 
 ```{r run-options}
+date_start <- "2002-01-01"
+date_end <- "2003-12-31"
 IndPeriod_Run <- seq(
-  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2002-01-01"),
-  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == "2005-12-31")
+  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == date_start),
+  which(format(InputsModel[[1]]$DatesR, format = "%Y-%m-%d") == date_end)
 )
 IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
 ```
@@ -281,14 +283,14 @@ is then clamped between a minimum and maximum bound:
 
 | Bound      | Value                                                        |
 |------------|---------------------------------------------------------------------|
-| **Maximum**  | `QrelMax` = 50 x 106 m3/day (physical release capacity)            |
-| **Minimum**  | `release_fraction x QrelMin` where `QrelMin` = 700 x 103 m3/day   |
+| **Maximum**  | `QrelMax` = 200 * 86400 m³/day (~17.3 × 10⁶ m³/day)            |
+| **Minimum**  | `release_fraction x QrelMin` where `QrelMin` = 30 * 86400 m³/day (~2.6 × 10⁶ m³/day)   |
 
 The key mechanism is the `release_fraction`, computed monthly by the tactical
 layer as `min(1, V_current / V_objective)`. When the reservoir volume is below
 the filling-curve target, the fraction is less than 1, proportionally reducing
 the allowed minimum release. When the volume meets or exceeds the target,
-the full mandatory minimum of 700,000 m3/day applies.
+the full mandatory minimum of 30 m³/s (~2,592,000 m³/day) applies.
 
 ```{r controller-factory}
 fn_filling_curve_factory <- function(sv, curve, QrelMax, QrelMin) {
@@ -316,21 +318,6 @@ fn_filling_curve_factory <- function(sv, curve, QrelMax, QrelMin) {
 
     # Step 2: Apply hard constraints -- clamp between scaled minimum and maximum
     frac <- sv$state$release_fraction
-    cat(
-      "Vsim:",
-      Vsim / 1E6,
-      "Vobj:",
-      Vobj_ts / 1E6,
-      "Error:",
-      error / 1E6,
-      "dError:",
-      dError / 1E6,
-      "CtrlAction:",
-      ctrl_action / 1E6,
-      "ReleaseFraction:",
-      frac,
-      "\n"
-    )
     Qrelease <- max(frac * QrelMin, min(QrelMax, Qrelease))
 
     # Return a single-column matrix with the release command
@@ -392,7 +379,7 @@ The release fraction is computed as:
 When `V_current < V_objective`, the fraction is less than 1, proportionally
 reducing the minimum release below QrelMin (potentially to near zero when the
 reservoir is nearly empty). When `V_current` meets or exceeds the objective,
-the fraction is 1, so the full mandatory minimum of 700,000 m3/day applies.
+the fraction is 1, so the full mandatory minimum of 30 m³/s (~2,592,000 m³/day) applies.
 
 The final daily release is then computed as:
 
@@ -419,8 +406,8 @@ dfTS <- data.frame(
   yearmonth = format(DatesR, "%Y-%m")
 )
 tactical_months <- unique(dfTS$yearmonth[
-  dfTS$yearmonth >= "2002-01" &
-    dfTS$yearmonth <= "2005-12"
+  dfTS$yearmonth >= format(as.Date(date_start), "%Y-%m") &
+    dfTS$yearmonth <= format(as.Date(date_end), "%Y-%m")
 ])
 
 first_run <- TRUE
@@ -503,6 +490,8 @@ curve_full <- approx(x = 1:366, y = curve, xout = ydoys)$y
 # Plot Reservoir volume, inflows, and release
 plot(OM$Reservoir, Vobs = curve_full)
 ```
+
+One can observe that the reservoir’s flow release follows the restriction ratio during low‑flow periods, preventing the reservoir from emptying.
 
 ## Flow components at the downstream gauge
 
