@@ -6,8 +6,8 @@
 #' @param sv \[object of class `Supervisor`\] see [CreateSupervisor] for details
 #' @param OutputsModel [list] model outputs
 #' @param InputsModel [list] model inputs
-#' @param idx.output_previous [integer] previous time step
-#' @param idx.input [integer] current time step
+#' @param idx.output_previous [integer] previous time step indexes for OutputsModel
+#' @param idx.input_previous [integer] previous time step indexes for InputsModel
 #' @param inDoSupervision [logical] whether in supervision
 #'
 #' @return [numeric] retrieved data at the location
@@ -18,7 +18,7 @@ getDataFromLocation <- function(
   OutputsModel = sv$OutputsModel,
   InputsModel = sv$InputsModel,
   idx.output_previous = sv$idx.output_previous,
-  idx.input = sv$idx.input,
+  idx.input_previous = sv$idx.input_previous,
   inDoSupervision = TRUE
 ) {
   if (is.null(ctrlr$Ynodes)) {
@@ -36,7 +36,7 @@ getDataFromLocation <- function(
     } else {
       # Direct injection node => read Qupstream of downstream node
       node <- sv$griwrm$down[sv$griwrm$id == nodeY]
-      InputsModel[[node]]$Qupstream[idx.input, nodeY]
+      InputsModel[[node]]$Qupstream[idx.input_previous, nodeY]
     }
   })
   return(do.call(cbind, l))
@@ -168,5 +168,17 @@ checkYinit <- function(sv, Yinit) {
         length(sv$controllers[[id]]$Ynodes)
       )
     }
+  })
+}
+
+getYinit <- function(sv, InputsModel, OutputsModel) {
+  lapply(setNames(sv$controllers, nm = names(sv$controllers)), function(ctrlr) {
+    getDataFromLocation(
+      ctrlr,
+      InputsModel = InputsModel,
+      OutputsModel = OutputsModel,
+      idx.output_previous = sv$idx.output_previous,
+      inDoSupervision = FALSE
+    )
   })
 }
