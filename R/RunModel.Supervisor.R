@@ -146,8 +146,8 @@ RunModel.Supervisor <- function(x, RunOptions, Param, Yinit = NULL, ...) {
     }
     iTS <- lSuperTS[[i]]
     # Run regulation on the whole basin for the current time step
-    x$ts.current <- iTS
-    x$ts.index <- iTS - x$ts.index0
+    x$idx.input <- iTS
+    x$idx.output <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
     # Regulation occurs from second time step
     if (iTS[1] > ts.start || !is.null(Yinit)) {
@@ -175,7 +175,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, Yinit = NULL, ...) {
         )
       } else {
         if (id %in% colnames(x$storedOutputs$QcontribDown)) {
-          QcontribDown <- x$storedOutputs$QcontribDown[x$ts.index, id]
+          QcontribDown <- x$storedOutputs$QcontribDown[x$idx.output, id]
         } else {
           QcontribDown <- NULL
         }
@@ -199,14 +199,15 @@ RunModel.Supervisor <- function(x, RunOptions, Param, Yinit = NULL, ...) {
       }
       # Storing Qsim_m3 and Qdiv_m3 data.frames
       for (outputVar in outputVars[[id]]) {
-        x$storedOutputs[[outputVar]][x$ts.index, id] <- x$OutputsModel[[id]][[
+        x$storedOutputs[[outputVar]][x$idx.output, id] <- x$OutputsModel[[id]][[
           outputVar
         ]]
       }
       # Routing Qsim_m3 and Qdiv_m3 to Qupstream of downstream nodes
       updateQupstream.Supervisor(x, id, iTS)
     }
-    x$ts.previous <- x$ts.index
+    x$idx.input_previous <- x$idx.input
+    x$idx.output_previous <- x$idx.output
   }
 
   message(" 100%")

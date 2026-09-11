@@ -11,7 +11,11 @@
 #' - `InputsModel`: a copy of `InputsModel` provided by [CreateInputsModel.GRiwrm]
 #' - `griwrm`: a copy of `griwrm` provided by [CreateGRiwrm]
 #' - `Controllers` [list]: list of the controllers used in the supervised simulation (See [CreateController])
-#' - some internal state variables updated during simulation (`ts.index`, `ts.previous`, `ts.date`, `ts.index0`, `controller.id`)
+#' - `idx.output` [integer]: index of the current time step output in the modeled series (updated during simulation)
+#' - `idx.output_previous` [integer]: index of the previous output time step
+#' - `ts.date` [POSIXct]: date/time of the current time step for controller calculations
+#' - `ts.index0` [integer]: index of the time step preceding the start of the simulation period
+#' - `controller.id` [character]: identifier of the current controller being applied
 #' @export
 #' @seealso [RunModel.Supervisor()], [CreateController()]
 #'
@@ -63,9 +67,13 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
 
   # Time steps handling: these data are provided by RunModel
   # Index of the current time steps in the modeled time series between 1 and length(RunOptions$Ind_Period)
-  e$ts.index <- NA
+  e$idx.output <- NA
   # Index of the previous time steps in the modeled time series
-  e$ts.previous <- NA
+  e$idx.output_previous <- NA
+  # Index of the current time steps in the modeled time series between min(RunOptions$Ind_Period) and max(RunOptions$Ind_Period)
+  e$idx.input <- NA
+  # Index of the previous time steps in the modeled time series
+  e$idx.input_previous <- NA
   # Index of the time step preceding RunOptions$Ind_Period
   e$ts.index0 <- NA
   # Date/Time of the current time step (For controller calculations based on date)

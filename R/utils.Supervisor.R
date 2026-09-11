@@ -4,10 +4,23 @@
 #'
 #' @param loc location of the data
 #' @param sv \[object of class `Supervisor`\] see [CreateSupervisor] for details
+#' @param OutputsModel [list] model outputs
+#' @param InputsModel [list] model inputs
+#' @param idx.output_previous [integer] previous time step
+#' @param idx.input [integer] current time step
+#' @param inDoSupervision [logical] whether in supervision
 #'
 #' @return [numeric] retrieved data at the location
 #' @noRd
-getDataFromLocation <- function(ctrlr, sv) {
+getDataFromLocation <- function(
+  ctrlr,
+  sv,
+  OutputsModel = sv$OutputsModel,
+  InputsModel = sv$InputsModel,
+  idx.output_previous = sv$idx.output_previous,
+  idx.input = sv$idx.input,
+  inDoSupervision = TRUE
+) {
   if (is.null(ctrlr$Ynodes)) {
     return(NULL)
   }
@@ -15,15 +28,15 @@ getDataFromLocation <- function(ctrlr, sv) {
     nodeY <- ctrlr$Ynodes[i]
     varY <- ctrlr$Yvars[i]
     if (varY != "Qupstream") {
-      if (sv$nodeProperties[nodeY, "Upstream"]) {
-        sv$OutputsModel[[nodeY]][[varY]][sv$ts.previous]
+      if (!inDoSupervision || sv$nodeProperties[nodeY, "Upstream"]) {
+        OutputsModel[[nodeY]][[varY]][idx.output_previous]
       } else {
-        sv$OutputsModel[[nodeY]][[varY]]
+        OutputsModel[[nodeY]][[varY]]
       }
     } else {
       # Direct injection node => read Qupstream of downstream node
       node <- sv$griwrm$down[sv$griwrm$id == nodeY]
-      sv$InputsModel[[node]]$Qupstream[sv$ts.current, nodeY]
+      InputsModel[[node]]$Qupstream[idx.input, nodeY]
     }
   })
   return(do.call(cbind, l))
@@ -40,7 +53,7 @@ getDataFromLocation <- function(ctrlr, sv) {
 setDataToLocation <- function(ctrlr, sv) {
   l <- lapply(seq(length(ctrlr$Unodes)), function(i) {
     # limit U size to the number of simulation time steps of the current supervision time step
-    U <- ctrlr$U[seq.int(length(sv$ts.index)), i]
+    U <- ctrlr$U[seq.int(length(sv$idx.output)), i]
     nodeU <- ctrlr$Unodes[i]
     varU <- ctrlr$Uvars[i]
 
@@ -49,13 +62,13 @@ setDataToLocation <- function(ctrlr, sv) {
       node <- sv$griwrm4U$down[sv$griwrm4U$id == nodeU]
       # ! Qupstream contains warm up period and run period => the index is shifted
       if (!is.null(sv$InputsModel[[node]])) {
-        sv$InputsModel[[node]]$Qupstream[sv$ts.current, nodeU] <- U
+        sv$InputsModel[[node]]$Qupstream[sv$idx.input, nodeU] <- U
       }
     } else if (varU == "Qdiv") {
       # Diversion node => update Qdiv with -U
-      sv$InputsModel[[nodeU]]$Qdiv[sv$ts.current] <- -U
+      sv$InputsModel[[nodeU]]$Qdiv[sv$idx.input] <- -U
     } else if (varU == "Qrelease") {
-      sv$InputsModel[[nodeU]]$Qrelease[sv$ts.current] <- U
+      sv$InputsModel[[nodeU]]$Qrelease[sv$idx.input] <- U
     }
   })
 }
@@ -89,7 +102,7 @@ doSupervision <- function(supervisor, Yinit = NULL) {
       ncol(supervisor$controllers[[id]]$U) !=
         length(supervisor$controllers[[id]]$Unodes) |
         (!nrow(supervisor$controllers[[id]]$U) %in%
-          c(supervisor$.TimeStep, length(supervisor$ts.index)))
+          c(supervisor$.TimeStep, length(supervisor$idx.output)))
     ) {
       stop(
         "The logic function of the controller ",
@@ -101,9 +114,13 @@ doSupervision <- function(supervisor, Yinit = NULL) {
       )
     }
     # For the last supervisor time step which can be truncated
-    if (length(supervisor$ts.index) < supervisor$.TimeStep) {
+    if (length(supervisor$idx.output) < supervisor$.TimeStep) {
       supervisor$controllers[[id]]$U <-
-        supervisor$controllers[[id]]$U[seq(length(supervisor$ts.index)), ]
+        supervisor$controllers[[id]]$U[
+          seq(length(supervisor$idx.output)),
+          ,
+          drop = FALSE
+        ]
     }
     # Write U to locations in the model
     setDataToLocation(supervisor$controllers[[id]], sv = supervisor)

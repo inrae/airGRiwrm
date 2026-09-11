@@ -18,7 +18,11 @@ A \code{Supervisor} object which is an \link{environment} containing all the nec
 \item \code{InputsModel}: a copy of \code{InputsModel} provided by \link{CreateInputsModel.GRiwrm}
 \item \code{griwrm}: a copy of \code{griwrm} provided by \link{CreateGRiwrm}
 \item \code{Controllers} \link{list}: list of the controllers used in the supervised simulation (See \link{CreateController})
-\item some internal state variables updated during simulation (\code{ts.index}, \code{ts.previous}, \code{ts.date}, \code{ts.index0}, \code{controller.id})
+\item \code{idx.output} \link{integer}: index of the current time step output in the modeled series (updated during simulation)
+\item \code{idx.output_previous} \link{integer}: index of the previous output time step
+\item \code{ts.date} \link{POSIXct}: date/time of the current time step for controller calculations
+\item \code{ts.index0} \link{integer}: index of the time step preceding the start of the simulation period
+\item \code{controller.id} \link{character}: identifier of the current controller being applied
 }
 }
 \description{
