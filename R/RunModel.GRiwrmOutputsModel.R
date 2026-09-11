@@ -155,17 +155,26 @@ RunModel.GRiwrmOutputsModel <- function(
 
   if (use_supervisor) {
     sv$InputsModel <- InputsModel
-    InputsModel <- sv
+    Yinit <- getYinit(sv, InputsModel, x)
+    OM <- suppressMessages(
+      RunModel(
+        sv,
+        RunOptions = RunOptions,
+        Param = extractParam(x),
+        Yinit = Yinit
+      )
+    )
+  } else {
+    OM <- suppressMessages(
+      RunModel(
+        InputsModel,
+        RunOptions = RunOptions,
+        Param = extractParam(x)
+      )
+    )
   }
 
   # Run the model
-  OM <- suppressMessages(
-    RunModel(
-      InputsModel,
-      RunOptions = RunOptions,
-      Param = extractParam(x)
-    )
-  )
 
   if (merge_outputs) {
     OM <- merge(x, OM)

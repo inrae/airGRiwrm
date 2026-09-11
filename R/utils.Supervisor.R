@@ -171,13 +171,22 @@ checkYinit <- function(sv, Yinit) {
   })
 }
 
+#' Get initial Y values for the controllers
+#'
+#' @param sv `Supervisor` (See [CreateSupervisor])
+#' @param InputsModel InputsModel object
+#' @param OutputsModel OutputsModel object
+#' @noRd
 getYinit <- function(sv, InputsModel, OutputsModel) {
+  len_input <- length(InputsModel[[1]]$DatesR)
+  len_output <- length(OutputsModel[[1]]$Qsim)
   lapply(setNames(sv$controllers, nm = names(sv$controllers)), function(ctrlr) {
     getDataFromLocation(
       ctrlr,
       InputsModel = InputsModel,
       OutputsModel = OutputsModel,
-      idx.output_previous = sv$idx.output_previous,
+      idx.input_previous = seq(len_input - sv$.TimeStep + 1, len_input),
+      idx.output_previous = seq(len_output - sv$.TimeStep + 1, len_output),
       inDoSupervision = FALSE
     )
   })
