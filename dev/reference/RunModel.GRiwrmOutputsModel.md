@@ -1,8 +1,9 @@
 # RunModel for hot restart after a previous simulation period
 
-This function allows to restart a simulation at the end of a previous
-simulation period. Parameters `Qinf`, `Qrelease`, and `Qmin` can be
-redefined for this new simulation period.
+This function restarts a simulation using the state at the end of a
+previous simulation (`GRiwrmOutputsModel` object `x`). It allows
+redefining the boundary conditions `Qinf`, `Qrelease`, and `Qmin` for
+the new period.
 
 ## Usage
 
@@ -26,103 +27,82 @@ RunModel(
 
 - x:
 
-  Object returned by
-  [RunModel.GRiwrmInputsModel](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GRiwrmInputsModel.md),
-  [RunModel.Supervisor](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.Supervisor.md),
-  or RunModel.GRiwrmOutputsModel
+  `GRiwrmOutputsModel` object resulting from a previous run.
 
 - InputsModel:
 
-  [GRiwrmInputsModel](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.GRiwrm.md)
-  (see
+  `GRiwrmInputsModel` object (see
   [CreateInputsModel.GRiwrm](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.GRiwrm.md))
-  or
-  [Supervisor](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md)
-  (See
-  [CreateSupervisor](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md))
+  or `Supervisor` object (see
+  [CreateSupervisor](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md)).
 
 - RunOptions:
 
-  \[object of class *GRiwrmRunOptions*\] see
-  [CreateRunOptions.GRiwrmInputsModel](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
-  for details
+  List of run options created with
+  [CreateRunOptions](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md).
 
 - IndPeriod_Run:
 
-  \[numeric\] index of period to be used for the model run \[-\]. See
-  details
+  Integer vector indicating the indices of the time steps to run. Must
+  start at the index immediately following the previous run.
 
 - DatesR:
 
-  (optional) [POSIXt](https://rdrr.io/r/base/DateTimeClasses.html)
-  vector of dates of period to be used for the model run. See details
+  (optional) `POSIXt` vector of dates for the simulation period. See
+  details.
 
 - Qinf:
 
-  (optional) [matrix](https://rdrr.io/r/base/matrix.html) or
-  [data.frame](https://rdrr.io/r/base/data.frame.html) of
-  [numeric](https://rdrr.io/r/base/numeric.html) containing observed
-  flows. It must be provided only for nodes of type "Direct injection"
-  and "Diversion" \[m3 per time step\]. Column names correspond to node
-  IDs. Negative flows are abstracted from the model and positive flows
-  are injected to the model. See details
+  (optional) `matrix` or `data.frame` of `numeric` observed flows for
+  nodes of type "Direct injection" and "Diversion" (m³ per time step).
+  Column names correspond to node IDs. Negative flows are abstracted
+  from the model and positive flows are injected to the model. See
+  details.
 
 - Qrelease:
 
-  (optional) [matrix](https://rdrr.io/r/base/matrix.html) or
-  [data.frame](https://rdrr.io/r/base/data.frame.html) of
-  [numeric](https://rdrr.io/r/base/numeric.html) containing release
-  flows by nodes using the model `RunModel_Reservoir` \[m3 per time
-  step\]. See details
+  (optional) `matrix` or `data.frame` of `numeric` release flows by
+  nodes using the model `RunModel_Reservoir` (m³ per time step). See
+  details.
 
 - Qmin:
 
-  (optional) [matrix](https://rdrr.io/r/base/matrix.html) or
-  [data.frame](https://rdrr.io/r/base/data.frame.html) of
-  [numeric](https://rdrr.io/r/base/numeric.html) containing minimum
-  flows to let downstream of a node with a Diversion \[m3 per time
-  step\]. Default is zero. Column names correspond to node IDs. See
-  details
+  (optional) `matrix` or `data.frame` of `numeric` minimum flows for
+  downstream of a Diversion node (m³ per time step). Default is zero.
+  Column names correspond to node IDs. See details.
 
 - merge_outputs:
 
-  [logical](https://rdrr.io/r/base/logical.html) Merge simulation
-  outputs with the one provided in argument `x`
+  `logical` Merge simulation outputs with the one provided in argument
+  `x`.
 
 - ...:
 
-  Further arguments for compatibility with S3 methods
+  Further arguments for compatibility with S3 methods.
 
 ## Value
 
-An object of class *GRiwrmOutputsModel*. This object is a
-[list](https://rdrr.io/r/base/list.html) of *OutputsModel* objects
-produced by
-[RunModel.InputsModel](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.InputsModel.md)
-for each node of the semi-distributed model.
-
-It also contains the following attributes (see
-[attr](https://rdrr.io/r/base/attr.html)):
-
-- "Qm3s": a [data.frame](https://rdrr.io/r/base/data.frame.html)
-  containing the dates of simulation and one column by node with the
-  simulated flows in cubic meters per seconds (See
-  [plot.Qm3s](https://inrae.github.io/airGRiwrm/dev/reference/plot.Qm3s.md))
-
-- "GRiwrm": a copy of the *GRiwrm* object produced by
-  [CreateGRiwrm](https://inrae.github.io/airGRiwrm/dev/reference/CreateGRiwrm.md)
-  and used for the simulation
-
-- "TimeStep": time step of the simulation in seconds
+An object of class `GRiwrmOutputsModel` (see
+[RunModel.GRiwrmInputsModel](https://inrae.github.io/airGRiwrm/dev/reference/RunModel.GRiwrmInputsModel.md)
+for details).
 
 ## Details
 
-`IndPeriod_Run` or `DatesR` must must be continuous periods starting the
-time step after the last simulation time step of the
-`GRiwrmOutputsModel` object provided through the argument `x`.
+`IndPeriod_Run` or `DatesR` must be continuous periods starting the time
+step after the last simulation time step of the `GRiwrmOutputsModel`
+object provided through the argument `x`.
 
-`Qinf`, `Qmin`, and `Qrelease` are used for overwriting the
-corresponding arguments provided to
+`Qinf`, `Qmin`, and `Qrelease` are used to overwrite the corresponding
+arguments provided to
 [CreateInputsModel.GRiwrm](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.GRiwrm.md)
 for the period to be simulated. Therefore, the number of rows of these
 arguments must correspond to `IndPeriod_Run` or `DatesR` lengths.
+
+## See also
+
+[`CreateGRiwrm()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateGRiwrm.md),
+[`CreateInputsModel.GRiwrm()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateInputsModel.GRiwrm.md),
+[`CreateRunOptions()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+
+Vignette "V07_Combine_tactical_operational_management" in package
+airGRiwrm

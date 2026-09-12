@@ -9,7 +9,7 @@ containing a Supervisor."><meta property="og:image" content="https://inrae.githu
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,6 +29,7 @@ containing a Supervisor."><meta property="og:image" content="https://inrae.githu
     <li><a class="dropdown-item" href="../articles/V04_Closed-loop_regulated_withdrawal.html">Severn_04: Modeling a regulated withdrawal (closed-loop control)</a></li>
     <li><a class="dropdown-item" href="../articles/V05_Modelling_ungauged_nodes.html">Severn_05: Modeling ungauged stations</a></li>
     <li><a class="dropdown-item" href="../articles/V06_Modelling_regulated_diversion.html">Severn_06: Modeling a regulated diversion</a></li>
+    <li><a class="dropdown-item" href="../articles/V07_Combine_tactical_operational_management.html">Severn_07: Combine tactical and operational planning management</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Example of a large network on the Seine River (France)</h6></li>
     <li><a class="dropdown-item" href="../articles/seinebasin/V01_First_network.html">Seine_01: Structuration of a semi-distributed GR4J model network</a></li>
@@ -70,7 +71,7 @@ containing a <a href="CreateSupervisor.html">Supervisor</a>.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'Supervisor'</span></span>
-<span><span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">RunOptions</span>, <span class="va">Param</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">RunOptions</span>, <span class="va">Param</span>, Yinit <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -93,6 +94,11 @@ The list item names are the IDs of the sub-basins.
 Each item is a vector of numerical parameters</p></dd>
 
 
+<dt id="arg-yinit">Yinit<a class="anchor" aria-label="anchor" href="#arg-yinit"></a></dt>
+<dd><p><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> of initial values for the Y variables of the controllers
+(See details)</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Further arguments for compatibility with S3 methods</p></dd>
 
@@ -100,6 +106,14 @@ Each item is a vector of numerical parameters</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p><em>GRiwrmOutputsModel</em> object which is a list of <em>OutputsModel</em> objects (See <a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a>) for each node of the semi-distributed model</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p><code>Yinit</code> is used for allowing to run the supervisor at the first supervision
+time step when no simulation data are available.
+It's a list with items named by the controller ids, and each item is a
+matrix with one column by controlled and/or measured variable <code>Y</code> for this
+controller and one row by supervision time step (See <a href="CreateSupervisor.html">CreateSupervisor</a>).</p>
     </div>
 
     <div class="section level2">

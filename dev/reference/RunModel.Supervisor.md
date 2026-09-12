@@ -9,7 +9,7 @@ but for a model containing a
 
 ``` r
 # S3 method for class 'Supervisor'
-RunModel(x, RunOptions, Param, ...)
+RunModel(x, RunOptions, Param, Yinit = NULL, ...)
 ```
 
 ## Arguments
@@ -36,6 +36,11 @@ RunModel(x, RunOptions, Param, ...)
   The list item names are the IDs of the sub-basins. Each item is a
   vector of numerical parameters
 
+- Yinit:
+
+  [list](https://rdrr.io/r/base/list.html) of initial values for the Y
+  variables of the controllers (See details)
+
 - ...:
 
   Further arguments for compatibility with S3 methods
@@ -45,6 +50,15 @@ RunModel(x, RunOptions, Param, ...)
 *GRiwrmOutputsModel* object which is a list of *OutputsModel* objects
 (See [airGR::RunModel](https://rdrr.io/pkg/airGR/man/RunModel.html)) for
 each node of the semi-distributed model
+
+## Details
+
+`Yinit` is used for allowing to run the supervisor at the first
+supervision time step when no simulation data are available. It's a list
+with items named by the controller ids, and each item is a matrix with
+one column by controlled and/or measured variable `Y` for this
+controller and one row by supervision time step (See
+[CreateSupervisor](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md)).
 
 ## Examples
 

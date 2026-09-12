@@ -353,7 +353,7 @@ plot(OM_reg$Reservoir, Vobs = Vobj$y[lubridate::yday(OM_reg$Reservoir$DatesR)])
 #   Kp = proportional gain, Kd = derivative gain
 #
 # The derivative term compensates for the one-step delay in the
-# Supervisor loop (Y values are from ts.previous) by anticipating
+# Supervisor loop (Y values are from idx.output_previous) by anticipating
 # the error trend and providing preemptive correction.
 factoryReservoirLogic <- function(Vobj, Qmin, Qmax) {
   # PID control gains

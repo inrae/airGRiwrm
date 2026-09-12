@@ -14,6 +14,8 @@
   stations](https://inrae.github.io/airGRiwrm/dev/articles/V05_Modelling_ungauged_nodes.md):
 - [Severn_06: Modeling a regulated
   diversion](https://inrae.github.io/airGRiwrm/dev/articles/V06_Modelling_regulated_diversion.md):
+- [Severn_07: Combine tactical and operational planning
+  management](https://inrae.github.io/airGRiwrm/dev/articles/V07_Combine_tactical_operational_management.md):
 
 ### Example of a large network on the Seine River (France)
 

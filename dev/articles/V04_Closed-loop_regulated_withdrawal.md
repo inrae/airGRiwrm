@@ -25,7 +25,12 @@ The following code chunk resumes the procedure of the vignette
 ``` r
 
 data(Severn)
-nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes <- Severn$BasinsInfo[, c(
+  "gauge_id",
+  "downstream_id",
+  "distance_downstream",
+  "area"
+)]
 nodes$model <- "RunModel_GR4J"
 ```
 
@@ -65,7 +70,10 @@ And we create the `GRiwrm` object from this new network:
 
 ``` r
 
-griwrmV04 <- CreateGRiwrm(nodes, list(id = "gauge_id", down = "downstream_id", length = "distance_downstream"))
+griwrmV04 <- CreateGRiwrm(
+  nodes,
+  list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
+)
 plot(griwrmV04)
 ```
 
@@ -101,21 +109,30 @@ of catchments “54001” and “54032” (unit mm/day) :
 # Formatting climatic data for CreateInputsModel (See vignette V01_Structure_SD_model for details)
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
-PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
-Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {
+  x$precipitation
+}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {
+  x$peti
+}))
+Qobs <- cbind(sapply(BasinsObs, function(x) {
+  x$discharge_spec
+}))
 Precip <- ConvertMeteoSD(griwrmV04, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrmV04, PotEvapTot)
 
 # Calculation of the water need at the sub-basin scale
 dailyWaterNeed <- PotEvap - Precip
-dailyWaterNeed <- cbind(as.data.frame(DatesR), dailyWaterNeed[,c("54001", "54032")])
-monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%Y%m", rep("mean",2))
-monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%m", rep("q80",2))
+dailyWaterNeed <- cbind(
+  as.data.frame(DatesR),
+  dailyWaterNeed[, c("54001", "54032")]
+)
+monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%Y%m", rep("mean", 2))
+monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%m", rep("q80", 2))
 monthlyWaterNeed[monthlyWaterNeed < 0] <- 0
-monthlyWaterNeed$DatesR <- as.numeric(format(monthlyWaterNeed$DatesR,"%m"))
+monthlyWaterNeed$DatesR <- as.numeric(format(monthlyWaterNeed$DatesR, "%m"))
 names(monthlyWaterNeed)[1] <- "month"
-monthlyWaterNeed <- monthlyWaterNeed[order(monthlyWaterNeed$month),]
+monthlyWaterNeed <- monthlyWaterNeed[order(monthlyWaterNeed$month), ]
 monthlyWaterNeed
 #>       month     54001     54032
 #> 25        1 0.2400000 0.2365627
@@ -142,10 +159,13 @@ irrigationObjective <- monthlyWaterNeed
 irrigationObjective$"54001" <- monthlyWaterNeed$"54001" * 15 * 1E3
 irrigationObjective$"54032" <- monthlyWaterNeed$"54032" * 30 * 1E3
 # Irrigation period between March and September
-irrigationObjective[-seq(3,9),-1] <- 0
+irrigationObjective[-seq(3, 9), -1] <- 0
 # Conversion in m3/s
-irrigationObjective[,c(2,3)] <- round(irrigationObjective[,c(2,3)] / 86400, 1)
-irrigationObjective$total <- rowSums(irrigationObjective[,c(2,3)])
+irrigationObjective[, c(2, 3)] <- round(
+  irrigationObjective[, c(2, 3)] / 86400,
+  1
+)
+irrigationObjective$total <- rowSums(irrigationObjective[, c(2, 3)])
 irrigationObjective
 #>       month 54001 54032 total
 #> 25        1   0.0   0.0   0.0
@@ -169,7 +189,7 @@ at intake for each irrigation system is as follows (unit: m³/s):
 ``` r
 
 # Application of the 50% irrigation system efficiency on the water demand
-irrigationObjective[,seq(2,4)] <- irrigationObjective[,seq(2,4)] / 0.5
+irrigationObjective[, seq(2, 4)] <- irrigationObjective[, seq(2, 4)] / 0.5
 # Display result in m3/s
 irrigationObjective
 #>       month 54001 54032 total
@@ -200,8 +220,10 @@ classified “ASB3”).
 
 ``` r
 
-restriction_rule <- data.frame(quantile_natural_flow = c(.05, .3, 0.5, 0.7),
-                               abstraction_rate = c(0.1, 0.15, 0.20, 0.24))
+restriction_rule <- data.frame(
+  quantile_natural_flow = c(.05, .3, 0.5, 0.7),
+  abstraction_rate = c(0.1, 0.15, 0.20, 0.24)
+)
 ```
 
 The control of the abstraction will be done at the gauging station
@@ -212,7 +234,7 @@ for abstraction in each case.
 ``` r
 
 quant_m3s32 <- quantile(
-  Qobs[,"54032"] * griwrmV04[griwrmV04$id == "54032", "area"] / 86.4,
+  Qobs[, "54032"] * griwrmV04[griwrmV04$id == "54032", "area"] / 86.4,
   restriction_rule$quantile_natural_flow,
   na.rm = TRUE
 )
@@ -221,17 +243,28 @@ restriction_rule_m3s <- data.frame(
   abstraction_rate = restriction_rule$abstraction_rate
 )
 
-matplot(restriction_rule$quantile_natural_flow,
-        cbind(restriction_rule_m3s$threshold_natural_flow,
-              restriction_rule$abstraction_rate * restriction_rule_m3s$threshold_natural_flow,
-              max(irrigationObjective$total)),
-        log = "x", type = "l",
-        main = "Quantiles of flow on the Severn at Saxons Lode (54032)",
-        xlab = "quantiles", ylab = "Flow (m3/s)",
-        lty = 1, col = rainbow(3, rev = TRUE)
-        )
-legend("topleft", legend = c("Natural flow", "Abstraction limit", "Irrigation max. objective"),
-       col = rainbow(3, rev = TRUE), lty = 1)
+matplot(
+  restriction_rule$quantile_natural_flow,
+  cbind(
+    restriction_rule_m3s$threshold_natural_flow,
+    restriction_rule$abstraction_rate *
+      restriction_rule_m3s$threshold_natural_flow,
+    max(irrigationObjective$total)
+  ),
+  log = "x",
+  type = "l",
+  main = "Quantiles of flow on the Severn at Saxons Lode (54032)",
+  xlab = "quantiles",
+  ylab = "Flow (m3/s)",
+  lty = 1,
+  col = rainbow(3, rev = TRUE)
+)
+legend(
+  "topleft",
+  legend = c("Natural flow", "Abstraction limit", "Irrigation max. objective"),
+  col = rainbow(3, rev = TRUE),
+  lty = 1
+)
 ```
 
 ![](V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-4-1.png)
@@ -243,10 +276,14 @@ natural flow is calculated with the function below:
 
 # A function to enclose the parameters in the function (See: http://adv-r.had.co.nz/Functional-programming.html#closures)
 getAvailableAbstractionEnclosed <- function(restriction_rule_m3s) {
-  function(Qnat) approx(restriction_rule_m3s$threshold_natural_flow,
-                        restriction_rule_m3s$abstraction_rate,
-                        Qnat,
-                        rule = 2)
+  function(Qnat) {
+    approx(
+      restriction_rule_m3s$threshold_natural_flow,
+      restriction_rule_m3s$abstraction_rate,
+      Qnat,
+      rule = 2
+    )
+  }
 }
 # The function with the parameters inside it :)
 getAvailableAbstraction <- getAvailableAbstractionEnclosed(restriction_rule_m3s)
@@ -314,23 +351,35 @@ operated as follows:
 
 ``` r
 
-restriction_rotation <- matrix(c(5,7,6,4,2,1,3,3,1,2,4,6,7,5), ncol = 2)
+restriction_rotation <- matrix(
+  c(5, 7, 6, 4, 2, 1, 3, 3, 1, 2, 4, 6, 7, 5),
+  ncol = 2
+)
 m <- do.call(
   rbind,
-  lapply(seq(0,7), function(x) {
+  lapply(seq(0, 7), function(x) {
     b <- restriction_rotation <= x
     rowSums(b)
   })
 )
 # Display the planning of restriction
-image(1:ncol(m), 1:nrow(m), t(m), col = heat.colors(3, rev = TRUE),
-      axes = FALSE, xlab = "week day", ylab = "number of restriction days",
-      main = "Number of closed irrigation perimeters")
+image(
+  1:ncol(m),
+  1:nrow(m),
+  t(m),
+  col = heat.colors(3, rev = TRUE),
+  axes = FALSE,
+  xlab = "week day",
+  ylab = "number of restriction days",
+  main = "Number of closed irrigation perimeters"
+)
 axis(1, 1:ncol(m), unlist(strsplit("SMTWTFS", "")))
-axis(2, 1:nrow(m), seq(0,7))
-for (x in 1:ncol(m))
-  for (y in 1:nrow(m))
-    text(x, y, m[y,x])
+axis(2, 1:nrow(m), seq(0, 7))
+for (x in 1:ncol(m)) {
+  for (y in 1:nrow(m)) {
+    text(x, y, m[y, x])
+  }
+}
 ```
 
 ![](V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-6-1.png)
@@ -344,8 +393,10 @@ object containing all the model inputs:
 
 # Flow time series are needed for all direct injection nodes in the network
 # even if they may be overwritten after by a controller
-QinfIrrig <- data.frame(Irrigation1 = rep(0, length(DatesR)),
-                        Irrigation2 = rep(0, length(DatesR)))
+QinfIrrig <- data.frame(
+  Irrigation1 = rep(0, length(DatesR)),
+  Irrigation2 = rep(0, length(DatesR))
+)
 
 # Creation of the GRiwrmInputsModel object
 IM_Irrig <- CreateInputsModel(griwrmV04, DatesR, Precip, PotEvap, QinfIrrig)
@@ -399,15 +450,17 @@ In this example, the logic function must do the following tasks:
 
 ``` r
 
-fIrrigationFactory <- function(supervisor,
-                               irrigationObjective,
-                               restriction_rule_m3s,
-                               restriction_rotation) {
+fIrrigationFactory <- function(
+  supervisor,
+  irrigationObjective,
+  restriction_rule_m3s,
+  restriction_rotation
+) {
   function(Y) {
     # Y is in m3/day and the basin's area is in km2
     # Calculate the objective of irrigation according to the month of the current days of simulation
     month <- as.numeric(format(supervisor$ts.date, "%m"))
-    U <- irrigationObjective[month, c(2,3)] # m3/s
+    U <- irrigationObjective[month, c(2, 3)] # m3/s
     meanU <- mean(rowSums(U))
     if (meanU > 0) {
       # calculate the naturalized flow from the measured flow and the abstracted flow of the previous week
@@ -415,17 +468,20 @@ fIrrigationFactory <- function(supervisor,
       Qnat <- (Y - rowSums(lastU)) / 86400 # m3/s
       # Maximum abstracted flow available
       Qrestricted <- mean(
-        approx(restriction_rule_m3s$threshold_natural_flow,
-               restriction_rule_m3s$abstraction_rate,
-               Qnat,
-               rule = 2)$y * Qnat
+        approx(
+          restriction_rule_m3s$threshold_natural_flow,
+          restriction_rule_m3s$abstraction_rate,
+          Qnat,
+          rule = 2
+        )$y *
+          Qnat
       )
       # Total for irrigation
       QIrrig <- min(meanU, Qrestricted)
       # Number of days of irrigation
       n <- floor(7 * (1 - QIrrig / meanU))
       # Apply days off
-      U[restriction_rotation[seq(nrow(U)),] <= n] <- 0
+      U[restriction_rotation[seq(nrow(U)), ] <= n] <- 0
     }
     return(-U * 86400) # withdrawal is a negative flow in m3/day on an upstream node
   }
@@ -442,10 +498,12 @@ of the function:
 
 ``` r
 
-fIrrigation <- fIrrigationFactory(supervisor = sv,
-                                  irrigationObjective = irrigationObjective,
-                                  restriction_rule_m3s = restriction_rule_m3s,
-                                  restriction_rotation = restriction_rotation)
+fIrrigation <- fIrrigationFactory(
+  supervisor = sv,
+  irrigationObjective = irrigationObjective,
+  restriction_rule_m3s = restriction_rule_m3s,
+  restriction_rotation = restriction_rotation
+)
 ```
 
 You can see what data are available in the environment of the function
@@ -455,7 +513,7 @@ with:
 
 str(as.list(environment(fIrrigation)))
 #> List of 4
-#>  $ supervisor          :Classes 'Supervisor', 'environment' <environment: 0x5627ca4bf518> 
+#>  $ supervisor          :Classes 'Supervisor', 'environment' <environment: 0x563d052fb630> 
 #>  $ irrigationObjective :'data.frame':    12 obs. of  4 variables:
 #>   ..$ month: num [1:12] 1 2 3 4 5 6 7 8 9 10 ...
 #>   ..$ 54001: num [1:12] 0 0 0.4 0.8 1 1.2 1.2 1 0.6 0 ...
@@ -471,8 +529,8 @@ The `supervisor` variable is itself an environment which means that the
 variables contained inside it will be updated during the simulation.
 Some of them are useful for computing the control logic such as:
 
-- `supervisor$ts.index`: indexes of the current time steps of simulation
-  (In `IndPeriod_Run`)
+- `supervisor$idx.output`: indexes of the current time steps of
+  simulation (In `IndPeriod_Run`)
 - `supervisor$ts.date`: date/time of the current time steps of
   simulation
 - `supervisor$controller.id`: identifier of the current controller
@@ -488,11 +546,13 @@ The controller contains:
 
 ``` r
 
-CreateController(sv,
-                 ctrl.id = "Irrigation",
-                 Y = "54032",
-                 U = c("Irrigation1", "Irrigation2"),
-                 FUN = fIrrigation)
+CreateController(
+  sv,
+  ctrl.id = "Irrigation",
+  Y = "54032",
+  U = c("Irrigation1", "Irrigation2"),
+  FUN = fIrrigation
+)
 #> The controller 'Irrigation' has been added to the supervisor
 ```
 
@@ -504,14 +564,20 @@ parameters calibrated in the vignette “V02_Calibration_SD_model”:
 ``` r
 
 IndPeriod_Run <- seq(
-  which(DatesR == (DatesR[1] + 365*24*60*60)), # Set aside warm-up period
+  which(DatesR == (DatesR[1] + 365 * 24 * 60 * 60)), # Set aside warm-up period
   length(DatesR) # Until the end of the time series
 )
-IndPeriod_WarmUp = seq(1,IndPeriod_Run[1]-1)
-RunOptions <- CreateRunOptions(IM_Irrig,
-                               IndPeriod_WarmUp = IndPeriod_WarmUp,
-                               IndPeriod_Run = IndPeriod_Run)
-ParamV02 <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
+RunOptions <- CreateRunOptions(
+  IM_Irrig,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
+  IndPeriod_Run = IndPeriod_Run
+)
+ParamV02 <- readRDS(system.file(
+  "vignettes",
+  "ParamV02.RDS",
+  package = "airGRiwrm"
+))
 ```
 
 For running a model with a supervision, you only need to substitute
@@ -529,10 +595,15 @@ follows:
 ``` r
 
 Qm3s <- attr(OM_Irrig, "Qm3s")
-Qm3s <- Qm3s[Qm3s$DatesR > "2003-02-25" & Qm3s$DatesR < "2003-10-05",]
-oldpar <- par(mfrow=c(2,1), mar = c(2.5,4,1,1))
+Qm3s <- Qm3s[Qm3s$DatesR > "2003-02-25" & Qm3s$DatesR < "2003-10-05", ]
+oldpar <- par(mfrow = c(2, 1), mar = c(2.5, 4, 1, 1))
 plot(Qm3s[, c("DatesR", "54095", "54001", "54032")], main = "", xlab = "")
-plot(Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")], main = "", xlab = "", legend.x = "bottomright")
+plot(
+  Qm3s[, c("DatesR", "Irrigation1", "Irrigation2")],
+  main = "",
+  xlab = "",
+  legend.x = "bottomright"
+)
 ```
 
 ![](V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-15-1.png)

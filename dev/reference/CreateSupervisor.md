@@ -38,8 +38,22 @@ the necessary variables to run a supervised simulation, such as:
   controllers used in the supervised simulation (See
   [CreateController](https://inrae.github.io/airGRiwrm/dev/reference/CreateController.md))
 
-- some internal state variables updated during simulation (`ts.index`,
-  `ts.previous`, `ts.date`, `ts.index0`, `controller.id`)
+- `idx.output` [integer](https://rdrr.io/r/base/integer.html): index of
+  the current time step output in the modeled series (updated during
+  simulation)
+
+- `idx.output_previous` [integer](https://rdrr.io/r/base/integer.html):
+  index of the previous output time step
+
+- `ts.date`
+  [base::POSIXct](https://rdrr.io/r/base/DateTimeClasses.html):
+  date/time of the current time step for controller calculations
+
+- `ts.index0` [integer](https://rdrr.io/r/base/integer.html): index of
+  the time step preceding the start of the simulation period
+
+- `controller.id` [character](https://rdrr.io/r/base/character.html):
+  identifier of the current controller being applied
 
 ## Details
 
