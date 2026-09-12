@@ -1,43 +1,44 @@
 #' RunModel for hot restart after a previous simulation period
 #'
-#' This function allows to restart a simulation at the end of a previous
-#' simulation period. Parameters `Qinf`, `Qrelease`, and `Qmin` can be
-#' redefined for this new simulation period.
+#' This function restarts a simulation using the state at the end of a previous
+#' simulation (`GRiwrmOutputsModel` object `x`). It allows redefining the
+#' boundary conditions `Qinf`, `Qrelease`, and `Qmin` for the new period.
 #'
 #' @details
-#' `IndPeriod_Run` or `DatesR` must must be continuous periods starting the
-#' time step after the last simulation time step of the `GRiwrmOutputsModel`
-#' object provided through the argument `x`.
+#' `IndPeriod_Run` or `DatesR` must be continuous periods starting the time step
+#' after the last simulation time step of the `GRiwrmOutputsModel` object
+#' provided through the argument `x`.
 #'
-#' `Qinf`, `Qmin`, and `Qrelease` are used for overwriting the corresponding
-#' arguments provided to [CreateInputsModel.GRiwrm] for the period to be simulated.
-#' Therefore, the number of rows of these arguments must correspond to
-#' `IndPeriod_Run` or `DatesR` lengths.
+#' `Qinf`, `Qmin`, and `Qrelease` are used to overwrite the corresponding
+#' arguments provided to [CreateInputsModel.GRiwrm] for the period to be
+#' simulated. Therefore, the number of rows of these arguments must correspond
+#' to `IndPeriod_Run` or `DatesR` lengths.
 #'
-#' @inheritParams getNextTimeSteps
-#' @inheritParams RunModel.GRiwrmInputsModel
-#' @inheritParams airGR::CreateRunOptions
-#' @param InputsModel [GRiwrmInputsModel][CreateInputsModel.GRiwrm] (see
-#' [CreateInputsModel.GRiwrm]) or [Supervisor][CreateSupervisor] (See [CreateSupervisor])
-#' @param DatesR (optional) [POSIXt] vector of dates of period to be used for
-#' the model run. See details
-#' @param Qinf (optional) [matrix] or [data.frame] of [numeric] containing
-#'        observed flows. It must be provided only for nodes of type "Direct
-#'        injection" and "Diversion" \[m3 per time step\].
-#'        Column names correspond to node IDs. Negative flows are abstracted from
-#'        the model and positive flows are injected to the model. See details
-#' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
-#'        minimum flows to let downstream of a node with a Diversion \[m3 per
-#'        time step\]. Default is zero. Column names correspond to node IDs.
-#'        See details
-#' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
-#'        release flows by nodes using the model `RunModel_Reservoir` \[m3 per
-#'        time step\]. See details
-#' @param merge_outputs [logical] Merge simulation outputs with the one provided
-#' in argument `x`
-#' @param ... Further arguments for compatibility with S3 methods
+#' @param x `GRiwrmOutputsModel` object resulting from a previous run.
+#' @param InputsModel `GRiwrmInputsModel` object (see [CreateInputsModel.GRiwrm])
+#'   or `Supervisor` object (see [CreateSupervisor]).
+#' @param RunOptions List of run options created with [CreateRunOptions].
+#' @param IndPeriod_Run Integer vector indicating the indices of the time steps
+#'   to run. Must start at the index immediately following the previous run.
+#' @param DatesR (optional) `POSIXt` vector of dates for the simulation period.
+#'   See details.
+#' @param Qinf (optional) `matrix` or `data.frame` of `numeric` observed flows for
+#'   nodes of type "Direct injection" and "Diversion" (m³ per time step).
+#'   Column names correspond to node IDs. Negative flows are abstracted from the
+#'   model and positive flows are injected to the model. See details.
+#' @param Qmin (optional) `matrix` or `data.frame` of `numeric` minimum flows for
+#'   downstream of a Diversion node (m³ per time step). Default is zero.
+#'   Column names correspond to node IDs. See details.
+#' @param Qrelease (optional) `matrix` or `data.frame` of `numeric` release flows by
+#'   nodes using the model `RunModel_Reservoir` (m³ per time step). See details.
+#' @param merge_outputs `logical` Merge simulation outputs with the one provided
+#'   in argument `x`.
+#' @param ... Further arguments for compatibility with S3 methods.
 #'
-#' @inherit RunModel.GRiwrmInputsModel return
+#' @return An object of class `GRiwrmOutputsModel` (see [RunModel.GRiwrmInputsModel]
+#'   for details).
+#' @seealso [CreateGRiwrm()], [CreateInputsModel.GRiwrm()], [CreateRunOptions()]
+#' @seealso Vignette "V07_Combine_tactical_operational_management" in package airGRiwrm
 #' @export
 #'
 RunModel.GRiwrmOutputsModel <- function(

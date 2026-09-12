@@ -13,7 +13,7 @@
 #' - `Controllers` [list]: list of the controllers used in the supervised simulation (See [CreateController])
 #' - `idx.output` [integer]: index of the current time step output in the modeled series (updated during simulation)
 #' - `idx.output_previous` [integer]: index of the previous output time step
-#' - `ts.date` [POSIXct]: date/time of the current time step for controller calculations
+#' - `ts.date` [base::POSIXct]: date/time of the current time step for controller calculations
 #' - `ts.index0` [integer]: index of the time step preceding the start of the simulation period
 #' - `controller.id` [character]: identifier of the current controller being applied
 #' @export
