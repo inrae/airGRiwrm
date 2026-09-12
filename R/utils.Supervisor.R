@@ -152,21 +152,23 @@ checkYinit <- function(sv, Yinit) {
     if (!id %in% names(Yinit)) {
       stop("Missing Yinit for controller ", id)
     }
-    if (!is.matrix(Yinit[[id]])) {
-      stop("Yinit for controller ", id, " should be a matrix")
-    }
-    if (
-      ncol(Yinit[[id]]) != length(sv$controllers[[id]]$Ynodes) ||
-        (nrow(Yinit[[id]]) != sv$.TimeStep)
-    ) {
-      stop(
-        "Yinit for controller ",
-        id,
-        " should be a matrix of dimension ",
-        sv$.TimeStep,
-        ", ",
-        length(sv$controllers[[id]]$Ynodes)
-      )
+    if (!is.null(sv$controllers[[id]]$Ynodes)) {
+      if (!is.matrix(Yinit[[id]])) {
+        stop("Yinit for controller ", id, " should be a matrix")
+      }
+      if (
+        ncol(Yinit[[id]]) != length(sv$controllers[[id]]$Ynodes) ||
+          (nrow(Yinit[[id]]) != sv$.TimeStep)
+      ) {
+        stop(
+          "Yinit for controller ",
+          id,
+          " should be a matrix of dimension ",
+          sv$.TimeStep,
+          ", ",
+          length(sv$controllers[[id]]$Ynodes)
+        )
+      }
     }
   })
 }
@@ -179,7 +181,7 @@ checkYinit <- function(sv, Yinit) {
 #' @noRd
 getYinit <- function(sv, InputsModel, OutputsModel) {
   len_input <- length(InputsModel[[1]]$DatesR)
-  len_output <- length(OutputsModel[[1]]$Qsim)
+  len_output <- length(OutputsModel[[1]]$Qsim_m3)
   lapply(setNames(sv$controllers, nm = names(sv$controllers)), function(ctrlr) {
     getDataFromLocation(
       ctrlr,
