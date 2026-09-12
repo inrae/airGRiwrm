@@ -10,13 +10,22 @@
 #' @param Param [list] of parameter values (See .
 #' The list item names are the IDs of the sub-basins.
 #' Each item is a vector of numerical parameters
+#' @param Yinit [list] of initial values for the Y variables of the controllers
+#' (See details)
 #' @param ... Further arguments for compatibility with S3 methods
+#'
+#' @details
+#' `Yinit` is used for allowing to run the supervisor at the first supervision
+#' time step when no simulation data are available.
+#' It's a list with items named by the controller ids, and each item is a
+#' matrix with one column by controlled and/or measured variable `Y` for this
+#' controller and one row by supervision time step (See [CreateSupervisor]).
 #'
 #' @return \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See [airGR::RunModel]) for each node of the semi-distributed model
 #' @export
 #'
 #' @example man-examples/RunModel.Supervisor.R
-RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
+RunModel.Supervisor <- function(x, RunOptions, Param, Yinit = NULL, ...) {
   stopifnot(is.Supervisor(x), inherits(RunOptions, "GRiwrmRunOptions"))
 
   # Save InputsModel for restoration at the end (Supervisor is an environment...)
@@ -137,12 +146,17 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     }
     iTS <- lSuperTS[[i]]
     # Run regulation on the whole basin for the current time step
-    x$ts.current <- iTS
-    x$ts.index <- iTS - x$ts.index0
+    x$idx.input <- iTS
+    x$idx.output <- iTS - x$ts.index0
     x$ts.date <- x$InputsModel[[1]]$DatesR[iTS]
     # Regulation occurs from second time step
-    if (iTS[1] > ts.start) {
-      doSupervision(x)
+    if (iTS[1] > ts.start || !is.null(Yinit)) {
+      if (iTS[1] == ts.start) {
+        checkYinit(x, Yinit)
+        doSupervision(x, Yinit)
+      } else {
+        doSupervision(x)
+      }
     }
     # Loop over sub-basin using SD model
     for (id in SD_Ids) {
@@ -161,7 +175,7 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
         )
       } else {
         if (id %in% colnames(x$storedOutputs$QcontribDown)) {
-          QcontribDown <- x$storedOutputs$QcontribDown[x$ts.index, id]
+          QcontribDown <- x$storedOutputs$QcontribDown[x$idx.output, id]
         } else {
           QcontribDown <- NULL
         }
@@ -185,14 +199,15 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
       }
       # Storing Qsim_m3 and Qdiv_m3 data.frames
       for (outputVar in outputVars[[id]]) {
-        x$storedOutputs[[outputVar]][x$ts.index, id] <- x$OutputsModel[[id]][[
+        x$storedOutputs[[outputVar]][x$idx.output, id] <- x$OutputsModel[[id]][[
           outputVar
         ]]
       }
       # Routing Qsim_m3 and Qdiv_m3 to Qupstream of downstream nodes
       updateQupstream.Supervisor(x, id, iTS)
     }
-    x$ts.previous <- x$ts.index
+    x$idx.input_previous <- x$idx.input
+    x$idx.output_previous <- x$idx.output
   }
 
   message(" 100%")
@@ -217,14 +232,16 @@ RunModel.Supervisor <- function(x, RunOptions, Param, ...) {
     for (outputVar in outputVars[[id]]) {
       x$OutputsModel[[id]][[outputVar]] <- x$storedOutputs[[outputVar]][, id]
     }
-    x$OutputsModel[[id]]$Qsim <-
-      x$storedOutputs$Qsim_m3[, id] /
-      sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
-      1e3
+    if (sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) > 0) {
+      x$OutputsModel[[id]]$Qsim <-
+        x$storedOutputs$Qsim_m3[, id] /
+        sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
+        1e3
+      x$OutputsModel[[id]]$RunOptions$WarmUpQsim <- OM_WarmUp[[id]]$Qsim_m3 /
+        sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
+        1e3
+    }
     x$OutputsModel[[id]]$RunOptions$WarmUpQsim_m3 <- OM_WarmUp[[id]]$Qsim_m3
-    x$OutputsModel[[id]]$RunOptions$WarmUpQsim <- OM_WarmUp[[id]]$Qsim_m3 /
-      sum(x$InputsModel[[id]]$BasinAreas, na.rm = TRUE) /
-      1e3
     x$OutputsModel[[id]]$RunOptions$Param <- Param[[id]]
   }
 

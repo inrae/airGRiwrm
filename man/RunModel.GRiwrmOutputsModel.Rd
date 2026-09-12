@@ -18,64 +18,57 @@
 )
 }
 \arguments{
-\item{x}{Object returned by \link{RunModel.GRiwrmInputsModel},
-\link{RunModel.Supervisor}, or \link{RunModel.GRiwrmOutputsModel}}
+\item{x}{\code{GRiwrmOutputsModel} object resulting from a previous run.}
 
-\item{InputsModel}{\link[=CreateInputsModel.GRiwrm]{GRiwrmInputsModel} (see
-\link{CreateInputsModel.GRiwrm}) or \link[=CreateSupervisor]{Supervisor} (See \link{CreateSupervisor})}
+\item{InputsModel}{\code{GRiwrmInputsModel} object (see \link{CreateInputsModel.GRiwrm})
+or \code{Supervisor} object (see \link{CreateSupervisor}).}
 
-\item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \link{CreateRunOptions.GRiwrmInputsModel} for details}
+\item{RunOptions}{List of run options created with \link{CreateRunOptions}.}
 
-\item{IndPeriod_Run}{[numeric] index of period to be used for the model run [-]. See details}
+\item{IndPeriod_Run}{Integer vector indicating the indices of the time steps
+to run. Must start at the index immediately following the previous run.}
 
-\item{DatesR}{(optional) \link{POSIXt} vector of dates of period to be used for
-the model run. See details}
+\item{DatesR}{(optional) \code{POSIXt} vector of dates for the simulation period.
+See details.}
 
-\item{Qinf}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
-observed flows. It must be provided only for nodes of type "Direct
-injection" and "Diversion" [m3 per time step].
-Column names correspond to node IDs. Negative flows are abstracted from
-the model and positive flows are injected to the model. See details}
+\item{Qinf}{(optional) \code{matrix} or \code{data.frame} of \code{numeric} observed flows for
+nodes of type "Direct injection" and "Diversion" (m³ per time step).
+Column names correspond to node IDs. Negative flows are abstracted from the
+model and positive flows are injected to the model. See details.}
 
-\item{Qrelease}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
-release flows by nodes using the model \code{RunModel_Reservoir} [m3 per
-time step]. See details}
+\item{Qrelease}{(optional) \code{matrix} or \code{data.frame} of \code{numeric} release flows by
+nodes using the model \code{RunModel_Reservoir} (m³ per time step). See details.}
 
-\item{Qmin}{(optional) \link{matrix} or \link{data.frame} of \link{numeric} containing
-minimum flows to let downstream of a node with a Diversion [m3 per
-time step]. Default is zero. Column names correspond to node IDs.
-See details}
+\item{Qmin}{(optional) \code{matrix} or \code{data.frame} of \code{numeric} minimum flows for
+downstream of a Diversion node (m³ per time step). Default is zero.
+Column names correspond to node IDs. See details.}
 
-\item{merge_outputs}{\link{logical} Merge simulation outputs with the one provided
-in argument \code{x}}
+\item{merge_outputs}{\code{logical} Merge simulation outputs with the one provided
+in argument \code{x}.}
 
-\item{...}{Further arguments for compatibility with S3 methods}
+\item{...}{Further arguments for compatibility with S3 methods.}
 }
 \value{
-An object of class \emph{GRiwrmOutputsModel}.
-This object is a \link{list} of \emph{OutputsModel} objects produced by \link{RunModel.InputsModel}
-for each node of the semi-distributed model.
-
-It also contains the following attributes (see \link{attr}):
-\itemize{
-\item "Qm3s": a \link{data.frame} containing the dates of simulation and one column by node
-with the simulated flows in cubic meters per seconds (See \link{plot.Qm3s})
-\item "GRiwrm":  a copy of the \emph{GRiwrm} object produced by \link{CreateGRiwrm} and used for the simulation
-\item "TimeStep":  time step of the simulation in seconds
-}
+An object of class \code{GRiwrmOutputsModel} (see \link{RunModel.GRiwrmInputsModel}
+for details).
 }
 \description{
-This function allows to restart a simulation at the end of a previous
-simulation period. Parameters \code{Qinf}, \code{Qrelease}, and \code{Qmin} can be
-redefined for this new simulation period.
+This function restarts a simulation using the state at the end of a previous
+simulation (\code{GRiwrmOutputsModel} object \code{x}). It allows redefining the
+boundary conditions \code{Qinf}, \code{Qrelease}, and \code{Qmin} for the new period.
 }
 \details{
-\code{IndPeriod_Run} or \code{DatesR} must must be continuous periods starting the
-time step after the last simulation time step of the \code{GRiwrmOutputsModel}
-object provided through the argument \code{x}.
+\code{IndPeriod_Run} or \code{DatesR} must be continuous periods starting the time step
+after the last simulation time step of the \code{GRiwrmOutputsModel} object
+provided through the argument \code{x}.
 
-\code{Qinf}, \code{Qmin}, and \code{Qrelease} are used for overwriting the corresponding
-arguments provided to \link{CreateInputsModel.GRiwrm} for the period to be simulated.
-Therefore, the number of rows of these arguments must correspond to
-\code{IndPeriod_Run} or \code{DatesR} lengths.
+\code{Qinf}, \code{Qmin}, and \code{Qrelease} are used to overwrite the corresponding
+arguments provided to \link{CreateInputsModel.GRiwrm} for the period to be
+simulated. Therefore, the number of rows of these arguments must correspond
+to \code{IndPeriod_Run} or \code{DatesR} lengths.
+}
+\seealso{
+\code{\link[=CreateGRiwrm]{CreateGRiwrm()}}, \code{\link[=CreateInputsModel.GRiwrm]{CreateInputsModel.GRiwrm()}}, \code{\link[=CreateRunOptions]{CreateRunOptions()}}
+
+Vignette "V07_Combine_tactical_operational_management" in package airGRiwrm
 }

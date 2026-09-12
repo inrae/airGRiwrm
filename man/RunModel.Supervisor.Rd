@@ -4,7 +4,7 @@
 \alias{RunModel.Supervisor}
 \title{RunModel function for a Supervisor}
 \usage{
-\method{RunModel}{Supervisor}(x, RunOptions, Param, ...)
+\method{RunModel}{Supervisor}(x, RunOptions, Param, Yinit = NULL, ...)
 }
 \arguments{
 \item{x}{Object of class \link[=CreateSupervisor]{Supervisor} see \link{CreateSupervisor}
@@ -17,6 +17,9 @@ see \link{CreateRunOptions} for details}
 The list item names are the IDs of the sub-basins.
 Each item is a vector of numerical parameters}
 
+\item{Yinit}{\link{list} of initial values for the Y variables of the controllers
+(See details)}
+
 \item{...}{Further arguments for compatibility with S3 methods}
 }
 \value{
@@ -25,6 +28,13 @@ Each item is a vector of numerical parameters}
 \description{
 This function acts as \link{RunModel.GRiwrmInputsModel} but for a model
 containing a \link[=CreateSupervisor]{Supervisor}.
+}
+\details{
+\code{Yinit} is used for allowing to run the supervisor at the first supervision
+time step when no simulation data are available.
+It's a list with items named by the controller ids, and each item is a
+matrix with one column by controlled and/or measured variable \code{Y} for this
+controller and one row by supervision time step (See \link{CreateSupervisor}).
 }
 \examples{
 ###############################################################################
