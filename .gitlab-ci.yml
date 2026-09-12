@@ -65,6 +65,8 @@ increment_dev_version:
   stage: deploy
 
   rules:
+    - if: '$CI_COMMIT_MESSAGE =~ /\[skip version\]/'
+      when: never
     - if: '$CI_COMMIT_BRANCH == "dev"'
 
   resource_group: main-version-bump
