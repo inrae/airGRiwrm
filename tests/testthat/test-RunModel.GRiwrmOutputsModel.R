@@ -2,6 +2,83 @@ skip_on_cran()
 
 data(Severn)
 
+test_that("RunModel.GRiwrmOutputsModel with a Supervisor takes the Yinit of the
+            first supervision step from the previous outputs", {
+  # Network with a direct-injection node controlled by a supervisor
+  nodes <- loadSevernNodes()
+  nodes <- rbind(
+    nodes,
+    data.frame(id = "R1", down = "54057", length = 100, area = NA, model = NA)
+  )
+  griwrm <- CreateGRiwrm(nodes)
+  Qinf <- matrix(0, nrow = length(Severn$BasinsObs[[1]]$DatesR), ncol = 1)
+  colnames(Qinf) <- "R1"
+  e <- setupRunModel(griwrm = griwrm, Qinf = Qinf, runRunModel = FALSE)
+  for (x in ls(e)) {
+    assign(x, get(x, e))
+  }
+  rm(e)
+
+  # Phase 1: supervised run with warm-up period
+  sv1 <- CreateSupervisor(InputsModel)
+  CreateController(sv1, "C1", Y = "54002", U = "R1", FUN = function(Y) -Y)
+  OM1 <- RunModel(sv1, RunOptions = RunOptions, Param = ParamMichel)
+  n1 <- nrow(attr(OM1, "Qm3s"))
+
+  # Phase 2: hot restart with a supervisor for the next 31 days
+  nDays2 <- 31L
+  DatesR2 <- seq(
+    OM1[["54057"]]$DatesR[n1] + 86400,
+    by = "day",
+    length.out = nDays2
+  )
+  Qinf2 <- matrix(0, nrow = nDays2, ncol = 1)
+  colnames(Qinf2) <- "R1"
+  InputsModel2 <- CreateInputsModel(
+    griwrm,
+    DatesR2,
+    Precip[(length(DatesR) - nDays2 + 1):length(DatesR), ],
+    PotEvap[(length(DatesR) - nDays2 + 1):length(DatesR), ],
+    Qinf = Qinf2
+  )
+  sv2 <- CreateSupervisor(InputsModel2)
+  CreateController(sv2, "C1", Y = "54002", U = "R1", FUN = function(Y) -Y)
+  RO2 <- CreateRunOptions(
+    InputsModel2,
+    IndPeriod_WarmUp = 0L,
+    IndPeriod_Run = seq_len(nDays2)
+  )
+
+  # Yinit must be the last simulated flow at the Y node of the previous run
+  # (controllers observe Qsim in m3 per time step, i.e. `Qsim_m3`)
+  Y_last <- OM1[["54002"]]$Qsim_m3[n1]
+  expect_false(is.na(Y_last))
+
+  OM2 <- RunModel(OM1, sv2, RunOptions = RO2, IndPeriod_Run = seq_len(nDays2))
+
+  # First supervision step of the new run uses the Y taken from the previous
+  # outputs (U = -Y written to the direct-injection node R1)
+  expect_equal(
+    attr(OM2, "Qm3s")[n1 + 1, "R1"],
+    -Y_last / attr(OM2, "TimeStep")
+  )
+  # The new run starts the time step right after the previous run
+  expect_equal(
+    OM2[["54057"]]$DatesR[n1 + 1],
+    OM1[["54057"]]$DatesR[n1] + 86400
+  )
+  # The outputs of the previous run are kept by the merge
+  expect_equal(attr(OM2, "Qm3s")[1:n1, ], attr(OM1, "Qm3s"))
+  expect_equal(length(OM2[["54057"]]$Qsim), n1 + nDays2)
+  # The warm-up data of the first run is kept in the merged outputs
+  expect_equal(
+    OM2[["54057"]]$RunOptions$WarmUpQsim_m3,
+    OM1[["54057"]]$RunOptions$WarmUpQsim_m3
+  )
+  # No NA in the new run
+  expect_false(any(is.na(OM2[["54057"]]$Qsim[(n1 + 1):(n1 + nDays2)])))
+})
+
 test_that("Single node returns same result as RunModel.GRiwrmInputsModel", {
   nodes <- loadSevernNodes()
   nodes <- nodes[nodes$id == "54029", ]
