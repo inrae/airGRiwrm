@@ -32,6 +32,41 @@ CreateRunOptions <- function(x, ...) {
   UseMethod("CreateRunOptions", x)
 }
 
+# Minimal default Outputs_Sim: the outputs required to propagate simulated
+# flows to downstream nodes (Qsim, Qsim_m3), to warm-up semi-distributed
+# nodes correctly (WarmUpQsim), to carry the model parameters (Param) and
+# the model states at the end of the run (StateEnd), which are needed for
+# De Lavenne parameter regularization and hot restart (#141).
+MinimalOutputsSim <- c(
+  "DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd"
+)
+
+# The CemaNeige layer output series computed by airGR's RunModel_CemaNeige
+# (mirrors airGR:::.FortranOutputs(GR = NULL, isCN = TRUE)$CN).
+CemaNeigeLayerOutputs <- c(
+  "Pliq", "Psol", "SnowPack", "ThermalState", "Gratio",
+  "PotMelt", "Melt", "PliqAndMelt", "Temp", "Gthreshold", "Glocalmax"
+)
+
+# "CemaNeigeLayers" is an airGRiwrm container name that stands for the full
+# set of CemaNeige layer output series (CemaNeigeLayerOutputs). airGR does
+# not know this name: it validates it in CreateRunOptions and selects the
+# layer columns computed at run time through
+# `FortranOutputsCemaNeige %in% RunOptions$Outputs_Sim` (a "CemaNeigeLayers"
+# entry matches nothing, so no layer column would be computed). The
+# container must therefore be expanded to its constituent names in every
+# Outputs_* vector that is passed to airGR or used at run time.
+# The full set must be requested: with a reduced set, the number of outputs
+# sent to the CemaNeige Fortran routine (NOutputs) changes and airGR 1.7.9
+# produces a different model run, which breaks the calibration of CemaNeige
+# models with hysteresis (SCA-based criteria).
+expand_CemaNeigeLayers <- function(outputs) {
+  if (!is.character(outputs) || !any(outputs == "CemaNeigeLayers")) {
+    return(outputs)
+  }
+  unique(c(setdiff(outputs, "CemaNeigeLayers"), CemaNeigeLayerOutputs))
+}
+
 #' @rdname CreateRunOptions
 #' @export
 CreateRunOptions.InputsModel <- function(x, ...) {
@@ -41,45 +76,55 @@ CreateRunOptions.InputsModel <- function(x, ...) {
     dots$IsHyst <- x$model$IsHyst
   }
   # airGR 1.7.9 validates both Outputs_Sim and Outputs_Cal against the
-  # model's supported outputs. Some outputs are computed by airGRiwrm
-  # (not airGR) and must be stripped before calling airGR::CreateRunOptions,
-  # then restored afterwards:
+  # model's supported outputs. Some names are computed by airGRiwrm
+  # (not airGR) or are not in airGR's vocabulary at all:
   #   - Qsim_m3: always computed by airGRiwrm's complete_OutputsModel
   #   - Qsim, QsimDown: for Lag (routing) models, computed by
   #     airGRiwrm's RunModel_Lag_enhanced
   #   - QsimDown: only valid for SD inputs in airGR; airGRiwrm adds it for
   #     routing nodes regardless
-  #   - CemaNeigeLayers: airGRiwrm-specific, not validated by airGR
-  #     CreateRunOptions for CemaNeige models
-  #   - Gratio: airGRiwrm-specific, not in airGR's output list
+  #   - CemaNeigeLayers: airGRiwrm container name, rejected by airGR
+  #     CreateRunOptions for CemaNeige models; expanded to its constituent
+  #     columns by expand_CemaNeigeLayers.
+  # The expanded vectors are also restored in the returned object (instead
+  # of the raw request), because airGR's RunModel_CemaNeige selects the
+  # layer columns computed at run time from RunOptions$Outputs_Sim.
   Outputs_Sim_full <- dots$Outputs_Sim
   Outputs_Cal_full <- dots$Outputs_Cal
-  # Strip airGRiwrm-specific and airGR-unsupported outputs from Outputs_Sim:
   dots$Outputs_Sim <- setdiff(
-    Outputs_Sim_full,
-    c("Qsim_m3", "QsimDown", "CemaNeigeLayers")
+    expand_CemaNeigeLayers(Outputs_Sim_full),
+    c("Qsim_m3", "QsimDown")
   )
   if (identical(dots$FUN_MOD, "RunModel_Lag")) {
     # Lag model doesn't support Qsim in airGR either
     dots$Outputs_Sim <- setdiff(dots$Outputs_Sim, "Qsim")
   }
-  # Strip airGRiwrm-specific outputs from Outputs_Cal too:
-  dots$Outputs_Cal <- setdiff(
-    Outputs_Cal_full,
-    c("CemaNeigeLayers", "Gratio")
-  )
+  dots$Outputs_Cal <- expand_CemaNeigeLayers(Outputs_Cal_full)
   RunOptions <- CreateRunOptions_runAirGR(
     dots,
     "does not require .* Values? set to NA"
   )
-  # Always restore the full Outputs_Sim so downstream
-  # code can check which outputs should be populated.
-  RunOptions$Outputs_Sim <- Outputs_Sim_full
+  # Restore the requested outputs (with the CemaNeigeLayers container
+  # expanded, see expand_CemaNeigeLayers) so the returned object drives
+  # the run-time output selection.
+  # The legacy string "all" must not be restored: airGR::CreateRunOptions
+  # has already expanded it to the full explicit output vector, and
+  # airGR::RunModel selects the run-time outputs from that vector (a
+  # "all" string matches no output name and would drop every output).
+  if (any(Outputs_Sim_full == "all")) {
+    # Keep the full vector expanded by airGR::CreateRunOptions
+  } else {
+    RunOptions$Outputs_Sim <- expand_CemaNeigeLayers(Outputs_Sim_full)
+  }
   # Only restore Outputs_Cal if it was explicitly set (non-NULL).
   # When not provided, airGR computes the appropriate default and
   # we should not overwrite it with NULL.
   if (!is.null(Outputs_Cal_full)) {
-    RunOptions$Outputs_Cal <- Outputs_Cal_full
+    if (any(Outputs_Cal_full == "all")) {
+      # Keep the full vector expanded by airGR::CreateRunOptions
+    } else {
+      RunOptions$Outputs_Cal <- expand_CemaNeigeLayers(Outputs_Cal_full)
+    }
   }
   return(RunOptions)
 }
@@ -128,8 +173,18 @@ CreateRunOptions.RunModel_Reservoir <- function(x, ...) {
   if (!is.null(IniStates)) {
     RunOptions$IniStates <- IniStates
   }
-  RunOptions$Outputs_Sim <- Outputs_Sim
-  RunOptions$Outputs_Cal <- Outputs_Cal
+  # Keep the full vector expanded by airGR::CreateRunOptions when the
+  # legacy string "all" was requested (see CreateRunOptions.InputsModel)
+  if (any(Outputs_Sim == "all")) {
+    # keep the vector expanded by airGR::CreateRunOptions
+  } else {
+    RunOptions$Outputs_Sim <- Outputs_Sim
+  }
+  if (any(Outputs_Cal == "all")) {
+    # keep the vector expanded by airGR::CreateRunOptions
+  } else {
+    RunOptions$Outputs_Cal <- Outputs_Cal
+  }
   return(RunOptions)
 }
 
@@ -148,37 +203,33 @@ CreateRunOptions_prepare_inputs <- function(x, ...) {
   }
   dots$FUN_MOD <- FUN_MOD
 
-  # Set minimal Outputs_Sim default when not explicitly provided by user.
-  # This reduces memory by avoiding "all" which returns every internal
-  # simulation variable.  Qsim_m3 and QsimDown are stripped before calling
-  # airGR (they are airGRiwrm-specific), and restored afterwards.
+  # Set the minimal Outputs_Sim default when not explicitly provided by
+  # user. This reduces memory by avoiding "all" which returns every
+  # internal simulation variable (#141). Qsim_m3 and QsimDown are stripped
+  # before calling airGR (they are airGRiwrm-specific), and restored
+  # afterwards.
   if (!"Outputs_Sim" %in% names(dots)) {
-    dots$Outputs_Sim <- c(
-      "DatesR",
-      "WarmUpQsim",
-      "Qsim",
-      "Qsim_m3",
-      "QsimDown",
-      "Param",
-      "StateEnd"
-    )
+    dots$Outputs_Sim <- MinimalOutputsSim
   }
 
-  # For CemaNeige models, ensure both Outputs_Sim and Outputs_Cal include
-  # "CemaNeigeLayers".
-  # (airGR defaults don't include these, but SCA-based error criteria
-  # need OutputsModel$CemaNeigeLayers[[1]]$Gratio).
-  # CemaNeigeLayers must be in Outputs_Cal because calibration uses that
-  # list (not Outputs_Sim) to decide what RunModel produces.
-  # This check is unconditional because CreateRunOptions.GRiwrmInputsModel
-  # always passes Outputs_Sim, so the guard above would skip it.
+  # For CemaNeige models, ensure Outputs_Sim includes "CemaNeigeLayers"
+  # and Outputs_Cal includes "Gratio".
+  # The "CemaNeigeLayers" container is expanded to the full set of
+  # CemaNeige layer outputs in CreateRunOptions.InputsModel (see there for
+  # why a reduced set must not be sent to airGR); SCA-based error criteria
+  # then read OutputsModel$CemaNeigeLayers[[i]]$Gratio.
+  # "Gratio" must also be in Outputs_Cal because airGR calibration
+  # replaces Outputs_Sim with Outputs_Cal before the screening runs.
+  # The Outputs_Sim check is unconditional because
+  # CreateRunOptions.GRiwrmInputsModel always passes Outputs_Sim, so the
+  # guard above would skip it.
   if (grepl("CemaNeige", FUN_MOD, fixed = TRUE)) {
     if (!"CemaNeigeLayers" %in% dots$Outputs_Sim) {
       dots$Outputs_Sim <- c(dots$Outputs_Sim, "CemaNeigeLayers")
     }
     if (!"Outputs_Cal" %in% names(dots)) {
       # Use airGR's default CemaNeige Outputs_Cal augmented with
-      # "CemaNeigeLayers" (contains Gratio) and "Gratio".
+      # "CemaNeigeLayers" and "Gratio".
       # airGR default for CemaNeige is c("PliqAndMelt", "Qsim", "Param").
       dots$Outputs_Cal <- c(
         "CemaNeigeLayers",

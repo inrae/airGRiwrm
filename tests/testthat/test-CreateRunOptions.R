@@ -86,3 +86,86 @@ test_that("CreateRunOptions.function works", {
     RunOptions
   )
 })
+
+## Network level: validation of the per-node Outputs_Sim selection (#141)
+e_net <- setupRunModel(
+  runInputsModel = TRUE,
+  runRunOptions = FALSE,
+  runRunModel = FALSE
+)
+InputsModel_net <- e_net$InputsModel
+Ind_Run_net <- seq(
+  length(InputsModel_net[[1]]$DatesR) - 365 + 1,
+  length(InputsModel_net[[1]]$DatesR)
+)
+Ind_WarmUp_net <- seq(Ind_Run_net[1] - 365, Ind_Run_net[1] - 1)
+
+test_that("CreateRunOptions.GRiwrmInputsModel validates Outputs_Sim", {
+  # A per-node list must cover every node of the network
+  expect_error(
+    CreateRunOptions(
+      InputsModel_net,
+      IndPeriod_Run = Ind_Run_net,
+      IndPeriod_WarmUp = Ind_WarmUp_net,
+      Outputs_Sim = setNames(
+        list(c("Qsim", "Param")),
+        names(InputsModel_net)[1]
+      )
+    ),
+    "must define outputs for every node"
+  )
+  # A per-node list with invalid node IDs is rejected
+  expect_error(
+    CreateRunOptions(
+      InputsModel_net,
+      IndPeriod_Run = Ind_Run_net,
+      IndPeriod_WarmUp = Ind_WarmUp_net,
+      Outputs_Sim = setNames(
+        lapply(names(InputsModel_net), function(id) c("Qsim", "Param")),
+        paste0("9", names(InputsModel_net))
+      )
+    ),
+    "contains invalid node IDs"
+  )
+  # A complete per-node selection is applied to each node
+  RunOptionsNet <- CreateRunOptions(
+    InputsModel_net,
+    IndPeriod_Run = Ind_Run_net,
+    IndPeriod_WarmUp = Ind_WarmUp_net,
+    Outputs_Sim = setNames(
+      lapply(names(InputsModel_net), function(id) c("Qsim", "Param")),
+      names(InputsModel_net)
+    )
+  )
+  expect_true(all(vapply(
+    RunOptionsNet,
+    function(x) identical(x$Outputs_Sim, c("Qsim", "Param")),
+    logical(1)
+  )))
+})
+
+test_that("Outputs_Sim = 'all' restores the previous behaviour (#141)", {
+  RunOptionsAll <- CreateRunOptions(
+    InputsModel_net,
+    IndPeriod_Run = Ind_Run_net,
+    IndPeriod_WarmUp = Ind_WarmUp_net,
+    Outputs_Sim = "all",
+    warnings = FALSE
+  )
+  # The legacy string "all" must not leak into the object: airGR::RunModel
+  # selects the run-time outputs from this vector, and an "all" string
+  # matches no output name (it would drop every output).
+  expect_false(any(vapply(
+    RunOptionsAll,
+    function(ro) any(ro$Outputs_Sim == "all"),
+    logical(1)
+  )))
+  OMAll <- suppressWarnings(RunModel(
+    InputsModel_net,
+    RunOptionsAll,
+    e_net$ParamMichel
+  ))
+  # The routing step needs the upstream Qsim_m3
+  expect_false(is.null(OMAll[[1]]$Qsim_m3))
+  expect_false(is.null(OMAll[[1]]$Qsim))
+})
