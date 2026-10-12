@@ -91,13 +91,9 @@ intermediate and downstream nodes)
 ``` r
 
 plot(griwrmV05)
-#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-#> URL
-#> 'https://mermaid.ink/img/pako:eNqdlMGOgjAQhl-lwRAumiiVGDnsycSY7MnEE5pN1061KxRTirsJ8u5bEbQguHEvA8x888_fljSztjEFy7dsO-OCKx9ljtpDBI6PHAGpkiR0cpTb9lqsxU6S4x69Ly_vnH544-HUC4q4uaeGblDEIpWkn9cmGotYXsrYRUHxMFtGRcvISLnToIhGCrtGIwh6r3iToIgb0xgaDN7OaOyiQ3RG1RzTZglgA_AmpqkS8AwAu6bFK4DdDgCXI0bew4htSJIEVVb7N0urY6IkkGhO0h3QJqktLYQCGQHlRMFK7FoxbazS6UKw26_s1CQbc2fAEAVG0lAhLRgfwO9hjGv15ijEeBj6PQDWis1NiJA61La6So9BJ1rXZKQGLiEBeYq5LOtTWheacQlbtRBfOvJYlBQj5OkqZ_wEMrnzern92xbp5upj8M2p2vv4-PNkN5pielteEWvbtQd_DP4r2eGRkVcEb6fQ1NHH8YeO1bcibYZwavmZVdxO-sIqf0srz38B6SKjZQ?type=png':
-#> Timeout of 60 seconds was reached
-#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
-#> cannot open URL 'https://mermaid.ink/img/pako:eNqdlMGOgjAQhl-lwRAumiiVGDnsycSY7MnEE5pN1061KxRTirsJ8u5bEbQguHEvA8x888_fljSztjEFy7dsO-OCKx9ljtpDBI6PHAGpkiR0cpTb9lqsxU6S4x69Ly_vnH544-HUC4q4uaeGblDEIpWkn9cmGotYXsrYRUHxMFtGRcvISLnToIhGCrtGIwh6r3iToIgb0xgaDN7OaOyiQ3RG1RzTZglgA_AmpqkS8AwAu6bFK4DdDgCXI0bew4htSJIEVVb7N0urY6IkkGhO0h3QJqktLYQCGQHlRMFK7FoxbazS6UKw26_s1CQbc2fAEAVG0lAhLRgfwO9hjGv15ijEeBj6PQDWis1NiJA61La6So9BJ1rXZKQGLiEBeYq5LOtTWheacQlbtRBfOvJYlBQj5OkqZ_wEMrnzern92xbp5upj8M2p2vv4-PNkN5pielteEWvbtQd_DP4r2eGRkVcEb6fQ1NHH8YeO1bcibYZwavmZVdxO-sIqf0srz38B6SKjZQ?type=png'
 ```
+
+![](V05_Modelling_ungauged_nodes_files/figure-html/plot_network-1.png)
 
 ### Generation of the GRiwrmInputsModel object
 

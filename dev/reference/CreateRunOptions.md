@@ -7,7 +7,7 @@ object) or for a network (with a *GRiwrmInputsModel* object)
 
 ``` r
 # S3 method for class 'GRiwrmInputsModel'
-CreateRunOptions(x, IniStates = NULL, ...)
+CreateRunOptions(x, IniStates = NULL, Outputs_Sim = MinimalOutputsSim, ...)
 
 CreateRunOptions(x, ...)
 
@@ -19,6 +19,9 @@ CreateRunOptions(x, InputsModel, ...)
 
 # S3 method for class 'function'
 CreateRunOptions(x, InputsModel, ...)
+
+# S3 method for class 'RunModel_Reservoir'
+CreateRunOptions(x, ...)
 ```
 
 ## Arguments
@@ -50,6 +53,25 @@ CreateRunOptions(x, InputsModel, ...)
   [airGR::CreateIniStates](https://rdrr.io/pkg/airGR/man/CreateIniStates.html)
   for details
 
+- Outputs_Sim:
+
+  (optional) outputs to be returned by the model run. Can be:
+
+  - `"all"` to return all available simulated outputs for each node
+    (previous default behaviour, but not recommended for large networks)
+
+  - A [character](https://rdrr.io/r/base/character.html) vector, applied
+    to every node, to restrict the returned outputs (default:
+    `c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd")`).
+
+  - A named [list](https://rdrr.io/r/base/list.html) (names matching
+    node IDs) to define outputs per node, each item being a
+    [character](https://rdrr.io/r/base/character.html) vector.
+
+  See
+  [airGR::CreateRunOptions](https://rdrr.io/pkg/airGR/man/CreateRunOptions.html)
+  for the list of output names supported by each rainfall-runoff model.
+
 - ...:
 
   arguments passed to
@@ -79,6 +101,20 @@ respectively:
   one item per modeled sub-catchment
 
 ## Details
+
+The default output selection has been reduced compared to previous
+versions of the package (where it was `"all"`) in order to keep the size
+of the resulting *GRiwrmOutputsModel* object reasonable for a network
+with a large number of nodes (See issue inrae/airGRiwrm#141). The
+default keeps only the outputs required to propagate simulated flows to
+downstream nodes (`Qsim`, `Qsim_m3`), to warm-up semi-distributed nodes
+correctly (`WarmUpQsim`), to carry the model parameters (`Param`) and
+the model states at the end of the run (`StateEnd`) which are needed for
+De Lavenne parameter regularization and hot restart. For CemaNeige
+models, the `CemaNeigeLayers` output is added automatically: it carries
+the CemaNeige layer output series required by SCA-based error criteria
+(a reduced CemaNeige output set would change the model run in airGR).
+Use `Outputs_Sim = "all"` to restore the previous behaviour.
 
 See
 [airGR::CreateRunOptions](https://rdrr.io/pkg/airGR/man/CreateRunOptions.html)

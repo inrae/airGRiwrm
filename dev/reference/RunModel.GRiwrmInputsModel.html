@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -259,8 +259,7 @@ with the simulated flows in cubic meters per seconds (See <a href="plot.Qm3s.htm
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:71] "Store.Prod" "Store.Rout" "Store.Exp" "Store.Int" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ IniResLevels    : num [1:4] 0.3 0.5 NA NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Outputs_Cal     : chr [1:2] "Qsim" "Param"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Outputs_Sim     : Named chr [1:24] "DatesR" "PotEvap" "Precip" "Prod" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..- attr(*, "names")= chr [1:24] "" "GR1" "GR2" "GR3" ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Outputs_Sim     : chr [1:7] "DatesR" "WarmUpQsim" "Qsim" "Qsim_m3" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FortranOutputs  :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ GR: chr [1:18] "PotEvap" "Precip" "Prod" "Pn" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ CN: NULL</span>
@@ -290,25 +289,8 @@ with the simulated flows in cubic meters per seconds (See <a href="plot.Qm3s.htm
 <span class="r-msg co"><span class="r-pr">#&gt;</span> RunModel.GRiwrmInputsModel: Processing sub-basin GaugingDown...</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">OutputsModels</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ GaugingDown:List of 24</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ GaugingDown:List of 7</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ DatesR    : POSIXlt[1:3652], format: "1990-01-01" "1990-01-02" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ PotEvap   : num [1:3652] 0.3 0.4 0.4 0.3 0.1 0.1 0.1 0.2 0.2 0.3 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Precip    : num [1:3652] 0 9.3 3.2 7.3 0 0 0 0 0.1 0.2 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Prod      : num [1:3652] 196 199 199 201 200 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Pn        : num [1:3652] 0 8.9 2.8 7 0 0 0 0 0 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Ps        : num [1:3652] 0 3.65 1.12 2.75 0 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AE        : num [1:3652] 0.2833 0.4 0.4 0.3 0.0952 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Perc      : num [1:3652] 0.645 0.696 0.703 0.74 0.725 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ PR        : num [1:3652] 0.645 5.946 2.383 4.992 0.725 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Q9        : num [1:3652] 1.78 1.52 3.86 3.17 3.45 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Q1        : num [1:3652] 0.2 0.195 0.271 0.387 0.365 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Rout      : num [1:3652] 53.9 53.6 55.3 56.1 56.9 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Exch      : num [1:3652] 0.181 0.18 0.176 0.197 0.207 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AExch1    : num [1:3652] 0.181 0.18 0.176 0.197 0.207 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AExch2    : num [1:3652] 0.181 0.18 0.176 0.197 0.207 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ AExch     : num [1:3652] 0.362 0.36 0.353 0.393 0.414 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QR        : num [1:3652] 2.05 1.99 2.36 2.55 2.78 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ QD        : num [1:3652] 0.381 0.375 0.447 0.584 0.572 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ Qsim      : num [1:3652] 2.43 2.37 2.56 2.9 3.11 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ RunOptions:List of 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .. ..$ WarmUpQsim   : num [1:365] 0.539 0.575 0.807 0.731 0.674 ...</span>

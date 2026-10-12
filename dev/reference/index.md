@@ -47,6 +47,7 @@
   [`CreateRunOptions.InputsModel`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
   [`CreateRunOptions.character`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
   [`CreateRunOptions.function`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
+  [`CreateRunOptions.RunModel_Reservoir`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md)
   : Creation of the RunOptions object
 
 - [`CreateSupervisor()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateSupervisor.md)

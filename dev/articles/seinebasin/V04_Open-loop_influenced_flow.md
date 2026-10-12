@@ -71,7 +71,12 @@ the flow released by the Pannecière lake, it is acting as an upstream
 node which means that the flow simulated at `CHAUM_07` is no longer
 routed to downstream.
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --> |0km| PANNEC_R\nPANNEC_R --> |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'
 
 The Marne lake can be mapped as:
 
@@ -84,12 +89,7 @@ The Marne lake can be mapped as:
 
 And can be modeled as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nMARNE_P23 -->|3km| STDIZ_04\nLOUVE_19 -->|83km| CHALO_21\nMARNE_P28 -->|82.5km| CHALO_21\nSTDIZ_04 -->|85.6km| CHALO_21\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_model-1.png)
 
 Hence the topological connection to the reservoirs is described in the
 model as below:
