@@ -18,6 +18,17 @@
   applied to all nodes, or as a named list with per-node selection
   ([\#141](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/141)).
 
+### Changes:
+
+- The minimum required version of ‘airGR’ has been raised to 1.7.8:
+  `CreateRunOptions` reads the per-node `FeatFUN_MOD` attribute for
+  every node, and Reservoir nodes require the fix of airGR issue
+  [\#167](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/167) (both
+  provided by the airGR 1.7.8 CRAN release, 2025-12-12). Users on airGR
+  \<= 1.7.6 now get a clear dependency error at installation instead of
+  a runtime crash in
+  [`CreateRunOptions()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md).
+
 ## airGRiwrm 0.7.0
 
 CRAN release: 2024-09-22
