@@ -55,8 +55,8 @@ test_that("RunModel.GRiwrmInputsModel handles CemaNeige", {
   ## run period selection
   data(L0123001, package = "airGR", envir = environment())
   Ind_Run <- seq(
-    which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1990-01-01"),
-    which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31")
+    which(format(l$DatesR, format = "%Y-%m-%d") == "1990-01-01"),
+    which(format(l$DatesR, format = "%Y-%m-%d") == "1999-12-31")
   )
   ## preparation of the RunOptions object
   RunOptions <- suppressWarnings(CreateRunOptions(

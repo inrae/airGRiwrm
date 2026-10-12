@@ -1,5 +1,21 @@
 # airGRiwrm (development version)
 
+Breaking changes:
+-----------------
+
+* CreateRunOptions [Breaking change]: The default value of `Outputs_Sim` has
+  changed from `"all"` to a minimal set
+  (`c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd")`)
+  in order to reduce the size of the GRiwrmOutputsModel object for large
+  networks. Use `Outputs_Sim = "all"` to restore the previous behaviour (#141).
+
+New features:
+-------------
+
+* CreateRunOptions: allow users to select which simulation outputs are returned
+  via the `Outputs_Sim` argument, either as a character vector applied to all
+  nodes, or as a named list with per-node selection (#141).
+
 # airGRiwrm 0.7.0
 
 Breaking changes:
