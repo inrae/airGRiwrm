@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9004</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,6 +69,7 @@
 <div class="section level3">
 <h3 id="new-features-development-version">New features:<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
 <ul><li>CreateRunOptions: allow users to select which simulation outputs are returned via the <code>Outputs_Sim</code> argument, either as a character vector applied to all nodes, or as a named list with per-node selection (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/141" class="external-link">#141</a>).</li>
+<li>CreateInputsCrit: allow user-defined a priori parameters for the De Lavenne criterion: entries of <code>AprioriIds</code> can now be numeric vectors (one value per model parameter of the node, e.g. <code>c(celerity, X1, X2, X3, X4)</code>) used as the a priori parameters instead of the parameters of an upstream sub-catchment (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/61" class="external-link">#61</a>).</li>
 </ul></div>
 <div class="section level3">
 <h3 id="changes-development-version">Changes:<a class="anchor" aria-label="anchor" href="#changes-development-version"></a></h3>

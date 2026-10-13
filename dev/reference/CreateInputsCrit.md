@@ -52,9 +52,12 @@ CreateInputsCrit(InputsModel, ...)
 - AprioriIds:
 
   (optional) named [list](https://rdrr.io/r/base/list.html) or named
-  [vector](https://rdrr.io/r/base/vector.html) of
-  [character](https://rdrr.io/r/base/character.html) used for the
-  parameter regularization (see details)
+  [vector](https://rdrr.io/r/base/vector.html) whose entries are
+  [character](https://rdrr.io/r/base/character.html) vectors (ids of a
+  priori sub-catchments) or
+  [numeric](https://rdrr.io/r/base/numeric.html) vectors (user-defined a
+  priori parameters), used for the parameter regularization (see
+  details)
 
 - k:
 
@@ -129,6 +132,20 @@ parameter regularization. By default, the immediate upstream catchments
 are used as a priori catchments, as determined by
 [getDefaultAprioriIds](https://inrae.github.io/airGRiwrm/dev/reference/getDefaultAprioriIds.md).
 
+The entries of `AprioriIds` can also be
+[numeric](https://rdrr.io/r/base/numeric.html) vectors of user-defined a
+priori parameters. In that case, the given parameters are used as the a
+priori parameters of the De Lavenne criterion of the named sub-catchment
+instead of the parameters of an upstream sub-catchment:
+`AprioriIds <- list("Sub-catchment 1" = c("Upstream sub-catchment 1"), "Sub-catchment 2" = c(1, 50, -1, 3, 2))`.
+A user-defined a priori parameter must have one value per model
+parameter of the sub-catchment (in the same order as the `Param`
+argument of
+[airGR::RunModel](https://rdrr.io/pkg/airGR/man/RunModel.html): e.g.
+`c(celerity, X1, X2, X3, X4)` for a GR4J sub-catchment with celerity).
+User-defined a priori parameters are used as-is: no default celerity is
+added and no X4 rescaling is applied.
+
 ## References
 
 De Lavenne, A., Andréassian, V., Thirel, G., Ramos, M.-H., Perrin, C.,
@@ -144,3 +161,77 @@ a Semidistributed Hydrological Model. Water Resources Research 55,
 [`CreateRunOptions()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md),
 [`CreateCalibOptions()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateCalibOptions.md),
 [`Calibration()`](https://inrae.github.io/airGRiwrm/dev/reference/Calibration.md)
+
+## Examples
+
+``` r
+# Loading catchment data
+data(Severn)
+
+# Creating catchment network
+nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id",
+                               "distance_downstream", "area")]
+nodes$model <- "RunModel_GR4J"
+rename_columns <- list(id = "gauge_id",
+                       down = "downstream_id",
+                       length = "distance_downstream")
+griwrm <- CreateGRiwrm(nodes, rename_columns)
+
+# Preparation of InputsModel object
+BasinsObs <- Severn$BasinsObs
+DatesR <- BasinsObs[[1]]$DatesR
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
+#> CreateInputsModel.GRiwrm: Processing sub-basin 54095...
+#> CreateInputsModel.GRiwrm: Processing sub-basin 54002...
+#> CreateInputsModel.GRiwrm: Processing sub-basin 54029...
+#> CreateInputsModel.GRiwrm: Processing sub-basin 54001...
+#> CreateInputsModel.GRiwrm: Processing sub-basin 54032...
+#> CreateInputsModel.GRiwrm: Processing sub-basin 54057...
+
+# Calibration period selection
+# Set aside warm-up period and use the rest for calibration
+IndPeriod_Run <- seq(
+  which(InputsModel[[1]]$DatesR ==
+        (InputsModel[[1]]$DatesR[1] + 365 * 24 * 60 * 60)),
+  length(InputsModel[[1]]$DatesR)
+)
+IndPeriod_WarmUp <- seq(1, IndPeriod_Run[1] - 1)
+
+# Preparation of RunOptions object
+RunOptions <- CreateRunOptions(
+  InputsModel,
+  IndPeriod_WarmUp = IndPeriod_WarmUp,
+  IndPeriod_Run = IndPeriod_Run
+)
+
+# De Lavenne criterion with the default node-based a priori parameters
+InputsCrit <- CreateInputsCrit(
+  InputsModel = InputsModel,
+  FUN_CRIT = ErrorCrit_KGE2,
+  RunOptions = RunOptions,
+  Obs = Qobs[IndPeriod_Run, ],
+  transfo = "sqrt"
+)
+
+# De Lavenne criterion with a user-defined a priori parameter for node
+# "54057" instead of the parameters of an upstream sub-catchment:
+# one value per model parameter of the node (e.g. for a GR4J sub-catchment
+# with celerity: celerity, X1, X2, X3, X4)
+InputsCrit <- CreateInputsCrit(
+  InputsModel = InputsModel,
+  FUN_CRIT = ErrorCrit_KGE2,
+  RunOptions = RunOptions,
+  Obs = Qobs[IndPeriod_Run, ],
+  AprioriIds = list(
+    "54057" = c(1, 50, -1, 3, 2),
+    "54032" = "54001",
+    "54001" = "54095"
+  ),
+  transfo = "sqrt"
+)
+```

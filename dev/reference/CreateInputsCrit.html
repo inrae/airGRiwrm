@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9004</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,7 +106,7 @@
 
 
 <dt id="arg-aprioriids">AprioriIds<a class="anchor" aria-label="anchor" href="#arg-aprioriids"></a></dt>
-<dd><p>(optional) named <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> or named <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> of <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> used for the parameter regularization (see details)</p></dd>
+<dd><p>(optional) named <a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> or named <a href="https://rdrr.io/r/base/vector.html" class="external-link">vector</a> whose entries are <a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> vectors (ids of a priori sub-catchments) or <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> vectors (user-defined a priori parameters), used for the parameter regularization (see details)</p></dd>
 
 
 <dt id="arg-k">k<a class="anchor" aria-label="anchor" href="#arg-k"></a></dt>
@@ -153,6 +153,17 @@ In the calibration process, all a priori parameter sets are tested and the one
 getting the best <code>ErrorCrit</code> score is used for the parameter regularization.
 By default, the immediate upstream catchments are used as a priori catchments,
 as determined by <a href="getDefaultAprioriIds.html">getDefaultAprioriIds</a>.</p>
+<p>The entries of <code>AprioriIds</code> can also be <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> vectors of user-defined
+a priori parameters. In that case, the given parameters are used as the a
+priori parameters of the De Lavenne criterion of the named sub-catchment
+instead of the parameters of an upstream sub-catchment:
+<code>AprioriIds &lt;- list("Sub-catchment 1" = c("Upstream sub-catchment 1"), "Sub-catchment 2" = c(1, 50, -1, 3, 2))</code>.
+A user-defined a priori parameter must have one value per model parameter of
+the sub-catchment (in the same order as the <code>Param</code> argument of
+<a href="https://rdrr.io/pkg/airGR/man/RunModel.html" class="external-link">airGR::RunModel</a>: e.g. <code>c(celerity, X1, X2, X3, X4)</code> for a GR4J sub-catchment
+with celerity).
+User-defined a priori parameters are used as-is: no default celerity is added
+and no X4 rescaling is applied.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -163,6 +174,80 @@ as determined by <a href="getDefaultAprioriIds.html">getDefaultAprioriIds</a>.</
     <div class="dont-index"><p><code><a href="CreateGRiwrm.html">CreateGRiwrm()</a></code>, <code><a href="CreateInputsModel.GRiwrm.html">CreateInputsModel.GRiwrm()</a></code>, <code><a href="CreateRunOptions.html">CreateRunOptions()</a></code>, <code><a href="CreateCalibOptions.html">CreateCalibOptions()</a></code>, <code><a href="Calibration.html">Calibration()</a></code></p></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Loading catchment data</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Creating catchment network</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>,</span></span>
+<span class="r-in"><span>                               <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span></span>
+<span class="r-in"><span><span class="va">rename_columns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>id <span class="op">=</span> <span class="st">"gauge_id"</span>,</span></span>
+<span class="r-in"><span>                       down <span class="op">=</span> <span class="st">"downstream_id"</span>,</span></span>
+<span class="r-in"><span>                       length <span class="op">=</span> <span class="st">"distance_downstream"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">griwrm</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodes</span>, <span class="va">rename_columns</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Preparation of InputsModel object</span></span></span>
+<span class="r-in"><span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span></span>
+<span class="r-in"><span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="va">BasinsObs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span></span></span>
+<span class="r-in"><span><span class="va">PrecipTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">precipitation</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">PotEvapTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">peti</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Qobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">discharge_spec</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PrecipTot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">InputsModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrm</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54029...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54001...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54032...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> CreateInputsModel.GRiwrm: Processing sub-basin 54057...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Calibration period selection</span></span></span>
+<span class="r-in"><span><span class="co"># Set aside warm-up period and use the rest for calibration</span></span></span>
+<span class="r-in"><span><span class="va">IndPeriod_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">==</span></span></span>
+<span class="r-in"><span>        <span class="op">(</span><span class="va">InputsModel</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">365</span> <span class="op">*</span> <span class="fl">24</span> <span class="op">*</span> <span class="fl">60</span> <span class="op">*</span> <span class="fl">60</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">InputsModel</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">IndPeriod_WarmUp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">IndPeriod_Run</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Preparation of RunOptions object</span></span></span>
+<span class="r-in"><span><span class="va">RunOptions</span> <span class="op">&lt;-</span> <span class="fu"><a href="CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">InputsModel</span>,</span></span>
+<span class="r-in"><span>  IndPeriod_WarmUp <span class="op">=</span> <span class="va">IndPeriod_WarmUp</span>,</span></span>
+<span class="r-in"><span>  IndPeriod_Run <span class="op">=</span> <span class="va">IndPeriod_Run</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># De Lavenne criterion with the default node-based a priori parameters</span></span></span>
+<span class="r-in"><span><span class="va">InputsCrit</span> <span class="op">&lt;-</span> <span class="fu">CreateInputsCrit</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  InputsModel <span class="op">=</span> <span class="va">InputsModel</span>,</span></span>
+<span class="r-in"><span>  FUN_CRIT <span class="op">=</span> <span class="va">ErrorCrit_KGE2</span>,</span></span>
+<span class="r-in"><span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span></span>
+<span class="r-in"><span>  Obs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>, <span class="op">]</span>,</span></span>
+<span class="r-in"><span>  transfo <span class="op">=</span> <span class="st">"sqrt"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># De Lavenne criterion with a user-defined a priori parameter for node</span></span></span>
+<span class="r-in"><span><span class="co"># "54057" instead of the parameters of an upstream sub-catchment:</span></span></span>
+<span class="r-in"><span><span class="co"># one value per model parameter of the node (e.g. for a GR4J sub-catchment</span></span></span>
+<span class="r-in"><span><span class="co"># with celerity: celerity, X1, X2, X3, X4)</span></span></span>
+<span class="r-in"><span><span class="va">InputsCrit</span> <span class="op">&lt;-</span> <span class="fu">CreateInputsCrit</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  InputsModel <span class="op">=</span> <span class="va">InputsModel</span>,</span></span>
+<span class="r-in"><span>  FUN_CRIT <span class="op">=</span> <span class="va">ErrorCrit_KGE2</span>,</span></span>
+<span class="r-in"><span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span></span>
+<span class="r-in"><span>  Obs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>, <span class="op">]</span>,</span></span>
+<span class="r-in"><span>  AprioriIds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="st">"54057"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">50</span>, <span class="op">-</span><span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"54032"</span> <span class="op">=</span> <span class="st">"54001"</span>,</span></span>
+<span class="r-in"><span>    <span class="st">"54001"</span> <span class="op">=</span> <span class="st">"54095"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  transfo <span class="op">=</span> <span class="st">"sqrt"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
