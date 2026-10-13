@@ -15,6 +15,11 @@ New features:
 * CreateRunOptions: allow users to select which simulation outputs are returned
   via the `Outputs_Sim` argument, either as a character vector applied to all
   nodes, or as a named list with per-node selection (#141).
+* CreateInputsCrit: allow user-defined a priori parameters for the De Lavenne
+  criterion: entries of `AprioriIds` can now be numeric vectors (one value per
+  model parameter of the node, e.g. `c(celerity, X1, X2, X3, X4)`) used as the
+  a priori parameters instead of the parameters of an upstream sub-catchment
+  (#61).
 
 Changes:
 --------

@@ -1,7 +1,8 @@
 #' Create InputsCrit for De Lavenne regularization
 #'
-#' Internal function that runs [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori upstream
-#' sub-catchment parameters grabbed during network calibration process.
+#' Internal function that runs [airGR::CreateInputsCrit_Lavenne] on-the-fly with a priori parameters
+#' either grabbed from the calibrated upstream sub-catchments during the network calibration process
+#' or user-defined and provided by the `AprioriIds` argument of [CreateInputsCrit].
 #'
 #' @param id [character] the id of the current sub-catchment
 #' @param OutputsModel \[GRiwrmOutputsModel\] object with simulation results of upstream sub-catchments run with calibrated parameters
@@ -24,6 +25,19 @@ getInputsCrit_Lavenne <- function(
   AprioriIds <- attr(InputsCrit, "AprioriIds")
   AprCelerity <- attr(InputsCrit, "AprCelerity")
   Lavenne_FUN <- attr(InputsCrit, "Lavenne_FUN")
+  if (isUserApriori(AprioriIds)) {
+    # User-defined a priori parameter (#61): a single candidate, provided in
+    # the parameter space of the node itself and used as-is
+    aprioriSet <- getInputsCrit_Lavenne_AprCrit(
+      AprioriId = id,
+      InputsModel = InputsModel,
+      RunOptions = RunOptions,
+      InputsCrit = InputsCrit,
+      get_or_test = "use",
+      AprParamR = AprioriIds
+    )
+    return(Lavenne_FUN(aprioriSet$AprParamR, aprioriSet$AprCrit))
+  }
   if (length(AprioriIds) == 1) {
     l <- getInputsCrit_Lavenne_AprCrit(
       AprioriIds,
@@ -67,30 +81,38 @@ getInputsCrit_Lavenne_AprCrit <- function(
   AprioriId,
   InputsModel,
   RunOptions,
-  OutputsModel,
-  AprCelerity,
-  InputsCrit,
-  get_or_test
+  OutputsModel = NULL,
+  AprCelerity = NULL,
+  InputsCrit = NULL,
+  get_or_test,
+  AprParamR = NULL
 ) {
-  AprParamR <- OutputsModel$RunOptions$Param
-  if (!inherits(OutputsModel, "SD")) {
-    # Add Celerity parameter if apriori is an upstream node
-    AprParamR <- c(AprCelerity, AprParamR)
+  if (is.null(AprParamR)) {
+    AprParamR <- OutputsModel$RunOptions$Param
+    if (!inherits(OutputsModel, "SD")) {
+      # Add Celerity parameter if apriori is an upstream node
+      AprParamR <- c(AprCelerity, AprParamR)
+    }
+    featMod <- attr(InputsCrit, "model")
+    if (featMod$hasX4) {
+      AprParamR[featMod$iX4] <- max(
+        0.5,
+        AprParamR[featMod$iX4] * featMod$X4Ratio[AprioriId]
+      )
+    }
+    AprParamR <- AprParamR[featMod$indexParamUngauged]
+    fromNode <- sprintf("from node %s", AprioriId)
+  } else {
+    # User-defined a priori parameter (#61), provided in the parameter space
+    # of the node itself: used as-is
+    fromNode <- sprintf("defined by the user for node %s", AprioriId)
   }
-  featMod <- attr(InputsCrit, "model")
-  if (featMod$hasX4) {
-    AprParamR[featMod$iX4] <- max(
-      0.5,
-      AprParamR[featMod$iX4] * featMod$X4Ratio[AprioriId]
-    )
-  }
-  AprParamR <- AprParamR[featMod$indexParamUngauged]
 
   message(
     "Parameter regularization: ",
     get_or_test,
-    " a priori parameters from node ",
-    AprioriId,
+    " a priori parameters ",
+    fromNode,
     ": ",
     paste(round(AprParamR, 3), collapse = ", ")
   )

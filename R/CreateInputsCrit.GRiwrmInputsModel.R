@@ -41,10 +41,26 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
   })
 
   if (!is.null(AprioriIds)) {
-    AprioriIds <- as.list(AprioriIds)
-    if (!all(sapply(AprioriIds, is.character)) || is.null(names(AprioriIds))) {
+    if (is.atomic(AprioriIds) && !is.character(AprioriIds)) {
       stop(
-        "Argument 'AprioriIds' must be a named list of character vectors or a named character vector"
+        "Argument 'AprioriIds' is a numeric vector: to provide user-defined ",
+        "a priori parameters, it must be a named list, e.g. ",
+        "'AprioriIds = list(\"54057\" = c(celerity, X1, X2, X3, X4))'"
+      )
+    }
+    AprioriIds <- as.list(AprioriIds)
+    if (
+      !all(
+        sapply(AprioriIds, function(x) {
+          is.character(x) || isUserApriori(x)
+        })
+      ) ||
+        is.null(names(AprioriIds))
+    ) {
+      stop(
+        "Argument 'AprioriIds' must be a named list or a named vector whose entries are ",
+        "character vectors (ids of a priori sub-catchments) or numeric vectors ",
+        "(user-defined a priori parameters)"
       )
     }
     if (length(unique(names(AprioriIds))) != length(names(AprioriIds))) {
@@ -56,7 +72,12 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
     if ("Weights" %in% names(dots)) {
       stop("Argument 'Weights' cannot be used when using Lavenne criterion")
     }
+    # Convert integer a priori parameters to numeric
+    AprioriIds <- lapply(AprioriIds, function(x) {
+      if (isUserApriori(x)) as.numeric(x) else x
+    })
     lapply(names(AprioriIds), function(id) {
+      entry <- AprioriIds[[id]]
       if (!id %in% names(InputsModel)) {
         stop(
           "'Each item of names(AprioriIds) must be an id of a modeled node:",
@@ -65,11 +86,34 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
           "\" is not in the list of the modeled nodes"
         )
       }
-      if (!all(AprioriIds[[id]] %in% names(InputsModel))) {
+      if (isUserApriori(entry)) {
+        # User-defined a priori parameter (#61): used as-is in the parameter
+        # space of the node itself (one value per model parameter)
+        if (any(is.na(entry))) {
+          stop(
+            "'AprioriIds': the user-defined a priori parameter of node \"",
+            id,
+            "\" must not contain NA values"
+          )
+        }
+        nparam <- length(InputsModel[[id]]$model$indexParamUngauged)
+        if (length(entry) != nparam) {
+          stop(
+            "'AprioriIds': the user-defined a priori parameter of node \"",
+            id,
+            "\" must have a length of ",
+            nparam,
+            " (one value per model parameter); got ",
+            length(entry)
+          )
+        }
+        return(invisible(NULL))
+      }
+      if (!all(entry %in% names(InputsModel))) {
         stop(
           "'Each item of AprioriIds must be an id of a modeled node:",
           " one of the ids \"",
-          AprioriIds[[id]],
+          entry,
           "\" is not in the list of the modeled nodes"
         )
       }
@@ -145,7 +189,9 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
         attr(InputsCrit[[IM$id]], "AprioriIds") <- AprioriIds[[IM$id]]
         attr(InputsCrit[[IM$id]], "AprCelerity") <- AprCelerity
         attr(InputsCrit[[IM$id]], "model") <- IM$model
-        if (IM$model$hasX4) {
+        # X4 rescaling applies to node-based a priori parameters only: a
+        # user-defined a priori parameter (#61) is used as-is
+        if (IM$model$hasX4 && !isUserApriori(AprioriIds[[IM$id]])) {
           attr(InputsCrit[[IM$id]], "model")$X4Ratio <- (dplyr::last(
             IM$BasinAreas
           ) /
@@ -168,6 +214,15 @@ CreateInputsCrit.GRiwrmInputsModel <- function(
     }
   }
   return(InputsCrit)
+}
+
+#' Test whether an entry of 'AprioriIds' is a user-defined a priori parameter
+#' (#61): a real numeric vector (integer or double), as opposed to a character
+#' vector of a priori sub-catchment ids.
+#' @param x An entry of the 'AprioriIds' argument
+#' @noRd
+isUserApriori <- function(x) {
+  is.numeric(x) && !is.complex(x)
 }
 
 #' Get default AprioriIds from direct upstream nodes of each node
