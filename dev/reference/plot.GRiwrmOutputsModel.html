@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9005</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9006</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,6 +107,20 @@ by hydrological model output named with the node ID (See <a href="CreateGRiwrm.h
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>For examples of use see topics <a href="RunModel.GRiwrmInputsModel.html">RunModel.GRiwrmInputsModel</a>, <a href="RunModel_Reservoir.html">RunModel_Reservoir</a>,
 and <a href="RunModel.Supervisor.html">RunModel.Supervisor</a>.</p>
+<p>The simulated discharge of a node integrates the flows of the whole
+catchment of the node, while the meteorological time series stored in the
+<em>OutputsModel</em> of the node (precipitation and potential evapotranspiration)
+come from the meteorological data of its local sub-basin only. Therefore,
+when these meteorological time series are available in the
+<em>GRiwrmOutputsModel</em> object (i.e. requested in <code>Outputs_Sim</code>, see
+<a href="CreateRunOptions.html">CreateRunOptions</a>), they are replaced on the fly, without modifying the
+object, by their area-weighted mean over the whole catchment of the node
+(the node and all its upstream nodes), so that the displayed meteorology
+reflects the whole catchment (See issue inrae/airGRiwrm#178).</p>
+<p>When the ID of a node is shared with a Diversion node (two rows of the
+network with the same <code>id</code>, see <a href="CreateGRiwrm.html">CreateGRiwrm</a>), the local sub-basin area
+of the shared ID cannot be computed and the node is simply excluded from
+the weighted mean (graceful behaviour).</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
