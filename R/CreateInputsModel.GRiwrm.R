@@ -587,6 +587,21 @@ hasUngaugedNodes <- function(id, griwrm) {
 }
 
 
+#' Return the row indices of the direct upstream non-Diversion nodes of a node
+#'
+#' @param griwrm A GRiwrm
+#' @param id [character] the ID of the node
+#'
+#' @return [integer] the row indices in the GRiwrm network of the direct
+#'   upstream nodes of the node (Diversion nodes excluded)
+#' @noRd
+#'
+directUpstreamNodes <- function(griwrm, id) {
+  Diversions <- !is.na(griwrm$model) & griwrm$model == "Diversion"
+  which(griwrm$down == id & !is.na(griwrm$down) & !Diversions)
+}
+
+
 #' Return the basin area of a node
 #'
 #' If the current node doesn't have an area (for example, for a Reservoir,
@@ -608,12 +623,41 @@ getNodeBasinArea <- function(i, griwrm) {
   if (i %in% which(Diversions)) {
     return(NA)
   }
-  UpstreamNodeRows <-
-    which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down) & !Diversions)
+  UpstreamNodeRows <- directUpstreamNodes(griwrm, griwrm$id[i])
   if (length(UpstreamNodeRows) > 0) {
     upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     return(sum(upstreamAreas, na.rm = TRUE))
   } else {
     return(NA)
   }
+}
+
+
+#' Return the local sub-basin area of a node
+#'
+#' The local sub-basin area is the part of the catchment of the node for which
+#' the meteorological data of the node itself are the "real" data: it is the
+#' total area of the catchment at the node (see `getNodeBasinArea`) minus the
+#' total areas of the catchments of the direct upstream nodes.
+#'
+#' @param id [character] the ID of the node
+#' @param griwrm A GRiwrm
+#'
+#' @return The local sub-basin area of the node in km2 (NA when unknown)
+#' @noRd
+#'
+getNodeLocalArea <- function(id, griwrm) {
+  i <- which(griwrm$id == id)
+  if (length(i) != 1) {
+    return(NA_real_)
+  }
+  total <- getNodeBasinArea(i, griwrm)
+  UpstreamNodeRows <- directUpstreamNodes(griwrm, id)
+  if (length(UpstreamNodeRows) == 0) {
+    return(total)
+  }
+  total - sum(
+    sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm),
+    na.rm = TRUE
+  )
 }

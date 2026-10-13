@@ -20,6 +20,13 @@ New features:
   model parameter of the node, e.g. `c(celerity, X1, X2, X3, X4)`) used as the
   a priori parameters instead of the parameters of an upstream sub-catchment
   (#61).
+* plot.GRiwrmOutputsModel: display the meteorological time series
+  (precipitation and potential evapotranspiration) at the whole-catchment
+  scale: when available in the *GRiwrmOutputsModel* object, the time series
+  of each node are replaced on the fly by their area-weighted mean over the
+  catchment of the node and all its upstream nodes, so that the displayed
+  meteorology reflects the whole catchment integrated in the simulated
+  discharge (#178).
 
 Changes:
 --------

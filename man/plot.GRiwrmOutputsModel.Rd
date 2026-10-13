@@ -30,4 +30,20 @@ Function which creates screen plots giving an overview of the model outputs in t
 \details{
 For examples of use see topics \link{RunModel.GRiwrmInputsModel}, \link{RunModel_Reservoir},
 and \link{RunModel.Supervisor}.
+
+The simulated discharge of a node integrates the flows of the whole
+catchment of the node, while the meteorological time series stored in the
+\emph{OutputsModel} of the node (precipitation and potential evapotranspiration)
+come from the meteorological data of its local sub-basin only. Therefore,
+when these meteorological time series are available in the
+\emph{GRiwrmOutputsModel} object (i.e. requested in \code{Outputs_Sim}, see
+\link{CreateRunOptions}), they are replaced on the fly, without modifying the
+object, by their area-weighted mean over the whole catchment of the node
+(the node and all its upstream nodes), so that the displayed meteorology
+reflects the whole catchment (See issue inrae/airGRiwrm#178).
+
+When the ID of a node is shared with a Diversion node (two rows of the
+network with the same \code{id}, see \link{CreateGRiwrm}), the local sub-basin area
+of the shared ID cannot be computed and the node is simply excluded from
+the weighted mean (graceful behaviour).
 }
