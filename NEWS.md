@@ -26,7 +26,17 @@ New features:
   of each node are replaced on the fly by their area-weighted mean over the
   catchment of the node and all its upstream nodes, so that the displayed
   meteorology reflects the whole catchment integrated in the simulated
-  discharge (#178).
+  discharge (#178). For a CemaNeige node, the per-layer series displayed by
+  `airGR::plot.OutputsModel` are covered as well: the mean air temperature
+  (`Temp`), the solid precipitation (`Psol`) and the snow pack state
+  (`SnowPack`) of each elevation layer are replaced by their whole-catchment
+  mean, as well as the mean over the layers that airGR derives from them.
+  The same adjustment is available as a new exported function
+  `adjustMeteoToCatchment()`: it computes, for a node of a
+  *GRiwrmOutputsModel* object, the meteorological time series at the
+  whole-catchment scale (including the CemaNeige layer series), so that
+  users can compute statistics from the meteorological data of the whole
+  catchment instead of the local sub-basin data of the node (#178).
 
 Changes:
 --------

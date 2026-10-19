@@ -42,8 +42,22 @@ object, by their area-weighted mean over the whole catchment of the node
 (the node and all its upstream nodes), so that the displayed meteorology
 reflects the whole catchment (See issue inrae/airGRiwrm#178).
 
+For a CemaNeige node, the same adjustment is applied to the per-layer
+series of \code{CemaNeigeLayers} displayed by \link[airGR:plot.OutputsModel]{airGR::plot.OutputsModel}: the
+mean air temperature (\code{Temp}), the solid precipitation (\code{Psol}) and the
+snow pack state (\code{SnowPack}) of each elevation layer are replaced by their
+area-weighted mean over the whole catchment of the node, as well as the
+mean over the layers that airGR derives from them. The other displayed
+series are not adjusted because they are either already at the scale of the
+whole catchment (the simulated discharge \code{Qsim}) or simulated at this scale
+(the actual evapotranspiration \code{AE}).
+
 When the ID of a node is shared with a Diversion node (two rows of the
 network with the same \code{id}, see \link{CreateGRiwrm}), the local sub-basin area
 of the shared ID cannot be computed and the node is simply excluded from
 the weighted mean (graceful behaviour).
+}
+\seealso{
+\code{\link[=adjustMeteoToCatchment]{adjustMeteoToCatchment()}} to compute statistics from the
+meteorological data at the whole-catchment scale.
 }
