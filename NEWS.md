@@ -38,6 +38,17 @@ Changes:
   airGR <= 1.7.6 now get a clear dependency error at installation
   instead of a runtime crash in `CreateRunOptions()`.
 
+Bug fixes:
+----------
+
+* RunModel: an explicit `Outputs_Sim` selection now works on
+  semi-distributed networks: the outputs required to propagate the simulated
+  flows between nodes (in particular `WarmUpQsim` when the warm-up period is
+  non-zero) are now included automatically in an explicit `Outputs_Sim`
+  selection, instead of failing with the error "Time series WarmUpQsim in
+  'QcontribDown' should have the same length as
+  'RunOptions$IndPeriod_WarmUp'" (#98).
+
 # airGRiwrm 0.7.0
 
 Breaking changes:

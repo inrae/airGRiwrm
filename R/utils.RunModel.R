@@ -22,6 +22,50 @@ checkRunModelParameters <- function(InputsModel, RunOptions, Param) {
   if (!is.list(Param) || !all(names(InputsModel) %in% names(Param))) {
     stop("Argument `Param` must be a list with names equal to nodes IDs")
   }
+  # Semi-distributed propagation outputs (#98): airGR's RunModel_Lag, which
+  # aggregates the local runoff with the routed upstream flows of each
+  # semi-distributed node, receives the node's own outputs as `QcontribDown`
+  # and requires "Qsim" (always) and "WarmUpQsim" (when the warm-up period
+  # is non-zero and the run is not a calibration: airGR skips this check
+  # when `Outputs_Sim` equals `Outputs_Cal`). CreateRunOptions includes
+  # these outputs automatically in an explicit `Outputs_Sim` selection;
+  # this check gives an actionable error for RunOptions objects created or
+  # edited outside of CreateRunOptions.
+  sdIds <- getSD_Ids(InputsModel)
+  if (length(sdIds) > 0) {
+    missing <- lapply(sdIds, function(id) {
+      required <- "Qsim"
+      if (
+        !identical(RunOptions[[id]]$IndPeriod_WarmUp, 0L) &&
+          !identical(
+            RunOptions[[id]]$Outputs_Sim,
+            RunOptions[[id]]$Outputs_Cal
+          )
+      ) {
+        required <- c(required, "WarmUpQsim")
+      }
+      setdiff(required, RunOptions[[id]]$Outputs_Sim)
+    })
+    missing <- missing[vapply(missing, length, integer(1)) > 0]
+    if (length(missing) > 0) {
+      details <- vapply(
+        names(missing),
+        function(id) {
+          sprintf(
+            "node '%s' (missing: %s)",
+            id,
+            paste(missing[[id]], collapse = ", ")
+          )
+        },
+        character(1)
+      )
+      stop(
+        "`RunOptions$Outputs_Sim` of each semi-distributed node must contain the outputs required to propagate the simulated flows between nodes. ",
+        paste(details, collapse = "; "),
+        ". Create the RunOptions object with CreateRunOptions() (it includes these outputs automatically in an explicit `Outputs_Sim` selection) or add the missing output names to `RunOptions$Outputs_Sim`."
+      )
+    }
+  }
 }
 
 

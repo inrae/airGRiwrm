@@ -127,7 +127,10 @@ test_that("CreateRunOptions.GRiwrmInputsModel validates Outputs_Sim", {
     ),
     "contains invalid node IDs"
   )
-  # A complete per-node selection is applied to each node
+  # A complete per-node selection is applied to each node. On this
+  # semi-distributed network the selection is completed with the outputs
+  # required to propagate the simulated flows between nodes (#98).
+  expected <- unique(c(c("Qsim", "Param"), MinimalOutputsSim))
   RunOptionsNet <- CreateRunOptions(
     InputsModel_net,
     IndPeriod_Run = Ind_Run_net,
@@ -139,7 +142,58 @@ test_that("CreateRunOptions.GRiwrmInputsModel validates Outputs_Sim", {
   )
   expect_true(all(vapply(
     RunOptionsNet,
-    function(x) identical(x$Outputs_Sim, c("Qsim", "Param")),
+    function(x) identical(x$Outputs_Sim, expected),
+    logical(1)
+  )))
+})
+
+test_that("An explicit Outputs_Sim subset includes the propagation outputs on a semi-distributed network (#98)", {
+  # Scenario A of research/issue-98-factcheck.R: with an explicit
+  # selection lacking "WarmUpQsim", the run used to fail in airGR's
+  # semi-distributed aggregation ("Time series WarmUpQsim in
+  # 'QcontribDown' should have the same length as
+  # 'RunOptions$IndPeriod_WarmUp'"). CreateRunOptions now completes the
+  # explicit selection with the minimal propagation set (same set as the
+  # default selection, #141).
+  RunOptionsQsim <- CreateRunOptions(
+    InputsModel_net,
+    IndPeriod_Run = Ind_Run_net,
+    IndPeriod_WarmUp = Ind_WarmUp_net,
+    Outputs_Sim = c("Qsim")
+  )
+  expect_true(all(vapply(
+    RunOptionsQsim,
+    function(x) all(MinimalOutputsSim %in% x$Outputs_Sim),
+    logical(1)
+  )))
+  expect_true(all(vapply(
+    RunOptionsQsim,
+    function(x) "Qsim" %in% x$Outputs_Sim,
+    logical(1)
+  )))
+})
+
+test_that("An explicit Outputs_Sim subset is not completed on a non semi-distributed network (#98)", {
+  # Without semi-distributed node, no propagation output is required:
+  # the explicit selection is applied as is.
+  nodes_ns <- loadSevernNodes()
+  nodes_ns <- nodes_ns[nodes_ns$id == "54095", ]
+  nodes_ns[nodes_ns$id == "54095", c("down", "length")] <- c(NA, NA)
+  e_ns <- setupRunModel(
+    nodes = nodes_ns,
+    runInputsModel = TRUE,
+    runRunOptions = FALSE,
+    runRunModel = FALSE
+  )
+  RunOptionsNs <- CreateRunOptions(
+    e_ns$InputsModel,
+    IndPeriod_Run = Ind_Run_net,
+    IndPeriod_WarmUp = Ind_WarmUp_net,
+    Outputs_Sim = c("Qsim")
+  )
+  expect_true(all(vapply(
+    RunOptionsNs,
+    function(x) identical(x$Outputs_Sim, c("Qsim")),
     logical(1)
   )))
 })

@@ -14,6 +14,13 @@
 #'   * A named [list] (names matching node IDs) to define outputs per node,
 #'     each item being a [character] vector.
 #'
+#'   On a semi-distributed network, an explicit selection is completed
+#'   with the minimal default output set so that the outputs required to
+#'   propagate the simulated flows between nodes are available (#98).
+#'   `Outputs_Sim = "all"` is not affected.
+#'
+#'   See details.
+#'
 #'   See [airGR::CreateRunOptions] for the list of output names supported by
 #'   each rainfall-runoff model.
 #'
@@ -31,6 +38,20 @@
 #' SCA-based error criteria (a reduced CemaNeige output set would change
 #' the model run in airGR). Use `Outputs_Sim = "all"` to restore the
 #' previous behaviour.
+#'
+#' On a semi-distributed network (a network with at least one
+#' semi-distributed node, i.e. a node whose sub-catchment receives the
+#' routed flows of upstream nodes), an explicit `Outputs_Sim` selection is
+#' completed with the minimal default output set (the default selection,
+#' See above, #141). This is required because airGR computes the discharge
+#' of each semi-distributed node by routing the upstream flows and
+#' aggregating them with the local runoff: the node's own outputs are
+#' passed to airGR's `RunModel_Lag` as `QcontribDown`, which requires in
+#' particular `Qsim` and, when the warm-up period is non-zero,
+#' `WarmUpQsim`. Without this completion, an explicit selection like
+#' `Outputs_Sim = c("Qsim")` fails with the error "Time series WarmUpQsim
+#' in 'QcontribDown' should have the same length as
+#' 'RunOptions$IndPeriod_WarmUp'" (#98).
 #'
 #' @rdname CreateRunOptions
 #' @export
@@ -83,6 +104,20 @@ CreateRunOptions.GRiwrmInputsModel <- function(
       rep(list(Outputs_Sim), length(names(x))),
       names(x)
     )
+  }
+
+  # On a semi-distributed network, the outputs required to propagate the
+  # simulated flows between nodes must be available in every node's
+  # outputs: an explicit `Outputs_Sim` selection is therefore completed
+  # with the minimal default set (issue #98, See details). The default
+  # selection and the legacy string "all" already include them.
+  if (length(getSD_Ids(x)) > 0) {
+    Outputs_Sim <- lapply(Outputs_Sim, function(outputs) {
+      if (identical(outputs, "all")) {
+        return(outputs)
+      }
+      unique(c(outputs, MinimalOutputsSim))
+    })
   }
 
   RunOptions <- list()

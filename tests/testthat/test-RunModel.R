@@ -355,3 +355,136 @@ test_that("RunModel should return water deficit (Qover_m3)", {
   expect_equal(OM_sv$`54001`$Qsim_m3, OM_GriwrmInputs$`54001`$Qsim_m3)
   expect_equal(OM_sv$`54001`$Qover_m3, OM_GriwrmInputs$`54001`$Qover_m3)
 })
+
+## Forge issue #98: an explicit `Outputs_Sim` selection on the semi-
+## distributed Severn network (transposition of
+## research/issue-98-factcheck.R, scenarios A/B/C/D: the 6-node network of
+## this fixture, 365-day warm-up and 365-day run). `OM_GriwrmInputs` (built
+## at the top of this file with the default, minimal, `Outputs_Sim`) is the
+## reference of scenario C.
+
+test_that("Outputs_Sim = c('Qsim') works on a semi-distributed network (#98)", {
+  # Scenario A: the 2022 bug (error "Time series WarmUpQsim in
+  # 'QcontribDown' should have the same length as
+  # 'RunOptions$IndPeriod_WarmUp'") reproduced on this network before the
+  # fix.
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    Outputs_Sim = c("Qsim"),
+    warnings = FALSE
+  )
+  OM <- suppressMessages(RunModel(
+    InputsModel,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  ))
+  expect_s3_class(OM, "GRiwrmOutputsModel")
+  lapply(names(OM), function(id) {
+    # Same flows as the default (minimal) run: the automatic completion
+    # of the explicit selection does not change the physics, only the
+    # returned outputs.
+    expect_equal(OM[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
+    # The propagation outputs are available in the returned object
+    expect_false(is.null(OM[[!!id]]$Qsim_m3))
+    expect_false(is.null(OM[[!!id]]$RunOptions$WarmUpQsim))
+  })
+})
+
+test_that("Outputs_Sim = c('Qsim', 'WarmUpQsim') works on a semi-distributed network (#98)", {
+  # Scenario B: the 2022 workaround must keep working.
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    Outputs_Sim = c("Qsim", "WarmUpQsim"),
+    warnings = FALSE
+  )
+  OM <- suppressMessages(RunModel(
+    InputsModel,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  ))
+  lapply(names(OM), function(id) {
+    expect_equal(OM[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
+    expect_false(is.null(OM[[!!id]]$RunOptions$WarmUpQsim))
+  })
+})
+
+test_that("Default Outputs_Sim keeps the minimal set on a semi-distributed network (#98)", {
+  # Scenario C: the default (minimal, #141) selection is unchanged.
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    warnings = FALSE
+  )
+  lapply(names(RunOptions), function(id) {
+    expect_equal(RunOptions[[id]]$Outputs_Sim, MinimalOutputsSim)
+  })
+  # The default run (fixture) provides the reference flows of scenario C
+  expect_s3_class(OM_GriwrmInputs, "GRiwrmOutputsModel")
+  lapply(names(OM_GriwrmInputs), function(id) {
+    expect_false(any(is.na(OM_GriwrmInputs[[!!id]]$Qsim)))
+  })
+})
+
+test_that("Outputs_Sim = 'all' works on a semi-distributed network (#98)", {
+  # Scenario D: the legacy "all" selection keeps working.
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    Outputs_Sim = "all",
+    warnings = FALSE
+  )
+  OM <- suppressMessages(RunModel(
+    InputsModel,
+    RunOptions = RunOptions,
+    Param = ParamMichel
+  ))
+  lapply(names(OM), function(id) {
+    expect_equal(OM[[!!id]]$Qsim, OM_GriwrmInputs[[!!id]]$Qsim)
+  })
+})
+
+test_that("RunModel gives an actionable error when a propagation output is missing from RunOptions (#98)", {
+  # The automatic completion happens in CreateRunOptions; a RunOptions
+  # object built outside of airGRiwrm (or edited afterwards) that misses
+  # the outputs required by the semi-distributed propagation must be
+  # rejected with an actionable error instead of the cryptic airGR
+  # "QcontribDown" error.
+  sdIds <- getSD_Ids(InputsModel)
+  expect_true(length(sdIds) > 0)
+  # Remove "WarmUpQsim" (required because the warm-up is non-zero)
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    warnings = FALSE
+  )
+  for (id in sdIds) {
+    RunOptions[[id]]$Outputs_Sim <-
+      setdiff(RunOptions[[id]]$Outputs_Sim, "WarmUpQsim")
+  }
+  expect_error(
+    RunModel(InputsModel, RunOptions = RunOptions, Param = ParamMichel),
+    "propagate the simulated flows between nodes"
+  )
+  # Remove "Qsim" (always required on a semi-distributed node)
+  RunOptions <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_WarmUp = IndPeriod_WarmUp,
+    IndPeriod_Run = IndPeriod_Run,
+    warnings = FALSE
+  )
+  for (id in sdIds) {
+    RunOptions[[id]]$Outputs_Sim <-
+      setdiff(RunOptions[[id]]$Outputs_Sim, "Qsim")
+  }
+  expect_error(
+    RunModel(InputsModel, RunOptions = RunOptions, Param = ParamMichel),
+    "propagate the simulated flows between nodes"
+  )
+})

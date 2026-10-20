@@ -37,6 +37,11 @@ CreateRunOptions <- function(x, ...) {
 # nodes correctly (WarmUpQsim), to carry the model parameters (Param) and
 # the model states at the end of the run (StateEnd), which are needed for
 # De Lavenne parameter regularization and hot restart (#141).
+# This set is also used to complete an explicit Outputs_Sim selection on a
+# semi-distributed network: airGR's semi-distributed aggregation
+# (RunModel_Lag, which receives the node's own outputs as QcontribDown)
+# requires in particular Qsim and WarmUpQsim with a non-zero warm-up
+# (#98). See CreateRunOptions.GRiwrmInputsModel.
 MinimalOutputsSim <- c(
   "DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd"
 )

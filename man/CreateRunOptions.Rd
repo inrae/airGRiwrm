@@ -44,6 +44,13 @@ outputs (default: \code{c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown",
 each item being a \link{character} vector.
 }
 
+On a semi-distributed network, an explicit selection is completed
+with the minimal default output set so that the outputs required to
+propagate the simulated flows between nodes are available (#98).
+\code{Outputs_Sim = "all"} is not affected.
+
+See details.
+
 See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for the list of output names supported by
 each rainfall-runoff model.}
 
@@ -80,6 +87,20 @@ automatically: it carries the CemaNeige layer output series required by
 SCA-based error criteria (a reduced CemaNeige output set would change
 the model run in airGR). Use \code{Outputs_Sim = "all"} to restore the
 previous behaviour.
+
+On a semi-distributed network (a network with at least one
+semi-distributed node, i.e. a node whose sub-catchment receives the
+routed flows of upstream nodes), an explicit \code{Outputs_Sim} selection is
+completed with the minimal default output set (the default selection,
+See above, #141). This is required because airGR computes the discharge
+of each semi-distributed node by routing the upstream flows and
+aggregating them with the local runoff: the node's own outputs are
+passed to airGR's \code{RunModel_Lag} as \code{QcontribDown}, which requires in
+particular \code{Qsim} and, when the warm-up period is non-zero,
+\code{WarmUpQsim}. Without this completion, an explicit selection like
+\code{Outputs_Sim = c("Qsim")} fails with the error "Time series WarmUpQsim
+in 'QcontribDown' should have the same length as
+'RunOptions$IndPeriod_WarmUp'" (#98).
 
 See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} documentation for a complete list of arguments.
 
