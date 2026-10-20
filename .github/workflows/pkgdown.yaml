@@ -22,6 +22,13 @@ jobs:
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       GITLAB_PAT: ${{ secrets.GITLAB_PAT }}
+      # pkgdown mode: release on master, devel otherwise (dev branch, PRs
+      # targeting a non-master ref, tags, workflow_dispatch). Note: on
+      # pull_request events github.ref_name is the base (target) branch, so a
+      # PR to master evaluates to release. GitHub Actions equivalent of the
+      # former GitLab-CI line `test "$CI_COMMIT_BRANCH" -eq "master"`, with the
+      # branch check via the github.ref_name context expression.
+      PKGDOWN_DEV_MODE: ${{ github.ref_name == 'master' && 'release' || 'devel' }}
     permissions:
       contents: write
     steps:
@@ -43,7 +50,6 @@ jobs:
           sed -i 's/`function`/function/g' man/CreateRunOptions.Rd
           sed -i 's/`function`/function/g' man/CreateCalibOptions.Rd
           R -e 'remotes::install_gitlab("airgriwrm/seinebasin", host = "forge.inrae.fr")'
-          test "$CI_COMMIT_BRANCH" -eq "master" && PKGDOWN_DEV_MODE="release" || PKGDOWN_DEV_MODE="devel"
 
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE, run_dont_run = TRUE)
