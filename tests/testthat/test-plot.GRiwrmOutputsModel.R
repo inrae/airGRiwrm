@@ -494,29 +494,19 @@ test_that("adjustMeteoToCatchment is graceful with heterogeneous CemaNeige layer
 test_that("plot.GRiwrmOutputsModel displays the CemaNeige series at the catchment scale (#178)", {
   grDevices::pdf(NULL)
   on.exit(grDevices::dev.off())
-  # With the default `Outputs_Sim` of a CemaNeige node, `Precip` is not
-  # available and airGR's monthly regime panel requires it as soon as `Psol`
-  # is present (pre-existing airGR limitation, not related to #178): the
-  # panels which display the CemaNeige layer series are tested here
-  expect_no_error(suppressWarnings(plot(OM_cn, unit = "mm", which = "ts")))
-  expect_no_error(suppressWarnings(plot(
-    OM_cn,
-    Qobs = NULL,
-    unit = "mm",
-    which = "Temp"
-  )))
-  # With `Precip` and `PotEvap` available (Outputs_Sim = "all"), the whole
-  # dashboard of a CemaNeige node can be displayed
-  RO_cn_all <- suppressWarnings(CreateRunOptions(
-    IM_cn,
-    IndPeriod_Run = seq(1, 30),
-    Outputs_Sim = "all"
-  ))
-  OM_cn_all <- suppressWarnings(RunModel(
-    IM_cn,
-    RunOptions = RO_cn_all,
-    Param = Param_cn
-  ))
-  expect_no_error(suppressWarnings(plot(OM_cn_all, unit = "mm")))
+  # The whole default dashboard of a CemaNeige node is displayed with the
+  # default `Outputs_Sim`: CemaNeige nodes also carry `Precip` (forced by
+  # CreateRunOptions, see there), so airGR's monthly regime panel, which
+  # requires `Precip` in the OutputsModel as soon as the per-layer `Psol`
+  # is present (upstream airGR `ylimP` limitation), can be drawn without
+  # any workaround. Note that the standalone airGR bug still exists on the
+  # airGR side (the fix is being prepared there): without `Precip` in the
+  # OutputsModel, the `plot.OutputsModel` of a CemaNeige node crashes with
+  # "object 'ylimP' not found". The default Outputs_Sim of airGRiwrm makes
+  # the affected path unreachable (before the mitigation, only the
+  # `which = "ts"` and `which = "Temp"` panels, or a run with
+  # `Outputs_Sim = "all"`, could be displayed on a CemaNeige node).
+  expect_no_error(suppressWarnings(plot(OM_cn, unit = "mm", which = "synth")))
+  expect_no_error(suppressWarnings(plot(OM_cn, unit = "mm", which = "all")))
 })
 

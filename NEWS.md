@@ -14,7 +14,14 @@ New features:
 
 * CreateRunOptions: allow users to select which simulation outputs are returned
   via the `Outputs_Sim` argument, either as a character vector applied to all
-  nodes, or as a named list with per-node selection (#141).
+  nodes, or as a named list with per-node selection (#141). CemaNeige nodes
+  now also carry `Precip` in their default `Outputs_Sim`: the default plot of
+  a CemaNeige node requires it in the *OutputsModel* to compute the
+  precipitation panel axis as soon as the per-layer solid precipitation
+  (`Psol`) is present (upstream airGR `ylimP` limitation; the standalone
+  airGR bug is still to be fixed on the airGR side). `Precip` is a recorded
+  meteo input, not a CemaNeige Fortran output: the CemaNeige `NOutputs` and
+  the model run are unchanged (#178).
 * CreateInputsCrit: allow user-defined a priori parameters for the De Lavenne
   criterion: entries of `AprioriIds` can now be numeric vectors (one value per
   model parameter of the node, e.g. `c(celerity, X1, X2, X3, X4)`) used as the
