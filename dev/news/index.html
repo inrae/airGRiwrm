@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9006</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9007</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,6 +75,10 @@
 <div class="section level3">
 <h3 id="changes-development-version">Changes:<a class="anchor" aria-label="anchor" href="#changes-development-version"></a></h3>
 <ul><li>The minimum required version of ‘airGR’ has been raised to 1.7.8: <code>CreateRunOptions</code> reads the per-node <code>FeatFUN_MOD</code> attribute for every node, and Reservoir nodes require the fix of airGR issue <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/167" class="external-link">#167</a> (both provided by the airGR 1.7.8 CRAN release, 2025-12-12). Users on airGR &lt;= 1.7.6 now get a clear dependency error at installation instead of a runtime crash in <code><a href="../reference/CreateRunOptions.html">CreateRunOptions()</a></code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes:<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li>RunModel: an explicit <code>Outputs_Sim</code> selection now works on semi-distributed networks: the outputs required to propagate the simulated flows between nodes (in particular <code>WarmUpQsim</code> when the warm-up period is non-zero) are now included automatically in an explicit <code>Outputs_Sim</code> selection, instead of failing with the error “Time series WarmUpQsim in ‘QcontribDown’ should have the same length as ‘RunOptions$IndPeriod_WarmUp’” (<a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/98" class="external-link">#98</a>).</li>
 </ul></div>
 </div>
     <div class="section level2">

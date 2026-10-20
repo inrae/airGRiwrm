@@ -43,6 +43,17 @@
   a runtime crash in
   [`CreateRunOptions()`](https://inrae.github.io/airGRiwrm/dev/reference/CreateRunOptions.md).
 
+### Bug fixes:
+
+- RunModel: an explicit `Outputs_Sim` selection now works on
+  semi-distributed networks: the outputs required to propagate the
+  simulated flows between nodes (in particular `WarmUpQsim` when the
+  warm-up period is non-zero) are now included automatically in an
+  explicit `Outputs_Sim` selection, instead of failing with the error
+  “Time series WarmUpQsim in ‘QcontribDown’ should have the same length
+  as ‘RunOptions\$IndPeriod_WarmUp’”
+  ([\#98](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/issues/98)).
+
 ## airGRiwrm 0.7.0
 
 CRAN release: 2024-09-22
