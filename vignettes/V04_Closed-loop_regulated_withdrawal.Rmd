@@ -467,4 +467,247 @@ par(oldpar)
 
 We can observe that the irrigation points are alternatively closed some days a week when the flow at node "54032" becomes low.
 
+# Handling missing data (NA) in the controller measurements
+
+In a real network, the data used to compute the simulated flows can be missing
+for some time steps: gaps in meteorological data, or missing measured
+withdrawals at nodes that are not managed by any controller. When the data are
+missing, the simulated flows at the affected locations contain `NA` values, and
+a controller whose measured variables (`Y`) are read from these flows then
+receives `NA` values.
+
+**airGRiwrm does not replace the `NA` values of the measured variables**: the
+control logic function of a controller is called with the measured matrix as it
+is, and it is up to the control logic to decide which command (`U`) to issue
+when the measurement is missing.
+
+The recommended pattern is to define a **fallback order**: a default command
+that is applied whenever the measured variables contain `NA` values. In the
+example below, the fallback order is "no withdrawal": when the measured flow
+is unknown, the withdrawal is set to zero.
+
+## A small demo network
+
+To illustrate the behavior, the following small network is built with the
+Severn data used in the previous sections:
+
+- `54095` and `54001`: two catchments modeled with the GR4J model;
+- `Intake`: a direct injection node whose withdrawal is managed by the
+  controller;
+- `Other`: a direct injection node which is **not** managed by any controller.
+
+The flow at the `54001` node (the measurement location of the controller)
+depends on the withdrawals at both the `Intake` and the `Other` nodes.
+
+```{r na_network}
+nodesNA <- data.frame(
+  id = c("54095", "Intake", "Other", "54001"),
+  down = c("54001", "54001", "54001", NA),
+  length = c(42, 10, 10, NA),
+  area = c(
+    Severn$BasinsInfo$area[Severn$BasinsInfo$gauge_id == "54095"],
+    NA,
+    NA,
+    Severn$BasinsInfo$area[Severn$BasinsInfo$gauge_id == "54001"]
+  ),
+  model = c("RunModel_GR4J", NA, NA, "RunModel_GR4J")
+)
+griwrmNA <- CreateGRiwrm(nodesNA)
+plot(griwrmNA)
+```
+
+The withdrawals at the `Other` node are constant (`-0.2 m<sup>3</sup>/s`)
+except for 7 days during the first 11 days of the run for which the data are
+missing (`NA`). These 7 days of missing data make the flow at `54001` unknown:
+
+```{r na_inputs}
+PrecipNA <- ConvertMeteoSD(griwrmNA, PrecipTot)
+PotEvapNA <- ConvertMeteoSD(griwrmNA, PotEvapTot)
+
+## One year of warm-up and one year of simulation
+IndPeriod_RunNA <- seq(length(DatesR) - 365 + 1, length(DatesR))
+IndPeriod_WarmUpNA <- seq(IndPeriod_RunNA[1] - 365, IndPeriod_RunNA[1] - 1)
+ParamNA <- ParamV02[c("54095", "54001")]
+
+## Withdrawals at the two intakes (m3/s): 0 for the controlled intake
+## (overwritten by the controller) and 0.2 m3/s for the uncontrolled one
+QinfNA <- data.frame(
+  Intake = rep(0, length(DatesR)),
+  Other = rep(-0.2, length(DatesR))
+)
+QinfNA <- QinfNA * 86400 # m3/day
+
+## 7 days of missing data at the uncontrolled intake
+QinfNA$Other[seq(IndPeriod_RunNA[1] + 4, IndPeriod_RunNA[1] + 10)] <- NA
+IMNA <- CreateInputsModel(griwrmNA, DatesR, PrecipNA, PotEvapNA, Qinf = QinfNA)
+RONA <- CreateRunOptions(
+  IMNA,
+  IndPeriod_WarmUp = IndPeriod_WarmUpNA,
+  IndPeriod_Run = IndPeriod_RunNA
+)
+```
+
+As announced by the warning issued above (`'Qupstream' contains NA values:
+model outputs will contain NAs`), the missing data propagate to the simulated
+flows: the flow at `54001` is `NA` during the period of missing data (plus one
+day of routing delay).
+
+## Two control logics for the same controller
+
+The controller measures the flow at `54001` (`Y`) and commands the withdrawal
+at the `Intake` node (`U`). The control logic withdraws 20% of the previous
+measured flow, capped at 0.5 m<sup>3</sup>/s. Two versions of this logic are implemented
+below: one **without** any handling of the `NA` values, and one **with a
+fallback order**:
+
+```{r na_logic}
+## Control logic without NA handling
+fWithdrawalNA <- function(Y) {
+  -pmin(0.2 * Y, 0.5 * 86400) # m3/day
+}
+
+## Same logic with a fallback order: when the measurement contains NA values,
+## the withdrawal is set to zero (no withdrawal when the flow is unknown)
+fWithdrawalNAFallback <- function(Y) {
+  if (any(is.na(Y))) {
+    return(matrix(0, nrow = nrow(Y), ncol = ncol(Y)))
+  }
+  return(-pmin(0.2 * Y, 0.5 * 86400))
+}
+```
+
+The simulation is run 3 times: once without any controller (open-loop
+reference), once with the control logic without `NA` handling, and once with
+the fallback order.
+
+```{r na_run}
+## Reference run without any controller
+OMNAref <- RunModel(IMNA, RunOptions = RONA, Param = ParamNA)
+
+## Run with the control logic without NA handling
+svNA1 <- CreateSupervisor(IMNA, TimeStep = 1L)
+CreateController(
+  svNA1,
+  "Irrigation",
+  Y = "54001",
+  U = "Intake",
+  FUN = fWithdrawalNA
+)
+OMNA1 <- RunModel(svNA1, RunOptions = RONA, Param = ParamNA)
+
+## Run with the fallback order
+svNA2 <- CreateSupervisor(IMNA, TimeStep = 1L)
+CreateController(
+  svNA2,
+  "Irrigation",
+  Y = "54001",
+  U = "Intake",
+  FUN = fWithdrawalNAFallback
+)
+OMNA2 <- RunModel(svNA2, RunOptions = RONA, Param = ParamNA)
+```
+
+## Observed behavior
+
+The first 15 days of the simulation are summarized in the table below (`Y` is
+the flow measured at `54001`, shown here from the run with the fallback order
+in which the measurement is only affected by the missing data, and `U` is the
+withdrawal commanded at the `Intake` node, both in m<sup>3</sup>/s):
+
+```{r na_results}
+Qm3sNA1 <- attr(OMNA1, "Qm3s")
+Qm3sNA2 <- attr(OMNA2, "Qm3s")
+
+i0 <- seq(1, 15)
+tabNA <- data.frame(
+  date = format(Qm3sNA2$DatesR[i0], "%Y-%m-%d"),
+  Y = Qm3sNA2[["54001"]][i0],
+  U_fallback = Qm3sNA2[["Intake"]][i0],
+  U_naive = Qm3sNA1[["Intake"]][i0]
+)
+for (v in names(tabNA)[-1]) {
+  tabNA[[v]] <- ifelse(is.na(tabNA[[v]]), "NA", round(tabNA[[v]], 2))
+}
+knitr::kable(tabNA, row.names = FALSE)
+```
+
+The measured flow at `54001` is `NA` for 8 days: the 7 days of missing data at
+the `Other` intake plus one day of routing delay. The number of `NA` values
+over the whole simulation period is:
+
+```{r na_count}
+tabNAcount <- data.frame(
+  variable = c(
+    "Qsim at 54001, open-loop reference",
+    "Qsim at 54001, run with the fallback order",
+    "Qsim at 54001, run without fallback",
+    "U, without fallback",
+    "U, with the fallback order"
+  ),
+  NA_values = c(
+    sum(is.na(OMNAref[["54001"]]$Qsim)),
+    sum(is.na(Qm3sNA2[["54001"]])),
+    sum(is.na(Qm3sNA1[["54001"]])),
+    sum(is.na(Qm3sNA1[["Intake"]])),
+    sum(is.na(Qm3sNA2[["Intake"]]))
+  )
+)
+knitr::kable(tabNAcount, row.names = FALSE)
+```
+
+```{r}
+oldpar <- par(mfrow = c(2, 1), mar = c(2.5, 4, 1, 1))
+i30 <- seq(1, 30)
+plot(
+  i30,
+  Qm3sNA2[["54001"]][i30],
+  type = "l",
+  col = "grey40",
+  lwd = 2,
+  main = "Flow at 54001 (first 30 days of the run)",
+  xlab = "day",
+  ylab = "Qsim (m3/s)"
+)
+abline(v = c(4.5, 12.5), col = "red", lty = 2)
+plot(
+  i30,
+  Qm3sNA2[["Intake"]][i30],
+  type = "l",
+  col = "blue",
+  lwd = 2,
+  main = "",
+  xlab = "day",
+  ylab = "U (m3/s)"
+)
+lines(i30, Qm3sNA1[["Intake"]][i30], col = "red", lty = 2)
+legend(
+  "topleft",
+  legend = c("with fallback order", "without"),
+  col = c("blue", "red"),
+  lty = c(1, 2)
+)
+par(oldpar)
+```
+
+The observed behavior is the following:
+
+- **without any `NA` handling**, the `NA` values of the measurement propagate
+  to the command `U` computed by the controller. The situation then degrades:
+  the flow measured at the next time step is itself affected by the previous
+  command, so the `NA` values are re-injected at each supervision step and
+  **persist for the rest of the simulation** (360 out of the 365 days of `U`
+  are `NA` in the example above, and the flow at `54001` of that run is `NA`
+  for 361 days);
+
+- **with the fallback order**, the command remains defined at all time steps:
+  during the days when the measurement is missing, the fallback order (zero
+  withdrawal) is applied, and the regular logic is used again as soon as the
+  measurement is available. The `NA` values are then confined to the period of
+  missing data at the measurement location, as in the open-loop reference run.
+
+The choice of the fallback order is left to the user: in this example the
+withdrawal is set to zero when the flow is unknown, which is a conservative
+default. The last issued command or a fixed seasonal objective could also be
+used.
+
 # References
