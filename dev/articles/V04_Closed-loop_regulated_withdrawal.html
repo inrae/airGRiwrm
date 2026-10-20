@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9007</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9008</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -566,7 +566,7 @@ function with:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="va">fIrrigation</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
-<span><span class="co">#&gt;  $ supervisor          :Classes 'Supervisor', 'environment' &lt;environment: 0x560fb8ad65c8&gt; </span></span>
+<span><span class="co">#&gt;  $ supervisor          :Classes 'Supervisor', 'environment' &lt;environment: 0x55e518a84f98&gt; </span></span>
 <span><span class="co">#&gt;  $ irrigationObjective :'data.frame':    12 obs. of  4 variables:</span></span>
 <span><span class="co">#&gt;   ..$ month: num [1:12] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
 <span><span class="co">#&gt;   ..$ 54001: num [1:12] 0 0 0.4 0.8 1 1.2 1.2 1 0.6 0 ...</span></span>
@@ -662,6 +662,394 @@ follows:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></code></pre></div>
 <p>We can observe that the irrigation points are alternatively closed
 some days a week when the flow at node “54032” becomes low.</p>
+</div>
+<div class="section level2">
+<h2 id="handling-missing-data-na-in-the-controller-measurements">Handling missing data (NA) in the controller measurements<a class="anchor" aria-label="anchor" href="#handling-missing-data-na-in-the-controller-measurements"></a>
+</h2>
+<p>In a real network, the data used to compute the simulated flows can
+be missing for some time steps: gaps in meteorological data, or missing
+measured withdrawals at nodes that are not managed by any controller.
+When the data are missing, the simulated flows at the affected locations
+contain <code>NA</code> values, and a controller whose measured
+variables (<code>Y</code>) are read from these flows then receives
+<code>NA</code> values.</p>
+<p><strong>airGRiwrm does not replace the <code>NA</code> values of the
+measured variables</strong>: the control logic function of a controller
+is called with the measured matrix as it is, and it is up to the control
+logic to decide which command (<code>U</code>) to issue when the
+measurement is missing.</p>
+<p>The recommended pattern is to define a <strong>fallback
+order</strong>: a default command that is applied whenever the measured
+variables contain <code>NA</code> values. In the example below, the
+fallback order is “no withdrawal”: when the measured flow is unknown,
+the withdrawal is set to zero.</p>
+<div class="section level3">
+<h3 id="a-small-demo-network">A small demo network<a class="anchor" aria-label="anchor" href="#a-small-demo-network"></a>
+</h3>
+<p>To illustrate the behavior, the following small network is built with
+the Severn data used in the previous sections:</p>
+<ul>
+<li>
+<code>54095</code> and <code>54001</code>: two catchments modeled
+with the GR4J model;</li>
+<li>
+<code>Intake</code>: a direct injection node whose withdrawal is
+managed by the controller;</li>
+<li>
+<code>Other</code>: a direct injection node which is
+<strong>not</strong> managed by any controller.</li>
+</ul>
+<p>The flow at the <code>54001</code> node (the measurement location of
+the controller) depends on the withdrawals at both the
+<code>Intake</code> and the <code>Other</code> nodes.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nodesNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54095"</span>, <span class="st">"Intake"</span>, <span class="st">"Other"</span>, <span class="st">"54001"</span><span class="op">)</span>,</span>
+<span>  down <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54001"</span>, <span class="st">"54001"</span>, <span class="st">"54001"</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">42</span>, <span class="fl">10</span>, <span class="fl">10</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span>  area <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">$</span><span class="va">area</span><span class="op">[</span><span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">$</span><span class="va">gauge_id</span> <span class="op">==</span> <span class="st">"54095"</span><span class="op">]</span>,</span>
+<span>    <span class="cn">NA</span>,</span>
+<span>    <span class="cn">NA</span>,</span>
+<span>    <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">$</span><span class="va">area</span><span class="op">[</span><span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">$</span><span class="va">gauge_id</span> <span class="op">==</span> <span class="st">"54001"</span><span class="op">]</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RunModel_GR4J"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="st">"RunModel_GR4J"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">griwrmNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateGRiwrm.html">CreateGRiwrm</a></span><span class="op">(</span><span class="va">nodesNA</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmNA</span><span class="op">)</span></span></code></pre></div>
+<p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/na_network-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<p>The withdrawals at the <code>Other</code> node are constant
+(<code>-0.2 m&lt;sup&gt;3&lt;/sup&gt;/s</code>) except for 7 days during
+the first 11 days of the run for which the data are missing
+(<code>NA</code>). These 7 days of missing data make the flow at
+<code>54001</code> unknown:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">PrecipNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmNA</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
+<span><span class="va">PotEvapNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmNA</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## One year of warm-up and one year of simulation</span></span>
+<span><span class="va">IndPeriod_RunNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span> <span class="op">-</span> <span class="fl">365</span> <span class="op">+</span> <span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">IndPeriod_WarmUpNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">IndPeriod_RunNA</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">365</span>, <span class="va">IndPeriod_RunNA</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ParamNA</span> <span class="op">&lt;-</span> <span class="va">ParamV02</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54095"</span>, <span class="st">"54001"</span><span class="op">)</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">## Withdrawals at the two intakes (m3/s): 0 for the controlled intake</span></span>
+<span><span class="co">## (overwritten by the controller) and 0.2 m3/s for the uncontrolled one</span></span>
+<span><span class="va">QinfNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  Intake <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  Other <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.2</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">QinfNA</span> <span class="op">&lt;-</span> <span class="va">QinfNA</span> <span class="op">*</span> <span class="fl">86400</span> <span class="co"># m3/day</span></span>
+<span></span>
+<span><span class="co">## 7 days of missing data at the uncontrolled intake</span></span>
+<span><span class="va">QinfNA</span><span class="op">$</span><span class="va">Other</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="va">IndPeriod_RunNA</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">4</span>, <span class="va">IndPeriod_RunNA</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">10</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="cn">NA</span></span>
+<span><span class="va">IMNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrmNA</span>, <span class="va">DatesR</span>, <span class="va">PrecipNA</span>, <span class="va">PotEvapNA</span>, Qinf <span class="op">=</span> <span class="va">QinfNA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span>
+<span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54001...</span></span>
+<span><span class="co">#&gt; Warning in airGR::CreateInputsModel(FUN_MOD = x, ...): 'Qupstream' contains NA</span></span>
+<span><span class="co">#&gt; values: model outputs will contain NAs</span></span>
+<span><span class="va">RONA</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateRunOptions.html">CreateRunOptions</a></span><span class="op">(</span></span>
+<span>  <span class="va">IMNA</span>,</span>
+<span>  IndPeriod_WarmUp <span class="op">=</span> <span class="va">IndPeriod_WarmUpNA</span>,</span>
+<span>  IndPeriod_Run <span class="op">=</span> <span class="va">IndPeriod_RunNA</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>As announced by the warning issued above
+(<code>'Qupstream' contains NA values: model outputs will contain NAs</code>),
+the missing data propagate to the simulated flows: the flow at
+<code>54001</code> is <code>NA</code> during the period of missing data
+(plus one day of routing delay).</p>
+</div>
+<div class="section level3">
+<h3 id="two-control-logics-for-the-same-controller">Two control logics for the same controller<a class="anchor" aria-label="anchor" href="#two-control-logics-for-the-same-controller"></a>
+</h3>
+<p>The controller measures the flow at <code>54001</code>
+(<code>Y</code>) and commands the withdrawal at the <code>Intake</code>
+node (<code>U</code>). The control logic withdraws 20% of the previous
+measured flow, capped at 0.5 m<sup>3</sup>/s. Two versions of this logic
+are implemented below: one <strong>without</strong> any handling of the
+<code>NA</code> values, and one <strong>with a fallback
+order</strong>:</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Control logic without NA handling</span></span>
+<span><span class="va">fWithdrawalNA</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">0.2</span> <span class="op">*</span> <span class="va">Y</span>, <span class="fl">0.5</span> <span class="op">*</span> <span class="fl">86400</span><span class="op">)</span> <span class="co"># m3/day</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">## Same logic with a fallback order: when the measurement contains NA values,</span></span>
+<span><span class="co">## the withdrawal is set to zero (no withdrawal when the flow is unknown)</span></span>
+<span><span class="va">fWithdrawalNAFallback</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/any.html" class="external-link">any</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, nrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span>, ncol <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">pmin</a></span><span class="op">(</span><span class="fl">0.2</span> <span class="op">*</span> <span class="va">Y</span>, <span class="fl">0.5</span> <span class="op">*</span> <span class="fl">86400</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>The simulation is run 3 times: once without any controller (open-loop
+reference), once with the control logic without <code>NA</code>
+handling, and once with the fallback order.</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Reference run without any controller</span></span>
+<span><span class="va">OMNAref</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">IMNA</span>, RunOptions <span class="op">=</span> <span class="va">RONA</span>, Param <span class="op">=</span> <span class="va">ParamNA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54095...</span></span>
+<span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54001...</span></span>
+<span><span class="co">#&gt; Warning in RunModel_Lag(InputsModel, RunOptions, Param[1], OutputsModel): 8</span></span>
+<span><span class="co">#&gt; time steps with NA values</span></span>
+<span></span>
+<span><span class="co">## Run with the control logic without NA handling</span></span>
+<span><span class="va">svNA1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateSupervisor.html">CreateSupervisor</a></span><span class="op">(</span><span class="va">IMNA</span>, TimeStep <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/CreateController.html">CreateController</a></span><span class="op">(</span></span>
+<span>  <span class="va">svNA1</span>,</span>
+<span>  <span class="st">"Irrigation"</span>,</span>
+<span>  Y <span class="op">=</span> <span class="st">"54001"</span>,</span>
+<span>  U <span class="op">=</span> <span class="st">"Intake"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="va">fWithdrawalNA</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; The controller 'Irrigation' has been added to the supervisor</span></span>
+<span><span class="va">OMNA1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">svNA1</span>, RunOptions <span class="op">=</span> <span class="va">RONA</span>, Param <span class="op">=</span> <span class="va">ParamNA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Processing: 0%</span></span>
+<span><span class="co">#&gt;  10% 20% 30% 40% 50% 60% 70% 80% 90% 100%</span></span>
+<span></span>
+<span><span class="co">## Run with the fallback order</span></span>
+<span><span class="va">svNA2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateSupervisor.html">CreateSupervisor</a></span><span class="op">(</span><span class="va">IMNA</span>, TimeStep <span class="op">=</span> <span class="fl">1L</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/CreateController.html">CreateController</a></span><span class="op">(</span></span>
+<span>  <span class="va">svNA2</span>,</span>
+<span>  <span class="st">"Irrigation"</span>,</span>
+<span>  Y <span class="op">=</span> <span class="st">"54001"</span>,</span>
+<span>  U <span class="op">=</span> <span class="st">"Intake"</span>,</span>
+<span>  FUN <span class="op">=</span> <span class="va">fWithdrawalNAFallback</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; The controller 'Irrigation' has been added to the supervisor</span></span>
+<span><span class="va">OMNA2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span><span class="va">svNA2</span>, RunOptions <span class="op">=</span> <span class="va">RONA</span>, Param <span class="op">=</span> <span class="va">ParamNA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Processing: 0% 10% 20% 30% 40% 50% 60% 70% 80% 90% 100%</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="observed-behavior">Observed behavior<a class="anchor" aria-label="anchor" href="#observed-behavior"></a>
+</h3>
+<p>The first 15 days of the simulation are summarized in the table below
+(<code>Y</code> is the flow measured at <code>54001</code>, shown here
+from the run with the fallback order in which the measurement is only
+affected by the missing data, and <code>U</code> is the withdrawal
+commanded at the <code>Intake</code> node, both in m<sup>3</sup>/s):</p>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Qm3sNA1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">OMNA1</span>, <span class="st">"Qm3s"</span><span class="op">)</span></span>
+<span><span class="va">Qm3sNA2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">OMNA2</span>, <span class="st">"Qm3s"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">i0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">15</span><span class="op">)</span></span>
+<span><span class="va">tabNA</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">Qm3sNA2</span><span class="op">$</span><span class="va">DatesR</span><span class="op">[</span><span class="va">i0</span><span class="op">]</span>, <span class="st">"%Y-%m-%d"</span><span class="op">)</span>,</span>
+<span>  Y <span class="op">=</span> <span class="va">Qm3sNA2</span><span class="op">[[</span><span class="st">"54001"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">i0</span><span class="op">]</span>,</span>
+<span>  U_fallback <span class="op">=</span> <span class="va">Qm3sNA2</span><span class="op">[[</span><span class="st">"Intake"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">i0</span><span class="op">]</span>,</span>
+<span>  U_naive <span class="op">=</span> <span class="va">Qm3sNA1</span><span class="op">[[</span><span class="st">"Intake"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">i0</span><span class="op">]</span></span>
+<span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">v</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">tabNA</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">tabNA</span><span class="op">[[</span><span class="va">v</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">tabNA</span><span class="op">[[</span><span class="va">v</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, <span class="st">"NA"</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">tabNA</span><span class="op">[[</span><span class="va">v</span><span class="op">]</span><span class="op">]</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tabNA</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">date</th>
+<th align="left">Y</th>
+<th align="right">U_fallback</th>
+<th align="left">U_naive</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">2014-10-01</td>
+<td align="left">6.68</td>
+<td align="right">0.0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-02</td>
+<td align="left">6.16</td>
+<td align="right">-0.5</td>
+<td align="left">-0.5</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-03</td>
+<td align="left">5.86</td>
+<td align="right">-0.5</td>
+<td align="left">-0.5</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-04</td>
+<td align="left">6.17</td>
+<td align="right">-0.5</td>
+<td align="left">-0.5</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-05</td>
+<td align="left">NA</td>
+<td align="right">-0.5</td>
+<td align="left">-0.5</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-06</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-07</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-08</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-09</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-10</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-11</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-12</td>
+<td align="left">NA</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-13</td>
+<td align="left">23.3</td>
+<td align="right">0.0</td>
+<td align="left">NA</td>
+</tr>
+<tr class="even">
+<td align="left">2014-10-14</td>
+<td align="left">24.49</td>
+<td align="right">-0.5</td>
+<td align="left">NA</td>
+</tr>
+<tr class="odd">
+<td align="left">2014-10-15</td>
+<td align="left">29.37</td>
+<td align="right">-0.5</td>
+<td align="left">NA</td>
+</tr>
+</tbody>
+</table>
+<p>The measured flow at <code>54001</code> is <code>NA</code> for 8
+days: the 7 days of missing data at the <code>Other</code> intake plus
+one day of routing delay. The number of <code>NA</code> values over the
+whole simulation period is:</p>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tabNAcount</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>  variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="st">"Qsim at 54001, open-loop reference"</span>,</span>
+<span>    <span class="st">"Qsim at 54001, run with the fallback order"</span>,</span>
+<span>    <span class="st">"Qsim at 54001, run without fallback"</span>,</span>
+<span>    <span class="st">"U, without fallback"</span>,</span>
+<span>    <span class="st">"U, with the fallback order"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  NA_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">OMNAref</span><span class="op">[[</span><span class="st">"54001"</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Qsim</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Qm3sNA2</span><span class="op">[[</span><span class="st">"54001"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Qm3sNA1</span><span class="op">[[</span><span class="st">"54001"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Qm3sNA1</span><span class="op">[[</span><span class="st">"Intake"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Qm3sNA2</span><span class="op">[[</span><span class="st">"Intake"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tabNAcount</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left">variable</th>
+<th align="right">NA_values</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Qsim at 54001, open-loop reference</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">Qsim at 54001, run with the fallback order</td>
+<td align="right">8</td>
+</tr>
+<tr class="odd">
+<td align="left">Qsim at 54001, run without fallback</td>
+<td align="right">361</td>
+</tr>
+<tr class="even">
+<td align="left">U, without fallback</td>
+<td align="right">360</td>
+</tr>
+<tr class="odd">
+<td align="left">U, with the fallback order</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">oldpar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span>, mar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2.5</span>, <span class="fl">4</span>, <span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">i30</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">i30</span>,</span>
+<span>  <span class="va">Qm3sNA2</span><span class="op">[[</span><span class="st">"54001"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">i30</span><span class="op">]</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"grey40"</span>,</span>
+<span>  lwd <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Flow at 54001 (first 30 days of the run)"</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"day"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Qsim (m3/s)"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4.5</span>, <span class="fl">12.5</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"red"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">i30</span>,</span>
+<span>  <span class="va">Qm3sNA2</span><span class="op">[[</span><span class="st">"Intake"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">i30</span><span class="op">]</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>  lwd <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"day"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"U (m3/s)"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">i30</span>, <span class="va">Qm3sNA1</span><span class="op">[[</span><span class="st">"Intake"</span><span class="op">]</span><span class="op">]</span><span class="op">[</span><span class="va">i30</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
+<span>  <span class="st">"topleft"</span>,</span>
+<span>  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"with fallback order"</span>, <span class="st">"without"</span><span class="op">)</span>,</span>
+<span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"blue"</span>, <span class="st">"red"</span><span class="op">)</span>,</span>
+<span>  lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">oldpar</span><span class="op">)</span></span></code></pre></div>
+<p>The observed behavior is the following:</p>
+<ul>
+<li><p><strong>without any <code>NA</code> handling</strong>, the
+<code>NA</code> values of the measurement propagate to the command
+<code>U</code> computed by the controller. The situation then degrades:
+the flow measured at the next time step is itself affected by the
+previous command, so the <code>NA</code> values are re-injected at each
+supervision step and <strong>persist for the rest of the
+simulation</strong> (360 out of the 365 days of <code>U</code> are
+<code>NA</code> in the example above, and the flow at <code>54001</code>
+of that run is <code>NA</code> for 361 days);</p></li>
+<li><p><strong>with the fallback order</strong>, the command remains
+defined at all time steps: during the days when the measurement is
+missing, the fallback order (zero withdrawal) is applied, and the
+regular logic is used again as soon as the measurement is available. The
+<code>NA</code> values are then confined to the period of missing data
+at the measurement location, as in the open-loop reference run.</p></li>
+</ul>
+<p>The choice of the fallback order is left to the user: in this example
+the withdrawal is set to zero when the flow is unknown, which is a
+conservative default. The last issued command or a fixed seasonal
+objective could also be used.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
