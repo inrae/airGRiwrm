@@ -34,7 +34,7 @@ node (\link{NA} for the most downstream node)
 \item \code{length} (\link{numeric}): hydraulic distance to the downstream node in km
 (\link{NA} for the most downstream node)
 \item \code{area} (\link{numeric}): total area of the basin starting from the current
-node location in km2
+node location (including upstream basin areas) in km2
 \item \code{model} (\link{character}): hydrological model to use (\link{NA} for using observed
 flow instead of a runoff model output)
 \item \code{donor} (\link{character}): node used as model and calibration parameter "donor" for
@@ -53,8 +53,8 @@ description of their connections
 \item the identifier and the hydraulic distance to the downstream node
 (\link{character} columns \code{down} and \link{numeric} columns \code{length} in km). The
 last downstream node should have fields \code{down} and \code{length} set to \code{NA},
-\item the total area of the basin at the node location (\link{numeric} column \code{area} in km2).
-Direct injection node can have a null area defined by \code{NA}
+\item the total area of the basin at the node location, including upstream basin areas
+(\link{numeric} column \code{area} in km2). Direct injection node can have a null area defined by \code{NA}
 \item the model to use (\link{character} column \code{model}), see section below for details
 }
 

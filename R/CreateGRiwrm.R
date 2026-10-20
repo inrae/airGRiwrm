@@ -7,8 +7,8 @@
 #'  * the identifier and the hydraulic distance to the downstream node
 #'  ([character] columns `down` and [numeric] columns `length` in km). The
 #'  last downstream node should have fields `down` and `length` set to `NA`,
-#'  * the total area of the basin at the node location ([numeric] column `area` in km2).
-#'  Direct injection node can have a null area defined by `NA`
+#'  * the total area of the basin at the node location, including upstream basin areas
+#'  ([numeric] column `area` in km2). Direct injection node can have a null area defined by `NA`
 #'  * the model to use ([character] column `model`), see section below for details
 #'
 #' An optional column `donor` can be used to manually define which sub-basin
@@ -50,7 +50,7 @@
 #'  * `length` ([numeric]): hydraulic distance to the downstream node in km
 #'  ([NA] for the most downstream node)
 #'  * `area` ([numeric]): total area of the basin starting from the current
-#'  node location in km2
+#'  node location (including upstream basin areas) in km2
 #'  * `model` ([character]): hydrological model to use ([NA] for using observed
 #'  flow instead of a runoff model output)
 #'  * `donor` ([character]): node used as model and calibration parameter "donor" for

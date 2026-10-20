@@ -15,7 +15,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/airGRiwrm)](https://cra
 AGPL-3](https://img.shields.io/badge/license-AGPL--3-orange.svg)](https://cran.r-project.org/web/licenses/AGPL-3)
 [![DOI:10.32614/CRAN.package.airGRiwrm](https://img.shields.io/badge/doi-10.32614/CRAN.package.airGRiwrm-purple)](https://doi.org/10.32614/CRAN.package.airGRiwrm)
 [![Dev
-pipeline](https://gitlab.irstea.fr/in-wop/airGRiwrm/badges/dev/pipeline.svg)](https://gitlab.irstea.fr/in-wop/airGRiwrm/-/pipelines)
+pipeline](https://forge.inrae.fr/airgriwrm/airgriwrm/badges/dev/pipeline.svg)](https://forge.inrae.fr/airgriwrm/airgriwrm/-/pipelines)
 <!-- badges: end -->
 
 **airGRiwrm** is an R package extending
