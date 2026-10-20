@@ -94,15 +94,22 @@ the “Irrigation1” or “Irrigation2” nodes. These values are only
 available in nodes “54095”, “54001” and “54032” where rainfall-runoff
 and hydraulic routing are actually modeled.
 
-### Irrigation objectives and flow demand at intakes
+### Irrigation objective at the intakes
 
 Irrigation1 covers an area of 15 km² and Irrigation2 covers an area of
 30 km².
 
-The objective of these irrigation systems is to cover the rainfall
-deficit (Burt et al. 1997) with 80% of success. Below is the calculation
-of the 8^(th) decile of monthly water needed given meteorological data
-of catchments “54001” and “54032” (unit mm/day) :
+The example below focuses on the flow restriction, so the water demand
+is simplified: each irrigation system is assigned a constant objective
+flow for the whole irrigation season (March to September), of the order
+of the 8^(th) decile of the monthly water need (potential
+evapotranspiration minus precipitation) of the catchment it irrigates in
+the peak months (June-July), converted into a flow and taking into
+account a 50% efficiency of the irrigation systems (Seckler et al.
+2003):
+
+- Irrigation1: 1.2 m³/s
+- Irrigation2: 2.4 m³/s
 
 ``` r
 
@@ -120,91 +127,34 @@ Qobs <- cbind(sapply(BasinsObs, function(x) {
 }))
 Precip <- ConvertMeteoSD(griwrmV04, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrmV04, PotEvapTot)
-
-# Calculation of the water need at the sub-basin scale
-dailyWaterNeed <- PotEvap - Precip
-dailyWaterNeed <- cbind(
-  as.data.frame(DatesR),
-  dailyWaterNeed[, c("54001", "54032")]
-)
-monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%Y%m", rep("mean", 2))
-monthlyWaterNeed <- SeriesAggreg(dailyWaterNeed, "%m", rep("q80", 2))
-monthlyWaterNeed[monthlyWaterNeed < 0] <- 0
-monthlyWaterNeed$DatesR <- as.numeric(format(monthlyWaterNeed$DatesR, "%m"))
-names(monthlyWaterNeed)[1] <- "month"
-monthlyWaterNeed <- monthlyWaterNeed[order(monthlyWaterNeed$month), ]
-monthlyWaterNeed
-#>       month     54001     54032
-#> 25        1 0.2400000 0.2365627
-#> 1721      2 0.5918416 0.6188486
-#> 2804      3 1.2376475 1.2384480
-#> 3745      4 2.1809664 2.2036046
-#> 4721      5 3.0230456 3.0555408
-#> 5716      6 3.4775922 3.5096402
-#> 6722      7 3.5305228 3.5769480
-#> 7644      8 2.6925228 2.7331421
-#> 8637      9 1.8323644 1.8489218
-#> 9588     10 0.8626301 0.8867260
-#> 10554    11 0.2707842 0.2497664
-#> 11491    12 0.1488753 0.1665834
 ```
 
-We restrict the irrigation season between March and September As a
-consequence, the crop requirement can be expressed in m³/s as follows:
+The irrigation objective (unit: m³/s) is:
 
 ``` r
 
-irrigationObjective <- monthlyWaterNeed
-# Conversion in m3/day
-irrigationObjective$"54001" <- monthlyWaterNeed$"54001" * 15 * 1E3
-irrigationObjective$"54032" <- monthlyWaterNeed$"54032" * 30 * 1E3
+irrigationObjective <- matrix(0, nrow = 12, ncol = 4)
+colnames(irrigationObjective) <- c("Month", "Irrigation1", "Irrigation2", "total")
+irrigationObjective[, 1] <- 1:12
 # Irrigation period between March and September
-irrigationObjective[-seq(3, 9), -1] <- 0
-# Conversion in m3/s
-irrigationObjective[, c(2, 3)] <- round(
-  irrigationObjective[, c(2, 3)] / 86400,
-  1
-)
-irrigationObjective$total <- rowSums(irrigationObjective[, c(2, 3)])
+irrigationObjective[3:9, 2] <- 1.2
+irrigationObjective[3:9, 3] <- 2.4
+irrigationObjective[, 4] <- rowSums(irrigationObjective[, c(2, 3)])
+irrigationObjective <- as.data.frame(irrigationObjective)
 irrigationObjective
-#>       month 54001 54032 total
-#> 25        1   0.0   0.0   0.0
-#> 1721      2   0.0   0.0   0.0
-#> 2804      3   0.2   0.4   0.6
-#> 3745      4   0.4   0.8   1.2
-#> 4721      5   0.5   1.1   1.6
-#> 5716      6   0.6   1.2   1.8
-#> 6722      7   0.6   1.2   1.8
-#> 7644      8   0.5   0.9   1.4
-#> 8637      9   0.3   0.6   0.9
-#> 9588     10   0.0   0.0   0.0
-#> 10554    11   0.0   0.0   0.0
-#> 11491    12   0.0   0.0   0.0
-```
-
-We assume that the efficiency of the irrigation systems is equal to 50%
-as proposed by Seckler et al. (2003). as a consequence, the flow demand
-at intake for each irrigation system is as follows (unit: m³/s):
-
-``` r
-
-# Application of the 50% irrigation system efficiency on the water demand
-irrigationObjective[, seq(2, 4)] <- irrigationObjective[, seq(2, 4)] / 0.5
-# Display result in m3/s
-irrigationObjective
-#>       month 54001 54032 total
-#> 25        1   0.0   0.0   0.0
-#> 1721      2   0.0   0.0   0.0
-#> 2804      3   0.4   0.8   1.2
-#> 3745      4   0.8   1.6   2.4
-#> 4721      5   1.0   2.2   3.2
-#> 5716      6   1.2   2.4   3.6
-#> 6722      7   1.2   2.4   3.6
-#> 7644      8   1.0   1.8   2.8
-#> 8637      9   0.6   1.2   1.8
-#> 9588     10   0.0   0.0   0.0
-#> 10554    11   0.0   0.0   0.0
-#> 11491    12   0.0   0.0   0.0
+#>    Month Irrigation1 Irrigation2 total
+#> 1      1         0.0         0.0   0.0
+#> 2      2         0.0         0.0   0.0
+#> 3      3         1.2         2.4   3.6
+#> 4      4         1.2         2.4   3.6
+#> 5      5         1.2         2.4   3.6
+#> 6      6         1.2         2.4   3.6
+#> 7      7         1.2         2.4   3.6
+#> 8      8         1.2         2.4   3.6
+#> 9      9         1.2         2.4   3.6
+#> 10    10         0.0         0.0   0.0
+#> 11    11         0.0         0.0   0.0
+#> 12    12         0.0         0.0   0.0
 ```
 
 ### Restriction of irrigation in case of water scarcity
@@ -267,7 +217,7 @@ legend(
 )
 ```
 
-![](V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-4-1.png)
+![](V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-3-1.png)
 
 The water availability or abstraction restriction depending on the
 natural flow is calculated with the function below:
@@ -299,55 +249,70 @@ as.list(environment(getAvailableAbstraction))
 
 #### Restriction rules
 
-The figure above shows that restrictions will be imposed to the
-irrigation perimeter if the natural flow at Saxons Lode (`54032`) is
-under around 20 m³/s.
+The figure above shows that, for the irrigation objective defined above,
+the abstraction is limited when the natural flow at Saxons Lode
+(`54032`) is under around 24 m³/s, i.e. when the flow available for
+abstraction under the rule falls below the irrigation objective.
 
 Applying restriction on the intake on a real field is always challenging
 since it is difficult to regulate day by day the flow at the intake.
 Policy makers often decide to close the irrigation abstraction points in
-turn several days a week based on the mean flow of the previous week.
+turn, several days a week, based on the mean flow of the previous week.
 
-The number of authorized days per week for irrigation can be calculated
-as follows. All calculations are based on the mean flow measured the
-week previous the current time step. First, the naturalized flow $`N`$
-is equal to
+All the calculations below are based on the flows of the week preceding
+the current time step. First, the naturalized flow $`N`$ is equal to:
 
 ``` math
  N = M + I_l 
 ```
+
 with:
 
 - $`M`$, the measured flow at the downstream gauging station
-- $`I_l`$, the total abstracted flow for irrigation for the last week
+- $`I_l`$, the total abstracted flow for irrigation during the last week
+  (the abstracted water is not measured at the gauging station, so it is
+  added back to the measured flow)
 
-Available flow for abstraction $`A`$ is:
+The available flow for abstraction $`A`$ is:
 
 ``` math
-A = f_{a}(N)
+ A = f_a(N) 
 ```
 
-with $`f_a`$ the availability function calculated from quantiles of
-natural flow and related restriction rates.
+with $`f_a`$ the availability function calculated from the quantiles of
+the natural flow and the related abstraction rates (see the
+`restriction_rule_m3s` above).
 
-The flow planned for irrigation $`Ip`$ is then:
+The flow actually planned for irrigation $`I_p`$ is then:
 
 ``` math
- I_p = \min (O, A)
+ I_p = \min (O, A) 
 ```
 
 with $`O`$ the irrigation objective flow.
 
-The number of days for irrigation $`n`$ per week is then equal to:
+The number of restricted days per week $`n`$ (the number of days on
+which the perimeters must be closed) is then equal to:
 
 ``` math
- n = \lfloor \frac{I_p}{O} \times 7 \rfloor
+ n = \lfloor 7 \times \left(1 - \frac{I_p}{O} \right) \rfloor 
 ```
-with $`\lfloor x \rfloor`$ the function that returns the largest
-integers not greater than $`x`$
 
-The rotation of restriction days between the 2 irrigation perimeters is
-operated as follows:
+with $`\lfloor x \rfloor`$ the function that returns the largest integer
+not greater than $`x`$. When the available flow covers the irrigation
+objective ($`A \geq O`$), $`n = 0`$ and the perimeters are open for the
+whole week. When the available flow tends to zero, $`n = 7`$ and the
+abstraction is completely stopped. The number of days actually available
+for irrigation is $`7 - n`$ (which is exactly
+$`\lceil 7 \times I_p / O \rceil`$, the smallest integer not less than
+$`7 \times I_p / O`$).
+
+The $`n`$ restricted days are then spread over the week and shared
+between the two perimeters by the `restriction_rotation` matrix. The
+matrix has one row per day of the 7-day supervision window and one
+column per perimeter; each entry is the *restriction rank* of the
+perimeter on this day (each column is a permutation of the ranks 1 to
+7):
 
 ``` r
 
@@ -355,6 +320,35 @@ restriction_rotation <- matrix(
   c(5, 7, 6, 4, 2, 1, 3, 3, 1, 2, 4, 6, 7, 5),
   ncol = 2
 )
+colnames(restriction_rotation) <- c("Irrigation1", "Irrigation2")
+restriction_rotation
+#>      Irrigation1 Irrigation2
+#> [1,]           5           3
+#> [2,]           7           1
+#> [3,]           6           2
+#> [4,]           4           4
+#> [5,]           2           6
+#> [6,]           1           7
+#> [7,]           3           5
+```
+
+On a given day, a perimeter is closed when its rank on this day is lower
+than or equal to $`n`$. As each column contains each rank exactly once,
+each perimeter is closed for exactly $`n`$ days per week. Because the
+ranks of the two perimeters are shifted with respect to each other, the
+closures are redistributed over the week: for low values of $`n`$, the
+closures of the two perimeters never fall on the same day (and for
+$`n \leq 3`$ there is at least one day per week when both perimeters
+remain open). As $`n`$ increases, the number of days on which the two
+perimeters are closed simultaneously increases: 1 day for $`n = 4`$, 3
+days for $`n = 5`$, 5 days for $`n = 6`$ and 7 days for $`n = 7`$
+(complete stop of the abstraction).
+
+The figure below displays, for each possible value of $`n`$ (0 to 7),
+the number of closed perimeters on each day of the 7-day window:
+
+``` r
+
 m <- do.call(
   rbind,
   lapply(seq(0, 7), function(x) {
@@ -439,14 +433,18 @@ variables in columns and the time steps in rows.
 
 In this example, the logic function must do the following tasks:
 
-1.  Calculate the objective of irrigation according to the month of the
-    current days of simulation
+1.  Calculate the objective of irrigation (m3/s) for each day of the
+    current week
 2.  Calculate the naturalized flow from the measured flow and the
     abstracted flow of the previous week
-3.  Calculate the number of days of restriction for each irrigation
-    point
-4.  Return the abstracted flow for the next week taking into account
-    restriction days
+3.  Calculate the number of restricted days for the week under the flow
+    restriction rule
+4.  Return the abstracted flow for the next week, closing each perimeter
+    on the days assigned to it by the rotation matrix
+
+On the first supervision step there is no previous week yet, so the
+measured flow is taken directly as the natural flow (there is no
+previous abstraction to subtract from it).
 
 ``` r
 
@@ -457,16 +455,24 @@ fIrrigationFactory <- function(
   restriction_rotation
 ) {
   function(Y) {
-    # Y is in m3/day and the basin's area is in km2
-    # Calculate the objective of irrigation according to the month of the current days of simulation
+    # Y is in m3/day (the last TimeStep simulated flows at node 54032)
+    # 1. Calculate the objective of irrigation (m3/s) for each day of the
+    # current week, according to the month of this day
     month <- as.numeric(format(supervisor$ts.date, "%m"))
-    U <- irrigationObjective[month, c(2, 3)] # m3/s
+    U <- irrigationObjective[month, c(2, 3)]
     meanU <- mean(rowSums(U))
     if (meanU > 0) {
-      # calculate the naturalized flow from the measured flow and the abstracted flow of the previous week
+      # 2. Calculate the naturalized flow (m3/s) from the measured flow and
+      # the abstracted flow of the previous week
       lastU <- supervisor$controllers[[supervisor$controller.id]]$U # m3/day
-      Qnat <- (Y - rowSums(lastU)) / 86400 # m3/s
-      # Maximum abstracted flow available
+      if (nrow(lastU) == 0) {
+        # First supervision: no abstraction yet, the measured flow is the natural flow
+        Qnat <- Y / 86400
+      } else {
+        Qnat <- (Y - rowSums(lastU)) / 86400
+      }
+      # 3. Calculate the number of restricted days for the week
+      # Maximum abstracted flow available under the restriction rule
       Qrestricted <- mean(
         approx(
           restriction_rule_m3s$threshold_natural_flow,
@@ -478,9 +484,11 @@ fIrrigationFactory <- function(
       )
       # Total for irrigation
       QIrrig <- min(meanU, Qrestricted)
-      # Number of days of irrigation
       n <- floor(7 * (1 - QIrrig / meanU))
-      # Apply days off
+      # 4. Return the abstracted flow for the next week taking into account
+      # the restriction days: a perimeter is closed on a day when its rank in
+      # the rotation matrix is lower than or equal to the number of
+      # restricted days
       U[restriction_rotation[seq(nrow(U)), ] <= n] <- 0
     }
     return(-U * 86400) # withdrawal is a negative flow in m3/day on an upstream node
@@ -513,16 +521,19 @@ with:
 
 str(as.list(environment(fIrrigation)))
 #> List of 4
-#>  $ supervisor          :Classes 'Supervisor', 'environment' <environment: 0x55e518a84f98> 
+#>  $ supervisor          :Classes 'Supervisor', 'environment' <environment: 0x5626f5634c00> 
 #>  $ irrigationObjective :'data.frame':    12 obs. of  4 variables:
-#>   ..$ month: num [1:12] 1 2 3 4 5 6 7 8 9 10 ...
-#>   ..$ 54001: num [1:12] 0 0 0.4 0.8 1 1.2 1.2 1 0.6 0 ...
-#>   ..$ 54032: num [1:12] 0 0 0.8 1.6 2.2 2.4 2.4 1.8 1.2 0 ...
-#>   ..$ total: num [1:12] 0 0 1.2 2.4 3.2 3.6 3.6 2.8 1.8 0 ...
+#>   ..$ Month      : num [1:12] 1 2 3 4 5 6 7 8 9 10 ...
+#>   ..$ Irrigation1: num [1:12] 0 0 1.2 1.2 1.2 1.2 1.2 1.2 1.2 0 ...
+#>   ..$ Irrigation2: num [1:12] 0 0 2.4 2.4 2.4 2.4 2.4 2.4 2.4 0 ...
+#>   ..$ total      : num [1:12] 0 0 3.6 3.6 3.6 3.6 3.6 3.6 3.6 0 ...
 #>  $ restriction_rule_m3s:'data.frame':    4 obs. of  2 variables:
 #>   ..$ threshold_natural_flow: num [1:4] 15.1 30.2 50.9 90.6
 #>   ..$ abstraction_rate      : num [1:4] 0.1 0.15 0.2 0.24
 #>  $ restriction_rotation: num [1:7, 1:2] 5 7 6 4 2 1 3 3 1 2 ...
+#>   ..- attr(*, "dimnames")=List of 2
+#>   .. ..$ : NULL
+#>   .. ..$ : chr [1:2] "Irrigation1" "Irrigation2"
 ```
 
 The `supervisor` variable is itself an environment which means that the
@@ -919,11 +930,6 @@ conservative default. The last issued command or a fixed seasonal
 objective could also be used.
 
 ## References
-
-Burt, C. M., A. J. Clemmens, T. S. Strelkoff, et al. 1997. “Irrigation
-Performance Measures: Efficiency and Uniformity.” *Journal of Irrigation
-and Drainage Engineering* 123 (6): 423–42.
-<https://doi.org/10.1061/(ASCE)0733-9437(1997)123:6(423)>.
 
 Klaar, Megan J., Michael J. Dunbar, Mark Warren, and Rob Soley. 2014.
 “Developing Hydroecological Models to Inform Environmental Flow

@@ -9,7 +9,7 @@ description of their connections"><meta property="og:image" content="https://inr
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9008</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@ description of their connections"><meta property="og:image" content="https://inr
     <li><a class="external-link dropdown-item" href="https://sunshine.irstea.fr/app/airGRteaching">airGRteaching web app</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/inrae/airGRiwrm" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://gitlab.irstea.fr/in-wop/airGRiwrm"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://forge.inrae.fr/airgriwrm/airgriwrm"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
       </ul></div>
 
 
@@ -59,7 +59,7 @@ description of their connections"><meta property="og:image" content="https://inr
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Generation of a network description containing all hydraulic nodes and the description of their connections</h1>
-      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/R/CreateGRiwrm.R" class="external-link"><code>R/CreateGRiwrm.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/blob/master/R/CreateGRiwrm.R" class="external-link"><code>R/CreateGRiwrm.R</code></a></small>
       <div class="d-none name"><code>CreateGRiwrm.Rd</code></div>
     </div>
 
@@ -107,7 +107,7 @@ node (<a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a> for 
 <li><p><code>length</code> (<a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a>): hydraulic distance to the downstream node in km
 (<a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a> for the most downstream node)</p></li>
 <li><p><code>area</code> (<a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a>): total area of the basin starting from the current
-node location in km2</p></li>
+node location (including upstream basin areas) in km2</p></li>
 <li><p><code>model</code> (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>): hydrological model to use (<a href="https://rdrr.io/r/base/NA.html" class="external-link">NA</a> for using observed
 flow instead of a runoff model output)</p></li>
 <li><p><code>donor</code> (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a>): node used as model and calibration parameter "donor" for
@@ -120,8 +120,8 @@ id, it indicates that the node is embedded in an ungauged node cluster.</p></li>
 <li><p>the identifier and the hydraulic distance to the downstream node
 (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> columns <code>down</code> and <a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> columns <code>length</code> in km). The
 last downstream node should have fields <code>down</code> and <code>length</code> set to <code>NA</code>,</p></li>
-<li><p>the total area of the basin at the node location (<a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> column <code>area</code> in km2).
-Direct injection node can have a null area defined by <code>NA</code></p></li>
+<li><p>the total area of the basin at the node location, including upstream basin areas
+(<a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a> column <code>area</code> in km2). Direct injection node can have a null area defined by <code>NA</code></p></li>
 <li><p>the model to use (<a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> column <code>model</code>), see section below for details</p></li>
 </ul><p>An optional column <code>donor</code> can be used to manually define which sub-basin
 will give its parameters to an ungauged node (See <code>Ungauged</code> model below).</p><div class="section">

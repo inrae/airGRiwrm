@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9008</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9009</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,7 +74,7 @@
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/inrae/airGRiwrm" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://gitlab.irstea.fr/in-wop/airGRiwrm"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://forge.inrae.fr/airgriwrm/airgriwrm"><span class="fa fab fa-gitlab fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -92,7 +92,7 @@
 Dorchies</h4>
             
       
-      <small class="dont-index">Source: <a href="https://gitlab.irstea.fr/in-wop/airGRiwrm/-/blob/master/vignettes/V04_Closed-loop_regulated_withdrawal.Rmd" class="external-link"><code>vignettes/V04_Closed-loop_regulated_withdrawal.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/blob/master/vignettes/V04_Closed-loop_regulated_withdrawal.Rmd" class="external-link"><code>vignettes/V04_Closed-loop_regulated_withdrawal.Rmd</code></a></small>
       <div class="d-none name"><code>V04_Closed-loop_regulated_withdrawal.Rmd</code></div>
     </div>
 
@@ -180,15 +180,21 @@ available in nodes “54095”, “54001” and “54032” where rainfall-runof
 and hydraulic routing are actually modeled.</p>
 </div>
 <div class="section level3">
-<h3 id="irrigation-objectives-and-flow-demand-at-intakes">Irrigation objectives and flow demand at intakes<a class="anchor" aria-label="anchor" href="#irrigation-objectives-and-flow-demand-at-intakes"></a>
+<h3 id="irrigation-objective-at-the-intakes">Irrigation objective at the intakes<a class="anchor" aria-label="anchor" href="#irrigation-objective-at-the-intakes"></a>
 </h3>
 <p>Irrigation1 covers an area of 15 km² and Irrigation2 covers an area
 of 30 km².</p>
-<p>The objective of these irrigation systems is to cover the rainfall
-deficit <span class="citation">(Burt et al. 1997)</span> with 80% of
-success. Below is the calculation of the 8<sup>th</sup> decile of
-monthly water needed given meteorological data of catchments “54001” and
-“54032” (unit mm/day) :</p>
+<p>The example below focuses on the flow restriction, so the water
+demand is simplified: each irrigation system is assigned a constant
+objective flow for the whole irrigation season (March to September), of
+the order of the 8<sup>th</sup> decile of the monthly water need
+(potential evapotranspiration minus precipitation) of the catchment it
+irrigates in the peak months (June-July), converted into a flow and
+taking into account a 50% efficiency of the irrigation systems <span class="citation">(Seckler et al. 2003)</span>:</p>
+<ul>
+<li>Irrigation1: 1.2 m<sup>3</sup>/s</li>
+<li>Irrigation2: 2.4 m<sup>3</sup>/s</li>
+</ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Formatting climatic data for CreateInputsModel (See vignette V01_Structure_SD_model for details)</span></span>
 <span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span>
@@ -203,86 +209,31 @@ monthly water needed given meteorological data of catchments “54001” and
 <span>  <span class="va">x</span><span class="op">$</span><span class="va">discharge_spec</span></span>
 <span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">Precip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">PrecipTot</span><span class="op">)</span></span>
-<span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Calculation of the water need at the sub-basin scale</span></span>
-<span><span class="va">dailyWaterNeed</span> <span class="op">&lt;-</span> <span class="va">PotEvap</span> <span class="op">-</span> <span class="va">Precip</span></span>
-<span><span class="va">dailyWaterNeed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span>,</span>
-<span>  <span class="va">dailyWaterNeed</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"54001"</span>, <span class="st">"54032"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">monthlyWaterNeed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/airGR/man/SeriesAggreg.html" class="external-link">SeriesAggreg</a></span><span class="op">(</span><span class="va">dailyWaterNeed</span>, <span class="st">"%Y%m"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"mean"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">monthlyWaterNeed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/airGR/man/SeriesAggreg.html" class="external-link">SeriesAggreg</a></span><span class="op">(</span><span class="va">dailyWaterNeed</span>, <span class="st">"%m"</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"q80"</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">monthlyWaterNeed</span><span class="op">[</span><span class="va">monthlyWaterNeed</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="va">DatesR</span>, <span class="st">"%m"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">monthlyWaterNeed</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"month"</span></span>
-<span><span class="va">monthlyWaterNeed</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="va">month</span><span class="op">)</span>, <span class="op">]</span></span>
-<span><span class="va">monthlyWaterNeed</span></span>
-<span><span class="co">#&gt;       month     54001     54032</span></span>
-<span><span class="co">#&gt; 25        1 0.2400000 0.2365627</span></span>
-<span><span class="co">#&gt; 1721      2 0.5918416 0.6188486</span></span>
-<span><span class="co">#&gt; 2804      3 1.2376475 1.2384480</span></span>
-<span><span class="co">#&gt; 3745      4 2.1809664 2.2036046</span></span>
-<span><span class="co">#&gt; 4721      5 3.0230456 3.0555408</span></span>
-<span><span class="co">#&gt; 5716      6 3.4775922 3.5096402</span></span>
-<span><span class="co">#&gt; 6722      7 3.5305228 3.5769480</span></span>
-<span><span class="co">#&gt; 7644      8 2.6925228 2.7331421</span></span>
-<span><span class="co">#&gt; 8637      9 1.8323644 1.8489218</span></span>
-<span><span class="co">#&gt; 9588     10 0.8626301 0.8867260</span></span>
-<span><span class="co">#&gt; 10554    11 0.2707842 0.2497664</span></span>
-<span><span class="co">#&gt; 11491    12 0.1488753 0.1665834</span></span></code></pre></div>
-<p>We restrict the irrigation season between March and September As a
-consequence, the crop requirement can be expressed in m<sup>3</sup>/s as
-follows:</p>
+<span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV04</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span></code></pre></div>
+<p>The irrigation objective (unit: m<sup>3</sup>/s) is:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">irrigationObjective</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span></span>
-<span><span class="co"># Conversion in m3/day</span></span>
-<span><span class="va">irrigationObjective</span><span class="op">$</span><span class="st">"54001"</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="st">"54001"</span> <span class="op">*</span> <span class="fl">15</span> <span class="op">*</span> <span class="fl">1E3</span></span>
-<span><span class="va">irrigationObjective</span><span class="op">$</span><span class="st">"54032"</span> <span class="op">&lt;-</span> <span class="va">monthlyWaterNeed</span><span class="op">$</span><span class="st">"54032"</span> <span class="op">*</span> <span class="fl">30</span> <span class="op">*</span> <span class="fl">1E3</span></span>
+<code class="sourceCode R"><span><span class="va">irrigationObjective</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">0</span>, nrow <span class="op">=</span> <span class="fl">12</span>, ncol <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">irrigationObjective</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Month"</span>, <span class="st">"Irrigation1"</span>, <span class="st">"Irrigation2"</span>, <span class="st">"total"</span><span class="op">)</span></span>
+<span><span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">12</span></span>
 <span><span class="co"># Irrigation period between March and September</span></span>
-<span><span class="va">irrigationObjective</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">9</span><span class="op">)</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="co"># Conversion in m3/s</span></span>
-<span><span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span></span>
-<span>  <span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="op">/</span> <span class="fl">86400</span>,</span>
-<span>  <span class="fl">1</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">irrigationObjective</span><span class="op">$</span><span class="va">total</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">irrigationObjective</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">9</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1.2</span></span>
+<span><span class="va">irrigationObjective</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">9</span>, <span class="fl">3</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2.4</span></span>
+<span><span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fl">4</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="va">irrigationObjective</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">irrigationObjective</span><span class="op">)</span></span>
 <span><span class="va">irrigationObjective</span></span>
-<span><span class="co">#&gt;       month 54001 54032 total</span></span>
-<span><span class="co">#&gt; 25        1   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 1721      2   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 2804      3   0.2   0.4   0.6</span></span>
-<span><span class="co">#&gt; 3745      4   0.4   0.8   1.2</span></span>
-<span><span class="co">#&gt; 4721      5   0.5   1.1   1.6</span></span>
-<span><span class="co">#&gt; 5716      6   0.6   1.2   1.8</span></span>
-<span><span class="co">#&gt; 6722      7   0.6   1.2   1.8</span></span>
-<span><span class="co">#&gt; 7644      8   0.5   0.9   1.4</span></span>
-<span><span class="co">#&gt; 8637      9   0.3   0.6   0.9</span></span>
-<span><span class="co">#&gt; 9588     10   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 10554    11   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 11491    12   0.0   0.0   0.0</span></span></code></pre></div>
-<p>We assume that the efficiency of the irrigation systems is equal to
-50% as proposed by <span class="citation">Seckler et al. (2003)</span>.
-as a consequence, the flow demand at intake for each irrigation system
-is as follows (unit: m<sup>3</sup>/s):</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Application of the 50% irrigation system efficiency on the water demand</span></span>
-<span><span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">irrigationObjective</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="op">/</span> <span class="fl">0.5</span></span>
-<span><span class="co"># Display result in m3/s</span></span>
-<span><span class="va">irrigationObjective</span></span>
-<span><span class="co">#&gt;       month 54001 54032 total</span></span>
-<span><span class="co">#&gt; 25        1   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 1721      2   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 2804      3   0.4   0.8   1.2</span></span>
-<span><span class="co">#&gt; 3745      4   0.8   1.6   2.4</span></span>
-<span><span class="co">#&gt; 4721      5   1.0   2.2   3.2</span></span>
-<span><span class="co">#&gt; 5716      6   1.2   2.4   3.6</span></span>
-<span><span class="co">#&gt; 6722      7   1.2   2.4   3.6</span></span>
-<span><span class="co">#&gt; 7644      8   1.0   1.8   2.8</span></span>
-<span><span class="co">#&gt; 8637      9   0.6   1.2   1.8</span></span>
-<span><span class="co">#&gt; 9588     10   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 10554    11   0.0   0.0   0.0</span></span>
-<span><span class="co">#&gt; 11491    12   0.0   0.0   0.0</span></span></code></pre></div>
+<span><span class="co">#&gt;    Month Irrigation1 Irrigation2 total</span></span>
+<span><span class="co">#&gt; 1      1         0.0         0.0   0.0</span></span>
+<span><span class="co">#&gt; 2      2         0.0         0.0   0.0</span></span>
+<span><span class="co">#&gt; 3      3         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 4      4         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 5      5         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 6      6         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 7      7         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 8      8         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 9      9         1.2         2.4   3.6</span></span>
+<span><span class="co">#&gt; 10    10         0.0         0.0   0.0</span></span>
+<span><span class="co">#&gt; 11    11         0.0         0.0   0.0</span></span>
+<span><span class="co">#&gt; 12    12         0.0         0.0   0.0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="restriction-of-irrigation-in-case-of-water-scarcity">Restriction of irrigation in case of water scarcity<a class="anchor" aria-label="anchor" href="#restriction-of-irrigation-in-case-of-water-scarcity"></a>
@@ -295,7 +246,7 @@ Indicator (EFI) supporting Good Ecological Status (GES) <span class="citation">(
 consists in limiting the proportion of available flow for abstraction in
 function of the current flow regime (Reference taken for a river that is
 highly sensitive to abstraction classified “ASB3”).</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">restriction_rule</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>  quantile_natural_flow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.05</span>, <span class="fl">.3</span>, <span class="fl">0.5</span>, <span class="fl">0.7</span><span class="op">)</span>,</span>
 <span>  abstraction_rate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.15</span>, <span class="fl">0.20</span>, <span class="fl">0.24</span><span class="op">)</span></span>
@@ -304,7 +255,7 @@ highly sensitive to abstraction classified “ASB3”).</p>
 downstream all the abstraction locations (node “54032”). So we need the
 flow corresponding to the quantiles of natural flow and flow available
 for abstraction in each case.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">quant_m3s32</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">quantile</a></span><span class="op">(</span></span>
 <span>  <span class="va">Qobs</span><span class="op">[</span>, <span class="st">"54032"</span><span class="op">]</span> <span class="op">*</span> <span class="va">griwrmV04</span><span class="op">[</span><span class="va">griwrmV04</span><span class="op">$</span><span class="va">id</span> <span class="op">==</span> <span class="st">"54032"</span>, <span class="st">"area"</span><span class="op">]</span> <span class="op">/</span> <span class="fl">86.4</span>,</span>
 <span>  <span class="va">restriction_rule</span><span class="op">$</span><span class="va">quantile_natural_flow</span>,</span>
@@ -337,10 +288,10 @@ for abstraction in each case.</p>
 <span>  col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">rainbow</a></span><span class="op">(</span><span class="fl">3</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>  lty <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<p><img src="V04_Closed-loop_regulated_withdrawal_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 <p>The water availability or abstraction restriction depending on the
 natural flow is calculated with the function below:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># A function to enclose the parameters in the function (See: http://adv-r.had.co.nz/Functional-programming.html#closures)</span></span>
 <span><span class="va">getAvailableAbstractionEnclosed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">restriction_rule_m3s</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">Qnat</span><span class="op">)</span> <span class="op">{</span></span>
@@ -366,61 +317,122 @@ natural flow is calculated with the function below:</p>
 <div class="section level4">
 <h4 id="restriction-rules">Restriction rules<a class="anchor" aria-label="anchor" href="#restriction-rules"></a>
 </h4>
-<p>The figure above shows that restrictions will be imposed to the
-irrigation perimeter if the natural flow at Saxons Lode
-(<code>54032</code>) is under around 20 m<sup>3</sup>/s.</p>
+<p>The figure above shows that, for the irrigation objective defined
+above, the abstraction is limited when the natural flow at Saxons Lode
+(<code>54032</code>) is under around 24 m<sup>3</sup>/s, i.e. when the
+flow available for abstraction under the rule falls below the irrigation
+objective.</p>
 <p>Applying restriction on the intake on a real field is always
 challenging since it is difficult to regulate day by day the flow at the
 intake. Policy makers often decide to close the irrigation abstraction
-points in turn several days a week based on the mean flow of the
+points in turn, several days a week, based on the mean flow of the
 previous week.</p>
-<p>The number of authorized days per week for irrigation can be
-calculated as follows. All calculations are based on the mean flow
-measured the week previous the current time step. First, the naturalized
-flow
+<p>All the calculations below are based on the flows of the week
+preceding the current time step. First, the naturalized flow
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>N</mi><annotation encoding="application/x-tex">N</annotation></semantics></math>
-is equal to</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mi>M</mi><mo>+</mo><msub><mi>I</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex"> N = M + I_l </annotation></semantics></math>
-with:</p>
+is equal to:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mo>=</mo><mi>M</mi><mo>+</mo><msub><mi>I</mi><mi>l</mi></msub></mrow><annotation encoding="application/x-tex"> N = M + I_l </annotation></semantics></math></p>
+<p>with:</p>
 <ul>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>,
 the measured flow at the downstream gauging station</li>
 <li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>l</mi></msub><annotation encoding="application/x-tex">I_l</annotation></semantics></math>,
-the total abstracted flow for irrigation for the last week</li>
+the total abstracted flow for irrigation during the last week (the
+abstracted water is not measured at the gauging station, so it is added
+back to the measured flow)</li>
 </ul>
-<p>Available flow for abstraction
+<p>The available flow for abstraction
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
 is:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><msub><mi>f</mi><mi>a</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">A = f_{a}(N)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><msub><mi>f</mi><mi>a</mi></msub><mo stretchy="false" form="prefix">(</mo><mi>N</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex"> A = f_a(N) </annotation></semantics></math></p>
 <p>with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>f</mi><mi>a</mi></msub><annotation encoding="application/x-tex">f_a</annotation></semantics></math>
-the availability function calculated from quantiles of natural flow and
-related restriction rates.</p>
-<p>The flow planned for irrigation
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>I</mi><mi>p</mi></mrow><annotation encoding="application/x-tex">Ip</annotation></semantics></math>
+the availability function calculated from the quantiles of the natural
+flow and the related abstraction rates (see the
+<code>restriction_rule_m3s</code> above).</p>
+<p>The flow actually planned for irrigation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>I</mi><mi>p</mi></msub><annotation encoding="application/x-tex">I_p</annotation></semantics></math>
 is then:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>p</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">min</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>O</mi><mo>,</mo><mi>A</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex"> I_p = \min (O, A)</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>I</mi><mi>p</mi></msub><mo>=</mo><mrow><mi mathvariant="normal">min</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><mi>O</mi><mo>,</mo><mi>A</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex"> I_p = \min (O, A) </annotation></semantics></math></p>
 <p>with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>O</mi><annotation encoding="application/x-tex">O</annotation></semantics></math>
 the irrigation objective flow.</p>
-<p>The number of days for irrigation
+<p>The number of restricted days per week
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
-per week is then equal to:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false" form="prefix">⌊</mo><mfrac><msub><mi>I</mi><mi>p</mi></msub><mi>O</mi></mfrac><mo>×</mo><mn>7</mn><mo stretchy="false" form="postfix">⌋</mo></mrow><annotation encoding="application/x-tex"> n = \lfloor \frac{I_p}{O} \times 7 \rfloor</annotation></semantics></math>
-with
+(the number of days on which the perimeters must be closed) is then
+equal to:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mo stretchy="false" form="prefix">⌊</mo><mn>7</mn><mo>×</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mfrac><msub><mi>I</mi><mi>p</mi></msub><mi>O</mi></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo stretchy="false" form="postfix">⌋</mo></mrow><annotation encoding="application/x-tex"> n = \lfloor 7 \times \left(1 - \frac{I_p}{O} \right) \rfloor </annotation></semantics></math></p>
+<p>with
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">⌊</mo><mi>x</mi><mo stretchy="false" form="postfix">⌋</mo></mrow><annotation encoding="application/x-tex">\lfloor x \rfloor</annotation></semantics></math>
-the function that returns the largest integers not greater than
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math></p>
-<p>The rotation of restriction days between the 2 irrigation perimeters
-is operated as follows:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+the function that returns the largest integer not greater than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.
+When the available flow covers the irrigation objective
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>≥</mo><mi>O</mi></mrow><annotation encoding="application/x-tex">A \geq O</annotation></semantics></math>),
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">n = 0</annotation></semantics></math>
+and the perimeters are open for the whole week. When the available flow
+tends to zero,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">n = 7</annotation></semantics></math>
+and the abstraction is completely stopped. The number of days actually
+available for irrigation is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">7 - n</annotation></semantics></math>
+(which is exactly
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">⌈</mo><mn>7</mn><mo>×</mo><msub><mi>I</mi><mi>p</mi></msub><mi>/</mi><mi>O</mi><mo stretchy="false" form="postfix">⌉</mo></mrow><annotation encoding="application/x-tex">\lceil 7 \times I_p / O \rceil</annotation></semantics></math>,
+the smallest integer not less than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><mo>×</mo><msub><mi>I</mi><mi>p</mi></msub><mi>/</mi><mi>O</mi></mrow><annotation encoding="application/x-tex">7 \times I_p / O</annotation></semantics></math>).</p>
+<p>The
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+restricted days are then spread over the week and shared between the two
+perimeters by the <code>restriction_rotation</code> matrix. The matrix
+has one row per day of the 7-day supervision window and one column per
+perimeter; each entry is the <em>restriction rank</em> of the perimeter
+on this day (each column is a permutation of the ranks 1 to 7):</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">restriction_rotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">6</span>, <span class="fl">4</span>, <span class="fl">2</span>, <span class="fl">1</span>, <span class="fl">3</span>, <span class="fl">3</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">6</span>, <span class="fl">7</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">2</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">restriction_rotation</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Irrigation1"</span>, <span class="st">"Irrigation2"</span><span class="op">)</span></span>
+<span><span class="va">restriction_rotation</span></span>
+<span><span class="co">#&gt;      Irrigation1 Irrigation2</span></span>
+<span><span class="co">#&gt; [1,]           5           3</span></span>
+<span><span class="co">#&gt; [2,]           7           1</span></span>
+<span><span class="co">#&gt; [3,]           6           2</span></span>
+<span><span class="co">#&gt; [4,]           4           4</span></span>
+<span><span class="co">#&gt; [5,]           2           6</span></span>
+<span><span class="co">#&gt; [6,]           1           7</span></span>
+<span><span class="co">#&gt; [7,]           3           5</span></span></code></pre></div>
+<p>On a given day, a perimeter is closed when its rank on this day is
+lower than or equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>.
+As each column contains each rank exactly once, each perimeter is closed
+for exactly
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+days per week. Because the ranks of the two perimeters are shifted with
+respect to each other, the closures are redistributed over the week: for
+low values of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>,
+the closures of the two perimeters never fall on the same day (and for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>≤</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">n \leq 3</annotation></semantics></math>
+there is at least one day per week when both perimeters remain open). As
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+increases, the number of days on which the two perimeters are closed
+simultaneously increases: 1 day for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">n = 4</annotation></semantics></math>,
+3 days for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>5</mn></mrow><annotation encoding="application/x-tex">n = 5</annotation></semantics></math>,
+5 days for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">n = 6</annotation></semantics></math>
+and 7 days for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">n = 7</annotation></semantics></math>
+(complete stop of the abstraction).</p>
+<p>The figure below displays, for each possible value of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+(0 to 7), the number of closed perimeters on each day of the 7-day
+window:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
 <span>  <span class="va">rbind</span>,</span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">7</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">b</span> <span class="op">&lt;-</span> <span class="va">restriction_rotation</span> <span class="op">&lt;=</span> <span class="va">x</span></span>
@@ -501,15 +513,18 @@ measured variables and command variables are of type <code>matrix</code>
 with the variables in columns and the time steps in rows.</p>
 <p>In this example, the logic function must do the following tasks:</p>
 <ol style="list-style-type: decimal">
-<li>Calculate the objective of irrigation according to the month of the
-current days of simulation</li>
+<li>Calculate the objective of irrigation (m3/s) for each day of the
+current week</li>
 <li>Calculate the naturalized flow from the measured flow and the
 abstracted flow of the previous week</li>
-<li>Calculate the number of days of restriction for each irrigation
-point</li>
-<li>Return the abstracted flow for the next week taking into account
-restriction days</li>
+<li>Calculate the number of restricted days for the week under the flow
+restriction rule</li>
+<li>Return the abstracted flow for the next week, closing each perimeter
+on the days assigned to it by the rotation matrix</li>
 </ol>
+<p>On the first supervision step there is no previous week yet, so the
+measured flow is taken directly as the natural flow (there is no
+previous abstraction to subtract from it).</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fIrrigationFactory</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
 <span>  <span class="va">supervisor</span>,</span>
@@ -518,16 +533,24 @@ restriction days</li>
 <span>  <span class="va">restriction_rotation</span></span>
 <span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">function</span><span class="op">(</span><span class="va">Y</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="co"># Y is in m3/day and the basin's area is in km2</span></span>
-<span>    <span class="co"># Calculate the objective of irrigation according to the month of the current days of simulation</span></span>
+<span>    <span class="co"># Y is in m3/day (the last TimeStep simulated flows at node 54032)</span></span>
+<span>    <span class="co"># 1. Calculate the objective of irrigation (m3/s) for each day of the</span></span>
+<span>    <span class="co"># current week, according to the month of this day</span></span>
 <span>    <span class="va">month</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">supervisor</span><span class="op">$</span><span class="va">ts.date</span>, <span class="st">"%m"</span><span class="op">)</span><span class="op">)</span></span>
-<span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="va">irrigationObjective</span><span class="op">[</span><span class="va">month</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span> <span class="co"># m3/s</span></span>
+<span>    <span class="va">U</span> <span class="op">&lt;-</span> <span class="va">irrigationObjective</span><span class="op">[</span><span class="va">month</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span>    <span class="va">meanU</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">U</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="va">meanU</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="co"># calculate the naturalized flow from the measured flow and the abstracted flow of the previous week</span></span>
+<span>      <span class="co"># 2. Calculate the naturalized flow (m3/s) from the measured flow and</span></span>
+<span>      <span class="co"># the abstracted flow of the previous week</span></span>
 <span>      <span class="va">lastU</span> <span class="op">&lt;-</span> <span class="va">supervisor</span><span class="op">$</span><span class="va">controllers</span><span class="op">[[</span><span class="va">supervisor</span><span class="op">$</span><span class="va">controller.id</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">U</span> <span class="co"># m3/day</span></span>
-<span>      <span class="va">Qnat</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">Y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">lastU</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">86400</span> <span class="co"># m3/s</span></span>
-<span>      <span class="co"># Maximum abstracted flow available</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">lastU</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="co"># First supervision: no abstraction yet, the measured flow is the natural flow</span></span>
+<span>        <span class="va">Qnat</span> <span class="op">&lt;-</span> <span class="va">Y</span> <span class="op">/</span> <span class="fl">86400</span></span>
+<span>      <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>        <span class="va">Qnat</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">Y</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="va">lastU</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="fl">86400</span></span>
+<span>      <span class="op">}</span></span>
+<span>      <span class="co"># 3. Calculate the number of restricted days for the week</span></span>
+<span>      <span class="co"># Maximum abstracted flow available under the restriction rule</span></span>
 <span>      <span class="va">Qrestricted</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span></span>
 <span>        <span class="fu"><a href="https://rdrr.io/r/stats/approxfun.html" class="external-link">approx</a></span><span class="op">(</span></span>
 <span>          <span class="va">restriction_rule_m3s</span><span class="op">$</span><span class="va">threshold_natural_flow</span>,</span>
@@ -539,9 +562,11 @@ restriction days</li>
 <span>      <span class="op">)</span></span>
 <span>      <span class="co"># Total for irrigation</span></span>
 <span>      <span class="va">QIrrig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">meanU</span>, <span class="va">Qrestricted</span><span class="op">)</span></span>
-<span>      <span class="co"># Number of days of irrigation</span></span>
 <span>      <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="fl">7</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">QIrrig</span> <span class="op">/</span> <span class="va">meanU</span><span class="op">)</span><span class="op">)</span></span>
-<span>      <span class="co"># Apply days off</span></span>
+<span>      <span class="co"># 4. Return the abstracted flow for the next week taking into account</span></span>
+<span>      <span class="co"># the restriction days: a perimeter is closed on a day when its rank in</span></span>
+<span>      <span class="co"># the rotation matrix is lower than or equal to the number of</span></span>
+<span>      <span class="co"># restricted days</span></span>
 <span>      <span class="va">U</span><span class="op">[</span><span class="va">restriction_rotation</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">U</span><span class="op">)</span><span class="op">)</span>, <span class="op">]</span> <span class="op">&lt;=</span> <span class="va">n</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span>    <span class="op">}</span></span>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">-</span><span class="va">U</span> <span class="op">*</span> <span class="fl">86400</span><span class="op">)</span> <span class="co"># withdrawal is a negative flow in m3/day on an upstream node</span></span>
@@ -566,16 +591,19 @@ function with:</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">as.list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="va">fIrrigation</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 4</span></span>
-<span><span class="co">#&gt;  $ supervisor          :Classes 'Supervisor', 'environment' &lt;environment: 0x55e518a84f98&gt; </span></span>
+<span><span class="co">#&gt;  $ supervisor          :Classes 'Supervisor', 'environment' &lt;environment: 0x5626f5634c00&gt; </span></span>
 <span><span class="co">#&gt;  $ irrigationObjective :'data.frame':    12 obs. of  4 variables:</span></span>
-<span><span class="co">#&gt;   ..$ month: num [1:12] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
-<span><span class="co">#&gt;   ..$ 54001: num [1:12] 0 0 0.4 0.8 1 1.2 1.2 1 0.6 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ 54032: num [1:12] 0 0 0.8 1.6 2.2 2.4 2.4 1.8 1.2 0 ...</span></span>
-<span><span class="co">#&gt;   ..$ total: num [1:12] 0 0 1.2 2.4 3.2 3.6 3.6 2.8 1.8 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Month      : num [1:12] 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ Irrigation1: num [1:12] 0 0 1.2 1.2 1.2 1.2 1.2 1.2 1.2 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Irrigation2: num [1:12] 0 0 2.4 2.4 2.4 2.4 2.4 2.4 2.4 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ total      : num [1:12] 0 0 3.6 3.6 3.6 3.6 3.6 3.6 3.6 0 ...</span></span>
 <span><span class="co">#&gt;  $ restriction_rule_m3s:'data.frame':    4 obs. of  2 variables:</span></span>
 <span><span class="co">#&gt;   ..$ threshold_natural_flow: num [1:4] 15.1 30.2 50.9 90.6</span></span>
 <span><span class="co">#&gt;   ..$ abstraction_rate      : num [1:4] 0.1 0.15 0.2 0.24</span></span>
-<span><span class="co">#&gt;  $ restriction_rotation: num [1:7, 1:2] 5 7 6 4 2 1 3 3 1 2 ...</span></span></code></pre></div>
+<span><span class="co">#&gt;  $ restriction_rotation: num [1:7, 1:2] 5 7 6 4 2 1 3 3 1 2 ...</span></span>
+<span><span class="co">#&gt;   ..- attr(*, "dimnames")=List of 2</span></span>
+<span><span class="co">#&gt;   .. ..$ : NULL</span></span>
+<span><span class="co">#&gt;   .. ..$ : chr [1:2] "Irrigation1" "Irrigation2"</span></span></code></pre></div>
 <p>The <code>supervisor</code> variable is itself an environment which
 means that the variables contained inside it will be updated during the
 simulation. Some of them are useful for computing the control logic such
@@ -1055,12 +1083,6 @@ objective could also be used.</p>
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-burtIrrigationPerformanceMeasures1997" class="csl-entry">
-Burt, C. M., A. J. Clemmens, T. S. Strelkoff, et al. 1997.
-<span>“Irrigation <span>Performance Measures</span>:
-<span>Efficiency</span> and <span>Uniformity</span>.”</span> <em>Journal
-of Irrigation and Drainage Engineering</em> 123 (6): 423–42. <a href="https://doi.org/10.1061/(ASCE)0733-9437(1997)123:6(423)" class="external-link">https://doi.org/10.1061/(ASCE)0733-9437(1997)123:6(423)</a>.
-</div>
 <div id="ref-klaarDevelopingHydroecologicalModels2014" class="csl-entry">
 Klaar, Megan J., Michael J. Dunbar, Mark Warren, and Rob Soley. 2014.
 <span>“Developing Hydroecological Models to Inform Environmental Flow

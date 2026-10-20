@@ -2,7 +2,7 @@
 
 ## For getting started several materials are available:
 
-### [A slide-show of a training on **airGRiwrm** in French](https://in-wop.gitlab.irstea.page/formation-airgriwrm/)
+### [A slide-show of a training on **airGRiwrm** in French](https://airgriwrm.pages-forge.inrae.fr/formation-airgriwrm)
 
 ### [The vignettes provided with the package with example of use on the Severn River (UK)](https://inrae.github.io/airGRiwrm/dev/articles/index.md)
 

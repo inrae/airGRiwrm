@@ -55,7 +55,8 @@ columns:
   ([NA](https://rdrr.io/r/base/NA.html) for the most downstream node)
 
 - `area` ([numeric](https://rdrr.io/r/base/numeric.html)): total area of
-  the basin starting from the current node location in km2
+  the basin starting from the current node location (including upstream
+  basin areas) in km2
 
 - `model` ([character](https://rdrr.io/r/base/character.html)):
   hydrological model to use ([NA](https://rdrr.io/r/base/NA.html) for
@@ -79,9 +80,10 @@ least contains in its columns:
   km). The last downstream node should have fields `down` and `length`
   set to `NA`,
 
-- the total area of the basin at the node location
-  ([numeric](https://rdrr.io/r/base/numeric.html) column `area` in km2).
-  Direct injection node can have a null area defined by `NA`
+- the total area of the basin at the node location, including upstream
+  basin areas ([numeric](https://rdrr.io/r/base/numeric.html) column
+  `area` in km2). Direct injection node can have a null area defined by
+  `NA`
 
 - the model to use ([character](https://rdrr.io/r/base/character.html)
   column `model`), see section below for details

@@ -66,10 +66,15 @@ The Pannecière lake is an inline reservoir:
     #> Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 -->|0km| P\nP --> |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:
     #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'
 
-We can keep the same structure to model it. `PANNEC_R` corresponds to
-the flow released by the Pannecière lake, it is acting as an upstream
-node which means that the flow simulated at `CHAUM_07` is no longer
-routed to downstream.
+We model it with a `RunModel_Reservoir` node: `PANNEC_R` is the
+Pannecière reservoir, located inline between `CHAUM_07` and `GURGY_02`.
+The flow simulated at `CHAUM_07` is routed into the reservoir (reservoir
+inflow), and the flow released by the reservoir (`Qrelease` in
+\[CreateInputsModel.GRiwrm\]) is routed 153 km downstream to `GURGY_02`.
+The reservoir release is not simulated by the storage dynamics (the lake
+storage volume is not calibrated in this study): it is forced to the
+observed values with the `forceReservoirObs` argument of
+\[RunModel.GRiwrmInputsModel\].
 
     #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
     #> cannot open URL
@@ -80,12 +85,7 @@ routed to downstream.
 
 The Marne lake can be mapped as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nLOUVE_19 -->|0.5km| MARNE_P28\nMARNE_P23 -->|3km| STDIZ_04\nMARNE_P23 --> M(MARNE)\nMARNE_P28 --> M\nMARNE_P28 -->|25.6km| MARNE_R25\nM --> MARNE_R25\nSTDIZ_04 -->|28.7km| MARNE_R25\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\nstyle M fill:#ccf\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_true-1.png)
 
 And can be modeled as:
 
@@ -124,6 +124,9 @@ Reservoir connections are added to the GRiwrm object:
 reservoir_connections$length <- reservoir_connections$length / 1000
 reservoir_connections$model <- NA
 reservoir_connections$area <- NA
+# The Pannecière lake is an inline reservoir: it is modeled as a
+# RunModel_Reservoir node (all the other connections remain direct injections)
+reservoir_connections$model[reservoir_connections$id == "PANNEC_R"] <- "RunModel_Reservoir"
 load("_cache/V01.RData")
 seine_nodes <- seine_nodes[, c("id_sgl", "distance_aval", "id_aval", "model", "area")]
 names(seine_nodes)[1:3] <- names(reservoir_connections)[1:3]
@@ -133,9 +136,13 @@ seine_nodes2$down[seine_nodes2$id == "CHAUM_07"] <- "PANNEC_R"
 seine_nodes2$length[seine_nodes2$id == "CHAUM_07"] <- 0
 griwrm2 <- CreateGRiwrm(seine_nodes2)
 plot(griwrm2)
+#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+#> cannot open URL
+#> 'https://mermaid.ink/img/pako:eNrtV01P20AQ_StWEOKykfyR70OlAG5qKU3QhiDRpVpZZA0uSUCJoZUo_71bvG8z3mIQPfXQC3pmHrMzb96MxGPj8nahGoPG_v5jvs6Lgfd4UFyrlToYeAdrdV9s0uXBk_e0v3-xvlhfbdK7a2_Mf-N8IU_5cDKRfiAAvprA7PQ4-SL9lgBA4HDImzPpdwQAAkefhvPP0u8KABuYz2bn0u8JgN0bo5hLvy8AEBjNk_FYBr4AQGCYzM6bMggEAALxif6FDFoCAIHP08kpl0FPACAwns7PYhn0BYANDGezRIa-AEDgLDnl5zJsCwArCU9irV0kAIgkh7r8UACQwHgqw0AA2HJjrvsKQwFgO-dHyUyGLQGAwImeW3wkuQDYichHWu1QACAwmY50lUEkAHaBRDccdAWALXc652MZRgKAqqu1awsAW-7441Sr3REAu3K5Lt9vC4Cv_53434n_lBOH88O4KU9CAVAN8EgA2MeHfBJrYiQsckM9G-pVQ1yP0SLrxzj5ze0KgGqA9wSAuz5es_nhp9fpeTernx6ZlrNMJa3XAQ3Td1bL0HzQ4AVn0UqaZWH-ztaVrH4AGtzg7KChtWpoWETTKO3g2djOfpa0wA_Bw2Y462o67VvdjFuc5S1pkZUX_nRW-Q15sc8lrdWqGRa2233UHZbpyDzatjSzIs4JMIoEYT3vOXvJC2t7hRdKXtvf0cpdds5FSesGNTR4xlTXjmrHX36aZls1TSC7cYnNhuvg3BmjcH_n4PIkOFfHSNKpyYZP18GOl_BpaDVv4vi4Pnc8glP0hpXsXTKdgoZ74F4rI29YYzl7sMzwuzU8nC8z_FbNHcExM02EL9Eul-l265FLx8idYuQYMXJyGLkrjBwPRi4EI1eAkVVnZJ8ZWVpGN3N-ty02Kl2N0vsrtajUCWkZWVFG9pARuRhplpHpMeJ4RmzNiHcZMS
+#> [... truncated]
+#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
+#> cannot open URL 'https://mermaid.ink/img/pako:eNrtV01P20AQ_StWEOKykfyR70OlAG5qKU3QhiDRpVpZZA0uSUCJoZUo_71bvG8z3mIQPfXQC3pmHrMzb96MxGPj8nahGoPG_v5jvs6Lgfd4UFyrlToYeAdrdV9s0uXBk_e0v3-xvlhfbdK7a2_Mf-N8IU_5cDKRfiAAvprA7PQ4-SL9lgBA4HDImzPpdwQAAkefhvPP0u8KABuYz2bn0u8JgN0bo5hLvy8AEBjNk_FYBr4AQGCYzM6bMggEAALxif6FDFoCAIHP08kpl0FPACAwns7PYhn0BYANDGezRIa-AEDgLDnl5zJsCwArCU9irV0kAIgkh7r8UACQwHgqw0AA2HJjrvsKQwFgO-dHyUyGLQGAwImeW3wkuQDYichHWu1QACAwmY50lUEkAHaBRDccdAWALXc652MZRgKAqqu1awsAW-7441Sr3REAu3K5Lt9vC4Cv_53434n_lBOH88O4KU9CAVAN8EgA2MeHfBJrYiQsckM9G-pVQ1yP0SLrxzj5ze0KgGqA9wSAuz5es_nhp9fpeTernx6ZlrNMJa3XAQ3Td1bL0HzQ4AVn0UqaZWH-ztaVrH4AGtzg7KChtWpoWETTKO3g2djOfpa0wA_Bw2Y462o67VvdjFuc5S1pkZUX_nRW-Q15sc8lrdWqGRa2233UHZbpyDzatjSzIs4JMIoEYT3vOXvJC2t7hRdKXtvf0cpdds5FSesGNTR4xlTXjmrHX36aZls1TSC7cYnNhuvg3BmjcH_n4PIkOFfHSNKpyYZP18GOl_BpaDVv4vi4Pnc8glP0hpXsXTKdgoZ74F4rI29YYzl7sMzwuzU8nC8z_FbNHcExM02EL9Eul-l265FLx8idYuQYMXJyGLkrjBwPRi4EI1eAkVVnZJ8ZWVpGN3N-ty02Kl2N0vsrtajUCWkZWVFG9pARuRhplpHpMeJ4RmzNiHcZM
 ```
-
-![](V04_Open-loop_influenced_flow_files/figure-html/griwrm2-1.png)
 
 ### Loading reservoir observation time series
 
@@ -196,9 +203,20 @@ data(Qreservoirs)
 
 ### Create the InputsModel object
 
+The observed flows of the 7 virtual reservoir connections are passed as
+direct injections (`Qinf`), while the observed release of the inline
+Pannecière reservoir is passed as `Qrelease`:
+
 ``` r
 
-InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
+InputsModel2 <- CreateInputsModel(
+  griwrm2,
+  DatesR,
+  Precip,
+  PotEvap,
+  Qinf = Qreservoirs[, colnames(Qreservoirs) != "PANNEC_R"],
+  Qrelease = Qreservoirs[, "PANNEC_R", drop = FALSE]
+)
 #> CreateInputsModel.GRiwrm: Processing sub-basin TRANN_01...
 #> CreateInputsModel.GRiwrm: Processing sub-basin STDIZ_04...
 #> CreateInputsModel.GRiwrm: Processing sub-basin BAR-S_06...
@@ -212,12 +230,13 @@ InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
 #> CreateInputsModel.GRiwrm: Processing sub-basin LOUVE_19...
 #> CreateInputsModel.GRiwrm: Processing sub-basin LASSI_20...
 #> CreateInputsModel.GRiwrm: Processing sub-basin VITRY_25...
-#> CreateInputsModel.GRiwrm: Processing sub-basin GURGY_02...
 #> CreateInputsModel.GRiwrm: Processing sub-basin BRIEN_03...
 #> CreateInputsModel.GRiwrm: Processing sub-basin CHABL_12...
 #> CreateInputsModel.GRiwrm: Processing sub-basin CHALO_21...
 #> CreateInputsModel.GRiwrm: Processing sub-basin MERY-_22...
 #> CreateInputsModel.GRiwrm: Processing sub-basin ARCIS_24...
+#> CreateInputsModel.GRiwrm: Processing sub-basin PANNEC_R...
+#> CreateInputsModel.GRiwrm: Processing sub-basin GURGY_02...
 #> CreateInputsModel.GRiwrm: Processing sub-basin NOGEN_13...
 #> CreateInputsModel.GRiwrm: Processing sub-basin NOISI_17...
 #> CreateInputsModel.GRiwrm: Processing sub-basin COURL_23...
@@ -243,14 +262,28 @@ load("_cache/V03.RData")
 A lag parameter is now mandatory for these sub-basins. As no calibration
 is possible at that stage an arbitrary one will be used (1 m/s).
 
+The Pannecière reservoir needs a maximum storage volume and an inflow
+celerity: the volume is 82.5 Mm³ (Wikipedia: [*Barrage de
+Pannecière*](https://fr.wikipedia.org/wiki/Barrage_de_Panneci%C3%A8re))
+and the celerity is set to 1 m/s as for the upstream sub-basins. As the
+released flow is forced to the observed values (see below), the storage
+volume only drives the internal volume bookkeeping of the reservoir.
+
 ``` r
 
 ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
+# Pannecière reservoir: maximum volume (m3) and inflow celerity (m/s)
+ParamMichel$PANNEC_R <- c(8.25e7, 1)
 ```
 
 #### Run simulation
 
-We can now run the model, using the parameters previously obtained:
+We can now run the model, using the parameters previously obtained. The
+`forceReservoirObs` argument forces the simulated release of the
+Pannecière reservoir to the observed `Qrelease` time series (instead of
+the release computed by the storage dynamics): the flow received by
+`GURGY_02` is then the observed release routed over the 153 km between
+the reservoir and the gauging station.
 
 ``` r
 
@@ -296,6 +329,11 @@ RunOptions <- CreateRunOptions(
 #>   the year preceding the run period is used
 #> Warning in (function (FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run, : model warm up period not defined: default configuration used
 #>   the year preceding the run period is used
+#> Warning in (function (FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL,
+#> IndPeriod_Run, : model states initialisation not defined: default configuration
+#> used
+#> Warning in (function (FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run, : model warm up period not defined: default configuration used
+#>   the year preceding the run period is used
 #> Warning in (function (FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run, : model warm up period not defined: default configuration used
 #>   the year preceding the run period is used
 #> Warning in (function (FUN_MOD, InputsModel, IndPeriod_WarmUp = NULL, IndPeriod_Run, : model warm up period not defined: default configuration used
@@ -311,7 +349,8 @@ RunOptions <- CreateRunOptions(
 OutputsModels2 <- RunModel(
   InputsModel2,
   RunOptions = RunOptions,
-  Param = ParamMichel
+  Param = ParamMichel,
+  forceReservoirObs = TRUE
 )
 #> RunModel.GRiwrmInputsModel: Processing sub-basin TRANN_01...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin STDIZ_04...
@@ -328,7 +367,6 @@ OutputsModels2 <- RunModel(
 #> RunModel.GRiwrmInputsModel: Processing sub-basin LOUVE_19...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin LASSI_20...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin VITRY_25...
-#> RunModel.GRiwrmInputsModel: Processing sub-basin GURGY_02...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin BRIEN_03...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin CHABL_12...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin CHALO_21...
@@ -336,6 +374,8 @@ OutputsModels2 <- RunModel(
 #> Warning in RunModel_Lag(InputsModel, RunOptions, Param[1], OutputsModel): 10
 #> time steps with negative flow, set to zero.
 #> RunModel.GRiwrmInputsModel: Processing sub-basin ARCIS_24...
+#> RunModel.GRiwrmInputsModel: Processing sub-basin PANNEC_R...
+#> RunModel.GRiwrmInputsModel: Processing sub-basin GURGY_02...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin NOGEN_13...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin NOISI_17...
 #> RunModel.GRiwrmInputsModel: Processing sub-basin COURL_23...
