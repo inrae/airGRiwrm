@@ -218,19 +218,30 @@ CreateRunOptions_prepare_inputs <- function(x, ...) {
   }
 
   # For CemaNeige models, ensure Outputs_Sim includes "CemaNeigeLayers"
-  # and Outputs_Cal includes "Gratio".
+  # and "Precip", and Outputs_Cal includes "Gratio".
   # The "CemaNeigeLayers" container is expanded to the full set of
   # CemaNeige layer outputs in CreateRunOptions.InputsModel (see there for
   # why a reduced set must not be sent to airGR); SCA-based error criteria
   # then read OutputsModel$CemaNeigeLayers[[i]]$Gratio.
   # "Gratio" must also be in Outputs_Cal because airGR calibration
   # replaces Outputs_Sim with Outputs_Cal before the screening runs.
+  # "Precip" is forced in Outputs_Sim because the default plot of a
+  # CemaNeige node (airGR::plot.OutputsModel) requires it in the
+  # OutputsModel to compute the precipitation panel axis as soon as the
+  # per-layer solid precipitation ("Psol") is present (upstream airGR
+  # `ylimP` limitation: with "Psol" but without "Precip", the default plot
+  # crashes with "object 'ylimP' not found"). "Precip" is a recorded meteo
+  # input, not a Fortran CemaNeige output: the CemaNeige NOutputs and the
+  # model run are unchanged.
   # The Outputs_Sim check is unconditional because
   # CreateRunOptions.GRiwrmInputsModel always passes Outputs_Sim, so the
   # guard above would skip it.
   if (grepl("CemaNeige", FUN_MOD, fixed = TRUE)) {
     if (!"CemaNeigeLayers" %in% dots$Outputs_Sim) {
       dots$Outputs_Sim <- c(dots$Outputs_Sim, "CemaNeigeLayers")
+    }
+    if (!"Precip" %in% dots$Outputs_Sim) {
+      dots$Outputs_Sim <- c(dots$Outputs_Sim, "Precip")
     }
     if (!"Outputs_Cal" %in% names(dots)) {
       # Use airGR's default CemaNeige Outputs_Cal augmented with

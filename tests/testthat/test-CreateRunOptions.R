@@ -223,3 +223,123 @@ test_that("Outputs_Sim = 'all' restores the previous behaviour (#141)", {
   expect_false(is.null(OMAll[[1]]$Qsim_m3))
   expect_false(is.null(OMAll[[1]]$Qsim))
 })
+
+## CemaNeige nodes: forced completion of Outputs_Sim (#141)
+## A standalone CemaNeige node built on the airGR example data set L0123001
+## (the network-level equivalent is setUpCemaNeigeData, see
+## helper_cemaneige.R)
+InputsModel_cn <- suppressWarnings(CreateInputsModel(
+  RunModel_CemaNeigeGR4J,
+  DatesR = BasinObs$DatesR,
+  Precip = BasinObs$P,
+  PotEvap = BasinObs$E,
+  TempMean = BasinObs$T,
+  ZInputs = BasinInfo$HypsoData[51],
+  HypsoData = BasinInfo$HypsoData
+))
+test_that("CemaNeige nodes force the full layer set and Precip in Outputs_Sim (#141)", {
+  # A CemaNeige node with an explicit minimal Outputs_Sim: the forced
+  # completion adds the full CemaNeige layer set (the container
+  # "CemaNeigeLayers" is expanded to its constituent names, see
+  # CreateRunOptions) and the recorded meteo input "Precip", after the
+  # requested outputs
+  RO_cn <- CreateRunOptions(
+    InputsModel_cn,
+    IndPeriod_Run = seq(1, 30),
+    Outputs_Sim = c("Qsim", "Param"),
+    warnings = FALSE
+  )
+  expect_identical(
+    RO_cn$Outputs_Sim,
+    c("Qsim", "Param", "Precip", CemaNeigeLayerOutputs)
+  )
+  # A non-CemaNeige node: the explicit minimal Outputs_Sim is left
+  # unchanged (no forced completion)
+  RO_GR4J <- CreateRunOptions(
+    InputsModel,
+    IndPeriod_Run = Ind_Run,
+    IndPeriod_WarmUp = Ind_WarmUp,
+    Outputs_Sim = c("Qsim", "Param"),
+    warnings = FALSE
+  )
+  expect_identical(RO_GR4J$Outputs_Sim, c("Qsim", "Param"))
+})
+
+## Fortran run equivalence fixture: a 2-node CemaNeige network on the airGR
+## example data set L0123001 (same setup as the CemaNeige fixture of
+## test-plot.GRiwrmOutputsModel.R)
+l_cn <- setUpCemaNeigeData()
+g_cn <- CreateGRiwrm(data.frame(
+  id = c("Upstream", "Downstream"),
+  down = c("Downstream", NA),
+  length = c(0, NA),
+  area = c(360, 720),
+  model = rep("RunModel_CemaNeigeGR4J", 2),
+  stringsAsFactors = FALSE
+))
+cnSeries <- function(x) {
+  x <- x[, c("Up1", "Down"), drop = FALSE]
+  colnames(x) <- c("Upstream", "Downstream")
+  return(x)
+}
+IM_cn <- suppressWarnings(CreateInputsModel(
+  g_cn,
+  DatesR = l_cn$DatesR,
+  Precip = cnSeries(l_cn$Precip),
+  PotEvap = cnSeries(l_cn$PotEvap),
+  TempMean = cnSeries(l_cn$TempMean),
+  ZInputs = setNames(l_cn$ZInputs[c("Up1", "Down")], c("Upstream", "Downstream")),
+  HypsoData = cnSeries(l_cn$HypsoData)
+))
+Param_cn <- list(
+  Upstream = c(
+    X1 = 408.774, X2 = 2.646, X3 = 131.264, X4 = 1.174,
+    CNX1 = 0.962, CNX2 = 2.249
+  ),
+  # Downstream receives the simulated flow of Upstream: the first parameter
+  # is the celerity of the routing model (See airGR::RunModel_Lag)
+  Downstream = c(
+    1, X1 = 408.774, X2 = 2.646, X3 = 131.264, X4 = 1.174,
+    CNX1 = 0.962, CNX2 = 2.249
+  )
+)
+
+test_that("forcing Precip in Outputs_Sim does not change the CemaNeige run (#178)", {
+  # Fortran run equivalence: "Precip" is a recorded meteo input, not a
+  # Fortran CemaNeige output (the CemaNeige NOutputs is driven by the layer
+  # outputs only), so forcing it must not change the model run. The main-
+  # calculated assertions of the existing CemaNeige fixture (test-RunModel.R
+  # and test-plot.GRiwrmOutputsModel.R) must stay green and unchanged: if
+  # the run had changed, the layer series would change and they would fail.
+  # A pre-mitigation variant is built manually on a copy (the same options
+  # minus the forced "Precip"): both runs must be identical.
+  RO_cn <- CreateRunOptions(IM_cn, IndPeriod_Run = seq(1, 30), warnings = FALSE)
+  # the default Outputs_Sim of every CemaNeige node carries the forced
+  # "Precip"
+  expect_true(all(vapply(
+    RO_cn,
+    function(ro) "Precip" %in% ro$Outputs_Sim,
+    logical(1)
+  )))
+  RO_cn_pre <- RO_cn
+  for (id in names(RO_cn_pre)) {
+    RO_cn_pre[[id]]$Outputs_Sim <- setdiff(RO_cn_pre[[id]]$Outputs_Sim, "Precip")
+  }
+  OM_cn <- suppressWarnings(RunModel(IM_cn, RunOptions = RO_cn, Param = Param_cn))
+  OM_cn_pre <- suppressWarnings(
+    RunModel(IM_cn, RunOptions = RO_cn_pre, Param = Param_cn)
+  )
+  # The model run is identical (simulated discharge and per-layer series),
+  # and only the recorded outputs differ: the post-mitigation objects carry
+  # the recorded meteo input "Precip", the pre-mitigation ones do not
+  for (id in c("Upstream", "Downstream")) {
+    expect_identical(OM_cn_pre[[id]]$Qsim, OM_cn[[id]]$Qsim, info = id)
+    expect_identical(
+      OM_cn_pre[[id]]$CemaNeigeLayers,
+      OM_cn[[id]]$CemaNeigeLayers,
+      info = id
+    )
+    expect_false(is.null(OM_cn[[id]]$Precip), info = id)
+    expect_null(OM_cn_pre[[id]]$Precip, info = id)
+  }
+})
