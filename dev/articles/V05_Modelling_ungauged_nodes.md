@@ -35,7 +35,12 @@ that nodes `54001` and `54029` are *Ungauged*. We simulate the
 streamflow at these locations by sharing hydrological parameters of the
 gauged node `54032`.
 
-![](V05_Modelling_ungauged_nodes_files/figure-html/network-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> URL
+    #> 'https://mermaid.ink/img/pako:eNpVkT9vgzAQxb_KyV2JRAxWZYZOkapInVplKh2u8TnQYgcZmJJ892KbEmd873d_3tkXdjwrYhWr7clh38Dbe21bJcWnKHMpvrzIt17k2yC49ILLWcRC2GxerlBy-DVX8MUeDNN3HPfRoCMFPTo0NJIbQLuzATsvhXlOweOCZYgIQ1afy-gXPPXJKr8iqMi3a594DiBfQFmkoLbHDodhRxoO_cGeQLddVz0R6QfyitNCEFOyt2PSpOkRJV0aE7Rr3d7-LEgjrjEg3BeC_DshZxYPiyPvtfMbxQB3S4os3hoy15ZlzJAz2CpWXdjYkPEfq0jj1I3sdvsDS4idcA?type=png':
+    #> Timeout of 60 seconds was reached
+    #> Warning in plot.mermaid("\ngraph LR\nid95[54095]\nid01[54001]\nid29[54029]\n\nid95 -->| 42 km| id01\n\nsubgraph Shared parameters from node 54032\nid01 -->| 45 km| 54032\nid29 -->| 32 km| 54032\nend\n\n54032 -->| 15 km| 54057\n54002 -->| 43 km| 54057\n\nclassDef UpUng fill:#eef\nclassDef UpGau fill:#aaf\nclassDef IntUng fill:#efe\nclassDef IntGau fill:#afa\nclassDef DirInj fill:#faa\n\nclass id29 UpUng\nclass 54057,54032 IntGau\nclass id01 IntUng\nclass id95,54002 UpGau\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNpVkT9vgzAQxb_KyV2JRAxWZYZOkapInVplKh2u8TnQYgcZmJJ892KbEmd873d_3tkXdjwrYhWr7clh38Dbe21bJcWnKHMpvrzIt17k2yC49ILLWcRC2GxerlBy-DVX8MUeDNN3HPfRoCMFPTo0NJIbQLuzATsvhXlOweOCZYgIQ1afy-gXPPXJKr8iqMi3a594DiBfQFmkoLbHDodhRxoO_cGeQLddVz0R6QfyitNCEFOyt2PSpOkRJV0aE7Rr3d7-LEgjrjEg3BeC_DshZxYPiyPvtfMbxQB3S4os3hoy15ZlzJAz2CpWXdjYkPEfq0jj1I3sdvsDS4idcA?type=png'
 
 Hydrological parameters at the ungauged nodes will be the same as the
 one at the gauged node `54032` except for the unit hydrograph parameter

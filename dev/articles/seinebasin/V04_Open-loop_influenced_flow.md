@@ -77,9 +77,9 @@ observed values with the `forceReservoirObs` argument of
 \[RunModel.GRiwrmInputsModel\].
 
     #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
+    #> URL
     #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':
-    #> HTTP status was '503 Service Unavailable'
+    #> Timeout of 60 seconds was reached
     #> Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --> |0km| PANNEC_R\nPANNEC_R --> |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:
     #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'
 
@@ -89,12 +89,7 @@ The Marne lake can be mapped as:
 
 And can be modeled as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nMARNE_P23 -->|3km| STDIZ_04\nLOUVE_19 -->|83km| CHALO_21\nMARNE_P28 -->|82.5km| CHALO_21\nSTDIZ_04 -->|85.6km| CHALO_21\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnzdQzyc40PMDJW0NW1qzHOzq1RCA5x8YyKNzCJyfPxDw1zjTe0BMtZgCWdPRx9_OONDBE6LSCyRnqmqPIwYyDSpnpm2LQHGZmC5U3N9CxR5YtLKnNSFRCWpGXm5FgppyUno0sZ45ICmY0kpaSjlJtalJuYmaJkVa1UkpGaCwqLlNS0xNKcEqXaWgBbPVhU?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_model-1.png)
 
 Hence the topological connection to the reservoirs is described in the
 model as below:
@@ -136,13 +131,9 @@ seine_nodes2$down[seine_nodes2$id == "CHAUM_07"] <- "PANNEC_R"
 seine_nodes2$length[seine_nodes2$id == "CHAUM_07"] <- 0
 griwrm2 <- CreateGRiwrm(seine_nodes2)
 plot(griwrm2)
-#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-#> cannot open URL
-#> 'https://mermaid.ink/img/pako:eNrtV01P20AQ_StWEOKykfyR70OlAG5qKU3QhiDRpVpZZA0uSUCJoZUo_71bvG8z3mIQPfXQC3pmHrMzb96MxGPj8nahGoPG_v5jvs6Lgfd4UFyrlToYeAdrdV9s0uXBk_e0v3-xvlhfbdK7a2_Mf-N8IU_5cDKRfiAAvprA7PQ4-SL9lgBA4HDImzPpdwQAAkefhvPP0u8KABuYz2bn0u8JgN0bo5hLvy8AEBjNk_FYBr4AQGCYzM6bMggEAALxif6FDFoCAIHP08kpl0FPACAwns7PYhn0BYANDGezRIa-AEDgLDnl5zJsCwArCU9irV0kAIgkh7r8UACQwHgqw0AA2HJjrvsKQwFgO-dHyUyGLQGAwImeW3wkuQDYichHWu1QACAwmY50lUEkAHaBRDccdAWALXc652MZRgKAqqu1awsAW-7441Sr3REAu3K5Lt9vC4Cv_53434n_lBOH88O4KU9CAVAN8EgA2MeHfBJrYiQsckM9G-pVQ1yP0SLrxzj5ze0KgGqA9wSAuz5es_nhp9fpeTernx6ZlrNMJa3XAQ3Td1bL0HzQ4AVn0UqaZWH-ztaVrH4AGtzg7KChtWpoWETTKO3g2djOfpa0wA_Bw2Y462o67VvdjFuc5S1pkZUX_nRW-Q15sc8lrdWqGRa2233UHZbpyDzatjSzIs4JMIoEYT3vOXvJC2t7hRdKXtvf0cpdds5FSesGNTR4xlTXjmrHX36aZls1TSC7cYnNhuvg3BmjcH_n4PIkOFfHSNKpyYZP18GOl_BpaDVv4vi4Pnc8glP0hpXsXTKdgoZ74F4rI29YYzl7sMzwuzU8nC8z_FbNHcExM02EL9Eul-l265FLx8idYuQYMXJyGLkrjBwPRi4EI1eAkVVnZJ8ZWVpGN3N-ty02Kl2N0vsrtajUCWkZWVFG9pARuRhplpHpMeJ4RmzNiHcZMS
-#> [... truncated]
-#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
-#> cannot open URL 'https://mermaid.ink/img/pako:eNrtV01P20AQ_StWEOKykfyR70OlAG5qKU3QhiDRpVpZZA0uSUCJoZUo_71bvG8z3mIQPfXQC3pmHrMzb96MxGPj8nahGoPG_v5jvs6Lgfd4UFyrlToYeAdrdV9s0uXBk_e0v3-xvlhfbdK7a2_Mf-N8IU_5cDKRfiAAvprA7PQ4-SL9lgBA4HDImzPpdwQAAkefhvPP0u8KABuYz2bn0u8JgN0bo5hLvy8AEBjNk_FYBr4AQGCYzM6bMggEAALxif6FDFoCAIHP08kpl0FPACAwns7PYhn0BYANDGezRIa-AEDgLDnl5zJsCwArCU9irV0kAIgkh7r8UACQwHgqw0AA2HJjrvsKQwFgO-dHyUyGLQGAwImeW3wkuQDYichHWu1QACAwmY50lUEkAHaBRDccdAWALXc652MZRgKAqqu1awsAW-7441Sr3REAu3K5Lt9vC4Cv_53434n_lBOH88O4KU9CAVAN8EgA2MeHfBJrYiQsckM9G-pVQ1yP0SLrxzj5ze0KgGqA9wSAuz5es_nhp9fpeTernx6ZlrNMJa3XAQ3Td1bL0HzQ4AVn0UqaZWH-ztaVrH4AGtzg7KChtWpoWETTKO3g2djOfpa0wA_Bw2Y462o67VvdjFuc5S1pkZUX_nRW-Q15sc8lrdWqGRa2233UHZbpyDzatjSzIs4JMIoEYT3vOXvJC2t7hRdKXtvf0cpdds5FSesGNTR4xlTXjmrHX36aZls1TSC7cYnNhuvg3BmjcH_n4PIkOFfHSNKpyYZP18GOl_BpaDVv4vi4Pnc8glP0hpXsXTKdgoZ74F4rI29YYzl7sMzwuzU8nC8z_FbNHcExM02EL9Eul-l265FLx8idYuQYMXJyGLkrjBwPRi4EI1eAkVVnZJ8ZWVpGN3N-ty02Kl2N0vsrtajUCWkZWVFG9pARuRhplpHpMeJ4RmzNiHcZM
 ```
+
+![](V04_Open-loop_influenced_flow_files/figure-html/griwrm2-1.png)
 
 ### Loading reservoir observation time series
 

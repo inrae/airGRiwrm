@@ -166,6 +166,10 @@ Agency (ANR) - Water JPI via WaterWorks2017
   : Catchment attributes and hydro-meteorological timeseries for some
   gauging stations on the Severn River
 
+- [`adjustMeteoToCatchment()`](https://inrae.github.io/airGRiwrm/dev/reference/adjustMeteoToCatchment.md)
+  : Compute the meteorological data of a node at the whole-catchment
+  scale
+
 - [`as.Qm3s()`](https://inrae.github.io/airGRiwrm/dev/reference/as.Qm3s.md)
   :
 

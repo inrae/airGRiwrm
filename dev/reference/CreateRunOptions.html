@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -147,8 +147,13 @@ are needed for De Lavenne parameter regularization and hot restart.
 For CemaNeige models, the <code>CemaNeigeLayers</code> output is added
 automatically: it carries the CemaNeige layer output series required by
 SCA-based error criteria (a reduced CemaNeige output set would change
-the model run in airGR). Use <code>Outputs_Sim = "all"</code> to restore the
-previous behaviour.</p>
+the model run in airGR). <code>Precip</code> is also added automatically on
+CemaNeige models: the default plot of a CemaNeige node requires it in
+the <em>OutputsModel</em> to compute the precipitation panel axis as soon as
+the per-layer solid precipitation (<code>Psol</code>) is present (upstream airGR
+<code>ylimP</code> limitation). It is a recorded meteo input, not a Fortran
+CemaNeige output: the CemaNeige <code>NOutputs</code> and the model run are
+unchanged. Use <code>Outputs_Sim = "all"</code> to restore the previous behaviour.</p>
 <p>On a semi-distributed network (a network with at least one
 semi-distributed node, i.e. a node whose sub-catchment receives the
 routed flows of upstream nodes), an explicit <code>Outputs_Sim</code> selection is

@@ -17,6 +17,15 @@
   returned via the `Outputs_Sim` argument, either as a character vector
   applied to all nodes, or as a named list with per-node selection
   ([\#141](https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/141)).
+  CemaNeige nodes now also carry `Precip` in their default
+  `Outputs_Sim`: the default plot of a CemaNeige node requires it in the
+  *OutputsModel* to compute the precipitation panel axis as soon as the
+  per-layer solid precipitation (`Psol`) is present (upstream airGR
+  `ylimP` limitation; the standalone airGR bug is still to be fixed on
+  the airGR side). `Precip` is a recorded meteo input, not a CemaNeige
+  Fortran output: the CemaNeige `NOutputs` and the model run are
+  unchanged
+  ([\#178](https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/178)).
 - CreateInputsCrit: allow user-defined a priori parameters for the De
   Lavenne criterion: entries of `AprioriIds` can now be numeric vectors
   (one value per model parameter of the node,
@@ -30,6 +39,20 @@
   area-weighted mean over the catchment of the node and all its upstream
   nodes, so that the displayed meteorology reflects the whole catchment
   integrated in the simulated discharge
+  ([\#178](https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/178)).
+  For a CemaNeige node, the per-layer series displayed by
+  [`airGR::plot.OutputsModel`](https://rdrr.io/pkg/airGR/man/plot.OutputsModel.html)
+  are covered as well: the mean air temperature (`Temp`), the solid
+  precipitation (`Psol`) and the snow pack state (`SnowPack`) of each
+  elevation layer are replaced by their whole-catchment mean, as well as
+  the mean over the layers that airGR derives from them. The same
+  adjustment is available as a new exported function
+  [`adjustMeteoToCatchment()`](https://inrae.github.io/airGRiwrm/dev/reference/adjustMeteoToCatchment.md):
+  it computes, for a node of a *GRiwrmOutputsModel* object, the
+  meteorological time series at the whole-catchment scale (including the
+  CemaNeige layer series), so that users can compute statistics from the
+  meteorological data of the whole catchment instead of the local
+  sub-basin data of the node
   ([\#178](https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/178)).
 
 ### Changes:

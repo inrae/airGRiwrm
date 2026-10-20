@@ -121,7 +121,13 @@ De Lavenne parameter regularization and hot restart. For CemaNeige
 models, the `CemaNeigeLayers` output is added automatically: it carries
 the CemaNeige layer output series required by SCA-based error criteria
 (a reduced CemaNeige output set would change the model run in airGR).
-Use `Outputs_Sim = "all"` to restore the previous behaviour.
+`Precip` is also added automatically on CemaNeige models: the default
+plot of a CemaNeige node requires it in the *OutputsModel* to compute
+the precipitation panel axis as soon as the per-layer solid
+precipitation (`Psol`) is present (upstream airGR `ylimP` limitation).
+It is a recorded meteo input, not a Fortran CemaNeige output: the
+CemaNeige `NOutputs` and the model run are unchanged. Use
+`Outputs_Sim = "all"` to restore the previous behaviour.
 
 On a semi-distributed network (a network with at least one
 semi-distributed node, i.e. a node whose sub-catchment receives the

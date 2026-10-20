@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,10 +117,24 @@ when these meteorological time series are available in the
 object, by their area-weighted mean over the whole catchment of the node
 (the node and all its upstream nodes), so that the displayed meteorology
 reflects the whole catchment (See issue inrae/airGRiwrm#178).</p>
+<p>For a CemaNeige node, the same adjustment is applied to the per-layer
+series of <code>CemaNeigeLayers</code> displayed by <a href="https://rdrr.io/pkg/airGR/man/plot.OutputsModel.html" class="external-link">airGR::plot.OutputsModel</a>: the
+mean air temperature (<code>Temp</code>), the solid precipitation (<code>Psol</code>) and the
+snow pack state (<code>SnowPack</code>) of each elevation layer are replaced by their
+area-weighted mean over the whole catchment of the node, as well as the
+mean over the layers that airGR derives from them. The other displayed
+series are not adjusted because they are either already at the scale of the
+whole catchment (the simulated discharge <code>Qsim</code>) or simulated at this scale
+(the actual evapotranspiration <code>AE</code>).</p>
 <p>When the ID of a node is shared with a Diversion node (two rows of the
 network with the same <code>id</code>, see <a href="CreateGRiwrm.html">CreateGRiwrm</a>), the local sub-basin area
 of the shared ID cannot be computed and the node is simply excluded from
 the weighted mean (graceful behaviour).</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="adjustMeteoToCatchment.html">adjustMeteoToCatchment()</a></code> to compute statistics from the
+meteorological data at the whole-catchment scale.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9009</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.7.0.9010</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,7 +131,12 @@ that nodes <code>54001</code> and <code>54029</code> are
 <em>Ungauged</em>. We simulate the streamflow at these locations by
 sharing hydrological parameters of the gauged node
 <code>54032</code>.</p>
-<p><img src="V05_Modelling_ungauged_nodes_files/figure-html/network-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
+<pre><code><span><span class="co">#&gt; Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):</span></span>
+<span><span class="co">#&gt; URL</span></span>
+<span><span class="co">#&gt; 'https://mermaid.ink/img/pako:eNpVkT9vgzAQxb_KyV2JRAxWZYZOkapInVplKh2u8TnQYgcZmJJ892KbEmd873d_3tkXdjwrYhWr7clh38Dbe21bJcWnKHMpvrzIt17k2yC49ILLWcRC2GxerlBy-DVX8MUeDNN3HPfRoCMFPTo0NJIbQLuzATsvhXlOweOCZYgIQ1afy-gXPPXJKr8iqMi3a594DiBfQFmkoLbHDodhRxoO_cGeQLddVz0R6QfyitNCEFOyt2PSpOkRJV0aE7Rr3d7-LEgjrjEg3BeC_DshZxYPiyPvtfMbxQB3S4os3hoy15ZlzJAz2CpWXdjYkPEfq0jj1I3sdvsDS4idcA?type=png':</span></span>
+<span><span class="co">#&gt; Timeout of 60 seconds was reached</span></span>
+<span><span class="co">#&gt; Warning in plot.mermaid("\ngraph LR\nid95[54095]\nid01[54001]\nid29[54029]\n\nid95 --&gt;| 42 km| id01\n\nsubgraph Shared parameters from node 54032\nid01 --&gt;| 45 km| 54032\nid29 --&gt;| 32 km| 54032\nend\n\n54032 --&gt;| 15 km| 54057\n54002 --&gt;| 43 km| 54057\n\nclassDef UpUng fill:#eef\nclassDef UpGau fill:#aaf\nclassDef IntUng fill:#efe\nclassDef IntGau fill:#afa\nclassDef DirInj fill:#faa\n\nclass id29 UpUng\nclass 54057,54032 IntGau\nclass id01 IntUng\nclass id95,54002 UpGau\n"): Mermaid diagram generation failed with error:</span></span>
+<span><span class="co">#&gt; cannot open URL 'https://mermaid.ink/img/pako:eNpVkT9vgzAQxb_KyV2JRAxWZYZOkapInVplKh2u8TnQYgcZmJJ892KbEmd873d_3tkXdjwrYhWr7clh38Dbe21bJcWnKHMpvrzIt17k2yC49ILLWcRC2GxerlBy-DVX8MUeDNN3HPfRoCMFPTo0NJIbQLuzATsvhXlOweOCZYgIQ1afy-gXPPXJKr8iqMi3a594DiBfQFmkoLbHDodhRxoO_cGeQLddVz0R6QfyitNCEFOyt2PSpOkRJV0aE7Rr3d7-LEgjrjEg3BeC_DshZxYPiyPvtfMbxQB3S4os3hoy15ZlzJAz2CpWXdjYkPEfq0jj1I3sdvsDS4idcA?type=png'</span></span></code></pre>
 <p>Hydrological parameters at the ungauged nodes will be the same as the
 one at the gauged node <code>54032</code> except for the unit hydrograph
 parameter which depend on the area of the sub-basin. <span class="citation">Lobligeois (2014)</span> provides the following
@@ -155,7 +160,7 @@ the parameter for the sub-basin
 <p><em>Ungauged</em> stations are specified by using the model
 <code>"Ungauged"</code> in the <code>model</code> column provided in the
 <code>CreateGRiwrm</code> function:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">Severn</span><span class="op">)</span></span>
 <span><span class="va">nodes</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsInfo</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gauge_id"</span>, <span class="st">"downstream_id"</span>, <span class="st">"distance_downstream"</span>, <span class="st">"area"</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="va">nodes</span><span class="op">$</span><span class="va">model</span> <span class="op">&lt;-</span> <span class="st">"RunModel_GR4J"</span></span>
@@ -183,7 +188,7 @@ details.</p>
 <p>On the following network scheme, the <em>Ungauged</em> nodes are
 clearer than gauged ones with the same color (blue for upstream nodes
 and green for intermediate and downstream nodes)</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">griwrmV05</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot_network-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
@@ -193,7 +198,7 @@ and green for intermediate and downstream nodes)</p>
 <p>The formatting of the input data is described in the vignette
 “V01_Structure_SD_model”. The following code chunk resumes this
 formatting procedure:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">BasinsObs</span> <span class="op">&lt;-</span> <span class="va">Severn</span><span class="op">$</span><span class="va">BasinsObs</span></span>
 <span><span class="va">DatesR</span> <span class="op">&lt;-</span> <span class="va">BasinsObs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">DatesR</span></span>
 <span><span class="va">PrecipTot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">BasinsObs</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">$</span><span class="va">precipitation</span><span class="op">}</span><span class="op">)</span><span class="op">)</span></span>
@@ -202,7 +207,7 @@ formatting procedure:</p>
 <span><span class="va">PotEvap</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ConvertMeteoSD.html">ConvertMeteoSD</a></span><span class="op">(</span><span class="va">griwrmV05</span>, <span class="va">PotEvapTot</span><span class="op">)</span></span></code></pre></div>
 <p>Then, the <code>GRiwrmInputsModel</code> object can be generated
 taking into account the new <code>GRiwrm</code> object:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">IM_U</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/CreateInputsModel.html">CreateInputsModel</a></span><span class="op">(</span><span class="va">griwrmV05</span>, <span class="va">DatesR</span>, <span class="va">Precip</span>, <span class="va">PotEvap</span><span class="op">)</span></span>
 <span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54095...</span></span>
 <span><span class="co">#&gt; CreateInputsModel.GRiwrm: Processing sub-basin 54002...</span></span>
@@ -218,7 +223,7 @@ taking into account the new <code>GRiwrm</code> object:</p>
 “V02_Calibration_SD_model”. We also apply a parameter regularization
 here but only where an upstream simulated catchment is available.</p>
 <p>The following code chunk resumes this procedure:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">IndPeriod_Run</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">DatesR</span> <span class="op">==</span> <span class="op">(</span><span class="va">DatesR</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">+</span> <span class="fl">365</span><span class="op">*</span><span class="fl">24</span><span class="op">*</span><span class="fl">60</span><span class="op">*</span><span class="fl">60</span><span class="op">)</span><span class="op">)</span>, <span class="co"># Set aside warm-up period</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">DatesR</span><span class="op">)</span> <span class="co"># Until the end of the time series</span></span>
@@ -241,7 +246,7 @@ to downstream nodes but this time the calibration of the sub-basin
 <code>54032</code> invokes a semi-distributed model composed of the
 nodes <code>54029</code>, <code>54001</code> and <code>54032</code>
 sharing the same parameters.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OC_U</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="../reference/Calibration.html">Calibration</a></span><span class="op">(</span><span class="va">IM_U</span>, <span class="va">RunOptions</span>, <span class="va">InputsCrit</span>, <span class="va">CalibOptions</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Calibration.GRiwrmInputsModel: Processing sub-basin '54095'...</span></span>
@@ -308,7 +313,7 @@ sharing the same parameters.</p>
 <p>The hydrological model uses parameters inherited from the calibration
 of the gauged sub-basin <code>54032</code> for the <em>Ungauged</em>
 nodes <code>54001</code> and <code>54029</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ParamV05</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">griwrmV05</span><span class="op">$</span><span class="va">id</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span><span class="va">OC_U</span><span class="op">[[</span><span class="va">x</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">Param</span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="va">dfParam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span></span>
 <span>  <span class="va">rbind</span>,</span>
@@ -378,7 +383,7 @@ nodes <code>54001</code> and <code>54029</code>:</p>
 </tbody>
 </table>
 <p>We can run the model with these calibrated parameters:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">OutputsModels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/RunModel.html">RunModel</a></span><span class="op">(</span></span>
 <span>  <span class="va">IM_U</span>,</span>
 <span>  RunOptions <span class="op">=</span> <span class="va">RunOptions</span>,</span>
@@ -392,7 +397,7 @@ nodes <code>54001</code> and <code>54029</code>:</p>
 <span><span class="co">#&gt; RunModel.GRiwrmInputsModel: Processing sub-basin 54057...</span></span></code></pre></div>
 <p>and plot the comparison of the modeled and the observed flows
 including the so-called <em>Ungauged</em> stations :</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">OutputsModels</span>, Qobs <span class="op">=</span> <span class="va">Qobs</span><span class="op">[</span><span class="va">IndPeriod_Run</span>,<span class="op">]</span>, which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Regime"</span>, <span class="st">"CumFreq"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-1.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-2.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-3.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-4.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-5.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"><img src="V05_Modelling_ungauged_nodes_files/figure-html/plot-6.png" class="r-plt" alt="" width="70%" style="display: block; margin: auto;"></p>
 </div>
