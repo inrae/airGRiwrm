@@ -1,4 +1,4 @@
-# airGRiwrm (development version)
+# airGRiwrm 0.8.0 (Release date: 2026-11-03)
 
 Breaking changes:
 -----------------
@@ -8,6 +8,28 @@ Breaking changes:
   (`c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd")`)
   in order to reduce the size of the GRiwrmOutputsModel object for large
   networks. Use `Outputs_Sim = "all"` to restore the previous behaviour (#141).
+* Calibration [Breaking change]: `Calibration` on a simple *InputsModel*
+  now requires a `RunOptions` argument, inserted in the second position
+  (`Calibration(InputsModel, RunOptions, CalibOptions, ...)`). Positional
+  calls written as `Calibration(InputsModel, CalibOptions)` are broken;
+  named calls and the calibration of network models (GRiwrmInputsModel)
+  are unchanged (#199).
+* CreateInputsCrit [Breaking change]: the default error criterion changed
+  from `ErrorCrit_NSE` to `ErrorCrit_KGE2` and the default `AprioriIds`
+  changed from `NULL` to a computed a priori node
+  (`getDefaultAprioriIds(InputsModel)`); several a priori nodes are now
+  tested and the best one is kept. The numeric results of the default
+  criteria and of the calibration change (#197, #196).
+* CreateInputsCrit [Breaking change]: the De Lavenne criterion now raises
+  an error if the X4 parameter of the a priori node is below 0.5, and the
+  a priori error criterion is now computed from the current sub-catchment
+  error criterion; the values of `InputsCritLavenne` and the calibration
+  results change accordingly (#193).
+* Calibration [Breaking change]: reservoirs now follow the
+  force-release/diversion logic during calibration by default
+  (`forceReservoirObs = TRUE` in `RunModel`/`Calibration` of a
+  GRiwrmInputsModel, with a calibration flag in the reservoir RunOptions);
+  the simulated reservoir behaviour during calibration can change (#199).
 
 New features:
 -------------
@@ -44,6 +66,36 @@ New features:
   whole-catchment scale (including the CemaNeige layer series), so that
   users can compute statistics from the meteorological data of the whole
   catchment instead of the local sub-basin data of the node (#178).
+* RunModel: a new S3 method `RunModel.GRiwrmOutputsModel` re-simulates a
+  model from a previous *GRiwrmOutputsModel* object (with modified
+  inputs), and a previous *OutputsModel* can now be merged with a new one
+  (`merge.OutputsModel`, `merge.GRiwrmOutputsModel`); the new exported
+  function `getNextTimeSteps()` helps to select the time steps of the
+  re-simulation (#173).
+* RunModel.Supervisor: a new `Yinit` argument sets the initial Y state for
+  a hot restart; the Yinit can be computed from a previous
+  *GRiwrmOutputsModel* (the warm-up outputs are kept in the object and feed
+  the supervised run) (#208, #209). The initial Y state is now applied at
+  every restart of the supervision (#210).
+* CreateInputsModel: a new `FUN_REGUL` argument allows providing a
+  user-defined regulation function ("local rule") for a node; the function
+  is called with an extra named argument `e = environment()` (contract to
+  document on the user side) (#29).
+* CreateController: the variable to control/measure can now be selected at
+  each node location (reservoir volume, derived flows as controlled/measured
+  variables), and the `Y` and `U` locations accept `NULL` (#188, #174).
+* CreateInputsModel: `ZInputs` now accepts a list (coerced to a numeric
+  vector) (#206).
+* RunModel_Reservoir: pass-through mode ("transparent" reservoir) with
+  `Qrelease = NA` and `Vsim = 0` (#201).
+* CreateInputsCrit: a new exported function `getDefaultAprioriIds(InputsModel)`
+  returns the default a priori node ids (#197).
+* CreateGRiwrm: gauged nodes inside an ungauged cluster are now detected
+  (#168).
+* plot.OutputsModelReservoir and plot.GRiwrmOutputsModel: the observed
+  volume series (`Vobs`) is now displayed in the plots (#189).
+* plot.GRiwrm: a new `server` argument and the `MERMAID_URL` environment
+  variable provide an alternative to the mermaid.ink service (#184).
 
 Changes:
 --------
@@ -54,6 +106,13 @@ Changes:
   provided by the airGR 1.7.8 CRAN release, 2025-12-12). Users on
   airGR <= 1.7.6 now get a clear dependency error at installation
   instead of a runtime crash in `CreateRunOptions()`.
+* CreateRunOptions: the initial states (`IniStates`) are now taken into
+  account and checked for Reservoir nodes (previously ignored); new
+  errors/warnings may be raised on configurations that were previously
+  accepted (#182).
+* Calibration: the calibration of ungauged clusters now takes the
+  `IniStates` of the involved nodes into account, and a new error is
+  raised if a Reservoir node is in an ungauged cluster (#182).
 
 Bug fixes:
 ----------
@@ -65,6 +124,57 @@ Bug fixes:
   selection, instead of failing with the error "Time series WarmUpQsim in
   'QcontribDown' should have the same length as
   'RunOptions$IndPeriod_WarmUp'" (#98).
+* RunModel.Supervisor: crash with `RunModel_Lag` on a node (#191).
+* RunModel.Supervisor: crash with Reservoir + Diversion nodes (#190).
+* RunModel.Supervisor: wrong detection of the warm-up period (#174).
+* RunModel.Supervision: crash at the hot restart (#176).
+* RunModel.Supervision: missing attributes (class, `DatesR`) for GR and
+  `OutputsModelReservoir` objects (#174, #177).
+* RunModel.Supervision: wrong retrieval of the data for the direct
+  injections (#211).
+* RunModel: `NA` handling in `IniStates` (#174).
+* RunModel.GRiwrmOutputsModel: the original warm-up data are now kept in
+  the OutputsModel (#179).
+* RunModel.OutputsModel: sign error of the Diversion flow (#173).
+* RunModel_Lag (routing): crash at the `StateEnd` computation on very short
+  simulations without a warm-up period (#192).
+* CreateInputsCrit: the De Lavenne criterion now updates the upstream
+  discharges before computing the criterion (#193).
+* Calibration: `RunModel_ungauged` is now allowed for the a priori
+  criterion of an ungauged cluster (#193).
+* getDefaultAprioriIds: unique node ids guaranteed and bypass on reservoirs
+  (#196).
+* transferGRparams: wrong computation of the X4 parameter transferred from
+  an upstream donor node; the transferred parameter values in ungauged
+  cluster calibrations change accordingly (#205).
+* CreateCalibOptions: crash when all parameters are fixed (#183).
+* Ungauged clusters: fixed parameters in a cluster, a gauged node in a
+  cluster without fixed parameters, the donor search with Diversion,
+  receivers removed from the cluster, and the gauged node detection were
+  fixed (#168, #167).
+* CreateGRiwrm: wrong rank of nodes with an ungauged cluster and reservoirs
+  (#168).
+* CreateController: direct injection in `Y` with `var = "Qupstream"` and
+  the case of a missing `Y` location (#188).
+* CreateInputsModel: `PrecipScale` is now defined at the node level (#187)
+  and `Qrelease` now accepts a matrix (#200).
+* plot.OutputsModelReservoir: the `which` argument is now handled when the
+  plot is called from `box` (#203).
+
+Documentation:
+--------------
+
+* New vignette V07: example combining tactical and operational management
+  (PID controller on a reservoir, `RunModel.GRiwrmOutputsModel`) (#180).
+* Vignette V04: reformatted for readability and the NA handling in the
+  controller measurements documented (#97).
+* Documentation: the irstea.fr links replaced by the corresponding
+  forge.inrae.fr pages, the irrigation and reservoir vignette examples
+  revised, and the `CreateGRiwrm` documentation updated (#204).
+* A documentation wave covered `Calibration`, `CreateCalibOptions`,
+  `CreateInputsModel`, `RunModel.Supervisor`, `RunModel_Reservoir`
+  (examples, target/observed release, PID supervisor examples),
+  `transferGRparams` and `extractParam` (#172, #189).
 
 # airGRiwrm 0.7.0
 
