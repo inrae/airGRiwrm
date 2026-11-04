@@ -104,7 +104,8 @@ Ind_Run <- seq(
   which(format(BasinObs$DatesR, format = "%Y-%m-%d") == "1999-12-31")
 )
 
-# Creation of the GRiwmRunOptions object with the initial states of the reservoir set to 0 (empty reservoir)
+# Creation of the GRiwrmRunOptions object with the initial states
+# of the reservoir set to 0 (empty reservoir)
 RunOptions <- CreateRunOptions(
   InputsModel,
   IndPeriod_Run = Ind_Run,

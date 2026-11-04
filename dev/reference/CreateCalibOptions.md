@@ -40,7 +40,7 @@ CreateCalibOptions(x, FixedParam = NULL, ...)
 - FixedParam:
 
   (optional) [numeric](https://rdrr.io/r/base/numeric.html) vector or
-  list of vectors giving the values set for the non-optimised parameter
+  list of vectors giving the values set for the non-optimized parameter
   values, as for
   [airGR::CreateCalibOptions](https://rdrr.io/pkg/airGR/man/CreateCalibOptions.html)
   (see details)

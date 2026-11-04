@@ -44,7 +44,7 @@ water allocation, reservoir release decisions, monitoring, and emergency
 response.
 
 **airGRiwrm** offers various tools for introducing human influences into
-catchment hydrological modelling, which can be combined to represent
+catchment hydrological modeling, which can be combined to represent
 these different planning levels. This vignette demonstrates how to
 integrate both approaches in a single simulation workflow, using a
 reservoir (dam) project on the Severn River as a case study.
@@ -198,7 +198,7 @@ griwrm
     #> 1 Reservoir     54001     42      NA RunModel_Reservoir Reservoir
     #> 3     54001      <NA>     NA 4329.90      RunModel_GR4J     54001
 
-### Visualising the network
+### Visualizing the network
 
 ``` r
 
@@ -236,10 +236,10 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 
 ### Human influence inputs
 
-We initialise the reservoir release time series to zero; the PD
+We initialize the reservoir release time series to zero; the PD
 controller will dynamically compute the release rate at each time step:
 
-- **Qrelease (dam release):** Initialised to `1E15` for keeping the
+- **Qrelease (dam release):** Initialized to `1E15` for keeping the
   reservoir empty during warm-up simulation period — the controller will
   compute the release rate, clamped between a scaled minimum and a hard
   maximum (see Operational Control section below).
@@ -614,7 +614,7 @@ for (ym in tactical_months) {
 
 ### Reservoir volume tracking
 
-We can visualise how the simulated reservoir volume follows (or deviates
+We can visualize how the simulated reservoir volume follows (or deviates
 from) the filling curve target over the simulation period:
 
 ``` r

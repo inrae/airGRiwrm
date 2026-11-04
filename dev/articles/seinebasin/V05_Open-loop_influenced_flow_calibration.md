@@ -219,7 +219,7 @@ OutputsCalib <- Calibration(InputsModel3, RunOptions, InputsCrit, CalibOptions)
 #>       Param =    1.250,  432.681,   -2.376,   20.697,    2.384
 #>       Crit. Composite    = 0.9334
 #> Steepest-descent local search in progress
-#>   Calibration completed (28 iterations, 502 runs)
+#>   Calibration completed (28 iterations, 501 runs)
 #>       Param =    0.600,  330.300,   -8.443,   69.408,    3.184
 #>       Crit. Composite    = 0.9510
 #>  Formula: sum(0.87 * KGE2[sqrt(Q)], 0.13 * GAPX[ParamT])

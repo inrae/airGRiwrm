@@ -96,7 +96,7 @@ CreateInputsModel(
   the precipitation interpolated on the elevation layers must be kept or
   not, required to create CemaNeige module inputs, default `TRUE` (the
   mean of the precipitation is kept to the original value). Optional
-  names cames correspond to node IDs
+  names correspond to node IDs
 
 - TempMean:
 

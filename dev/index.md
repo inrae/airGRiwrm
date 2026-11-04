@@ -64,7 +64,7 @@ stay informed, ask questions, and connect with other users.
 This package was developed within:
 
 - [**IN-WOP project**
-  (2019–2023)](http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop)
+  (2019–2023)](https://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks2017)
 
 - [**Talanoa-Water project**
   (2021–2025)](https://talanoa-water-france.hub.inrae.fr/) Part of the
