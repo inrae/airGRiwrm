@@ -25,7 +25,7 @@
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
 #'        (the mean of the precipitation is kept to the original value).
-#'        Optional names cames correspond to node IDs
+#'        Optional names correspond to node IDs
 #' @param TempMean (optional) [matrix] or [data.frame] of time series of mean
 #'        air temperature \[°C\], required to create the CemaNeige module inputs. Column names correspond to node IDs
 #' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum
