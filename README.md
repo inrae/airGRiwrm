@@ -79,7 +79,7 @@ stay informed, ask questions, and connect with other users.
 This package was developed within:
 
 - [**IN-WOP project**
-  (2019–2023)](http://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks-2017/booklet/in-wop)
+  (2019–2023)](https://www.waterjpi.eu/joint-calls/joint-call-2018-waterworks2017)
 
 - [**Talanoa-Water project**
   (2021–2025)](https://talanoa-water-france.hub.inrae.fr/) Part of the
@@ -89,15 +89,12 @@ This package was developed within:
 Agency (ANR) - Water JPI via WaterWorks2017
 
 <p align="center">
-
 <img src="man/figures/logo_water_jpi.png" height="80"/>
 <img src="man/figures/logo_water_works_2017.png" height="80"/>
 <img src="man/figures/logo_european_commission.jpg" height="80"/>
 <img src="man/figures/logo_2018_joint_call.png" height="80"/>
 </p>
-
 <p align="center">
-
 <img src="https://upload.wikimedia.org/wikipedia/commons/2/29/Horizon_2020_Logo.png" width="25%"/>
 <img src="man/figures/logo_prima.png" width="25%"/>
 </p>
