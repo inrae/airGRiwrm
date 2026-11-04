@@ -15,7 +15,7 @@ test_that("RunModel.Supervisor with no regulation should returns same results as
     RunOptions = RunOptions,
     Param = ParamMichel
   )
-  lapply(griwrm$id, function(id) {
+  invisible(lapply(griwrm$id, function(id) {
     expect_equal(
       sort(names(OM_GriwrmInputs[[!!id]])),
       sort(names(OM_Supervisor[[!!id]]))
@@ -23,8 +23,7 @@ test_that("RunModel.Supervisor with no regulation should returns same results as
     lapply(names(OM_Supervisor[[id]]), function(x) {
       expect_equal(OM_Supervisor[[!!id]][[!!x]], OM_GriwrmInputs[[!!id]][[!!x]])
     })
-  }) |>
-    invisible()
+  }))
 })
 
 # Add 2 nodes to the network

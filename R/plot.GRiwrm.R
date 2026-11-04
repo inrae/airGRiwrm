@@ -328,7 +328,7 @@ mermaid_gen_link <- function(
     diagram <- paste(diagram, collapse = "\n")
   }
   jGraph <-
-    list(code = diagram, mermaid = list(theme = theme)) |>
+    list(code = diagram, mermaid = list(theme = theme)) %>%
     jsonlite::toJSON(auto_unbox = TRUE)
   deflated <- pako_deflate(jGraph)
   dEncode <- gsub("\n", "", jsonlite::base64url_enc(deflated))
