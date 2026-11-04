@@ -1,4 +1,4 @@
-# airGRiwrm 0.8.0 (Release date: 2026-11-03)
+# airGRiwrm 0.8.0
 
 Breaking changes:
 -----------------
