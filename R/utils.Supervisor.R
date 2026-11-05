@@ -4,24 +4,42 @@
 #'
 #' @param loc location of the data
 #' @param sv \[object of class `Supervisor`\] see [CreateSupervisor] for details
+#' @param OutputsModel [list] model outputs
+#' @param InputsModel [list] model inputs
+#' @param idx.output_previous [integer] previous time step indexes for OutputsModel
+#' @param idx.input_previous [integer] previous time step indexes for InputsModel
+#' @param inDoSupervision [logical] whether in supervision
 #'
 #' @return [numeric] retrieved data at the location
 #' @noRd
-getDataFromLocation <- function(loc, sv) {
-  if (length(grep("\\[[0-9]+\\]$", loc)) > 0) {
-    stop("Reaching output of other controller is not implemented yet")
-  } else {
-    if (!sv$nodeProperties[loc, "DirectInjection"]) {
-      if (sv$nodeProperties[loc, "Upstream"]) {
-        sv$OutputsModel[[loc]]$Qsim_m3[sv$ts.previous]
+getDataFromLocation <- function(
+  ctrlr,
+  sv,
+  OutputsModel = sv$OutputsModel,
+  InputsModel = sv$InputsModel,
+  idx.output_previous = sv$idx.output_previous,
+  idx.input_previous = sv$idx.input_previous,
+  inDoSupervision = TRUE
+) {
+  if (is.null(ctrlr$Ynodes)) {
+    return(NULL)
+  }
+  l <- lapply(seq(length(ctrlr$Ynodes)), function(i) {
+    nodeY <- ctrlr$Ynodes[i]
+    varY <- ctrlr$Yvars[i]
+    if (varY != "Qupstream") {
+      if (!inDoSupervision || sv$nodeProperties[nodeY, "Upstream"]) {
+        OutputsModel[[nodeY]][[varY]][idx.output_previous]
       } else {
-        sv$OutputsModel[[loc]]$Qsim_m3
+        OutputsModel[[nodeY]][[varY]]
       }
     } else {
-      node <- sv$griwrm$down[sv$griwrm$id == loc]
-      sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.previous, loc]
+      # Direct injection node => read Qupstream of downstream node
+      node <- sv$griwrm$down[sv$griwrm$id == nodeY]
+      InputsModel[[node]]$Qupstream[idx.input_previous, nodeY]
     }
-  }
+  })
+  return(do.call(cbind, l))
 }
 
 
@@ -33,26 +51,24 @@ getDataFromLocation <- function(loc, sv) {
 #' @return [NULL]
 #' @noRd
 setDataToLocation <- function(ctrlr, sv) {
-  l <- lapply(seq(length(ctrlr$Unames)), function(i) {
+  l <- lapply(seq(length(ctrlr$Unodes)), function(i) {
     # limit U size to the number of simulation time steps of the current supervision time step
-    U <- ctrlr$U[seq.int(length(sv$ts.index)), i]
+    U <- ctrlr$U[seq.int(length(sv$idx.output)), i]
+    nodeU <- ctrlr$Unodes[i]
+    varU <- ctrlr$Uvars[i]
 
-    locU <- ctrlr$Unames[i]
-
-    if (sv$nodeProperties[locU, "DirectInjection"]) {
+    if (varU == "Qupstream") {
       # Direct injection node => update Qusptream of downstream node
-      node <- sv$griwrm4U$down[sv$griwrm4U$id == locU]
+      node <- sv$griwrm4U$down[sv$griwrm4U$id == nodeU]
       # ! Qupstream contains warm up period and run period => the index is shifted
       if (!is.null(sv$InputsModel[[node]])) {
-        sv$InputsModel[[node]]$Qupstream[sv$ts.index0 + sv$ts.index, locU] <- U
+        sv$InputsModel[[node]]$Qupstream[sv$idx.input, nodeU] <- U
       }
-    } else if (sv$nodeProperties[locU, "Diversion"]){
+    } else if (varU == "Qdiv") {
       # Diversion node => update Qdiv with -U
-      sv$InputsModel[[locU]]$Qdiv[sv$ts.index0 + sv$ts.index] <- -U
-    } else if (sv$nodeProperties[locU, "Reservoir"]) {
-      sv$InputsModel[[locU]]$Qrelease[sv$ts.index0 + sv$ts.index] <- U
-    } else {
-      stop("Node ", locU, " must be a Direct Injection or a Diversion node")
+      sv$InputsModel[[nodeU]]$Qdiv[sv$idx.input] <- -U
+    } else if (varU == "Qrelease") {
+      sv$InputsModel[[nodeU]]$Qrelease[sv$idx.input] <- U
     }
   })
 }
@@ -62,34 +78,49 @@ setDataToLocation <- function(ctrlr, sv) {
 #'
 #' @param supervisor `Supervisor` (See [CreateSupervisor])
 #' @noRd
-doSupervision <- function(supervisor) {
+doSupervision <- function(supervisor, Yinit = NULL) {
   for (id in names(supervisor$controllers)) {
     supervisor$controller.id <- id
     # Read Y from locations in the model
-    supervisor$controllers[[id]]$Y <- do.call(
-      cbind,
-      lapply(supervisor$controllers[[id]]$Ynames, getDataFromLocation, sv = supervisor)
-    )
+    if (!is.null(Yinit)) {
+      supervisor$controllers[[id]]$Y <- Yinit[[id]]
+    } else {
+      supervisor$controllers[[id]]$Y <-
+        getDataFromLocation(supervisor$controllers[[id]], sv = supervisor)
+    }
     # Run logic
     supervisor$controllers[[id]]$U <-
       supervisor$controllers[[id]]$FUN(supervisor$controllers[[id]]$Y)
     if (is.vector(supervisor$controllers[[id]]$U)) {
-      supervisor$controllers[[id]]$U <- matrix(supervisor$controllers[[id]]$U, nrow = 1)
+      supervisor$controllers[[id]]$U <- matrix(
+        supervisor$controllers[[id]]$U,
+        nrow = 1
+      )
     }
     # Check U output
     if (
-      ncol(supervisor$controllers[[id]]$U) != length(supervisor$controllers[[id]]$Unames) |
-      (!nrow(supervisor$controllers[[id]]$U) %in% c(supervisor$.TimeStep, length(supervisor$ts.index)))
+      ncol(supervisor$controllers[[id]]$U) !=
+        length(supervisor$controllers[[id]]$Unodes) |
+        (!nrow(supervisor$controllers[[id]]$U) %in%
+          c(supervisor$.TimeStep, length(supervisor$idx.output)))
     ) {
-      stop("The logic function of the controller ",
-           supervisor$controllers[[id]]$name,
-           " should return a matrix of dimension ",
-           supervisor$.TimeStep, ", ", length(supervisor$controllers[[id]]$Unames))
+      stop(
+        "The logic function of the controller ",
+        supervisor$controllers[[id]]$name,
+        " should return a matrix of dimension ",
+        supervisor$.TimeStep,
+        ", ",
+        length(supervisor$controllers[[id]]$Unodes)
+      )
     }
     # For the last supervisor time step which can be truncated
-    if (length(supervisor$ts.index) < supervisor$.TimeStep) {
+    if (length(supervisor$idx.output) < supervisor$.TimeStep) {
       supervisor$controllers[[id]]$U <-
-        supervisor$controllers[[id]]$U[seq(length(supervisor$ts.index)), ]
+        supervisor$controllers[[id]]$U[
+          seq(length(supervisor$idx.output)),
+          ,
+          drop = FALSE
+        ]
     }
     # Write U to locations in the model
     setDataToLocation(supervisor$controllers[[id]], sv = supervisor)
@@ -114,4 +145,51 @@ initStoredOutputs <- function(x, outputVars) {
   })
   so$QcontribDown <- QcontribDown
   return(so)
+}
+
+checkYinit <- function(sv, Yinit) {
+  lapply(names(sv$controllers), function(id) {
+    if (!id %in% names(Yinit)) {
+      stop("Missing Yinit for controller ", id)
+    }
+    if (!is.null(sv$controllers[[id]]$Ynodes)) {
+      if (!is.matrix(Yinit[[id]])) {
+        stop("Yinit for controller ", id, " should be a matrix")
+      }
+      if (
+        ncol(Yinit[[id]]) != length(sv$controllers[[id]]$Ynodes) ||
+          (nrow(Yinit[[id]]) != sv$.TimeStep)
+      ) {
+        stop(
+          "Yinit for controller ",
+          id,
+          " should be a matrix of dimension ",
+          sv$.TimeStep,
+          ", ",
+          length(sv$controllers[[id]]$Ynodes)
+        )
+      }
+    }
+  })
+}
+
+#' Get initial Y values for the controllers
+#'
+#' @param sv `Supervisor` (See [CreateSupervisor])
+#' @param InputsModel InputsModel object
+#' @param OutputsModel OutputsModel object
+#' @noRd
+getYinit <- function(sv, InputsModel, OutputsModel) {
+  len_input <- length(InputsModel[[1]]$DatesR)
+  len_output <- length(OutputsModel[[1]]$Qsim_m3)
+  lapply(setNames(sv$controllers, nm = names(sv$controllers)), function(ctrlr) {
+    getDataFromLocation(
+      ctrlr,
+      InputsModel = InputsModel,
+      OutputsModel = OutputsModel,
+      idx.input_previous = seq(len_input - sv$.TimeStep + 1, len_input),
+      idx.output_previous = seq(len_output - sv$.TimeStep + 1, len_output),
+      inDoSupervision = FALSE
+    )
+  })
 }

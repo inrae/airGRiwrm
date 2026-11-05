@@ -14,7 +14,6 @@
 #'
 #' @examples
 setUpCemaNeigeData <- function() {
-
   data(L0123001, package = "airGR", envir = environment())
 
   # Formatting observations for the hydrological models
@@ -32,12 +31,14 @@ setUpCemaNeigeData <- function() {
   l$ZInputs <- rep(BasinInfo$HypsoData[51], 3)
   names(l$ZInputs) <- ids
 
-  db <- data.frame(id = ids,
-                   length = c(0, 0, NA),
-                   down = c("Down", "Down", NA),
-                   area = c(rep(BasinInfo$BasinArea, 2), BasinInfo$BasinArea * 2),
-                   model = rep("RunModel_CemaNeigeGR4J", 3),
-                   stringsAsFactors = FALSE)
+  db <- data.frame(
+    id = ids,
+    length = c(0, 0, NA),
+    down = c("Down", "Down", NA),
+    area = c(rep(BasinInfo$BasinArea, 2), BasinInfo$BasinArea * 2),
+    model = rep("RunModel_CemaNeigeGR4J", 3),
+    stringsAsFactors = FALSE
+  )
 
   # Create GRiwrm object from the data.frame
   l$griwrm <- CreateGRiwrm(db)

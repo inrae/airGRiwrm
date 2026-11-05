@@ -8,9 +8,13 @@ updateMermaid <- function(version = "") {
   }
   url <- gsub("@version", version, url)
   try(
-    download.file(url,
-                  system.file("htmlwidgets/lib/mermaid/dist/mermaid.slim.min.js",
-                              package = "DiagrammeR"))
+    download.file(
+      url,
+      system.file(
+        "htmlwidgets/lib/mermaid/dist/mermaid.slim.min.js",
+        package = "DiagrammeR"
+      )
+    )
   )
 }
 

@@ -7,9 +7,10 @@
 \alias{CreateRunOptions.InputsModel}
 \alias{CreateRunOptions.character}
 \alias{CreateRunOptions.function}
+\alias{CreateRunOptions.RunModel_Reservoir}
 \title{Creation of the RunOptions object}
 \usage{
-\method{CreateRunOptions}{GRiwrmInputsModel}(x, IniStates = NULL, ...)
+\method{CreateRunOptions}{GRiwrmInputsModel}(x, IniStates = NULL, Outputs_Sim = MinimalOutputsSim, ...)
 
 CreateRunOptions(x, ...)
 
@@ -18,11 +19,40 @@ CreateRunOptions(x, ...)
 \method{CreateRunOptions}{character}(x, InputsModel, ...)
 
 \method{CreateRunOptions}{`function`}(x, InputsModel, ...)
+
+\method{CreateRunOptions}{RunModel_Reservoir}(x, ...)
 }
 \arguments{
 \item{x}{For a single catchment, it can be an object of class \emph{InputsModel} or a \link{function} or a \link{character} corresponding to \code{FUN_MOD} (compliant with \strong{airGR} call). For a network, it should be an object of class \emph{GRiwrmInputsModel}. See \link{CreateInputsModel} for details}
 
-\item{IniStates}{(optional) \link{numeric} object or \link{list} of \link{numeric} object of class \emph{IniStates}, see \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
+\item{IniStates}{(optional) object containing initial model states. Can be:
+\itemize{
+\item A single \code{\link[airGR:CreateIniStates]{IniStates}} object when calling \link{CreateRunOptions.InputsModel}
+\item A named \link{list} of \code{\link[airGR:CreateIniStates]{IniStates}} objects when calling \link{CreateRunOptions.GRiwrmInputsModel}, with names matching node IDs
+}
+
+See \link[airGR:CreateIniStates]{airGR::CreateIniStates} for details}
+
+\item{Outputs_Sim}{(optional) outputs to be returned by the model run.
+Can be:
+\itemize{
+\item \code{"all"} to return all available simulated outputs for each node
+(previous default behaviour, but not recommended for large networks)
+\item A \link{character} vector, applied to every node, to restrict the returned
+outputs (default: \code{c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd")}).
+\item A named \link{list} (names matching node IDs) to define outputs per node,
+each item being a \link{character} vector.
+}
+
+On a semi-distributed network, an explicit selection is completed
+with the minimal default output set so that the outputs required to
+propagate the simulated flows between nodes are available (#98).
+\code{Outputs_Sim = "all"} is not affected.
+
+See details.
+
+See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} for the list of output names supported by
+each rainfall-runoff model.}
 
 \item{...}{arguments passed to \link[airGR:CreateRunOptions]{airGR::CreateRunOptions}, see details}
 
@@ -43,6 +73,40 @@ Depending on the class of \code{InputsModel} argument (respectively
 This function can be used either for a catchment (with an \emph{InputsModel} object) or for a network (with a \emph{GRiwrmInputsModel} object)
 }
 \details{
+The default output selection has been reduced compared to
+previous versions of the package (where it was \code{"all"}) in order to keep
+the size of the resulting \emph{GRiwrmOutputsModel} object reasonable for a
+network with a large number of nodes (See issue inrae/airGRiwrm#141).
+The default keeps only the outputs required to propagate simulated flows
+to downstream nodes (\code{Qsim}, \code{Qsim_m3}), to warm-up semi-distributed
+nodes correctly (\code{WarmUpQsim}), to carry the model parameters
+(\code{Param}) and the model states at the end of the run (\code{StateEnd}) which
+are needed for De Lavenne parameter regularization and hot restart.
+For CemaNeige models, the \code{CemaNeigeLayers} output is added
+automatically: it carries the CemaNeige layer output series required by
+SCA-based error criteria (a reduced CemaNeige output set would change
+the model run in airGR). \code{Precip} is also added automatically on
+CemaNeige models: the default plot of a CemaNeige node requires it in
+the \emph{OutputsModel} to compute the precipitation panel axis as soon as
+the per-layer solid precipitation (\code{Psol}) is present (upstream airGR
+\code{ylimP} limitation). It is a recorded meteo input, not a Fortran
+CemaNeige output: the CemaNeige \code{NOutputs} and the model run are
+unchanged. Use \code{Outputs_Sim = "all"} to restore the previous behaviour.
+
+On a semi-distributed network (a network with at least one
+semi-distributed node, i.e. a node whose sub-catchment receives the
+routed flows of upstream nodes), an explicit \code{Outputs_Sim} selection is
+completed with the minimal default output set (the default selection,
+See above, #141). This is required because airGR computes the discharge
+of each semi-distributed node by routing the upstream flows and
+aggregating them with the local runoff: the node's own outputs are
+passed to airGR's \code{RunModel_Lag} as \code{QcontribDown}, which requires in
+particular \code{Qsim} and, when the warm-up period is non-zero,
+\code{WarmUpQsim}. Without this completion, an explicit selection like
+\code{Outputs_Sim = c("Qsim")} fails with the error "Time series WarmUpQsim
+in 'QcontribDown' should have the same length as
+'RunOptions$IndPeriod_WarmUp'" (#98).
+
 See \link[airGR:CreateRunOptions]{airGR::CreateRunOptions} documentation for a complete list of arguments.
 
 If \code{x} argument is a \emph{GRiwrmInputsModel} object, \code{IniStates} must be a

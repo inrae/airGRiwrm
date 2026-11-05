@@ -107,9 +107,14 @@ style P fill:#ccf
 ")
 ```
 
-We can keep the same structure to model it. `PANNEC_R` corresponds to the flow
-released by the Pannecière lake, it is acting as an upstream node which means
-that the flow simulated at `CHAUM_07` is no longer routed to downstream.
+We model it with a `RunModel_Reservoir` node: `PANNEC_R` is the Pannecière
+reservoir, located inline between `CHAUM_07` and `GURGY_02`. The flow
+simulated at `CHAUM_07` is routed into the reservoir (reservoir inflow), and
+the flow released by the reservoir (`Qrelease` in
+[CreateInputsModel.GRiwrm]) is routed 153 km downstream to `GURGY_02`. The
+reservoir release is not simulated by the storage dynamics (the lake storage
+volume is not calibrated in this study): it is forced to the observed values
+with the `forceReservoirObs` argument of [RunModel.GRiwrmInputsModel].
 
 ```{r mmd_pannec_model, echo = FALSE}
 plot.mermaid("
@@ -172,6 +177,9 @@ Reservoir connections are added to the GRiwrm object:
 reservoir_connections$length <- reservoir_connections$length / 1000
 reservoir_connections$model <- NA
 reservoir_connections$area <- NA
+# The Pannecière lake is an inline reservoir: it is modeled as a
+# RunModel_Reservoir node (all the other connections remain direct injections)
+reservoir_connections$model[reservoir_connections$id == "PANNEC_R"] <- "RunModel_Reservoir"
 load("_cache/V01.RData")
 seine_nodes <- seine_nodes[, c("id_sgl", "distance_aval", "id_aval", "model", "area")]
 names(seine_nodes)[1:3] <- names(reservoir_connections)[1:3]
@@ -204,8 +212,19 @@ data(Qreservoirs)
 
 ## Create the InputsModel object
 
+The observed flows of the 7 virtual reservoir connections are passed as
+direct injections (`Qinf`), while the observed release of the inline
+Pannecière reservoir is passed as `Qrelease`:
+
 ```{r CreateInputsModel}
-InputsModel2 <- CreateInputsModel(griwrm2, DatesR, Precip, PotEvap, Qreservoirs)
+InputsModel2 <- CreateInputsModel(
+  griwrm2,
+  DatesR,
+  Precip,
+  PotEvap,
+  Qinf = Qreservoirs[, colnames(Qreservoirs) != "PANNEC_R"],
+  Qrelease = Qreservoirs[, "PANNEC_R", drop = FALSE]
+)
 ```
 
 ## Run simulation with naturalized flow parameters
@@ -225,14 +244,28 @@ load("_cache/V03.RData")
 A lag parameter is now mandatory for these sub-basins. As no calibration is
 possible at that stage an arbitrary one will be used (1 m/s).
 
+The Pannecière reservoir needs a maximum storage volume and an inflow
+celerity: the volume is 82.5 Mm<sup>3</sup> (Wikipedia:
+[*Barrage de Pannecière*](https://fr.wikipedia.org/wiki/Barrage_de_Pannecière))
+and the celerity is set to 1 m/s as for the upstream sub-basins.
+As the released flow is forced to the observed values (see below), the
+storage volume only drives the internal volume bookkeeping of the reservoir.
+
 ```{r ParamMichel}
 ParamMichel$STDIZ_04 <- c(1, ParamMichel$STDIZ_04)
+# Pannecière reservoir: maximum volume (m3) and inflow celerity (m/s)
+ParamMichel$PANNEC_R <- c(8.25e7, 1)
 ```
 
 
 ### Run simulation
 
-We can now run the model, using the parameters previously obtained:
+We can now run the model, using the parameters previously obtained. The
+`forceReservoirObs` argument forces the simulated release of the Pannecière
+reservoir to the observed `Qrelease` time series (instead of the release
+computed by the storage dynamics): the flow received by `GURGY_02` is then
+the observed release routed over the 153 km between the reservoir and the
+gauging station.
 
 ```{r RunModel}
 RunOptions <- CreateRunOptions(
@@ -242,7 +275,8 @@ RunOptions <- CreateRunOptions(
 OutputsModels2 <- RunModel(
   InputsModel2,
   RunOptions = RunOptions,
-  Param = ParamMichel
+  Param = ParamMichel,
+  forceReservoirObs = TRUE
 )
 ```
 

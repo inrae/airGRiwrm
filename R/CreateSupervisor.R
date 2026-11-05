@@ -4,23 +4,33 @@
 #' See [RunModel.Supervisor] and vignettes for examples of use.
 #'
 #' @param InputsModel \[object of type `GRiwrmInputsModel`\] inputs of the model
-#' @param TimeStep [numeric] number of time steps between each supervision
+#' @param TimeStep [integer] number of time steps between each supervision
 #'
 #' @return A `Supervisor` object which is an [environment] containing all the necessary variables to run a supervised simulation, such as:
-#' - `DatesR` [POSIXct]: vector of date from `InputsModel`
+#' - `DatesR` [base::POSIXct]: vector of date from `InputsModel`
 #' - `InputsModel`: a copy of `InputsModel` provided by [CreateInputsModel.GRiwrm]
 #' - `griwrm`: a copy of `griwrm` provided by [CreateGRiwrm]
 #' - `Controllers` [list]: list of the controllers used in the supervised simulation (See [CreateController])
-#' - some internal state variables updated during simulation (`ts.index`, `ts.previous`, `ts.date`, `ts.index0`, `controller.id`)
+#' - `idx.output` [integer]: index of the current time step output in the modeled series (updated during simulation)
+#' - `idx.output_previous` [integer]: index of the previous output time step
+#' - `ts.date` [base::POSIXct]: date/time of the current time step for controller calculations
+#' - `ts.index0` [integer]: index of the time step preceding the start of the simulation period
+#' - `controller.id` [character]: identifier of the current controller being applied
 #' @export
 #' @seealso [RunModel.Supervisor()], [CreateController()]
 #'
 CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   if (!inherits(InputsModel, "GRiwrmInputsModel")) {
-    stop("`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)")
+    stop(
+      "`InputsModel` parameter must of class 'GRiwrmInputsModel' (See ?CreateInputsModel.GRiwrm)"
+    )
   }
-  if (!is.integer(TimeStep)) stop("`TimeStep` parameter must be an integer")
-  if (TimeStep < 1) stop("`TimeStep` parameter must be strictly positive")
+  if (!is.integer(TimeStep)) {
+    stop("`TimeStep` parameter must be an integer")
+  }
+  if (TimeStep < 1) {
+    stop("`TimeStep` parameter must be strictly positive")
+  }
 
   # Create Supervisor environment from the parent of GlobalEnv
   e <- new.env(parent = parent.env(globalenv()))
@@ -40,8 +50,10 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
   e$nodeProperties <- getAllNodesProperties(e$griwrm)
   models4U <- c("Diversion", "RunModel_Reservoir")
   e$griwrm4U <-
-    e$griwrm[is.na(e$griwrm$model) |
-             (!is.na(e$griwrm$model) & e$griwrm$model %in% models4U), ]
+    e$griwrm[
+      is.na(e$griwrm$model) |
+        (!is.na(e$griwrm$model) & e$griwrm$model %in% models4U),
+    ]
   e$OutputsModel <- list()
   e$.TimeStep <- TimeStep
 
@@ -55,9 +67,13 @@ CreateSupervisor <- function(InputsModel, TimeStep = 1L) {
 
   # Time steps handling: these data are provided by RunModel
   # Index of the current time steps in the modeled time series between 1 and length(RunOptions$Ind_Period)
-  e$ts.index <- NA
+  e$idx.output <- NA
   # Index of the previous time steps in the modeled time series
-  e$ts.previous <- NA
+  e$idx.output_previous <- NA
+  # Index of the current time steps in the modeled time series between min(RunOptions$Ind_Period) and max(RunOptions$Ind_Period)
+  e$idx.input <- NA
+  # Index of the previous time steps in the modeled time series
+  e$idx.input_previous <- NA
   # Index of the time step preceding RunOptions$Ind_Period
   e$ts.index0 <- NA
   # Date/Time of the current time step (For controller calculations based on date)

@@ -9,16 +9,20 @@ CreateSupervisor(InputsModel, TimeStep = 1L)
 \arguments{
 \item{InputsModel}{[object of type \code{GRiwrmInputsModel}] inputs of the model}
 
-\item{TimeStep}{\link{numeric} number of time steps between each supervision}
+\item{TimeStep}{\link{integer} number of time steps between each supervision}
 }
 \value{
 A \code{Supervisor} object which is an \link{environment} containing all the necessary variables to run a supervised simulation, such as:
 \itemize{
-\item \code{DatesR} \link{POSIXct}: vector of date from \code{InputsModel}
+\item \code{DatesR} \link[base:POSIXct]{base::POSIXct}: vector of date from \code{InputsModel}
 \item \code{InputsModel}: a copy of \code{InputsModel} provided by \link{CreateInputsModel.GRiwrm}
 \item \code{griwrm}: a copy of \code{griwrm} provided by \link{CreateGRiwrm}
 \item \code{Controllers} \link{list}: list of the controllers used in the supervised simulation (See \link{CreateController})
-\item some internal state variables updated during simulation (\code{ts.index}, \code{ts.previous}, \code{ts.date}, \code{ts.index0}, \code{controller.id})
+\item \code{idx.output} \link{integer}: index of the current time step output in the modeled series (updated during simulation)
+\item \code{idx.output_previous} \link{integer}: index of the previous output time step
+\item \code{ts.date} \link[base:POSIXct]{base::POSIXct}: date/time of the current time step for controller calculations
+\item \code{ts.index0} \link{integer}: index of the time step preceding the start of the simulation period
+\item \code{controller.id} \link{character}: identifier of the current controller being applied
 }
 }
 \description{

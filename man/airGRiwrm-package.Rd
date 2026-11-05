@@ -90,6 +90,11 @@ Useful links:
 \author{
 \strong{Maintainer}: David Dorchies \email{david.dorchies@inrae.fr} (\href{https://orcid.org/0000-0002-6595-7984}{ORCID})
 
+Authors:
+\itemize{
+  \item David Dorchies \email{david.dorchies@inrae.fr} (\href{https://orcid.org/0000-0002-6595-7984}{ORCID})
+}
+
 Other contributors:
 \itemize{
   \item Olivier Delaigue \email{airGR@inrae.fr} (\href{https://orcid.org/0000-0002-7668-8468}{ORCID}) [contributor]

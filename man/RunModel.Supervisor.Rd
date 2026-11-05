@@ -2,16 +2,23 @@
 % Please edit documentation in R/RunModel.Supervisor.R
 \name{RunModel.Supervisor}
 \alias{RunModel.Supervisor}
-\title{RunModel function for a GRiwrmInputsModel object}
+\title{RunModel function for a Supervisor}
 \usage{
-\method{RunModel}{Supervisor}(x, RunOptions, Param, ...)
+\method{RunModel}{Supervisor}(x, RunOptions, Param, Yinit = NULL, ...)
 }
 \arguments{
-\item{x}{[object of class \code{Supervisor}] see \link{CreateSupervisor} for details}
+\item{x}{Object of class \link[=CreateSupervisor]{Supervisor} see \link{CreateSupervisor}
+for details}
 
-\item{RunOptions}{[object of class \emph{GRiwrmRunOptions}] see \code{[CreateRunOptions.GRiwrm]} for details}
+\item{RunOptions}{Object of class \link[=CreateRunOptions]{GRiwrmRunOptions},
+see \link{CreateRunOptions} for details}
 
-\item{Param}{\link{list} parameter values. The list item names are the IDs of the sub-basins. Each item is a vector of numerical parameters}
+\item{Param}{\link{list} of parameter values (See .
+The list item names are the IDs of the sub-basins.
+Each item is a vector of numerical parameters}
+
+\item{Yinit}{\link{list} of initial values for the Y variables of the controllers
+(See details)}
 
 \item{...}{Further arguments for compatibility with S3 methods}
 }
@@ -19,7 +26,15 @@
 \emph{GRiwrmOutputsModel} object which is a list of \emph{OutputsModel} objects (See \link[airGR:RunModel]{airGR::RunModel}) for each node of the semi-distributed model
 }
 \description{
-RunModel function for a GRiwrmInputsModel object
+This function acts as \link{RunModel.GRiwrmInputsModel} but for a model
+containing a \link[=CreateSupervisor]{Supervisor}.
+}
+\details{
+\code{Yinit} is used for allowing to run the supervisor at the first supervision
+time step when no simulation data are available.
+It's a list with items named by the controller ids, and each item is a
+matrix with one column by controlled and/or measured variable \code{Y} for this
+controller and one row by supervision time step (See \link{CreateSupervisor}).
 }
 \examples{
 ###############################################################################
@@ -34,33 +49,46 @@ library(airGRiwrm)
 
 # Load Severn network information
 data(Severn)
-nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+nodes <- Severn$BasinsInfo[, c(
+  "gauge_id",
+  "downstream_id",
+  "distance_downstream",
+  "area"
+)]
 nodes$model <- "RunModel_GR4J"
 
 # Insert a dam downstream the location the gauging station 54095
 # The dam is a direct injection node
 nodes$downstream_id[nodes$gauge_id == "54095"] <- "Dam"
 nodes$distance_downstream[nodes$gauge_id == "54095"] <- 0
-nodes <- rbind(nodes,
-               data.frame(gauge_id = "Dam",
-                          downstream_id = "54001",
-                          distance_downstream = 42,
-                          area = NA,
-                          model = "RunModel_Reservoir"))
+nodes <- rbind(
+  nodes,
+  data.frame(
+    gauge_id = "Dam",
+    downstream_id = "54001",
+    distance_downstream = 42,
+    area = NA,
+    model = "RunModel_Reservoir"
+  )
+)
 
-griwrm <- CreateGRiwrm(nodes,
-                 list(id = "gauge_id",
-                      down = "downstream_id",
-                      length = "distance_downstream"))
-\dontrun{
-plot(griwrm)
+griwrm <- CreateGRiwrm(
+  nodes,
+  list(id = "gauge_id", down = "downstream_id", length = "distance_downstream")
+)
+if (interactive()) {
+  plot(griwrm)
 }
 
 # Format meteorological inputs for CreateInputs
 BasinsObs <- Severn$BasinsObs
 DatesR <- BasinsObs[[1]]$DatesR
-PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
-PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+PrecipTot <- cbind(sapply(BasinsObs, function(x) {
+  x$precipitation
+}))
+PotEvapTot <- cbind(sapply(BasinsObs, function(x) {
+  x$peti
+}))
 Precip <- ConvertMeteoSD(griwrm, PrecipTot)
 PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 
@@ -68,12 +96,20 @@ PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
 # This release will be modified by the Supervisor
 # We initiate it with the natural flow for having a good initialization of the
 # model at the first time step of the running period
-Qinf <- data.frame(
-  Dam = BasinsObs$`54095`$discharge_spec * griwrm$area[griwrm$id == "54095"] * 1E3
+Qrelease <- data.frame(
+  Dam = BasinsObs$`54095`$discharge_spec *
+    griwrm$area[griwrm$id == "54095"] *
+    1E3
 )
 
 # InputsModel object
-IM_severn <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap, Qinf)
+IM_severn <- CreateInputsModel(
+  griwrm,
+  DatesR,
+  Precip,
+  PotEvap,
+  Qrelease = Qrelease
+)
 
 # Initialization of the Supervisor
 sv <- CreateSupervisor(IM_severn)
@@ -104,12 +140,18 @@ funDamLogic <- factoryDamLogic(
   Qthreshold = 65 * 86400 # Min flow threshold to support at station 54057 (m3/day)
 )
 
-CreateController(sv, "DamRelease", Y = c("54057", "Dam"), U = "Dam", FUN = funDamLogic)
+CreateController(
+  sv,
+  "DamRelease",
+  Y = c("54057", "Dam"),
+  U = "Dam",
+  FUN = funDamLogic
+)
 
 # GRiwrmRunOptions object simulation of the hydrological year 2002-2003
 IndPeriod_Run <- which(
   DatesR >= as.POSIXct("2002-11-01", tz = "UTC") &
-  DatesR <= as.POSIXct("2003-11-01", tz = "UTC")
+    DatesR <= as.POSIXct("2003-11-01", tz = "UTC")
 )
 IndPeriod_WarmUp <- seq.int(IndPeriod_Run[1] - 366, IndPeriod_Run[1] - 1)
 RO_severn <- CreateRunOptions(
@@ -119,7 +161,11 @@ RO_severn <- CreateRunOptions(
 )
 
 # Load parameters of the model from Calibration in vignette V02
-P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwrm"))
+P_severn <- readRDS(system.file(
+  "vignettes",
+  "ParamV02.RDS",
+  package = "airGRiwrm"
+))
 
 # Set the reservoir parameters: maximum storage capacity and celerity of inflows
 # As the distance between the upstream node "54095" and the dam is 0 km, the celerity
@@ -127,20 +173,8 @@ P_severn <- readRDS(system.file("vignettes", "ParamV02.RDS", package = "airGRiwr
 P_severn$Dam <- c(Vmax = 650E6, celerity = 1)
 
 # The Supervisor is used instead of InputsModel for running the model
-OM_dam <- RunModel(sv,
-                   RunOptions = RO_severn,
-                   Param = P_severn)
+OM_dam <- RunModel(sv, RunOptions = RO_severn, Param = P_severn)
 
 # Plotting the time series of flows and reservoir storage
-oldpar <- par(mfrow=c(2,1),
-              mar = c(2,3.3,1.2,0.5),
-              mgp = c(2,1,0))
-plot(attr(OM_dam, "Qm3s")[, c("DatesR", "54095", "Dam", "54057")],
-     ylim = c(0, 200))
-Vres <- as.Qm3s(DatesR = OM_dam$Dam$DatesR,
-                   "Simulated volume" = OM_dam$Dam$Vsim / 1E6)
-plot(Vres,
-     main = "Simulated reservoir storage",
-     ylab = expression("Storage (Mm" ^ "3" * ")"))
-par(oldpar)
+plot(OM_dam$Dam)
 }

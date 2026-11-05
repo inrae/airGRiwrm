@@ -2,21 +2,27 @@
 % Please edit documentation in R/utils.Calibration.R
 \name{extractParam}
 \alias{extractParam}
+\alias{extractParam.GRiwrmOutputsCalib}
+\alias{extractParam.GRiwrmOutputsModel}
 \title{Extract calibrated parameters}
 \usage{
 extractParam(x)
+
+\method{extractParam}{GRiwrmOutputsCalib}(x)
+
+\method{extractParam}{GRiwrmOutputsModel}(x)
 }
 \arguments{
-\item{x}{A \emph{GRiwrmOutputsModel} object returned by \link{Calibration.GRiwrmInputsModel}}
+\item{x}{Object of class \link[=Calibration.GRiwrmInputsModel]{GRiwrmOutputsModel} returned by \link{Calibration.GRiwrmInputsModel}}
 }
 \value{
-A named \link{list} of \link{numeric} \link{vector} containing the calibrated parameters
-of each modeled node.
+A \link{list} containing representing the calibrated parameters
+of each modeled node as a \link{numeric} \link{vector}.
 }
 \description{
 Extract \link{list} of parameters from the output of \link{Calibration.GRiwrmInputsModel}
-which can be directly used as argument \code{Param} of \link{RunModel.GRiwrmInputsModel}
-and \link{RunModel.Supervisor}.
+which can be directly used as argument \code{Param} of \link{RunModel.GRiwrmInputsModel},
+\link{RunModel.Supervisor}, and \link{RunModel.GRiwrmOutputsModel}.
 }
 \details{
 See vignettes and example of \link{RunModel_Reservoir} for examples of use.

@@ -2,18 +2,23 @@
 % Please edit documentation in R/utils.GRiwrm.R
 \name{getSD_Ids}
 \alias{getSD_Ids}
-\title{Function to obtain the ID of sub-basins using SD model}
+\alias{getNoSD_Ids}
+\title{Function to get the IDs of sub-basins using SD model or not}
 \usage{
 getSD_Ids(InputsModel, add_diversions = FALSE)
+
+getNoSD_Ids(InputsModel, include_diversion = TRUE)
 }
 \arguments{
-\item{InputsModel}{[\code{GRiwrmInputsModel} object]}
+\item{InputsModel}{\link[=CreateInputsModel.GRiwrm]{GRiwrmInputsModel} object}
 
-\item{add_diversions}{\link{logical} for adding upstream nodes with diversion}
+\item{add_diversions}{\link{logical} for adding upstream nodes due to diversion}
+
+\item{include_diversion}{\link{logical} for including diversion nodes}
 }
 \value{
-\link{character} IDs of the sub-basins using SD model
+\link{character} IDs of the sub-basins using SD model or not
 }
 \description{
-Function to obtain the ID of sub-basins using SD model
+Function to get the IDs of sub-basins using SD model or not
 }

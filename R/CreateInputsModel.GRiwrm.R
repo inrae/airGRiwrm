@@ -1,6 +1,7 @@
-#' Creation of an InputsModel object for a **airGRiwrm** network
+#' Creation of an InputsModel object for an **airGRiwrm** network
 #'
-#' @param x \[GRiwrm object\] diagram of the semi-distributed model (See [CreateGRiwrm])
+#' @param x [GRiwrm][CreateGRiwrm] object containing diagram of the
+#' semi-distributed model (See [CreateGRiwrm])
 #' @param DatesR [POSIXt] vector of dates
 #' @param Precip (optional) [matrix] or [data.frame] of [numeric] containing
 #'        precipitation in \[mm per time step\]. Column names correspond to node IDs
@@ -10,81 +11,137 @@
 #'        observed flows. It must be provided only for nodes of type "Direct
 #'        injection" and "Diversion". See [CreateGRiwrm] for
 #'        details about these node types. Unit is \[mm per time step\] for nodes
-#'        with an area, and \[m3 per time step\] for nodes with `area=NA`.
+#'        with an area, and \[m³ per time step\] for nodes with `area=NA`.
 #'        Column names correspond to node IDs. Negative flows are abstracted from
 #'        the model and positive flows are injected to the model
 #' @param Qobs (deprecated) use `Qinf` instead
 #' @param Qmin (optional) [matrix] or [data.frame] of [numeric] containing
-#'        minimum flows to let downstream of a node with a Diversion \[m3 per
+#'        minimum flows that must be provided downstream of a node with a Diversion \[m³ per
 #'        time step\]. Default is zero. Column names correspond to node IDs
 #' @param Qrelease (optional) [matrix] or [data.frame] of [numeric] containing
-#'        release flows by nodes using the model `RunModel_Reservoir` \[m3 per
-#'        time step\]
-#' @param PrecipScale (optional) named [vector] of [logical] indicating if the
+#'        targeted release flows by nodes using the [RunModel_Reservoir] model
+#'        \[m³ per time step\]. Column names correspond to node IDs
+#' @param PrecipScale (optional) [logical] [vector] indicating if the
 #'        mean of the precipitation interpolated on the elevation layers must be
 #'        kept or not, required to create CemaNeige module inputs, default `TRUE`
-#'        (the mean of the precipitation is kept to the original value)
+#'        (the mean of the precipitation is kept to the original value).
+#'        Optional names correspond to node IDs
 #' @param TempMean (optional) [matrix] or [data.frame] of time series of mean
-#'        air temperature \[°C\], required to create the CemaNeige module inputs
+#'        air temperature \[°C\], required to create the CemaNeige module inputs. Column names correspond to node IDs
 #' @param TempMin (optional) [matrix] or [data.frame] of time series of minimum
-#'        air temperature \[°C\], possibly used to create the CemaNeige module inputs
+#'        air temperature \[°C\], possibly used to create the CemaNeige module inputs. Column names correspond to node IDs
 #' @param TempMax (optional) [matrix] or [data.frame] of time series of maximum
-#'        air temperature \[°C\], possibly used to create the CemaNeige module inputs
-#' @param ZInputs  (optional) named [vector] of [numeric] giving the mean
+#'        air temperature \[°C\], possibly used to create the CemaNeige module inputs. Column names correspond to node IDs
+#' @param ZInputs (optional) [numeric] [vector] giving the mean
 #'        elevation of the Precip and Temp series (before extrapolation) \[m\],
-#'        possibly used to create the CemaNeige module input
-#' @param HypsoData	(optional) [matrix] or [data.frame] containing 101 [numeric]
+#'        possibly used to create the CemaNeige module input. Names correspond to node IDs
+#' @param HypsoData (optional) [matrix] or [data.frame] containing 101 [numeric]
 #'        rows: min, q01 to q99 and max of catchment elevation distribution \[m\],
-#'        if not defined a single elevation is used for CemaNeige
-#' @param NLayers (optional) named [vector] of [numeric] integer giving the number
-#'        of elevation layers requested [-], required to create CemaNeige module
-#'        inputs, default=5
-#' @param IsHyst [logical] boolean indicating if the hysteresis version of
-#'        CemaNeige is used. See details of [airGR::CreateRunOptions].
+#'        if not defined a single elevation is used for CemaNeige. Column names correspond to node IDs
+#' @param NLayers (optional) [numeric] vector (integer) giving the number
+#'        of elevation layers requested \[-\], required to create CemaNeige module
+#'        inputs, default=5. Optional names correspond to node IDs
+#' @param IsHyst [logical] indicating if the hysteresis version of
+#'        CemaNeige is used. See details of [airGR::CreateRunOptions()].
+#' @param FUN_REGUL [list] of functions for local regulation (See details)
 #' @param ... used for compatibility with S3 methods
 #'
 #' @details Meteorological data are needed for the nodes of the network that
 #' represent a catchment simulated by a rainfall-runoff model. Instead of
-#' [airGR::CreateInputsModel] that has [numeric] [vector] as time series inputs,
-#' this function uses [matrix] or [data.frame] with the id of the sub-catchment
+#' [airGR::CreateInputsModel()] that has [numeric] [vector] as time series inputs,
+#' this function uses [matrix] or [data.frame] with the id of the sub-catchments
 #' as column names. For single values (`ZInputs` or `NLayers`), the function
 #' requires named [vector] with the id of the sub-catchment as name item. If an
 #' argument is optional, only the column or the named item has to be provided.
 #'
-#' See [airGR::CreateInputsModel] documentation for details concerning each input.
+#' See [airGR::CreateInputsModel()] documentation for details concerning each argument
 #'
-#' Number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `TempMean`, `TempMin`,
-#' `TempMax` must be the same of the length of `DatesR` (each row corresponds to
-#' a time step defined in `DatesR`).
+#' The number of rows of `Precip`, `PotEvap`, `Qinf`, `Qmin`, `Qrelease`, `TempMean`,
+#' `TempMin`, `TempMax` must be the same as the length of `DatesR` (each row
+#' corresponds to a time step defined in `DatesR`).
 #'
-#' For examples of use see topics [RunModel.GRiwrmInputsModel], [RunModel_Reservoir],
-#' and [RunModel.Supervisor].
+#' `NA` values inside `Qrelease` (for specific time steps and nodes) can be used
+#' to run the corresponding reservoir in pass-through mode, i.e. without any
+#' water storage for those time steps.
+#'
+#' For various examples of use see topics [RunModel.GRiwrmInputsModel()],
+#' [RunModel_Reservoir()], and [RunModel.Supervisor()].
 #'
 #' For example of use of Direct Injection nodes, see vignettes
 #' "V03_Open-loop_influenced_flow" and "V04_Closed-loop_regulated_withdrawal".
 #'
 #' For example of use of Diversion nodes, see example in
-#' [RunModel.GRiwrmInputsModel] topic and vignette
+#' [RunModel.GRiwrmInputsModel()] topic and vignette
 #' "V06_Modelling_regulated_diversion".
 #'
-#' @return A \emph{GRiwrmInputsModel} object which is a list of \emph{InputsModel}
-#' objects created by [airGR::CreateInputsModel] with one item per modeled sub-catchment.
+#' ## The `FUN_REGUL` parameter
+#'
+#' `FUN_REGUL` argument is a named [list] of functions that modify the node
+#' `InputsModel` before sending it to the node's model.
+#' This feature is useful for modifying data such as `InputsModel$Qdiv` or
+#' `InputsModel$Qrelease` giving simulated flows already available from upstream
+#' nodes.
+#' Each item of the list has a name corresponding to the node on which the
+#' function is applied. Each function must follow this interface:
+#' `function(InputsModel, RunOptions, OutputsModel, env)` where the arguments are:
+#' - `InputsModel`, the *InputsModel* object of the current node
+#' - `RunOptions`, the *RunOptions* object of the current node
+#' - `OutputsModel`, the *GRiwrmOutputsModel* object of the upstream and sibling
+#' nodes that have been already computed when the computation of the current
+#' node occurs
+#' - `env`, the [environment] of the [RunModel.GRiwrmInputsModel()] function
+#'
+#' The functions embedded in `FUN_REGUL` should all return the argument
+#' `InputsModel` after calculation.
+#'
+#' @return A \emph{GRiwrmInputsModel} object which is a [list] of \emph{InputsModel}
+#' objects created by [airGR::CreateInputsModel()] with one item per modeled sub-catchment.
 #' @export
 #' @seealso [CreateGRiwrm()], [CreateRunOptions()], [RunModel.GRiwrmInputsModel()]
 #'
-CreateInputsModel.GRiwrm <- function(x, DatesR,
-                                     Precip = NULL,
-                                     PotEvap = NULL,
-                                     Qinf = NULL,
-                                     Qobs = NULL,
-                                     Qmin = NULL,
-                                     Qrelease = NULL,
-                                     PrecipScale = TRUE,
-                                     TempMean = NULL, TempMin = NULL,
-                                     TempMax = NULL, ZInputs = NULL,
-                                     HypsoData = NULL, NLayers = 5,
-                                     IsHyst = FALSE, ...) {
-
+#' @examples
+#' # Loading catchment data
+#' data(Severn)
+#'
+#' # Creating catchment network
+#' nodes <- Severn$BasinsInfo[, c("gauge_id", "downstream_id", "distance_downstream", "area")]
+#' nodes$model <- "RunModel_GR4J"
+#' rename_columns <- list(id = "gauge_id",
+#'                        down = "downstream_id",
+#'                        length = "distance_downstream")
+#' griwrm <- CreateGRiwrm(nodes, rename_columns)
+#' griwrm
+#'
+#' # Preparation of InputsModel object
+#' BasinsObs <- Severn$BasinsObs
+#' DatesR <- BasinsObs[[1]]$DatesR
+#' PrecipTot <- cbind(sapply(BasinsObs, function(x) {x$precipitation}))
+#' PotEvapTot <- cbind(sapply(BasinsObs, function(x) {x$peti}))
+#' Qobs <- cbind(sapply(BasinsObs, function(x) {x$discharge_spec}))
+#' Precip <- ConvertMeteoSD(griwrm, PrecipTot)
+#' PotEvap <- ConvertMeteoSD(griwrm, PotEvapTot)
+#' InputsModel <- CreateInputsModel(griwrm, DatesR, Precip, PotEvap)
+#'
+CreateInputsModel.GRiwrm <- function(
+  x,
+  DatesR,
+  Precip = NULL,
+  PotEvap = NULL,
+  Qinf = NULL,
+  Qobs = NULL,
+  Qmin = NULL,
+  Qrelease = NULL,
+  PrecipScale = TRUE,
+  TempMean = NULL,
+  TempMin = NULL,
+  TempMax = NULL,
+  ZInputs = NULL,
+  HypsoData = NULL,
+  NLayers = 5L,
+  IsHyst = FALSE,
+  FUN_REGUL = NULL,
+  ...
+) {
   # Check and format inputs
   if (!is.null(Qobs) && !is.null(Qinf)) {
     stop("'Qobs' and 'Qinf' cannot be used together, use only 'Qinf' instead")
@@ -93,60 +150,45 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     warning("The usage of 'Qobs' is deprecated, use 'Qinf' instead")
     Qinf <- Qobs
   }
-  varNames <- c("Precip", "PotEvap", "TempMean", "Qinf", "Qmin",
-                "TempMin", "TempMax", "ZInputs", "HypsoData", "NLayers")
-  names(varNames) <- varNames
-  lapply(varNames, function(varName) {
-    v <- get(varName)
-    if (!is.null(v)) {
-      if (is.matrix(v) || is.data.frame(v)) {
-        if (is.null(colnames(v))) {
-          stop(sprintf(
-            "'%s' must have column names",
-            varName
-          ))
-        } else if (!all(colnames(v) %in% x$id)) {
-          stop(sprintf(
-            "'%s' column names must be included in 'id's of the GRiwrm object",
-            varName
-          ), "\n",
-          sprintf("These columns are not known: %s",
-                  paste(colnames(v)[!colnames(v) %in% x$id], collapse = ", ")))
-        } else if (any(duplicated(colnames(v)))) {
-          stop(sprintf(
-            "'%s' has duplicated column names: '%s'",
-            varName,
-            paste(colnames(v)[duplicated(colnames(v))], collapse = "', '")
-          ))
-        }
-        if (!varName %in% c("ZInputs", "NLayers", "HypsoData") && nrow(v) != length(DatesR)) {
-          stop(sprintf(
-            "'%s' number of rows and the length of 'DatesR' must be equal",
-             varName
-          ))
-        }
-        if (varName %in% c("Precip", "PotEvap", "Qmin")) {
-          if (any(is.na(v))) {
-            stop(sprintf(
-              "`NA` values detected in '%s'. Missing values are not allowed in InputsModel",
-              varName
-            ))
-          }
-          if (any(v < 0)) {
-            stop(sprintf(
-              "'%s' values must be positive or nul. Missing values are not allowed in InputsModel",
-              varName
-            ))
-          }
-        }
-      } else if (!varName %in% c("ZInputs", "NLayers")) {
-        stop(sprintf("'%s' must be a matrix or a data.frame", varName))
-      }
+  if (!is.null(ZInputs)) {
+    if (is.data.frame(ZInputs) && nrow(ZInputs) == 1) {
+      ZInputs <- as.numeric(unlist(ZInputs[1, ], use.names = TRUE))
+    } else if (is.list(ZInputs) && !is.data.frame(ZInputs)) {
+      ZInputs <- as.numeric(unlist(ZInputs, use.names = TRUE))
     }
-  })
+    if (!is.numeric(ZInputs)) {
+      stop("'ZInputs' must be a numeric vector")
+    }
+  }
+  if (!is.logical(PrecipScale)) {
+    stop("'PrecipScale' must be logical")
+  }
+  if (!is.numeric(NLayers)) {
+    stop("'NLayers' must be numeric")
+  }
 
-  if (is.null(Qinf)) Qinf <- matrix(0, ncol = 0, nrow = length(DatesR))
-  if (is.null(Qrelease)) Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
+  checkInputsModelArguments(
+    x,
+    DatesR,
+    Precip = Precip,
+    PotEvap = PotEvap,
+    TempMean = TempMean,
+    Qinf = Qinf,
+    Qmin = Qmin,
+    TempMin = TempMin,
+    TempMax = TempMax,
+    ZInputs = ZInputs,
+    HypsoData = HypsoData,
+    NLayers = NLayers,
+    PrecipScale = PrecipScale
+  )
+
+  if (is.null(Qinf)) {
+    Qinf <- matrix(0, ncol = 0, nrow = length(DatesR))
+  }
+  if (is.null(Qrelease)) {
+    Qrelease <- matrix(0, ncol = 0, nrow = length(DatesR))
+  }
   l <- updateQinfQrelease(g = x, Qinf = Qinf, Qrelease = Qrelease)
   Qinf <- l$Qinf
   Qrelease <- l$Qrelease
@@ -200,23 +242,25 @@ CreateInputsModel.GRiwrm <- function(x, DatesR,
     message("CreateInputsModel.GRiwrm: Processing sub-basin ", id, "...")
 
     InputsModel[[id]] <-
-      CreateOneGRiwrmInputsModel(id = id,
-                                 griwrm = x,
-                                 DatesR = DatesR,
-                                 Precip = getInputBV(Precip, id),
-                                 PrecipScale,
-                                 PotEvap = getInputBV(PotEvap, id),
-                                 TempMean = getInputBV(TempMean, id),
-                                 TempMin = getInputBV(TempMin, id),
-                                 TempMax = getInputBV(TempMax, id),
-                                 ZInputs = getInputBV(ZInputs, id),
-                                 HypsoData = getInputBV(HypsoData, id),
-                                 NLayers = getInputBV(NLayers, id, 5),
-                                 Qinf = Qinf,
-                                 Qmin = getInputBV(Qmin, id),
-                                 Qrelease = Qrelease,
-                                 IsHyst = IsHyst
-                                 )
+      CreateOneGRiwrmInputsModel(
+        id = id,
+        griwrm = x,
+        DatesR = DatesR,
+        Precip = getInputBV(Precip, id),
+        PrecipScale = getInputBV(PrecipScale, id, TRUE),
+        PotEvap = getInputBV(PotEvap, id),
+        TempMean = getInputBV(TempMean, id),
+        TempMin = getInputBV(TempMin, id),
+        TempMax = getInputBV(TempMax, id),
+        ZInputs = getInputBV(ZInputs, id),
+        HypsoData = getInputBV(HypsoData, id),
+        NLayers = getInputBV(NLayers, id, 5),
+        Qinf = Qinf,
+        Qmin = getInputBV(Qmin, id),
+        Qrelease = Qrelease,
+        IsHyst = IsHyst,
+        FUN_REGUL = FUN_REGUL[[id]]
+      )
   }
   attr(InputsModel, "TimeStep") <- getModelTimeStep(InputsModel)
   return(InputsModel)
@@ -250,7 +294,17 @@ CreateEmptyGRiwrmInputsModel <- function(griwrm) {
 #'
 #' @return \emph{InputsModel} object for one.
 #' @noRd
-CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrelease, IsHyst) {
+CreateOneGRiwrmInputsModel <- function(
+  id,
+  griwrm,
+  DatesR,
+  ...,
+  Qinf,
+  Qmin,
+  Qrelease,
+  IsHyst,
+  FUN_REGUL
+) {
   np <- getNodeProperties(id, griwrm)
 
   if (np$Diversion) {
@@ -266,7 +320,6 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     FUN_MOD <- node$model
   }
 
-
   # Set hydraulic parameters
   UpstreamNodeRows <- which(griwrm$down == id & !is.na(griwrm$down))
   Qupstream <- NULL
@@ -277,11 +330,21 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     # Sub-basin with hydraulic routing
     Qupstream <- NULL
     Qupstream <- as.matrix(cbind(
-      Qinf[ , colnames(Qinf)[colnames(Qinf) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE],
-      Qrelease[ , colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]], drop = FALSE]
+      Qinf[,
+        colnames(Qinf)[colnames(Qinf) %in% griwrm$id[UpstreamNodeRows]],
+        drop = FALSE
+      ],
+      Qrelease[,
+        colnames(Qrelease)[colnames(Qrelease) %in% griwrm$id[UpstreamNodeRows]],
+        drop = FALSE
+      ]
     ))
     # Qupstream completion with zeros for all upstream nodes
-    Qupstream0 <- matrix(0, nrow = length(DatesR), ncol = length(UpstreamNodeRows))
+    Qupstream0 <- matrix(
+      0,
+      nrow = length(DatesR),
+      ncol = length(UpstreamNodeRows)
+    )
     colnames(Qupstream0) <- griwrm$id[UpstreamNodeRows]
     if (is.null(Qupstream) || ncol(Qupstream) == 0) {
       Qupstream <- Qupstream0
@@ -290,20 +353,20 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
       Qupstream <- Qupstream0
     }
     upstreamDiversion <- which(
-      sapply(griwrm$id[UpstreamNodeRows],
-             function(id) {
-               getNodeProperties(id, griwrm)$Diversion
-             })
+      sapply(griwrm$id[UpstreamNodeRows], function(id) {
+        np <- getNodeProperties(id, griwrm)
+        np$Diversion
+      })
     )
     if (length(upstreamDiversion) > 0) {
-      Qupstream[, upstreamDiversion] <- - Qupstream[, upstreamDiversion]
+      Qupstream[, upstreamDiversion] <- -Qupstream[, upstreamDiversion]
     }
     LengthHydro <- griwrm$length[UpstreamNodeRows]
     names(LengthHydro) <- griwrm$id[UpstreamNodeRows]
     upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     BasinAreas <- c(
-        upstreamAreas,
-        node$area - sum(upstreamAreas, na.rm = TRUE)
+      upstreamAreas,
+      node$area - sum(upstreamAreas, na.rm = TRUE)
     )
     if (!is.na(node$area)) {
       if (BasinAreas[length(BasinAreas)] < 0) {
@@ -338,10 +401,12 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     InputsModel$UpstreamNodes <- griwrm$id[UpstreamNodeRows]
     InputsModel$UpstreamIsModeled <- !is.na(griwrm$model[UpstreamNodeRows])
     names(InputsModel$UpstreamIsModeled) <- InputsModel$UpstreamNodes
-    InputsModel$UpstreamVarQ <- ifelse(!is.na(griwrm$model[UpstreamNodeRows]) &
-                                    griwrm$model[UpstreamNodeRows] == "Diversion",
-                                    "Qdiv_m3",
-                                    "Qsim_m3")
+    InputsModel$UpstreamVarQ <- ifelse(
+      !is.na(griwrm$model[UpstreamNodeRows]) &
+        griwrm$model[UpstreamNodeRows] == "Diversion",
+      "Qdiv_m3",
+      "Qsim_m3"
+    )
     names(InputsModel$UpstreamVarQ) <- InputsModel$UpstreamNodes
   } else {
     InputsModel$BasinAreas <- node$area
@@ -353,13 +418,11 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
   # inUngaugedCluster: Ungauged node with downstream donor
   # including reservoirs between ungauged nodes and donor
   InputsModel$inUngaugedCluster <- node$donor != id &&
-                                   isNodeDownstream(griwrm, id, node$donor)
+    isNodeDownstream(griwrm, id, node$donor)
   # isReceiver: Ungauged node with not downstream donor
   InputsModel$isReceiver <- node$model == "Ungauged" &&
-                            !isNodeDownstream(griwrm, id, node$donor)
-  InputsModel$gaugedId <- ifelse(node$model == "Ungauged",
-                                 node$donor,
-                                 id)
+    !isNodeDownstream(griwrm, id, node$donor)
+  InputsModel$gaugedId <- ifelse(node$model == "Ungauged", node$donor, id)
   InputsModel$hasUngaugedNodes <- hasUngaugedNodes(id, griwrm)
   InputsModel$model <-
     list(
@@ -379,9 +442,19 @@ CreateOneGRiwrmInputsModel <- function(id, griwrm, DatesR, ..., Qinf, Qmin, Qrel
     InputsModel$Qmin <- Qmin
   }
   if (np$Reservoir) {
-    # Fill reservoir release with Qinf
-    InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+    if (!is.null(Qrelease) && id %in% colnames(Qrelease)) {
+      # Fill reservoir release with Qinf
+      InputsModel$Qrelease <- Qrelease[, id, drop = TRUE]
+      if (any(is.na(InputsModel$Qrelease))) {
+        message(
+          "NA values detected in Qrelease: on these time steps, the reservoir will operate in pass-through mode and will not apply release constraints."
+        )
+      }
+    }
   }
+
+  # Add regulation function
+  InputsModel$FUN_REGUL <- FUN_REGUL
 
   # Add class for S3 process (Prequel of HYCAR-Hydro/airgr#60)
   class(InputsModel) <- c(FUN_MOD_REAL, class(InputsModel))
@@ -435,7 +508,7 @@ getInputBV <- function(x, id, unset = NULL) {
       return(unset)
     }
   } else {
-    # vector (for ZInputs and NLayers)
+    # vector (for PrecipScale, ZInputs and NLayers)
     if (length(x) == 1 && is.null(names(x))) {
       return(x)
     } else if (!id %in% names(x)) {
@@ -459,12 +532,19 @@ getInputBV <- function(x, id, unset = NULL) {
 hasUngaugedNodes <- function(id, griwrm) {
   g <- griwrm[!is.na(griwrm$model), ]
   idsWithCurrentAsDonor <- g$id[g$id != id & !is.na(g$donor) & g$donor == id]
-  if (length(idsWithCurrentAsDonor) == 0) return(FALSE)
-  areNodesUpstream <- sapply(idsWithCurrentAsDonor,
-                             function(x) isNodeUpstream(g, id, x))
-  if (!any(areNodesUpstream)) return(FALSE)
+  if (length(idsWithCurrentAsDonor) == 0) {
+    return(FALSE)
+  }
+  areNodesUpstream <- sapply(idsWithCurrentAsDonor, function(x) {
+    isNodeUpstream(g, id, x)
+  })
+  if (!any(areNodesUpstream)) {
+    return(FALSE)
+  }
   g_red <- g[g$id %in% idsWithCurrentAsDonor[areNodesUpstream], ]
-  if (any(g_red$model == "Ungauged")) return(TRUE)
+  if (any(g_red$model == "Ungauged")) {
+    return(TRUE)
+  }
   return(FALSE)
 }
 
@@ -474,11 +554,20 @@ hasUngaugedNodes <- function(id, griwrm) {
 #' @noRd
 .GetFeatModel <- function(InputsModel, IsHyst) {
   path <- system.file("modelsFeatures/FeatModelsGR.csv", package = "airGR")
-  FeatMod <- read.table(path, header = TRUE, sep = ";", stringsAsFactors = FALSE)
-  NameFunMod <- ifelse(test = FeatMod$Pkg %in% "airGR",
-                       yes  = paste("RunModel", FeatMod$NameMod, sep = "_"),
-                       no   = FeatMod$NameMod)
-  IdMod <- which(sapply(NameFunMod, FUN = function(x) identical(InputsModel$FUN_MOD, x)))
+  FeatMod <- read.table(
+    path,
+    header = TRUE,
+    sep = ";",
+    stringsAsFactors = FALSE
+  )
+  NameFunMod <- ifelse(
+    test = FeatMod$Pkg %in% "airGR",
+    yes = paste("RunModel", FeatMod$NameMod, sep = "_"),
+    no = FeatMod$NameMod
+  )
+  IdMod <- which(sapply(NameFunMod, FUN = function(x) {
+    identical(InputsModel$FUN_MOD, x)
+  }))
   if (length(IdMod) < 1) {
     stop("'FUN_MOD' must be one of ", paste(NameFunMod, collapse = ", "))
   }
@@ -498,6 +587,21 @@ hasUngaugedNodes <- function(id, griwrm) {
 }
 
 
+#' Return the row indices of the direct upstream non-Diversion nodes of a node
+#'
+#' @param griwrm A GRiwrm
+#' @param id [character] the ID of the node
+#'
+#' @return [integer] the row indices in the GRiwrm network of the direct
+#'   upstream nodes of the node (Diversion nodes excluded)
+#' @noRd
+#'
+directUpstreamNodes <- function(griwrm, id) {
+  Diversions <- !is.na(griwrm$model) & griwrm$model == "Diversion"
+  which(griwrm$down == id & !is.na(griwrm$down) & !Diversions)
+}
+
+
 #' Return the basin area of a node
 #'
 #' If the current node doesn't have an area (for example, for a Reservoir,
@@ -512,16 +616,48 @@ hasUngaugedNodes <- function(id, griwrm) {
 #'
 getNodeBasinArea <- function(i, griwrm) {
   area <- griwrm$area[i]
-  if (!is.na(area)) return(area)
+  if (!is.na(area)) {
+    return(area)
+  }
   Diversions <- !is.na(griwrm$model) & griwrm$model == "Diversion"
-  if (i %in% which(Diversions)) return(NA)
-  UpstreamNodeRows <-
-    which(griwrm$down == griwrm$id[i] & !is.na(griwrm$down) & !Diversions)
+  if (i %in% which(Diversions)) {
+    return(NA)
+  }
+  UpstreamNodeRows <- directUpstreamNodes(griwrm, griwrm$id[i])
   if (length(UpstreamNodeRows) > 0) {
     upstreamAreas <- sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm)
     return(sum(upstreamAreas, na.rm = TRUE))
   } else {
     return(NA)
   }
+}
 
+
+#' Return the local sub-basin area of a node
+#'
+#' The local sub-basin area is the part of the catchment of the node for which
+#' the meteorological data of the node itself are the "real" data: it is the
+#' total area of the catchment at the node (see `getNodeBasinArea`) minus the
+#' total areas of the catchments of the direct upstream nodes.
+#'
+#' @param id [character] the ID of the node
+#' @param griwrm A GRiwrm
+#'
+#' @return The local sub-basin area of the node in km2 (NA when unknown)
+#' @noRd
+#'
+getNodeLocalArea <- function(id, griwrm) {
+  i <- which(griwrm$id == id)
+  if (length(i) != 1) {
+    return(NA_real_)
+  }
+  total <- getNodeBasinArea(i, griwrm)
+  UpstreamNodeRows <- directUpstreamNodes(griwrm, id)
+  if (length(UpstreamNodeRows) == 0) {
+    return(total)
+  }
+  total - sum(
+    sapply(UpstreamNodeRows, getNodeBasinArea, griwrm = griwrm),
+    na.rm = TRUE
+  )
 }

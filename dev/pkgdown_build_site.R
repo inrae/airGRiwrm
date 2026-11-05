@@ -1,2 +1,2 @@
-remotes::install_gitlab("in-wop/seinebasin", host = "gitlab.irstea.fr")
+remotes::install_gitlab("airgriwrm/seinebasin", host = "forge.inrae.fr")
 pkgdown::build_site("..")

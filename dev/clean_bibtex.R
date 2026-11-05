@@ -7,9 +7,18 @@
 #' @return Function used for side effect.
 #' @export
 #'
-clean_bibtex <- function(path = "./vignettes",
-                         pattern = "*.bib",
-                         rm.fields = c("abstract", "langid", "file", "keywords", "copyright", "annotation")) {
+clean_bibtex <- function(
+  path = "./vignettes",
+  pattern = "*.bib",
+  rm.fields = c(
+    "abstract",
+    "langid",
+    "file",
+    "keywords",
+    "copyright",
+    "annotation"
+  )
+) {
   files <- list.files(path = path, pattern = pattern)
   message("Found files to clean: ", paste(files, collapse = ", "))
   lapply(files, function(f) {

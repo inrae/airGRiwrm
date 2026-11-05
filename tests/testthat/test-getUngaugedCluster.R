@@ -19,11 +19,17 @@ test_that("Reservoir and Diversion on reservoir should be in ungauged cluster", 
   nodes <- n_rsrvr
   nodes[nodes$id == "Dam", c("down", "length")] <- NA
   nodes$model[nodes$id == "54095"] <- "Ungauged"
-  nodes <- rbind(nodes,
-                 data.frame(id = "Dam", down = "54001", length = 42, area = NA, model = "Diversion"))
+  nodes <- rbind(
+    nodes,
+    data.frame(
+      id = "Dam",
+      down = "54001",
+      length = 42,
+      area = NA,
+      model = "Diversion"
+    )
+  )
   g <- CreateGRiwrm(nodes)
   g2 <- getUngaugedCluster(g, "54001")
-  expect_equal(g2$id,
-               c("54095", "Dam", "Dam", "54001"))
+  expect_equal(g2$id, c("54095", "Dam", "Dam", "54001"))
 })
-

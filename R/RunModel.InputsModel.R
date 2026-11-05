@@ -17,12 +17,14 @@
 #' applied by the minimum flow threshold `Qmin` to keep flowing in the river
 #'
 #' @export
-RunModel.InputsModel <- function(x = NULL,
-                                 RunOptions,
-                                 Param,
-                                 FUN_MOD = NULL,
-                                 InputsModel = NULL,
-                                 ...) {
+RunModel.InputsModel <- function(
+  x = NULL,
+  RunOptions,
+  Param,
+  FUN_MOD = NULL,
+  InputsModel = NULL,
+  ...
+) {
   if (is.null(x)) {
     if (!is.null(InputsModel)) {
       x <- InputsModel
@@ -43,10 +45,16 @@ RunModel.InputsModel <- function(x = NULL,
     }
   }
 
+  # Avoiding Error in `FUN_MOD(x, RunOptions, Param)`: NA/NaN/Inf in foreign function call (arg 7)
+  RunOptions$IniStates[is.na(RunOptions$IniStates)] <- 0
+
   FUN_MOD <- match.fun(FUN_MOD)
   if (identical(FUN_MOD, RunModel_Lag)) {
     OutputsModel <- RunModel_Routing(x, RunOptions, Param)
-  } else if ((inherits(x, "GR") & is.null(x$UpstreamNodes)) | identical(FUN_MOD, RunModel_Reservoir)) {
+  } else if (
+    (inherits(x, "GR") & is.null(x$UpstreamNodes)) |
+      identical(FUN_MOD, RunModel_Reservoir)
+  ) {
     # Upstream basins and Reservoir are launch directly
     OutputsModel <- FUN_MOD(x, RunOptions, Param)
   } else {
@@ -57,19 +65,12 @@ RunModel.InputsModel <- function(x = NULL,
     }
     OutputsModel <- airGR::RunModel(x, RunOptions, Param, FUN_MOD)
     OutputsModel <- calcOverAbstraction(OutputsModel, FALSE)
-    OutputsModel$RunOptions <- calcOverAbstraction(OutputsModel$RunOptions, TRUE)
+    OutputsModel$RunOptions <- calcOverAbstraction(
+      OutputsModel$RunOptions,
+      TRUE
+    )
   }
-  OutputsModel$RunOptions$TimeStep <- RunOptions$FeatFUN_MOD$TimeStep
-  if (is.null(OutputsModel$Qsim_m3)) {
-    # Add Qsim_m3 in m3/timestep
-    OutputsModel$Qsim_m3 <-
-      OutputsModel$Qsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
-  }
-  if ("WarmUpQsim" %in% RunOptions$Outputs_Sim &&
-      is.null(OutputsModel$RunOptions$WarmUpQsim_m3)) {
-    OutputsModel$RunOptions$WarmUpQsim_m3 <-
-      OutputsModel$RunOptions$WarmUpQsim * sum(x$BasinAreas, na.rm = TRUE) * 1e3
-  }
+  OutputsModel <- complete_OutputsModel(OutputsModel, RunOptions, x$BasinAreas)
   if (x$hasDiversion && !x$isReservoir) {
     OutputsModel <- RunModel_Diversion(x, RunOptions, OutputsModel)
   }
@@ -90,14 +91,18 @@ RunModel.InputsModel <- function(x = NULL,
 #' @return Updated `OutputsModel` object after diversion
 #' @noRd
 #'
-RunModel_Diversion <- function(InputsModel,
-                               RunOptions,
-                               OutputsModel,
-                               updateQsim = TRUE) {
+RunModel_Diversion <- function(
+  InputsModel,
+  RunOptions,
+  OutputsModel,
+  updateQsim = TRUE
+) {
   OutputsModel$Qnat <- OutputsModel$Qsim
-  lQ <- calc_Qdiv(OutputsModel$Qsim_m3,
-                  InputsModel$Qdiv[RunOptions$IndPeriod_Run],
-                  InputsModel$Qmin[RunOptions$IndPeriod_Run])
+  lQ <- calc_Qdiv(
+    OutputsModel$Qsim_m3,
+    InputsModel$Qdiv[RunOptions$IndPeriod_Run],
+    InputsModel$Qmin[RunOptions$IndPeriod_Run]
+  )
   #message(paste(InputsModel$Qdiv[RunOptions$IndPeriod_Run], lQ$Qdiv, lQ$Qsim, InputsModel$Qmin[RunOptions$IndPeriod_Run], sep = ", "))
   OutputsModel$Qdiv_m3 <- lQ$Qdiv
   OutputsModel$Qsim_m3 <- lQ$Qsim
@@ -106,9 +111,11 @@ RunModel_Diversion <- function(InputsModel,
       OutputsModel$Qsim_m3 / sum(InputsModel$BasinAreas, na.rm = TRUE) / 1e3
   }
   if ("WarmUpQsim" %in% RunOptions$Outputs_Sim) {
-    lQ <- calc_Qdiv(OutputsModel$RunOptions$WarmUpQsim_m3,
-                    InputsModel$Qdiv[RunOptions$IndPeriod_WarmUp],
-                    InputsModel$Qmin[RunOptions$IndPeriod_WarmUp])
+    lQ <- calc_Qdiv(
+      OutputsModel$RunOptions$WarmUpQsim_m3,
+      InputsModel$Qdiv[RunOptions$IndPeriod_WarmUp],
+      InputsModel$Qmin[RunOptions$IndPeriod_WarmUp]
+    )
     OutputsModel$RunOptions$WarmUpQdiv_m3 <- lQ$Qdiv
     OutputsModel$RunOptions$WarmUpQsim_m3 <- lQ$Qsim
   }
@@ -126,7 +133,7 @@ RunModel_Diversion <- function(InputsModel,
 #' - Qdiv, the diverted flow after limitation of minimum flow
 #' - Qsim, the simulated flow after diversion and limitation
 #' @noRd
-calc_Qdiv<- function(Qnat, Qdiv, Qmin) {
+calc_Qdiv <- function(Qnat, Qdiv, Qmin) {
   Qsim <- Qnat - Qdiv
   indexQmin <- which(Qsim < Qmin & Qdiv > 0)
   if (any(indexQmin)) {
@@ -134,4 +141,10 @@ calc_Qdiv<- function(Qnat, Qdiv, Qmin) {
     Qsim[indexQmin] <- pmin(Qnat[indexQmin], Qmin[indexQmin])
   }
   return(list(Qsim = Qsim, Qdiv = Qnat - Qsim))
+}
+
+#' @export
+#' @noRd
+RunModel.Ungauged <- function(x, ...) {
+  RunModel_Ungauged(x, ...)
 }
