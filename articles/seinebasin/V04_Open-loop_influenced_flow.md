@@ -41,30 +41,15 @@ releases).
 
 The configuration on the lake Seine is similar:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 -->|6km| SEINE_P7\n  SEINE_P7 -->|32km| SEINE_R8\n  SEINE_P7 --> SEINE(SEINE)\n  SEINE--> SEINE_R8\n  SEINE_R8 -->|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n  style SEINE fill:#ccf\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_true-1.png)
 
 which can be translated as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 -->|79.7km| MERY-_22\n  SEINE_P7 -->|73.7km| MERY-_22\n  SEINE_R8 -->|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_model-1.png)
 
 The Pannecière lake is an inline reservoir:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 -->|0km| P\nP --> |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_true-1.png)
 
 We model it with a `RunModel_Reservoir` node: `PANNEC_R` is the
 Pannecière reservoir, located inline between `CHAUM_07` and `GURGY_02`.
@@ -76,21 +61,11 @@ storage volume is not calibrated in this study): it is forced to the
 observed values with the `forceReservoirObs` argument of
 \[RunModel.GRiwrmInputsModel\].
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nCHAUM_07 --> |0km| PANNEC_R\nPANNEC_R --> |153km| GURGY_02\nstyle PANNEC_R fill:#fcc\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislz9nAM9Y03MFfQ1bVTqDHIzq1RCHD083N1jgdKwlgQSUNTY5C0e2iQe2S8gVFMXnFJZU4qXLlCWmZOjpVyWnJyTJ6SjlJualFuYmaKklW1UklGai7I3pTUtMTSnBKl2loAuYMsAg?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_model-1.png)
 
 The Marne lake can be mapped as:
 
-    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
-    #> cannot open URL
-    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png':
-    #> HTTP status was '503 Service Unavailable'
-    #> Warning in plot.mermaid("\ngraph LR\nLOUVE_19 -->|0.5km| MARNE_P28\nMARNE_P23 -->|3km| STDIZ_04\nMARNE_P23 --> M(MARNE)\nMARNE_P28 --> M\nMARNE_P28 -->|25.6km| MARNE_R25\nM --> MARNE_R25\nSTDIZ_04 -->|28.7km| MARNE_R25\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\nstyle M fill:#ccf\n"): Mermaid diagram generation failed with error:
-    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png'
+![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_true-1.png)
 
 And can be modeled as:
 
@@ -141,9 +116,13 @@ seine_nodes2$down[seine_nodes2$id == "CHAUM_07"] <- "PANNEC_R"
 seine_nodes2$length[seine_nodes2$id == "CHAUM_07"] <- 0
 griwrm2 <- CreateGRiwrm(seine_nodes2)
 plot(griwrm2)
+#> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+#> cannot open URL
+#> 'https://mermaid.ink/img/pako:eNrtV01P20AQ_StWEOKykfyR70OlAG5qKU3QhiDRpVpZZA0uSUCJoZUo_71bvG8z3mIQPfXQC3pmHrMzb96MxGPj8nahGoPG_v5jvs6Lgfd4UFyrlToYeAdrdV9s0uXBk_e0v3-xvlhfbdK7a2_Mf-N8IU_5cDKRfiAAvprA7PQ4-SL9lgBA4HDImzPpdwQAAkefhvPP0u8KABuYz2bn0u8JgN0bo5hLvy8AEBjNk_FYBr4AQGCYzM6bMggEAALxif6FDFoCAIHP08kpl0FPACAwns7PYhn0BYANDGezRIa-AEDgLDnl5zJsCwArCU9irV0kAIgkh7r8UACQwHgqw0AA2HJjrvsKQwFgO-dHyUyGLQGAwImeW3wkuQDYichHWu1QACAwmY50lUEkAHaBRDccdAWALXc652MZRgKAqqu1awsAW-7441Sr3REAu3K5Lt9vC4Cv_53434n_lBOH88O4KU9CAVAN8EgA2MeHfBJrYiQsckM9G-pVQ1yP0SLrxzj5ze0KgGqA9wSAuz5es_nhp9fpeTernx6ZlrNMJa3XAQ3Td1bL0HzQ4AVn0UqaZWH-ztaVrH4AGtzg7KChtWpoWETTKO3g2djOfpa0wA_Bw2Y462o67VvdjFuc5S1pkZUX_nRW-Q15sc8lrdWqGRa2233UHZbpyDzatjSzIs4JMIoEYT3vOXvJC2t7hRdKXtvf0cpdds5FSesGNTR4xlTXjmrHX36aZls1TSC7cYnNhuvg3BmjcH_n4PIkOFfHSNKpyYZP18GOl_BpaDVv4vi4Pnc8glP0hpXsXTKdgoZ74F4rI29YYzl7sMzwuzU8nC8z_FbNHcExM02EL9Eul-l265FLx8idYuQYMXJyGLkrjBwPRi4EI1eAkVVnZJ8ZWVpGN3N-ty02Kl2N0vsrtajUCWkZWVFG9pARuRhplpHpMeJ4RmzNiHcZMS
+#> [... truncated]
+#> Warning in plot.mermaid(diagram, ...): Mermaid diagram generation failed with error:
+#> cannot open URL 'https://mermaid.ink/img/pako:eNrtV01P20AQ_StWEOKykfyR70OlAG5qKU3QhiDRpVpZZA0uSUCJoZUo_71bvG8z3mIQPfXQC3pmHrMzb96MxGPj8nahGoPG_v5jvs6Lgfd4UFyrlToYeAdrdV9s0uXBk_e0v3-xvlhfbdK7a2_Mf-N8IU_5cDKRfiAAvprA7PQ4-SL9lgBA4HDImzPpdwQAAkefhvPP0u8KABuYz2bn0u8JgN0bo5hLvy8AEBjNk_FYBr4AQGCYzM6bMggEAALxif6FDFoCAIHP08kpl0FPACAwns7PYhn0BYANDGezRIa-AEDgLDnl5zJsCwArCU9irV0kAIgkh7r8UACQwHgqw0AA2HJjrvsKQwFgO-dHyUyGLQGAwImeW3wkuQDYichHWu1QACAwmY50lUEkAHaBRDccdAWALXc652MZRgKAqqu1awsAW-7441Sr3REAu3K5Lt9vC4Cv_53434n_lBOH88O4KU9CAVAN8EgA2MeHfBJrYiQsckM9G-pVQ1yP0SLrxzj5ze0KgGqA9wSAuz5es_nhp9fpeTernx6ZlrNMJa3XAQ3Td1bL0HzQ4AVn0UqaZWH-ztaVrH4AGtzg7KChtWpoWETTKO3g2djOfpa0wA_Bw2Y462o67VvdjFuc5S1pkZUX_nRW-Q15sc8lrdWqGRa2233UHZbpyDzatjSzIs4JMIoEYT3vOXvJC2t7hRdKXtvf0cpdds5FSesGNTR4xlTXjmrHX36aZls1TSC7cYnNhuvg3BmjcH_n4PIkOFfHSNKpyYZP18GOl_BpaDVv4vi4Pnc8glP0hpXsXTKdgoZ74F4rI29YYzl7sMzwuzU8nC8z_FbNHcExM02EL9Eul-l265FLx8idYuQYMXJyGLkrjBwPRi4EI1eAkVVnZJ8ZWVpGN3N-ty02Kl2N0vsrtajUCWkZWVFG9pARuRhplpHpMeJ4RmzNiHcZM
 ```
-
-![](V04_Open-loop_influenced_flow_files/figure-html/griwrm2-1.png)
 
 ### Loading reservoir observation time series
 
