@@ -41,15 +41,30 @@ releases).
 
 The configuration on the lake Seine is similar:
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_true-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 -->|6km| SEINE_P7\n  SEINE_P7 -->|32km| SEINE_R8\n  SEINE_P7 --> SEINE(SEINE)\n  SEINE--> SEINE_R8\n  SEINE_R8 -->|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n  style SEINE fill:#ccf\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxy86tUQh29fRzjQ8wB8nC2GBZYyOEdJAFujSEowEmNeGScAkUHUEWYANNDPXMQUb6ugZF6sYbGYEUFJdU5qQiDE7LzMmxUk5LTkaXAxqBSw4qkZycFpOnpKOUm1qUm5iZomRVrVSSkZoLCoKU1LTE0pwSpdpaAN4PU1k?type=png'
 
 which can be translated as:
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_seine_model-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\n  BAR-S_06 -->|79.7km| MERY-_22\n  SEINE_P7 -->|73.7km| MERY-_22\n  SEINE_R8 -->|41.7km| MERY-_22\n  style SEINE_P7 fill:#fcc\n  style SEINE_R8 fill:#fcc\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJislTUHByDNINjjcwU9DVtasxt9Qzz86tUfB1DYrUjTcyAikIdvX0c40PMIcoMMalIMgCrMDEEFNBcUllTirCnLTMnBwr5bTkZHQ5oBFIcko6SrmpRbmJmSlKVtVKJRmpuSDHp6SmJZbmlCjV1gIAvB0-3g?type=png'
 
 The Pannecière lake is an inline reservoir:
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_pannec_true-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\nP(PANNECIERE)\nCHAUM_07 -->|0km| P\nP --> |153km| GURGY_02\nstyle P fill:#ccf\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJiskL0Ahw9PNzdfZ0DXLVjMlz9nAM9Y03MFfQ1bWrMcjOrVEIAKoB8RRqDE2NQQLuoUHukfEGRjF5xSWVOakKAQppmTk5VsrJyWkxeUo6SrmpRbmJmSlKVtVKJRmpuSALU1LTEktzSpRqawGXySnl?type=png'
 
 We model it with a `RunModel_Reservoir` node: `PANNEC_R` is the
 Pannecière reservoir, located inline between `CHAUM_07` and `GURGY_02`.
@@ -65,7 +80,12 @@ observed values with the `forceReservoirObs` argument of
 
 The Marne lake can be mapped as:
 
-![](V04_Open-loop_influenced_flow_files/figure-html/mmd_marne_true-1.png)
+    #> Warning in utils::download.file(link, file.dest, quiet = TRUE, mode = "wb"):
+    #> cannot open URL
+    #> 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png':
+    #> HTTP status was '503 Service Unavailable'
+    #> Warning in plot.mermaid("\ngraph LR\nLOUVE_19 -->|0.5km| MARNE_P28\nMARNE_P23 -->|3km| STDIZ_04\nMARNE_P23 --> M(MARNE)\nMARNE_P28 --> M\nMARNE_P28 -->|25.6km| MARNE_R25\nM --> MARNE_R25\nSTDIZ_04 -->|28.7km| MARNE_R25\nMARNE_R25 -->|56.9km| CHALO_21\nstyle MARNE_P28 fill:#fcc\nstyle MARNE_P23 fill:#fcc\nstyle MARNE_R25 fill:#fcc\nstyle M fill:#ccf\n"): Mermaid diagram generation failed with error:
+    #> cannot open URL 'https://mermaid.ink/img/pako:eNqrVkrOT0lVslKKyUsvSizIUPAJisnz8Q8Nc403tFTQ1bWrMdAzzc6tUfB1DPJzjQ8wsojJgzGNwfLGINngEBfPqHgDEzRJBV8NMF8TIW4BEUcTqDEy1TNDWBNkZApUAFGJEIBZAtFgoWeOrgHGBCswNdOzBClw9nD08Y83MozJKy6pzElFeEQhLTMnx0o5LTkZXcoYlxTIbEwpqFByclpMnpKOUm5qUW5iZoqSVbVSSUZqLihwU1LTEktzSpRqawGXcG-G?type=png'
 
 And can be modeled as:
 
