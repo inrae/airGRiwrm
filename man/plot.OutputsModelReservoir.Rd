@@ -213,6 +213,12 @@ OM_reg <- RunModel(IM_reg, RunOptions, Param)
 # And plot the new result
 plot(OM_reg$Reservoir, Vobs = Vobj$y[lubridate::yday(OM_reg$Reservoir$DatesR)])
 
+# The supervised (closed-loop) simulation calls the control function at
+# each time step from R, which is too slow for R CMD check. It is wrapped
+# in \donttest so that R CMD check (and CRAN) skip it; it is still executed
+# by the package CI (devtools::run_examples(run_donttest = TRUE)).
+# See also the RunModel.Supervisor example.
+\donttest{
 #############################################################
 # Supervised reservoir management tracking an objective     #
 # filling curve using a PID Controller with Vsim as         #
@@ -340,4 +346,5 @@ plot(
   OM_Sup$Reservoir,
   Vobs = Vobj$y[lubridate::yday(OM_Sup$Reservoir$DatesR)]
 )
+}
 }
