@@ -1,3 +1,8 @@
-Version: 0.6.2
-Date: 2023-10-24 15:31:30 UTC
-SHA: 18be8ed32bca6bc03ba3196e4e345a90f535409c
+Note (2026-11-07): the 0.8.0 submission (2026-11-06) was rejected by the
+pretest because two examples (RunModel_Reservoir, plot.OutputsModelReservoir)
+exceeded the 5 s limit; the closed-loop Supervisor example block is now
+wrapped in \donttest so that R CMD check no longer executes it (it is still
+run by the package CI).
+Version: 0.8.0
+Date: 2026-11-06 08:00:27 UTC
+SHA: 02c3e6127d838967192433169176ad136a2f5c25
