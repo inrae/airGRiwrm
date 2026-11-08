@@ -1,4 +1,4 @@
-# airGRiwrm 0.8.0
+# airGRiwrm 0.8.1
 
 Breaking changes:
 -----------------
@@ -175,6 +175,18 @@ Documentation:
   `CreateInputsModel`, `RunModel.Supervisor`, `RunModel_Reservoir`
   (examples, target/observed release, PID supervisor examples),
   `transferGRparams` and `extractParam` (#172, #189).
+
+Internal changes:
+-----------------
+
+* Examples: the closed-loop Supervisor block of the shared Reservoir
+  example (used by the `RunModel_Reservoir` and
+  `plot.OutputsModelReservoir` manual pages) is now wrapped in
+  `\donttest` — it calls R at every time step and made the examples
+  exceed the CRAN 5-second limit, which led to the rejection of the
+  0.8.0 submission by the CRAN pretest (2026-11-06). The code stays
+  visible in the manual and is still executed by the package CI and by
+  `R CMD check --run-donttest`.
 
 # airGRiwrm 0.7.0
 

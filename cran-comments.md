@@ -1,16 +1,16 @@
-# CRAN submission comments — airGRiwrm 0.8.0
+# CRAN submission comments — airGRiwrm 0.8.1
 
-**Resubmission of 0.8.0** — the previous submission (2026-11-06) was
-rejected by the pretest because two examples
-(`RunModel_Reservoir`, `plot.OutputsModelReservoir`) exceeded the
-5-second limit. The closed-loop Supervisor block of the shared example
+**Resubmission** — the 0.8.0 submission (2026-11-06) was rejected by
+the pretest because two examples (`RunModel_Reservoir`,
+`plot.OutputsModelReservoir`) exceeded the 5-second limit. The closed-
+loop Supervisor block of the shared example
 (`man-examples/RunModel_Reservoir.R`) is now wrapped in `\donttest{}`:
 the code stays visible in the manual, `R CMD check` no longer executes
 it (it calls R at every time step, which is intrinsically slow), and it
 is still executed by the package CI and by `R CMD check
---run-donttest`.
+--run-donttest`. This 0.8.1 submission contains that fix.
 
-This is a version 0.8.0 update of the airGRiwrm package
+This is a version 0.8.1 update of the airGRiwrm package
 (currently 0.7.0 on CRAN).
 
 The package extends `airGR` (>= 1.7.8, currently 1.7.9 on CRAN)
