@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">airGRiwrm</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,9 +61,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.8.0" id="airgriwrm-080">airGRiwrm 0.8.0<a class="anchor" aria-label="anchor" href="#airgriwrm-080"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.8.1" id="airgriwrm-081">airGRiwrm 0.8.1<a class="anchor" aria-label="anchor" href="#airgriwrm-081"></a></h2>
 <div class="section level3">
-<h3 id="breaking-changes-0-8-0">Breaking changes:<a class="anchor" aria-label="anchor" href="#breaking-changes-0-8-0"></a></h3>
+<h3 id="breaking-changes-0-8-1">Breaking changes:<a class="anchor" aria-label="anchor" href="#breaking-changes-0-8-1"></a></h3>
 <ul><li>CreateRunOptions [Breaking change]: The default value of <code>Outputs_Sim</code> has changed from <code>"all"</code> to a minimal set (<code>c("DatesR", "WarmUpQsim", "Qsim", "Qsim_m3", "QsimDown", "Param", "StateEnd")</code>) in order to reduce the size of the GRiwrmOutputsModel object for large networks. Use <code>Outputs_Sim = "all"</code> to restore the previous behaviour (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/141" class="external-link">#141</a>).</li>
 <li>Calibration [Breaking change]: <code>Calibration</code> on a simple <em>InputsModel</em> now requires a <code>RunOptions</code> argument, inserted in the second position (<code>Calibration(InputsModel, RunOptions, CalibOptions, ...)</code>). Positional calls written as <code>Calibration(InputsModel, CalibOptions)</code> are broken; named calls and the calibration of network models (GRiwrmInputsModel) are unchanged (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/199" class="external-link">#199</a>).</li>
 <li>CreateInputsCrit [Breaking change]: the default error criterion changed from <code>ErrorCrit_NSE</code> to <code>ErrorCrit_KGE2</code> and the default <code>AprioriIds</code> changed from <code>NULL</code> to a computed a priori node (<code>getDefaultAprioriIds(InputsModel)</code>); several a priori nodes are now tested and the best one is kept. The numeric results of the default criteria and of the calibration change (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/197" class="external-link">#197</a>, <a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/196" class="external-link">#196</a>).</li>
@@ -71,7 +71,7 @@
 <li>Calibration [Breaking change]: reservoirs now follow the force-release/diversion logic during calibration by default (<code>forceReservoirObs = TRUE</code> in <code>RunModel</code>/<code>Calibration</code> of a GRiwrmInputsModel, with a calibration flag in the reservoir RunOptions); the simulated reservoir behaviour during calibration can change (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/199" class="external-link">#199</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="new-features-0-8-0">New features:<a class="anchor" aria-label="anchor" href="#new-features-0-8-0"></a></h3>
+<h3 id="new-features-0-8-1">New features:<a class="anchor" aria-label="anchor" href="#new-features-0-8-1"></a></h3>
 <ul><li>CreateRunOptions: allow users to select which simulation outputs are returned via the <code>Outputs_Sim</code> argument, either as a character vector applied to all nodes, or as a named list with per-node selection (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/141" class="external-link">#141</a>). CemaNeige nodes now also carry <code>Precip</code> in their default <code>Outputs_Sim</code>: the default plot of a CemaNeige node requires it in the <em>OutputsModel</em> to compute the precipitation panel axis as soon as the per-layer solid precipitation (<code>Psol</code>) is present (upstream airGR <code>ylimP</code> limitation; the standalone airGR bug is still to be fixed on the airGR side). <code>Precip</code> is a recorded meteo input, not a CemaNeige Fortran output: the CemaNeige <code>NOutputs</code> and the model run are unchanged (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/178" class="external-link">#178</a>).</li>
 <li>CreateInputsCrit: allow user-defined a priori parameters for the De Lavenne criterion: entries of <code>AprioriIds</code> can now be numeric vectors (one value per model parameter of the node, e.g. <code>c(celerity, X1, X2, X3, X4)</code>) used as the a priori parameters instead of the parameters of an upstream sub-catchment (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/61" class="external-link">#61</a>).</li>
 <li>plot.GRiwrmOutputsModel: display the meteorological time series (precipitation and potential evapotranspiration) at the whole-catchment scale: when available in the <em>GRiwrmOutputsModel</em> object, the time series of each node are replaced on the fly by their area-weighted mean over the catchment of the node and all its upstream nodes, so that the displayed meteorology reflects the whole catchment integrated in the simulated discharge (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/178" class="external-link">#178</a>). For a CemaNeige node, the per-layer series displayed by <code><a href="https://rdrr.io/pkg/airGR/man/plot.OutputsModel.html" class="external-link">airGR::plot.OutputsModel</a></code> are covered as well: the mean air temperature (<code>Temp</code>), the solid precipitation (<code>Psol</code>) and the snow pack state (<code>SnowPack</code>) of each elevation layer are replaced by their whole-catchment mean, as well as the mean over the layers that airGR derives from them. The same adjustment is available as a new exported function <code><a href="../reference/adjustMeteoToCatchment.html">adjustMeteoToCatchment()</a></code>: it computes, for a node of a <em>GRiwrmOutputsModel</em> object, the meteorological time series at the whole-catchment scale (including the CemaNeige layer series), so that users can compute statistics from the meteorological data of the whole catchment instead of the local sub-basin data of the node (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/178" class="external-link">#178</a>).</li>
@@ -87,13 +87,13 @@
 <li>plot.GRiwrm: a new <code>server</code> argument and the <code>MERMAID_URL</code> environment variable provide an alternative to the mermaid.ink service (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/184" class="external-link">#184</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="changes-0-8-0">Changes:<a class="anchor" aria-label="anchor" href="#changes-0-8-0"></a></h3>
+<h3 id="changes-0-8-1">Changes:<a class="anchor" aria-label="anchor" href="#changes-0-8-1"></a></h3>
 <ul><li>The minimum required version of ‘airGR’ has been raised to 1.7.8: <code>CreateRunOptions</code> reads the per-node <code>FeatFUN_MOD</code> attribute for every node, and Reservoir nodes require the fix of airGR issue <a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/167" class="external-link">#167</a> (both provided by the airGR 1.7.8 CRAN release, 2025-12-12). Users on airGR &lt;= 1.7.6 now get a clear dependency error at installation instead of a runtime crash in <code><a href="../reference/CreateRunOptions.html">CreateRunOptions()</a></code>.</li>
 <li>CreateRunOptions: the initial states (<code>IniStates</code>) are now taken into account and checked for Reservoir nodes (previously ignored); new errors/warnings may be raised on configurations that were previously accepted (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/182" class="external-link">#182</a>).</li>
 <li>Calibration: the calibration of ungauged clusters now takes the <code>IniStates</code> of the involved nodes into account, and a new error is raised if a Reservoir node is in an ungauged cluster (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/182" class="external-link">#182</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-0-8-0">Bug fixes:<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-0"></a></h3>
+<h3 id="bug-fixes-0-8-1">Bug fixes:<a class="anchor" aria-label="anchor" href="#bug-fixes-0-8-1"></a></h3>
 <ul><li>RunModel: an explicit <code>Outputs_Sim</code> selection now works on semi-distributed networks: the outputs required to propagate the simulated flows between nodes (in particular <code>WarmUpQsim</code> when the warm-up period is non-zero) are now included automatically in an explicit <code>Outputs_Sim</code> selection, instead of failing with the error “Time series WarmUpQsim in ‘QcontribDown’ should have the same length as ‘RunOptions$IndPeriod_WarmUp’” (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/98" class="external-link">#98</a>).</li>
 <li>RunModel.Supervisor: crash with <code>RunModel_Lag</code> on a node (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/191" class="external-link">#191</a>).</li>
 <li>RunModel.Supervisor: crash with Reservoir + Diversion nodes (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/190" class="external-link">#190</a>).</li>
@@ -117,11 +117,15 @@
 <li>plot.OutputsModelReservoir: the <code>which</code> argument is now handled when the plot is called from <code>box</code> (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/203" class="external-link">#203</a>).</li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-0-8-0">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-0-8-0"></a></h3>
+<h3 id="documentation-0-8-1">Documentation:<a class="anchor" aria-label="anchor" href="#documentation-0-8-1"></a></h3>
 <ul><li>New vignette V07: example combining tactical and operational management (PID controller on a reservoir, <code>RunModel.GRiwrmOutputsModel</code>) (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/180" class="external-link">#180</a>).</li>
 <li>Vignette V04: reformatted for readability and the NA handling in the controller measurements documented (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/97" class="external-link">#97</a>).</li>
 <li>Documentation: the irstea.fr links replaced by the corresponding forge.inrae.fr pages, the irrigation and reservoir vignette examples revised, and the <code>CreateGRiwrm</code> documentation updated (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/204" class="external-link">#204</a>).</li>
 <li>A documentation wave covered <code>Calibration</code>, <code>CreateCalibOptions</code>, <code>CreateInputsModel</code>, <code>RunModel.Supervisor</code>, <code>RunModel_Reservoir</code> (examples, target/observed release, PID supervisor examples), <code>transferGRparams</code> and <code>extractParam</code> (<a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/172" class="external-link">#172</a>, <a href="https://forge.inrae.fr/airgriwrm/airgriwrm/-/issues/189" class="external-link">#189</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-changes-0-8-1">Internal changes:<a class="anchor" aria-label="anchor" href="#internal-changes-0-8-1"></a></h3>
+<ul><li>Examples: the closed-loop Supervisor block of the shared Reservoir example (used by the <code>RunModel_Reservoir</code> and <code>plot.OutputsModelReservoir</code> manual pages) is now wrapped in <code>\donttest</code> — it calls R at every time step and made the examples exceed the CRAN 5-second limit, which led to the rejection of the 0.8.0 submission by the CRAN pretest (2026-11-06). The code stays visible in the manual and is still executed by the package CI and by <code>R CMD check --run-donttest</code>.</li>
 </ul></div>
 </div>
     <div class="section level2">
