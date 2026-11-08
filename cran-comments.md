@@ -1,5 +1,15 @@
 # CRAN submission comments — airGRiwrm 0.8.0
 
+**Resubmission of 0.8.0** — the previous submission (2026-11-06) was
+rejected by the pretest because two examples
+(`RunModel_Reservoir`, `plot.OutputsModelReservoir`) exceeded the
+5-second limit. The closed-loop Supervisor block of the shared example
+(`man-examples/RunModel_Reservoir.R`) is now wrapped in `\donttest{}`:
+the code stays visible in the manual, `R CMD check` no longer executes
+it (it calls R at every time step, which is intrinsically slow), and it
+is still executed by the package CI and by `R CMD check
+--run-donttest`.
+
 This is a version 0.8.0 update of the airGRiwrm package
 (currently 0.7.0 on CRAN).
 
@@ -31,26 +41,33 @@ Breaking changes (all documented in NEWS.md):
 
 ## Checks performed
 
-`R CMD check --no-manual --as-cran` (R 4.6.2, Linux x86_64):
+`R CMD check --no-manual --as-cran` (R 4.6.2, Linux x86_64), after the
+examples fix (2026-11-07):
 
-- 0 errors, 0 warnings, 2 notes:
-  - *CRAN incoming feasibility*: the users-list subscribe URL
+- 0 errors, 0 warnings. The two notes from the 2026-11-06 check are
+  both resolved:
+  - *examples*: with the Supervisor block wrapped in `\donttest`, the
+    two Reservoir examples run in 3.5 s and 2.6 s respectively (measured
+    twice under CRAN semantics, i.e. with the `\donttest` block
+    excluded as `R CMD check` does), well below the 5-second limit.
+  - *CRAN incoming feasibility*: the RENATER users-list subscribe URL
     `https://groupes.renater.fr/sympa/subscribe/airgriwrm-users`
-    returned HTTP 503 (Service Unavailable) at check time; the RENATER
-    sytse service is up and the link is the official users list of
-    the package. The one URL that had moved (IN-WOP project) was
-    updated to its canonical target.
-  - *examples*: the two Reservoir examples (`RunModel_Reservoir`,
-    `plot.OutputsModelReservoir`) run a 9-year simulation with a
-    1-year warm-up; their elapsed time (7–12 s on a shared Linux
-    machine) is inherent to the simulation, not to package overhead.
+    returned HTTP 503 (transient service issue) at the time of the
+    previous submission; it returns HTTP 200 as of 2026-11-08 and the
+    check now passes. The link is the official users list of the
+    package; the one URL that had moved (IN-WOP project) was updated to
+    its canonical target.
 - The full testthat suite and all vignettes build and pass
   (including the new V07 vignette).
+- R-hub check (2026-11-07, branch `master`): all five platforms pass
+  with 0 errors, 0 warnings and 0 notes — ubuntu-release,
+  ubuntu-next, ubuntu-gcc12, ubuntu-clang and Windows (R-devel) —
+  including the `--run-donttest` examples run (the Supervisor block is
+  still executed and correct).
 - Spelling: no findings (`spelling::spell_check_package`);
   `inst/WORDLIST` lists the package terminology and the legitimate
   French bibliographic titles in the references.
-- URL check (`urlchecker`): no dead links (the 503 above is a
-  transient service response, not a dead link).
+- URL check (`urlchecker`): no dead links.
 
 ## Reverse dependencies
 
